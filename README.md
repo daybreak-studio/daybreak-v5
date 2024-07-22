@@ -1,40 +1,52 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+The folder structure was designed to balance [locality of behaviour](https://htmx.org/essays/locality-of-behaviour/#:~:text=The%20primary%20feature%20for%20easy%20maintenance%20is%20locality%3A%20Locality%20is%20that%20characteristic%20of%20source%20code%20that%20enables%20a%20programmer%20to%20understand%20that%20source%20by%20looking%20at%20only%20a%20small%20portion%20of%20it) and abstraction the in daybreak web projects.
 
-## Getting Started
+`/components`
 
-First, run the development server:
+- ✅ In this folder:
+    - Think *organisms* in atomic design, a group of ui that is context-agonistic but has a complex logic.
+    - With more specialized function, while `ui` is more function agnostic.
+    - eg: Carousel, Filter Search
+- ❌ Not in this folder:
+    - Page specific or section specific components
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+💡 Rule of thumbs
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Is the components being used more than once in the project?
+    - Yes: definitely put it here ✅
+    - No: Default to route private `_`, Put it here if you think this is generic enough to have the potential to be reused (caution)
+- Does the component depends on the product/website context?
+    - Yes: Don’t put it here, put it under `_`
+    - No: Default to route private `_` , but ✅
+- Can this component be used in other projects as well with the same client?
+    - Yes: then put it here!
+    - No: Default to route private `_`
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+`/components/ui/`
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- ✅ In this folder:
+    - *Atomic* level components or your design system elements
+    - eg. Button, Textfield, Scrim, AnimationConfig, FadeInText(superpower)
+- ❌ Not in this folder:
+    - Complex design system components: eg - carousel, search with auto complete.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+`/pages`
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- ✅ In this folder: NextJS pages and sub pages directories (because we uses page router for framer motion route animation)
+- for page specific components and logic, put them inside a private `_` folder
+    - for example, you have a ScrollVideo that is only going to be used once on the website, put it under the `_`.
+    - Default to using the private folder, except there is specific reason.
+- Example structure
+    - `/pages/about/index.tsx` *(for the page)*
+    - `/pages/about/_/3DScene/...` *(private components that group with the page)*
+    - `/pages/about/_/SceneNavigation/...`
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+`/hooks`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- ✅ In this folder: Hooks that can be used globally
+- ❌ Not in this folder: For component specific hooks that is written for organisation purpose, put those under the private `_` folder.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+`/utils`
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- ✅ In this folder: Javascript utilities, eg. map(v,start,end), clamp, convertTimeString
