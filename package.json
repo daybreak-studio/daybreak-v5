@@ -1,0 +1,45 @@
+{
+  "name": "sanity-template-nextjs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@portabletext/react": "^3.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "@sanity/client": "^6.21.1",
+    "@sanity/image-url": "^1.0.2",
+    "@sanity/react-loader": "^1.10.5",
+    "@sanity/vision": "^3.52.4",
+    "@sanity/visual-editing": "^2.1.7",
+    "@sanity/webhook": "^4.0.4",
+    "@vercel/og": "^0.6.2",
+    "framer-motion": "^11.3.19",
+    "lenis": "^1.1.13",
+    "next": "14.2.5",
+    "next-sanity": "^9.4.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "sanity": "^3.52.4",
+    "styled-components": "^6.1.12",
+    "svgo": "^3.3.2"
+  },
+  "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
+    "@tailwindcss/typography": "^0.5.13",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8",
+    "prettier": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.5",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
