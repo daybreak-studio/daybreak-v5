@@ -32,7 +32,7 @@ export default function Home(props: PageProps) {
     >
       <SnappingProvider>
         <div className="flex h-screen items-center justify-center">
-          <h1 className="text-5xl">[Widgets Here]</h1>
+          <h1 className="text-5xl">[Widget]</h1>
         </div>
 
         <SnapArea className="h-[200vh] rounded-[2rem] bg-white p-8 drop-shadow-2xl">
