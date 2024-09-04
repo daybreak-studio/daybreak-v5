@@ -6,6 +6,12 @@ export const home = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "pageTitle", // Add a new field for the page title
+      title: "Page Title",
+      type: "string",
+      initialValue: "Home", // Set the default value to "Home"
+    }),
+    defineField({
       name: "widgets",
       title: "Widgets",
       type: "array",

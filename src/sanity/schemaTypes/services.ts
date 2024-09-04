@@ -31,4 +31,5 @@ export const services = defineType({
       of: [defineField({ name: "logo", type: "image" })],
     }),
   ],
+  preview: { select: { title: "title" } },
 });
