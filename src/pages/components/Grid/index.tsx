@@ -1,6 +1,28 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import clsx from "clsx";
 
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [scale, setScale] = React.useState(1);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setScale(window.innerWidth / 1920);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <div className="grid h-[597px] w-[1016px] grid-cols-3 gap-[31px] sm:grid-cols-5">
+      {children}
+    </div>
+  );
+};
+
 interface WidgetContextProps {
   size: "small" | "medium" | "large";
   rowStart?: number;
@@ -28,28 +50,6 @@ export const WidgetProvider: React.FC<WidgetProviderProps> = ({
 }) => {
   return (
     <WidgetContext.Provider value={value}>{children}</WidgetContext.Provider>
-  );
-};
-
-interface LayoutProps {
-  children: ReactNode;
-}
-
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [scale, setScale] = React.useState(1);
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      setScale(window.innerWidth / 1920);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return (
-    <div className="grid h-[597px] w-[1016px] grid-cols-3 gap-[31px] sm:grid-cols-5">
-      {children}
-    </div>
   );
 };
 
