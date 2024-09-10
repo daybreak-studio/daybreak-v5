@@ -1,33 +1,31 @@
 import "@/styles/globals.css";
-import { VisualEditing } from "@sanity/visual-editing/next-pages-router";
-
 import { AppProps } from "next/app";
 import { lazy, Suspense } from "react";
-
 import { ReactLenis } from "lenis/react";
 
-export interface SharedPageProps {
-  draftMode: boolean;
-  token: string;
-}
-
-const PreviewProvider = lazy(
-  () => import("@/sanity/components/PreviewProvider"),
+const VisualEditing = lazy(() =>
+  import("@sanity/visual-editing/next-pages-router").then((mod) => ({
+    default: mod.VisualEditing,
+  })),
 );
+
+export interface SharedPageProps {
+  preview: boolean;
+}
 
 export default function App({
   Component,
   pageProps,
 }: AppProps<SharedPageProps>) {
-  const { draftMode, token } = pageProps;
+  const { preview } = pageProps;
 
-  return draftMode ? (
-    <PreviewProvider token={token}>
+  return preview ? (
+    <>
       <Component {...pageProps} />
-      <Suspense>
+      <Suspense fallback={null}>
         <VisualEditing />
       </Suspense>
-    </PreviewProvider>
+    </>
   ) : (
     <ReactLenis root options={{ lerp: 0.5 }}>
       <Component {...pageProps} />

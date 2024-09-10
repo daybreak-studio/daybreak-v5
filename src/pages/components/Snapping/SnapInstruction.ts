@@ -17,9 +17,9 @@ export function performSnap(lenis: Lenis, snapPoints: SnapPoint[]) {
   const nearest = snapInstruction.position;
   if (snapInstruction.alignment === "top") {
     lenis.scrollTo(nearest, { lerp: 0.1 });
-    return;
+  } else {
+    lenis.scrollTo(Math.max(0, nearest - window.innerHeight), { lerp: 0.1 });
   }
-  lenis.scrollTo(nearest - window.innerHeight, { lerp: 0.1 });
 }
 
 export function getSnapInstruction(

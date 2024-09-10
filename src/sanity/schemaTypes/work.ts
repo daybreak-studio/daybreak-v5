@@ -48,7 +48,7 @@ export const project = defineType({
     }),
     defineField({
       name: "isActive",
-      title: "isActive",
+      title: "Active?",
       type: "boolean",
       initialValue: true,
       validation: (Rule) => Rule.required(),
