@@ -6,12 +6,6 @@ export const team = defineType({
   type: "document",
   fields: [
     defineField({
-      name: "title",
-      title: "Title",
-      type: "string",
-      description: "Title for the team page",
-    }),
-    defineField({
       name: "introduction",
       title: "Introduction",
       type: "text",
@@ -54,12 +48,9 @@ export const team = defineType({
     }),
   ],
   preview: {
-    select: {
-      title: "title",
-    },
-    prepare({ title }) {
+    prepare() {
       return {
-        title: title || "Team",
+        title: "Team",
       };
     },
   },

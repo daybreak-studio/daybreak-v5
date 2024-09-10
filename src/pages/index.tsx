@@ -1,28 +1,25 @@
-// ./src/pages/index.tsx
-
-import { SanityDocument } from "next-sanity";
-import dynamic from "next/dynamic";
-
-import { getClient } from "@/sanity/lib/client";
-import { token } from "@/sanity/lib/token";
-import { POSTS_QUERY } from "@/sanity/lib/queries";
+import { GetStaticProps } from "next";
+import { PortableText } from "@portabletext/react";
+import { client } from "@/sanity/lib/client";
 import SnapArea from "@/pages/components/Snapping/SnapArea";
 import SnappingProvider from "@/pages/components/Snapping/SnappingProvider";
 
-// const PostsPreview = dynamic(() => import("@/components/PostsPreview"));
-
-type PageProps = {
-  posts: SanityDocument[];
-  draftMode: boolean;
-  token: string;
+// Define a type for your home page data
+type HomePageData = {
+  missionStatement: any;
+  // Add other fields from your home document here
+  // For example:
+  // title: string;
+  // description: string;
+  // featuredImage: any;
+  // Add any other fields you have in your home document
 };
 
-export default function Home(props: PageProps) {
-  // return props.draftMode ? (
-  //   // <PostsPreview posts={props.posts} />
-  // ) : (
-  //   // <Posts posts={props.posts} />
-  // );
+type HomePageProps = {
+  data: HomePageData;
+};
+
+export default function Home({ data }: HomePageProps) {
   return (
     <main
       style={{
@@ -37,44 +34,30 @@ export default function Home(props: PageProps) {
 
         <SnapArea className="h-[200vh] rounded-[2rem] bg-white p-8 drop-shadow-2xl">
           <div className="mb-24 text-zinc-400 xl:w-2/3">
-            <h3 className="text-3xl">
-              Daybreak Studio creates brand, web, and software experiences by
-              integrating technology to enhance human craft <br />
-              <br />
-              We work closely with ambitious companies to realize their vision
-              for the future. Through everything we do, we aim to build works of
-              design that are beautiful, intuitive, and functional. <br />
-              <br />
-              Design that feels right. Tech that works well.
-            </h3>
+            <PortableText value={data.missionStatement} />
           </div>
 
-          <div className="text-zinc-400 xl:w-2/3">
-            <h5 className="mb-4">About Us</h5>
-            <h3 className="text-3xl">
-              We’re a team of craftspeople and optimists who are eternally
-              curious about new tools, big ideas, and what more we can achieve
-              with technology. <br />
-              <br />
-              It’s right there in the name. We think tomorrow could be Earth’s
-              best day yet.
-            </h3>
-          </div>
+          {/* You can now use other fields from data here */}
+          {/* For example: */}
+          {/* <h1>{data.title}</h1> */}
+          {/* <p>{data.description}</p> */}
+          {/* Add more components using the data as needed */}
+
+          {/* Rest of your component */}
         </SnapArea>
       </SnappingProvider>
     </main>
   );
 }
 
-export const getStaticProps = async ({ draftMode = false }) => {
-  const client = getClient(draftMode ? token : undefined);
-  // const posts = await client.fetch<SanityDocument[]>(POSTS_QUERY);
+export const getStaticProps: GetStaticProps<HomePageProps> = async () => {
+  const query = `*[_type == "home"][0]`;
+  const data = await client.fetch(query);
 
   return {
     props: {
-      // posts,
-      draftMode,
-      token: draftMode ? token : "",
+      data,
     },
+    revalidate: 60, // Revalidate every 60 seconds
   };
 };
