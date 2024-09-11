@@ -1,82 +1,49 @@
-import * as React from "react";
+import React from "react";
+import GridLayout from "react-grid-layout";
 
-import GridLayout, { ReactGridLayoutProps } from "react-grid-layout";
+type LayoutItem = {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  static?: boolean;
+};
 
-import { GridWidgetProps } from "./grid.props";
-import { useState, useEffect } from "react";
+type GridLayoutProps = {
+  layout: LayoutItem[];
+  size: number;
+  margin: [number, number];
+};
 
-export function useWindowWidth(): number {
-  const [width, setWidth] = useState<number>(
-    typeof window !== "undefined" ? Math.min(window.innerWidth, 1280) : 1280,
-  );
+const GridLayoutComponent: React.FC<GridLayoutProps> = ({
+  layout,
+  size,
+  margin,
+}) => {
+  const columns = Math.max(...layout.map((item) => item.x + item.w), 0);
+  const width = columns * size + (columns - 1) * margin[0];
 
-  useEffect(() => {
-    function handleResize() {
-      setWidth(Math.min(window.innerWidth, 1280));
-    }
-
-    window.addEventListener("resize", handleResize);
-
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  return width;
-}
-
-export const Layout: React.FC<ReactGridLayoutProps> = ({ ...props }) => {
   return (
-    <GridLayout
-      cols={5}
-      rowHeight={598}
-      autoSize={true}
-      isBounded={false}
-      isDraggable={false}
-      isResizable={false}
-      isDroppable={false}
-      className="h-screen w-screen border"
-      margin={[32, 32]}
-    >
-      {props.children}
-    </GridLayout>
+    <div className="flex h-screen w-screen items-center justify-center">
+      <div style={{ width: `${width}px` }}>
+        <GridLayout
+          margin={margin}
+          rowHeight={size}
+          cols={columns}
+          width={width}
+        >
+          {layout.map((item) => (
+            <div key={item.i} data-grid={item}>
+              <div className="flex h-full w-full items-center justify-center rounded-2xl border p-2 text-gray-400 shadow">
+                {item.i}
+              </div>
+            </div>
+          ))}
+        </GridLayout>
+      </div>
+    </div>
   );
 };
 
-export const Widget = React.forwardRef<HTMLDivElement, GridWidgetProps>(
-  (
-    {
-      style,
-      className,
-      onMouseDown,
-      onMouseUp,
-      onTouchEnd,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    return (
-      <div
-        ref={ref}
-        data-grid={{
-          x: props.x,
-          y: props.y,
-          w: props.size === "small" ? 1 : props.size === "medium" ? 2 : 3,
-          h: props.size === "small" ? 1 : props.size === "medium" ? 2 : 3,
-          static: true,
-          isDraggable: false,
-          isResizable: false,
-          isBounded: false,
-        }}
-        style={{ ...style }}
-        className={className}
-        onMouseUp={onMouseUp}
-        onTouchEnd={onTouchEnd}
-        onMouseDown={onMouseDown}
-      >
-        {children}
-      </div>
-    );
-  },
-);
-
-Widget.displayName = "Widget";
+export default GridLayoutComponent;
