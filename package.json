@@ -18,6 +18,7 @@
     "@sanity/vision": "^3.52.4",
     "@sanity/visual-editing": "^2.1.7",
     "@sanity/webhook": "^4.0.4",
+    "@studio-freight/react-lenis": "^0.0.47",
     "@vercel/og": "^0.6.2",
     "framer-motion": "^11.3.19",
     "lenis": "^1.1.13",
