@@ -50,7 +50,7 @@ export default function Home({ data }: HomePageProps) {
       </div>
       <Drawer scrollY={scrollY} windowHeight={windowHeight}>
         <div className="p-8 2xl:p-16">
-          <h2 className="text-md mb-4 2xl:text-8xl">
+          <h2 className="text-md mb-4 2xl:text-4xl">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
             leo risus, vehicula id feugiat ut, convallis et nisl. Nullam auctor
             sit amet libero eu accumsan. Integer molestie felis dolor, venenatis
