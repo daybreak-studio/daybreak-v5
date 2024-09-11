@@ -43,19 +43,17 @@ export default function Example() {
   return <WidgetGrid layout={layout} />;
 }
 
-interface ExampleWidgetProps {
-  seed?: string;
-}
-
-const ExampleWidget = ({ seed = uuid() }: ExampleWidgetProps) => {
-  const { size } = useWidgetGridContext();
+const ExampleWidget = () => {
+  const { id, size, position } = useWidgetGridContext();
   return (
-    <div className="relative flex h-full w-full items-center justify-center">
-      <img
-        src={`https://avatar.vercel.sh/${encodeURIComponent(seed)}`}
-        className="absolute h-full w-full object-cover opacity-5"
-      />
-      {size.w}x{size.h}
+    <div className="relative flex h-full w-full flex-col items-center justify-center gap-1 text-gray-400">
+      <div>Key: {id}</div>
+      <div>
+        Size: {size.w} x {size.h}
+      </div>
+      <div>
+        Position: x:{position.x}, y:{position.y}
+      </div>
     </div>
   );
 };

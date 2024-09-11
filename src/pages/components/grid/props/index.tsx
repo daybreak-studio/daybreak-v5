@@ -14,16 +14,25 @@ export namespace LayoutProps {
 
 export namespace GridProps {
   export interface Context {
-    size: { w: number; h: number };
+    id: string;
+    position: Position;
+    size: Size;
   }
 
   export interface Provider {
+    id: string;
+    position: Position;
     size: { w: number; h: number };
     children: React.ReactNode;
   }
 
   export interface Layout {
     layout: LayoutProps.Item[];
+  }
+
+  export interface Settings {
+    lg: { rowHeight: number; margin: [number, number] };
+    sm: { rowHeight: number; margin: [number, number] };
   }
 
   export interface Structure extends ReactGridLayoutProps {
@@ -58,8 +67,6 @@ export namespace GridProps {
 
 export namespace Defaults {
   export const Structure: ReactGridLayoutProps = {
-    margin: [32, 32],
-    rowHeight: 178,
     containerPadding: [0, 0],
   };
 
