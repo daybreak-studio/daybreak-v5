@@ -1,101 +1,82 @@
-import React, { createContext, useContext, ReactNode } from "react";
-import clsx from "clsx";
+import * as React from "react";
 
-interface LayoutProps {
-  children: ReactNode;
-}
+import GridLayout, { ReactGridLayoutProps } from "react-grid-layout";
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [scale, setScale] = React.useState(1);
+import { GridWidgetProps } from "./grid.props";
+import { useState, useEffect } from "react";
 
-  React.useEffect(() => {
-    const handleResize = () => {
-      setScale(window.innerWidth / 1920);
-    };
+export function useWindowWidth(): number {
+  const [width, setWidth] = useState<number>(
+    typeof window !== "undefined" ? Math.min(window.innerWidth, 1280) : 1280,
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      setWidth(Math.min(window.innerWidth, 1280));
+    }
+
     window.addEventListener("resize", handleResize);
+
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  return width;
+}
+
+export const Layout: React.FC<ReactGridLayoutProps> = ({ ...props }) => {
   return (
-    <div className="grid h-[597px] w-[1016px] grid-cols-3 gap-[31px] sm:grid-cols-5">
-      {children}
-    </div>
+    <GridLayout
+      cols={5}
+      rowHeight={598}
+      autoSize={true}
+      isBounded={false}
+      isDraggable={false}
+      isResizable={false}
+      isDroppable={false}
+      className="h-screen w-screen border"
+      margin={[32, 32]}
+    >
+      {props.children}
+    </GridLayout>
   );
 };
 
-interface WidgetContextProps {
-  size: "small" | "medium" | "large";
-  rowStart?: number;
-  colStart?: number;
-}
-
-const WidgetContext = createContext<WidgetContextProps | undefined>(undefined);
-
-export const useWidgetContext = (): WidgetContextProps => {
-  const context = useContext(WidgetContext);
-  if (!context) {
-    throw new Error("useWidgetContext must be used within a WidgetProvider");
-  }
-  return context;
-};
-
-interface WidgetProviderProps {
-  value: WidgetContextProps;
-  children: ReactNode;
-}
-
-export const WidgetProvider: React.FC<WidgetProviderProps> = ({
-  value,
-  children,
-}) => {
-  return (
-    <WidgetContext.Provider value={value}>{children}</WidgetContext.Provider>
-  );
-};
-
-interface WidgetProps {
-  size: "small" | "medium" | "large";
-  children?: React.ReactNode;
-  rowStart?: number;
-  colStart?: number;
-}
-
-export const Widget: React.FC<WidgetProps> = ({
-  size,
-  children,
-  rowStart,
-  colStart,
-}) => {
-  const sizeClasses = clsx({
-    "col-span-1 row-span-1": size === "small",
-    "col-span-2 row-span-2": size === "medium",
-    "col-span-3 row-span-3": size === "large",
-  });
-
-  const positionClasses = clsx({
-    [`row-start-${rowStart}`]: rowStart,
-    [`col-start-${colStart}`]: colStart,
-  });
-
-  return (
-    <WidgetProvider value={{ size, rowStart, colStart }}>
+export const Widget = React.forwardRef<HTMLDivElement, GridWidgetProps>(
+  (
+    {
+      style,
+      className,
+      onMouseDown,
+      onMouseUp,
+      onTouchEnd,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
       <div
-        className={clsx(
-          "aspect-square rounded-3xl bg-[#D9D9D9] p-4",
-          sizeClasses,
-          positionClasses,
-        )}
+        ref={ref}
+        data-grid={{
+          x: props.x,
+          y: props.y,
+          w: props.size === "small" ? 1 : props.size === "medium" ? 2 : 3,
+          h: props.size === "small" ? 1 : props.size === "medium" ? 2 : 3,
+          static: true,
+          isDraggable: false,
+          isResizable: false,
+          isBounded: false,
+        }}
+        style={{ ...style }}
+        className={className}
+        onMouseUp={onMouseUp}
+        onTouchEnd={onTouchEnd}
+        onMouseDown={onMouseDown}
       >
         {children}
       </div>
-    </WidgetProvider>
-  );
-};
+    );
+  },
+);
 
-const Grid = {
-  Layout,
-  Widget,
-  useWidgetContext,
-};
-
-export default Grid;
+Widget.displayName = "Widget";
