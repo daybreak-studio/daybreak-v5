@@ -1,42 +1,53 @@
-import React from "react";
 import GridLayout from "react-grid-layout";
+import { WidgetGridContext } from "@/pages/components/grid/hooks";
+import { Defaults, GridProps } from "@/pages/components/grid/props";
 
-type LayoutItem = {
-  i: string;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  static?: boolean;
-};
-
-type GridLayoutProps = {
-  layout: LayoutItem[];
-  size: number;
-  margin: [number, number];
-};
-
-const GridLayoutComponent: React.FC<GridLayoutProps> = ({
-  layout,
+export const WidgetGridProvider: React.FC<GridProps.Provider> = ({
   size,
-  margin,
+  children,
 }) => {
-  const columns = Math.max(...layout.map((item) => item.x + item.w), 0);
-  const width = columns * size + (columns - 1) * margin[0];
+  return (
+    <WidgetGridContext.Provider value={{ size }}>
+      {children}
+    </WidgetGridContext.Provider>
+  );
+};
+
+export const WidgetGrid: React.FC<GridProps.Layout> = ({ layout }) => {
+  const cols = Math.max(
+    ...layout.map((item) => item.position.x + item.size.w),
+    0,
+  );
+
+  const width = cols * 178 + (cols - 1) * 32;
+
+  const Structure: GridProps.Structure = {
+    cols,
+    width,
+    ...Defaults.Structure,
+  };
 
   return (
     <div className="flex h-screen w-screen items-center justify-center">
       <div style={{ width: `${width}px` }}>
-        <GridLayout
-          margin={margin}
-          rowHeight={size}
-          cols={columns}
-          width={width}
-        >
+        <GridLayout {...Structure} cols={Structure.cols}>
           {layout.map((item) => (
-            <div key={item.i} data-grid={item}>
-              <div className="flex h-full w-full items-center justify-center rounded-2xl border p-2 text-gray-400 shadow">
-                {item.i}
+            <div
+              key={item.id}
+              data-grid={{
+                i: item.id,
+                x: item.position.x,
+                y: item.position.y,
+                w: item.size.w,
+                h: item.size.h,
+                ...Defaults.DataGridAttributes,
+              }}
+            >
+              <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-2xl border text-gray-400 shadow">
+                <WidgetGridProvider size={item.size}>
+                  {/* Wrap the widget in the provider */}
+                  {item.content}
+                </WidgetGridProvider>
               </div>
             </div>
           ))}
@@ -45,5 +56,3 @@ const GridLayoutComponent: React.FC<GridLayoutProps> = ({
     </div>
   );
 };
-
-export default GridLayoutComponent;
