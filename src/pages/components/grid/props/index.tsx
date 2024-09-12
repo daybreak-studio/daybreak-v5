@@ -29,6 +29,7 @@ export namespace GridProps {
   export interface Layout {
     header?: React.ReactNode;
     layout: LayoutProps.Item[];
+    debug?: boolean;
   }
 
   export interface Settings {

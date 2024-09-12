@@ -5,6 +5,7 @@ import {
   WidgetGridContext,
 } from "@/pages/components/grid/hooks";
 import { Defaults, GridProps } from "@/pages/components/grid/props";
+import clsx from "clsx";
 
 export const WidgetGridProvider: React.FC<GridProps.Provider> = ({
   size,
@@ -19,7 +20,11 @@ export const WidgetGridProvider: React.FC<GridProps.Provider> = ({
   );
 };
 
-export const WidgetGrid: React.FC<GridProps.Layout> = ({ header, layout }) => {
+export const WidgetGrid: React.FC<GridProps.Layout> = ({
+  header,
+  layout,
+  debug,
+}) => {
   const breakpoints: GridProps.Settings = {
     lg: { rowHeight: 178, margin: [32, 32] },
     sm: { rowHeight: 103, margin: [12, 12] },
@@ -65,7 +70,12 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({ header, layout }) => {
                   ...Defaults.DataGridAttributes,
                 }}
               >
-                <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-3xl border font-semibold shadow">
+                <div
+                  className={clsx({
+                    ["border-2 border-orange-500"]: debug,
+                    ["flex h-full w-full overflow-hidden"]: true,
+                  })}
+                >
                   <WidgetGridProvider
                     id={item.id}
                     size={item.size}
@@ -73,6 +83,14 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({ header, layout }) => {
                   >
                     {item.content}
                   </WidgetGridProvider>
+                  {debug && (
+                    <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 p-1 text-xs uppercase text-white">
+                      ID: {item.id}
+                      <br /> Size: {item.size.w}x{item.size.h}
+                      <br />
+                      Position: x: {item.position.x} y:{item.position.y}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
