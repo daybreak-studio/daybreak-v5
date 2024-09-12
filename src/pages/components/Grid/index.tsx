@@ -19,7 +19,7 @@ export const WidgetGridProvider: React.FC<GridProps.Provider> = ({
   );
 };
 
-export const WidgetGrid: React.FC<GridProps.Layout> = ({ layout }) => {
+export const WidgetGrid: React.FC<GridProps.Layout> = ({ header, layout }) => {
   const breakpoints: GridProps.Settings = {
     lg: { rowHeight: 178, margin: [32, 32] },
     sm: { rowHeight: 103, margin: [12, 12] },
@@ -40,37 +40,44 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({ layout }) => {
     ...Defaults.Structure,
   };
 
+  // TODO: Setup debug mode, Tablet breakpoint, add title componetn
   return (
     <div className="relative h-screen w-screen">
-      <div
-        style={{ width: `${width}px` }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform"
-      >
-        <GridLayout {...Structure} cols={Structure.cols}>
-          {layout.map((item) => (
-            <div
-              key={item.id}
-              data-grid={{
-                i: item.id,
-                x: item.position.x,
-                y: item.position.y,
-                w: item.size.w,
-                h: item.size.h,
-                ...Defaults.DataGridAttributes,
-              }}
-            >
-              <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-3xl border font-semibold shadow">
-                <WidgetGridProvider
-                  id={item.id}
-                  size={item.size}
-                  position={item.position}
-                >
-                  {item.content}
-                </WidgetGridProvider>
+      <div className="flex h-full w-full flex-col items-center justify-center gap-12">
+        {header ? (
+          header
+        ) : (
+          <h1 className="text w-[316px] text-center text-4xl">
+            A technology first design studio
+          </h1>
+        )}
+        <div style={{ width: `${width}px` }}>
+          <GridLayout {...Structure} cols={Structure.cols}>
+            {layout.map((item) => (
+              <div
+                key={item.id}
+                data-grid={{
+                  i: item.id,
+                  x: item.position.x,
+                  y: item.position.y,
+                  w: item.size.w,
+                  h: item.size.h,
+                  ...Defaults.DataGridAttributes,
+                }}
+              >
+                <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-3xl border font-semibold shadow">
+                  <WidgetGridProvider
+                    id={item.id}
+                    size={item.size}
+                    position={item.position}
+                  >
+                    {item.content}
+                  </WidgetGridProvider>
+                </div>
               </div>
-            </div>
-          ))}
-        </GridLayout>
+            ))}
+          </GridLayout>
+        </div>
       </div>
     </div>
   );

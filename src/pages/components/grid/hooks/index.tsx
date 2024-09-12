@@ -21,6 +21,7 @@ export const useBreakpoint = () => {
     const handleResize = () => {
       const width = window.outerWidth;
       console.log(width);
+      // TODO: Add tablet breakpoint
       if (width < 512) {
         setBreakpoint("sm");
       } else {
