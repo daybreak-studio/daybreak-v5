@@ -10,8 +10,8 @@ export default function Example() {
   const layout: LayoutProps.Item[] = [
     {
       id: "1",
-      position: { x: 1, y: 0 },
-      size: { w: 1, h: 1 },
+      position: { x: 3, y: 0 },
+      size: { w: 2, h: 1 },
       content: <ExampleWidget />,
     },
     {
@@ -36,7 +36,7 @@ export default function Example() {
       id: "5",
       position: { x: 5, y: 2 },
       size: { w: 1, h: 1 },
-      content: <ExampleWidget />,
+      content: "dhfjdksahfkjldshfkjdashfkljds",
     },
   ];
 
