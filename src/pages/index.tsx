@@ -14,31 +14,16 @@ type HomePageProps = {
 
 export default function Home({ data }: HomePageProps) {
   const [windowHeight, setWindowHeight] = useState(0);
-  const [scrollY, setScrollY] = useState(0);
-
-  const handleScroll = useCallback(() => {
-    setScrollY(window.scrollY);
-  }, []);
-
-  const handleDrawerScroll = useCallback(
-    (delta: number) => {
-      const newScrollY = Math.min(Math.max(scrollY + delta, 0), windowHeight);
-      window.scrollTo(0, newScrollY);
-    },
-    [scrollY, windowHeight],
-  );
 
   useEffect(() => {
     const updateHeight = () => setWindowHeight(window.innerHeight);
     updateHeight();
     window.addEventListener("resize", updateHeight);
-    window.addEventListener("scroll", handleScroll);
 
     return () => {
       window.removeEventListener("resize", updateHeight);
-      window.removeEventListener("scroll", handleScroll);
     };
-  }, [handleScroll]);
+  }, []);
 
   return (
     <main className="relative min-h-[200vh]">
@@ -55,11 +40,7 @@ export default function Home({ data }: HomePageProps) {
           </h1>
         </div>
       </div>
-      <Drawer
-        scrollY={scrollY}
-        windowHeight={windowHeight}
-        onScroll={handleScroll}
-      >
+      <Drawer windowHeight={windowHeight}>
         <div className="p-8 2xl:p-16">
           <h2 className="text-md mb-4 2xl:text-4xl">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
