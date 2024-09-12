@@ -1,106 +1,75 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 
 interface DrawerProps {
   children: React.ReactNode;
-  scrollY: number;
   windowHeight: number;
-  onScroll: (delta: number) => void;
 }
 
 const Drawer: React.FC<DrawerProps> = React.memo(
-  ({ children, scrollY, windowHeight, onScroll }) => {
-    const drawerRef = useRef<HTMLDivElement>(null);
+  ({ children, windowHeight }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    // Main page scroll
+    const { scrollY } = useScroll();
+    const yRange = useTransform(scrollY, [0, windowHeight], [windowHeight, 0]);
+    const y = useSpring(yRange, { stiffness: 400, damping: 40 });
+
+    // Inner content scroll
+    const { scrollYProgress: contentScrollProgress } = useScroll({
+      container: contentRef,
+    });
 
     useEffect(() => {
-      const drawerY = Math.max(0, windowHeight - scrollY - windowHeight * 0.03);
-      const expanded = drawerY === 0;
+      const unsubscribeY = y.on("change", (latest) => {
+        setIsDrawerOpen(latest === 0);
+      });
 
-      if (drawerRef.current) {
-        drawerRef.current.style.transform = `translateY(${drawerY}px)`;
+      return () => unsubscribeY();
+    }, [y]);
+
+    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+      const contentElement = contentRef.current;
+      if (!contentElement) return;
+
+      if (!isDrawerOpen) {
+        // If drawer is not fully open, let the page scroll handle it
+        return;
       }
 
-      setIsExpanded(expanded);
-    }, [scrollY, windowHeight]);
+      const { scrollTop } = contentElement;
+      const isContentAtTop = scrollTop === 0;
 
-    const handleScroll = useCallback(
-      (deltaY: number) => {
-        const contentElement = contentRef.current;
-        if (!contentElement) return;
-
-        const { scrollTop, scrollHeight, clientHeight } = contentElement;
-        const isAtTop = scrollTop === 0;
-        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1;
-
-        if (!isExpanded || (deltaY < 0 && isAtTop)) {
-          onScroll(deltaY);
-        } else if (!isAtBottom || (deltaY < 0 && !isAtTop)) {
-          contentElement.scrollTop += deltaY;
-        }
-      },
-      [isExpanded, onScroll],
-    );
-
-    const handleWheel = useCallback(
-      (e: React.WheelEvent<HTMLDivElement>) => {
-        handleScroll(e.deltaY);
-      },
-      [handleScroll],
-    );
-
-    const handleTouchStart = useCallback(
-      (e: React.TouchEvent<HTMLDivElement>) => {
-        if (e.touches.length === 1) {
-          const touch = e.touches[0];
-          drawerRef.current?.setAttribute(
-            "data-touch-start-y",
-            touch.clientY.toString(),
-          );
-        }
-      },
-      [],
-    );
-
-    const handleTouchMove = useCallback(
-      (e: React.TouchEvent<HTMLDivElement>) => {
-        const touch = e.touches[0];
-        const touchStartY = Number(
-          drawerRef.current?.getAttribute("data-touch-start-y") || 0,
-        );
-        const deltaY = touchStartY - touch.clientY;
-        handleScroll(deltaY);
-        drawerRef.current?.setAttribute(
-          "data-touch-start-y",
-          touch.clientY.toString(),
-        );
-      },
-      [handleScroll],
-    );
+      if (isContentAtTop && e.deltaY < 0) {
+        // If content is at top and scrolling up, start closing the drawer
+        scrollY.set(scrollY.get() - e.deltaY);
+        e.preventDefault();
+      } else {
+        // Otherwise, scroll the content
+        contentElement.scrollTop += e.deltaY;
+      }
+    };
 
     return (
-      <div
-        ref={drawerRef}
-        className={`fixed inset-x-0 bottom-0 z-20 overflow-hidden bg-white transition-all duration-300 ease-out ${
-          isExpanded ? "rounded-t-none" : "rounded-t-[24px]"
+      <motion.div
+        ref={containerRef}
+        className={`fixed inset-x-0 bottom-0 z-20 overflow-hidden bg-white ${
+          isDrawerOpen ? "rounded-t-none" : "rounded-t-[24px]"
         }`}
-        style={{
-          height: windowHeight,
-          willChange: "transform",
-        }}
-        onWheel={handleWheel}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
+        style={{ height: windowHeight, y }}
       >
-        <div
+        <motion.div
           ref={contentRef}
-          className={`h-full transition-opacity duration-300 ease-out ${
-            isExpanded ? "overflow-y-auto" : "overflow-hidden"
-          }`}
+          className={`h-full ${isDrawerOpen ? "overflow-y-auto" : "overflow-hidden"}`}
+          animate={{ opacity: isDrawerOpen ? 1 : 0.7 }}
+          transition={{ duration: 0.3 }}
+          onWheel={handleWheel}
         >
           {children}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     );
   },
 );
