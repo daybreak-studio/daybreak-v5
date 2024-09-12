@@ -9,6 +9,9 @@
   body {
     @apply hide-scrollbar;
   }
+  :root {
+    --radius: 0.5rem;
+  }
 }
 
 @layer utilities {

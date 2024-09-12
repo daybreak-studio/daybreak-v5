@@ -39,6 +39,7 @@ export default function Home({ data }: HomePageProps) {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);
+
   return (
     <main className="relative min-h-[200vh]">
       <div
@@ -57,7 +58,7 @@ export default function Home({ data }: HomePageProps) {
       <Drawer
         scrollY={scrollY}
         windowHeight={windowHeight}
-        onScroll={handleDrawerScroll}
+        onScroll={handleScroll}
       >
         <div className="p-8 2xl:p-16">
           <h2 className="text-md mb-4 2xl:text-4xl">

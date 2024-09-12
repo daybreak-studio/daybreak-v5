@@ -44,7 +44,6 @@ const Drawer: React.FC<DrawerProps> = React.memo(
 
     const handleWheel = useCallback(
       (e: React.WheelEvent<HTMLDivElement>) => {
-        e.preventDefault();
         handleScroll(e.deltaY);
       },
       [handleScroll],
@@ -65,7 +64,6 @@ const Drawer: React.FC<DrawerProps> = React.memo(
 
     const handleTouchMove = useCallback(
       (e: React.TouchEvent<HTMLDivElement>) => {
-        e.preventDefault();
         const touch = e.touches[0];
         const touchStartY = Number(
           drawerRef.current?.getAttribute("data-touch-start-y") || 0,
