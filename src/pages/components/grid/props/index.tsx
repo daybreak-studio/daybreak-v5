@@ -33,7 +33,9 @@ export namespace GridProps {
   }
 
   export interface Settings {
+    xl: { rowHeight: number; margin: [number, number] };
     lg: { rowHeight: number; margin: [number, number] };
+    md: { rowHeight: number; margin: [number, number] };
     sm: { rowHeight: number; margin: [number, number] };
   }
 

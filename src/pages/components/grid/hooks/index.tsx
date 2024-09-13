@@ -20,12 +20,14 @@ export const useBreakpoint = () => {
   useEffect(() => {
     const handleResize = () => {
       const width = window.outerWidth;
-      console.log(width);
-      // TODO: Add tablet breakpoint
-      if (width < 512) {
-        setBreakpoint("sm");
-      } else {
+      if (width > 1920) {
+        setBreakpoint("xl");
+      } else if (width > 834) {
         setBreakpoint("lg");
+      } else if (width > 744) {
+        setBreakpoint("md");
+      } else {
+        setBreakpoint("sm");
       }
     };
 
