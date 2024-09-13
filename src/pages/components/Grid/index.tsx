@@ -26,8 +26,10 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
   debug,
 }) => {
   const breakpoints: GridProps.Settings = {
-    lg: { rowHeight: 178, margin: [32, 32] },
-    sm: { rowHeight: 103, margin: [12, 12] },
+    xl: { rowHeight: 178, margin: [32, 32] },
+    lg: { rowHeight: 96, margin: [16, 16] },
+    md: { rowHeight: 118, margin: [22, 22] },
+    sm: { rowHeight: 109, margin: [19, 19] },
   };
   const breakpoint = useBreakpoint() as keyof typeof breakpoints;
   const settings = breakpoints[breakpoint];
@@ -45,9 +47,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
     ...Defaults.Structure,
   };
 
-  // TODO: Setup debug mode, Tablet breakpoint, add title componetn
   return (
-    <div className="relative h-screen w-screen">
+    <div className="relative h-screen w-screen transition-all">
       <div className="flex h-full w-full flex-col items-center justify-center gap-12">
         {header ? (
           header
