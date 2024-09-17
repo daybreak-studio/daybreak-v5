@@ -1,8 +1,9 @@
 import { GetStaticProps } from "next";
 import { client } from "@/sanity/lib/client";
 import Drawer from "@/pages/components/Drawer";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useSpring } from "framer-motion";
+import { ReactLenis, useLenis } from "lenis/react";
 
 type HomePageData = {
   missionStatement: any;
