@@ -55,7 +55,7 @@ const Drawer: React.FC<DrawerProps> = ({ children, windowHeight }) => {
     >
       <motion.div
         ref={contentRef}
-        className={`h-full pt-2 ${isDrawerFullyOpen ? "overflow-y-auto" : "overflow-hidden"}`}
+        className={`hide-scrollbar h-full pt-2 ${isDrawerFullyOpen ? "overflow-y-auto" : "overflow-hidden"}`}
         style={{ opacity }}
       >
         {children}
