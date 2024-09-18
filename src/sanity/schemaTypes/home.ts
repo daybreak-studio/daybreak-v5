@@ -109,12 +109,12 @@ export const home = defineType({
       of: [
         {
           type: "block",
-          styles: [{ title: "Normal", value: "normal" }],
-          lists: [],
-          marks: {
-            decorators: [], // This disables inline formatting (bold, italic, etc.)
-            // annotations: [], // This disables links
-          },
+          // styles: [{ title: "Normal", value: "normal" }],
+          // lists: [],
+          // marks: {
+          //   decorators: [], // This disables inline formatting (bold, italic, etc.)
+          //   // annotations: [], // This disables links
+          // },
         },
       ], // Define block content
     }),
