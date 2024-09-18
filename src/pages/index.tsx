@@ -6,6 +6,7 @@ import { PortableText, PortableTextProps } from "@portabletext/react";
 import Image from "next/image";
 import type { Home } from "../../sanity.types";
 import { urlFor } from "@/sanity/lib/image";
+import Reveal from "@/components/Reveal";
 
 export default function Home({ data }: { data: Home }) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
@@ -24,8 +25,10 @@ export default function Home({ data }: { data: Home }) {
 
   const components: PortableTextProps["components"] = {
     block: {
-      normal: ({ children }) => (
-        <p className="mb-8 text-3xl text-zinc-400">{children}</p>
+      normal: ({ children, index }) => (
+        <Reveal delay={index * 0.2}>
+          <p className="mb-8 text-3xl text-zinc-400">{children}</p>
+        </Reveal>
       ),
     },
   };
@@ -59,46 +62,56 @@ export default function Home({ data }: { data: Home }) {
         <Drawer windowHeight={windowHeight}>
           <div className="p-12">
             {data.missionStatement && (
-              <div className="mb-64">
-                <PortableText
-                  value={data.missionStatement}
-                  components={components}
-                />
-              </div>
-            )}
-            <h2 className="mb-4 text-xl text-zinc-400">About Us</h2>
-            {data?.aboutUs && (
-              <div className="mb-64">
-                <PortableText value={data.aboutUs} components={components} />
-              </div>
-            )}
-            <h2 className="mb-4 text-xl text-zinc-400">Newsfeed</h2>
-            {data?.inTheNews?.map((article) => {
-              return (
-                <div
-                  key={article._key}
-                  className="mb-4 w-full rounded-3xl bg-zinc-50 p-2"
-                >
-                  {article.image && (
-                    <Image
-                      src={urlFor(article.image)}
-                      className="w-full rounded-3xl object-cover"
-                      alt={article?.title || ""}
-                      width={600}
-                      height={400}
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  )}
-                  <div className="p-4">
-                    <h2 className="pb-4 text-sm text-zinc-400">
-                      {formatDate(article.date || "")}
-                    </h2>
-                    <h1 className="pb-2">{article.title}</h1>
-                    <h2 className="text-zinc-500">{article.description}</h2>
-                  </div>
+              <Reveal>
+                <div className="mb-64 md:w-7/12">
+                  <PortableText
+                    value={data.missionStatement}
+                    components={components}
+                  />
                 </div>
-              );
-            })}
+              </Reveal>
+            )}
+            <Reveal>
+              <h2 className="mb-4 text-xl text-zinc-400">About Us</h2>
+              {data?.aboutUs && (
+                <div className="mb-64 md:w-7/12">
+                  <PortableText value={data.aboutUs} components={components} />
+                </div>
+              )}
+            </Reveal>
+
+            {/* In the News */}
+            <Reveal>
+              <h2 className="mb-4 text-xl text-zinc-400">Newsfeed</h2>
+            </Reveal>
+            <div className="md:grid md:grid-cols-2 md:gap-6 xl:grid-cols-3">
+              {data?.inTheNews?.map((article) => {
+                return (
+                  <Reveal
+                    key={article._key}
+                    className="mb-4 w-full rounded-3xl bg-zinc-50 p-2"
+                  >
+                    {article.image && (
+                      <Image
+                        src={urlFor(article.image)}
+                        className="h-[50vw] w-screen rounded-3xl object-cover xl:h-96"
+                        alt={article?.title || ""}
+                        width={600}
+                        height={400}
+                        // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    )}
+                    <div className="p-4">
+                      <h2 className="pb-4 text-sm text-zinc-400">
+                        {formatDate(article.date || "")}
+                      </h2>
+                      <h1 className="pb-2">{article.title}</h1>
+                      <h2 className="text-zinc-500">{article.description}</h2>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </div>
           </div>
         </Drawer>
       )}
