@@ -1,4 +1,4 @@
-// ./src/app/api/revalidate-path/route.ts
+// ./src/app/api/revalidate/route.ts
 
 import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
@@ -25,13 +25,12 @@ export async function POST(req: NextRequest) {
       return new Response(JSON.stringify({ message, isValidSignature, body }), {
         status: 401,
       });
-    } else if (!body?.path) {
-      const message = "Bad Request";
-      return new Response(JSON.stringify({ message, body }), { status: 400 });
     }
 
-    revalidatePath(body.path);
-    const message = `Updated route: ${body.path}`;
+    // Revalidate all routes
+    revalidatePath("/", "layout");
+
+    const message = `Revalidated all routes`;
     return NextResponse.json({ body, message });
   } catch (err: any) {
     console.error(err);
