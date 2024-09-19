@@ -1,4 +1,4 @@
-import { useWidgetGridContext } from "@/pages/(components)/grid/hooks";
+import { useWidgetGridContext } from "@/components/grid/hooks";
 
 const Twitter = () => {
   const { size } = useWidgetGridContext();

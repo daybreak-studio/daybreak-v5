@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { GetStaticProps } from "next";
-import Image from "next/image";
 import { PortableText, PortableTextProps } from "@portabletext/react";
 
 // Sanity imports
 import { client } from "@/sanity/lib/client";
-import { urlFor } from "@/sanity/lib/image";
 import type { Home } from "@/sanity/types";
 
 // Component imports
-import Drawer from "@/pages/(components)/drawer";
+import Drawer from "@/components/drawer";
 import Reveal from "@/components/animations/reveal";
-import { WidgetGrid } from "@/pages/(components)/grid";
-import Twitter from "@/pages/(components)/widgets/twitter";
-import Article from "@/pages/(components)/article"; // Add this import
-
-// Utility imports
-import { formatDate } from "@/utils/formatDate";
+import { WidgetGrid } from "@/components/grid";
+import Twitter from "@/components/widgets/twitter";
+import Article from "@/components/article"; // Add this import
 
 // Type imports
-import { LayoutProps } from "@/pages/(components)/grid/props";
+import { LayoutProps } from "@/components/grid/props";
 
 // Home layout configuration
 const homeLayout: LayoutProps.Item[] = [

@@ -1,10 +1,7 @@
 import GridLayout from "react-grid-layout";
 
-import {
-  useBreakpoint,
-  WidgetGridContext,
-} from "@/pages/(components)/grid/hooks";
-import { Defaults, GridProps } from "@/pages/(components)/grid/props";
+import { useBreakpoint, WidgetGridContext } from "@/components/grid/hooks";
+import { Defaults, GridProps } from "@/components/grid/props";
 import clsx from "clsx";
 
 export const WidgetGridProvider: React.FC<GridProps.Provider> = ({
