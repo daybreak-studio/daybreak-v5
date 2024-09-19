@@ -1,6 +1,6 @@
-import Card from "./components/card";
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
+import Card from "./(components)/card";
 
 const cards = [
   { title: "Brand", position: "top-left" },
