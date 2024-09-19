@@ -21,7 +21,6 @@ const GridView: React.FC = () => {
   const totalGap = GAP_SIZE * (GRID_SIZE - 1);
   const gridSizePx = GRID_SIZE * SQUARE_SIZE + totalGap;
 
-  // Update container dimensions
   useEffect(() => {
     const updateContainerSize = () => {
       if (containerRef.current) {
@@ -47,11 +46,9 @@ const GridView: React.FC = () => {
     const col = index % GRID_SIZE;
     const row = Math.floor(index / GRID_SIZE);
 
-    // Calculate the position of the square center relative to the grid
     const squareCenterX = col * (SQUARE_SIZE + GAP_SIZE) + SQUARE_SIZE / 2;
     const squareCenterY = row * (SQUARE_SIZE + GAP_SIZE) + SQUARE_SIZE / 2;
 
-    // Since the grid is centered in the container, calculate the originX and originY relative to the grid center
     const originXValue = (squareCenterX - gridSizePx / 2) / gridSizePx + 0.5;
     const originYValue = (squareCenterY - gridSizePx / 2) / gridSizePx + 0.5;
 
@@ -72,10 +69,7 @@ const GridView: React.FC = () => {
     });
   };
 
-  const handleDragEnd = () => {
-    // Implement drag-end logic if necessary
-    // For this approach, you may need to adjust the implementation to handle dragging
-  };
+  const handleDragEnd = () => {};
 
   useEffect(() => {
     if (focusedIndex === null) {
