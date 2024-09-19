@@ -1,42 +1,71 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
 
-const GRID_SIZE = 2; // 2x2 grid
-const SQUARE_SIZE = 200; // Size of each square in pixels
-const SCALE_FACTOR = 2.5; // Zoom scale
-const GAP_SIZE = 20; // Gap between squares in pixels
+const GRID_SIZE = 2;
+const SQUARE_SIZE = 200;
+const SCALE_FACTOR = 2.5;
+const GAP_SIZE = 24;
 
 const GridView: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const [containerSize, setContainerSize] = useState({
+    width: 0,
+    height: 0,
+  });
 
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
   const scale = useMotionValue(1);
+  const originX = useMotionValue(0.5);
+  const originY = useMotionValue(0.5);
 
-  // Total size of the grid including gaps
   const totalGap = GAP_SIZE * (GRID_SIZE - 1);
   const gridSizePx = GRID_SIZE * SQUARE_SIZE + totalGap;
 
+  // Update container dimensions
+  useEffect(() => {
+    const updateContainerSize = () => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setContainerSize({
+          width: rect.width,
+          height: rect.height,
+        });
+      }
+    };
+
+    updateContainerSize();
+
+    window.addEventListener("resize", updateContainerSize);
+    return () => window.removeEventListener("resize", updateContainerSize);
+  }, []);
+
   const handleSquareClick = (index: number) => {
+    if (containerSize.width === 0 || containerSize.height === 0) return;
+
     setFocusedIndex(index);
 
     const col = index % GRID_SIZE;
     const row = Math.floor(index / GRID_SIZE);
 
-    // Calculate the position of the square's center
+    // Calculate the position of the square center relative to the grid
     const squareCenterX = col * (SQUARE_SIZE + GAP_SIZE) + SQUARE_SIZE / 2;
     const squareCenterY = row * (SQUARE_SIZE + GAP_SIZE) + SQUARE_SIZE / 2;
 
-    const targetScale = SCALE_FACTOR;
+    // Since the grid is centered in the container, calculate the originX and originY relative to the grid center
+    const originXValue = (squareCenterX - gridSizePx / 2) / gridSizePx + 0.5;
+    const originYValue = (squareCenterY - gridSizePx / 2) / gridSizePx + 0.5;
 
-    // Calculate the target x and y to center the square
-    const targetX = window.innerWidth / 2 - squareCenterX * targetScale;
-    const targetY = window.innerHeight / 2 - squareCenterY * targetScale;
-
-    animate(x, targetX, { type: "spring", stiffness: 150, damping: 20 });
-    animate(y, targetY, { type: "spring", stiffness: 150, damping: 20 });
-    animate(scale, targetScale, {
+    animate(originX, originXValue, {
+      type: "spring",
+      stiffness: 150,
+      damping: 20,
+    });
+    animate(originY, originYValue, {
+      type: "spring",
+      stiffness: 150,
+      damping: 20,
+    });
+    animate(scale, SCALE_FACTOR, {
       type: "spring",
       stiffness: 150,
       damping: 20,
@@ -44,90 +73,57 @@ const GridView: React.FC = () => {
   };
 
   const handleDragEnd = () => {
-    const currentX = x.get();
-    const currentY = y.get();
-    const currentScale = scale.get();
-
-    // Calculate the center point in the grid coordinate system
-    const centerXInGrid = (window.innerWidth / 2 - currentX) / currentScale;
-    const centerYInGrid = (window.innerHeight / 2 - currentY) / currentScale;
-
-    // Determine the column and row of the square closest to the center point
-    const col = Math.round(
-      (centerXInGrid - SQUARE_SIZE / 2) / (SQUARE_SIZE + GAP_SIZE),
-    );
-    const row = Math.round(
-      (centerYInGrid - SQUARE_SIZE / 2) / (SQUARE_SIZE + GAP_SIZE),
-    );
-
-    const clampedCol = Math.max(0, Math.min(col, GRID_SIZE - 1));
-    const clampedRow = Math.max(0, Math.min(row, GRID_SIZE - 1));
-
-    const index = clampedRow * GRID_SIZE + clampedCol;
-    setFocusedIndex(index);
-
-    handleSquareClick(index);
+    // Implement drag-end logic if necessary
+    // For this approach, you may need to adjust the implementation to handle dragging
   };
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (focusedIndex !== null) {
-        handleSquareClick(focusedIndex);
-      } else {
-        animate(scale, 1, { type: "spring", stiffness: 150, damping: 20 });
-        animate(x, 0, { type: "spring", stiffness: 150, damping: 20 });
-        animate(y, 0, { type: "spring", stiffness: 150, damping: 20 });
-      }
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [focusedIndex]);
 
   useEffect(() => {
     if (focusedIndex === null) {
       animate(scale, 1, { type: "spring", stiffness: 150, damping: 20 });
-      animate(x, 0, { type: "spring", stiffness: 150, damping: 20 });
-      animate(y, 0, { type: "spring", stiffness: 150, damping: 20 });
+      animate(originX, 0.5, { type: "spring", stiffness: 150, damping: 20 });
+      animate(originY, 0.5, { type: "spring", stiffness: 150, damping: 20 });
     }
   }, [focusedIndex]);
 
   return (
     <div
       ref={containerRef}
-      style={{
-        width: "100vw",
-        height: "100vh",
-        overflow: "hidden",
-        position: "relative",
-      }}
+      className="flex h-full w-full flex-col items-center justify-center overflow-hidden align-middle"
+      style={{ position: "relative" }}
     >
-      <motion.div
+      <h1>Zoom Grid</h1>
+      <div
         style={{
-          x,
-          y,
-          cursor: "grab",
-          position: "absolute",
+          display: "flex",
+          position: "relative",
+          justifyContent: "center",
+          alignItems: "center",
           width: "100%",
           height: "100%",
         }}
-        drag
-        dragElastic={0.2}
-        dragConstraints={{
-          left: -Infinity,
-          right: Infinity,
-          top: -Infinity,
-          bottom: Infinity,
-        }}
-        onDragEnd={handleDragEnd}
       >
         <motion.div
           style={{
             scale,
-            transformOrigin: "top left",
+            originX,
+            originY,
             width: gridSizePx,
             height: gridSizePx,
+            cursor: "grab",
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
+          drag
+          dragElastic={0.2}
+          dragConstraints={{
+            left: -gridSizePx * (SCALE_FACTOR - 1) * originX.get(),
+            right: gridSizePx * (SCALE_FACTOR - 1) * (1 - originX.get()),
+            top: -gridSizePx * (SCALE_FACTOR - 1) * originY.get(),
+            bottom: gridSizePx * (SCALE_FACTOR - 1) * (1 - originY.get()),
+          }}
+          onDragEnd={handleDragEnd}
         >
           <div
             style={{
@@ -154,7 +150,7 @@ const GridView: React.FC = () => {
             ))}
           </div>
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 };

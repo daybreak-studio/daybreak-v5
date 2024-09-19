@@ -4,14 +4,15 @@ import React from "react";
 
 import { WidgetGrid } from "@/pages/components/grid";
 import { LayoutProps } from "@/pages/components/grid/props";
+import { useWidgetGridContext } from "../components/grid/hooks";
 
 export default function Example() {
   const layout: LayoutProps.Item[] = [
     {
       id: "1",
-      position: { x: 3, y: 0 },
+      position: { x: 0, y: 0 },
       size: { w: 2, h: 1 },
-      content: "",
+      content: <Twitter />,
     },
     {
       id: "2",
@@ -41,3 +42,12 @@ export default function Example() {
 
   return <WidgetGrid layout={layout} debug />;
 }
+
+const Twitter = () => {
+  const { size } = useWidgetGridContext();
+  return (
+    <div>
+      <h1>Twitter {size.w}</h1>
+    </div>
+  );
+};

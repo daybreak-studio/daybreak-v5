@@ -17,6 +17,7 @@ export namespace GridProps {
     id: string;
     position: Position;
     size: Size;
+    breakpoint: string;
   }
 
   export interface Provider {
@@ -24,6 +25,7 @@ export namespace GridProps {
     position: Position;
     size: { w: number; h: number };
     children: React.ReactNode;
+    breakpoint: string;
   }
 
   export interface Layout {

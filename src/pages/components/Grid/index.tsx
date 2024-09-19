@@ -12,9 +12,10 @@ export const WidgetGridProvider: React.FC<GridProps.Provider> = ({
   id,
   position,
   children,
+  breakpoint,
 }) => {
   return (
-    <WidgetGridContext.Provider value={{ size, id, position }}>
+    <WidgetGridContext.Provider value={{ size, id, position, breakpoint }}>
       {children}
     </WidgetGridContext.Provider>
   );
@@ -81,6 +82,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
                     id={item.id}
                     size={item.size}
                     position={item.position}
+                    breakpoint={breakpoint}
                   >
                     {item.content}
                   </WidgetGridProvider>
