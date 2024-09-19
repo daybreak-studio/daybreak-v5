@@ -633,7 +633,7 @@ export type AllSanitySchemaTypes =
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/queries.ts
 // Variable: HOME_QUERY
-// Query: *[_type == "home"][0] {    missionStatement  }
+// Query:   *[_type == "home"][0] {    missionStatement  }
 export type HOME_QUERYResult = {
   missionStatement: Array<{
     children?: Array<{
@@ -654,11 +654,3 @@ export type HOME_QUERYResult = {
     _key: string;
   }> | null;
 } | null;
-
-// Query TypeMap
-import "@sanity/client";
-declare module "@sanity/client" {
-  interface SanityQueries {
-    '\n  *[_type == "home"][0] {\n    missionStatement\n  }\n': HOME_QUERYResult;
-  }
-}

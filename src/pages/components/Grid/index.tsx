@@ -54,8 +54,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
         {header ? (
           header
         ) : (
-          <h1 className="text w-[316px] text-center text-4xl">
-            A technology first design studio
+          <h1 className="text w-80 text-center text-4xl">
+            A technology first design studio.
           </h1>
         )}
         <div style={{ width: `${width}px` }}>
