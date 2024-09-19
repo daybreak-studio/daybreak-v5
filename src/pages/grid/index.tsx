@@ -2,9 +2,9 @@
 
 import React from "react";
 
-import { WidgetGrid } from "@/pages/(components)/grid";
-import { LayoutProps } from "@/pages/(components)/grid/props";
-import { useWidgetGridContext } from "@/pages/(components)/grid/hooks";
+import { WidgetGrid } from "@/components/grid";
+import { LayoutProps } from "@/components/grid/props";
+import { useWidgetGridContext } from "@/components/grid/hooks";
 
 export default function Example() {
   const layout: LayoutProps.Item[] = [
