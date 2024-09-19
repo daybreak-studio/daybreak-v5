@@ -6,6 +6,7 @@ export const WidgetGridContext = createContext<GridProps.Context | undefined>(
   undefined,
 );
 
+//TODO: Add types for breakpoints
 export const useWidgetGridContext = () => {
   const context = useContext(WidgetGridContext);
   if (!context) {
