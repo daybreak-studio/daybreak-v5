@@ -1,16 +1,25 @@
-import { GetStaticProps } from "next";
-import { client } from "@/sanity/lib/client";
-import Drawer from "@/pages/components/drawer";
 import React, { useState, useEffect } from "react";
-import { PortableText, PortableTextProps } from "@portabletext/react";
+import { GetStaticProps } from "next";
 import Image from "next/image";
-import type { Home } from "../../sanity.types";
+import { PortableText, PortableTextProps } from "@portabletext/react";
+
+// Sanity imports
+import { client } from "@/sanity/lib/client";
 import { urlFor } from "@/sanity/lib/image";
+import type { Home } from "@/sanity/types";
+
+// Component imports
+import Drawer from "@/pages/(components)/drawer";
 import Reveal from "@/components/animations/reveal";
-import { WidgetGrid } from "@/pages/components/grid";
-import { LayoutProps } from "@/pages/components/grid/props";
-import Twitter from "@/pages/components/widgets/twitter";
+import { WidgetGrid } from "@/pages/(components)/grid";
+import Twitter from "@/pages/(components)/widgets/twitter";
+import Article from "@/pages/(components)/article"; // Add this import
+
+// Utility imports
 import { formatDate } from "@/utils/formatDate";
+
+// Type imports
+import { LayoutProps } from "@/pages/(components)/grid/props";
 
 // Home layout configuration
 const homeLayout: LayoutProps.Item[] = [
@@ -46,44 +55,21 @@ const homeLayout: LayoutProps.Item[] = [
   },
 ];
 
-// Define the type for a news item based on the Sanity schema
-type ArticleType = NonNullable<Home["newsfeed"]>[number];
-
-const Article: React.FC<{ article: ArticleType }> = ({ article }) => (
-  <Reveal key={article._key} className="mb-4 w-full rounded-3xl bg-zinc-50 p-2">
-    {article.image && (
-      <Image
-        src={urlFor(article.image)}
-        className="h-[50vw] w-screen rounded-3xl object-cover xl:h-96"
-        alt={article.title || ""}
-        width={600}
-        height={400}
-      />
-    )}
-    <div className="p-4">
-      <h2 className="pb-4 text-sm text-zinc-400">
-        {formatDate(article.date || "")}
-      </h2>
-      <h1 className="pb-2">{article.title}</h1>
-      <h2 className="text-zinc-500">{article.description}</h2>
-    </div>
-  </Reveal>
-);
-// Main Home component
 export default function Home({ data }: { data: Home }) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
 
+  // Handles updates for window height.
   useEffect(() => {
     const updateHeight = () => {
       setWindowHeight(window.innerHeight);
     };
-
     updateHeight();
     window.addEventListener("resize", updateHeight);
-
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
 
+  // Handles text rendering for the CMS text.
+  //We are applying reveal animation and controlling font size.
   const components: PortableTextProps["components"] = {
     block: {
       normal: ({ children, index }) => (
@@ -145,9 +131,11 @@ export default function Home({ data }: { data: Home }) {
   );
 }
 
+// Fetch data from Sanity CMS
 export const getStaticProps: GetStaticProps = async () => {
   const query = `*[_type=="home"][!(_id in path('drafts.**'))][0]`;
   const data = await client.fetch(query);
+  console.log(data);
 
   return {
     props: {
