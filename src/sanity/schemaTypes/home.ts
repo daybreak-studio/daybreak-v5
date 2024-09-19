@@ -125,12 +125,12 @@ export const home = defineType({
       of: [{ type: "block" }], // Define block content
     }),
     defineField({
-      name: "inTheNews",
-      title: "In the News",
+      name: "newsfeed",
+      title: "Newsfeed",
       type: "array",
       of: [
         defineField({
-          name: "newsItem",
+          name: "article",
           type: "object",
           fields: [
             defineField({ name: "image", title: "Image", type: "image" }),
