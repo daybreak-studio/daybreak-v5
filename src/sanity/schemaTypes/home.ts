@@ -1,5 +1,69 @@
 import { defineField, defineType } from "sanity";
 
+const createSizeField = (allowedSizes) =>
+  defineField({
+    name: "size",
+    title: "Size",
+    type: "string",
+    options: {
+      list: allowedSizes.map((size) => ({ title: size, value: size })),
+    },
+    validation: (Rule) => Rule.required(),
+  });
+
+const baseWidget = {
+  fields: [
+    defineField({
+      name: "position",
+      title: "Position",
+      type: "object",
+      fields: [
+        defineField({ name: "x", type: "number", title: "X Position" }),
+        defineField({ name: "y", type: "number", title: "Y Position" }),
+      ],
+      initialValue: { x: 0, y: 0 },
+    }),
+  ],
+};
+
+const twitterWidget = defineField({
+  name: "twitterWidget",
+  title: "Twitter Widget",
+  type: "object",
+  fields: [
+    ...baseWidget.fields,
+    createSizeField(["1x1", "2x2"]),
+    defineField({ name: "link", type: "url", title: "Tweet Link" }),
+    defineField({ name: "author", type: "string", title: "Author" }),
+    defineField({ name: "tweet", type: "text", title: "Tweet Content" }),
+  ],
+});
+
+const mediaWidget = defineField({
+  name: "mediaWidget",
+  title: "Media Widget",
+  type: "object",
+  fields: [
+    ...baseWidget.fields,
+    createSizeField(["2x2", "3x3"]),
+    defineField({
+      name: "media",
+      title: "Media",
+      type: "array",
+      of: [
+        { type: "image" },
+        {
+          type: "file",
+          options: { accept: "video/*" },
+        },
+      ],
+      validation: (Rule) => Rule.max(1),
+    }),
+    defineField({ name: "caption", type: "string", title: "Caption" }),
+    defineField({ name: "link", type: "url", title: "Link" }),
+  ],
+});
+
 export const home = defineType({
   name: "home",
   title: "Home",
@@ -10,96 +74,9 @@ export const home = defineType({
       title: "Widgets",
       type: "array",
       of: [
-        defineField({
-          name: "widget",
-          type: "object",
-          fields: [
-            defineField({
-              name: "media",
-              title: "Media",
-              type: "array",
-              of: [
-                {
-                  type: "image",
-                  title: "Image",
-                  fields: [
-                    {
-                      name: "alt",
-                      title: "Alt Text",
-                      type: "string",
-                      description:
-                        "Description of the image for SEO and accessibility.",
-                    },
-                  ],
-                  options: {
-                    metadata: ["blurhash", "lqip", "palette"],
-                  },
-                },
-                {
-                  type: "file",
-                  title: "Video",
-
-                  options: {
-                    accept: "video/*",
-                  },
-                  fields: [
-                    {
-                      name: "alt",
-                      title: "Alt Text",
-                      type: "string",
-                      description:
-                        "Description of the video for SEO and accessibility.",
-                    },
-                    {
-                      name: "name",
-                      title: "Name",
-                      type: "string",
-                    },
-                    {
-                      name: "medium",
-                      title: "Medium",
-                      type: "string",
-                    },
-                  ],
-                },
-              ],
-              options: {
-                layout: "grid",
-              },
-            }),
-            defineField({ name: "link", title: "Link", type: "url" }),
-            defineField({ name: "title", title: "Title", type: "string" }),
-            defineField({
-              name: "description",
-              title: "Description",
-              type: "text",
-            }),
-            defineField({
-              name: "size",
-              title: "Size",
-              type: "string",
-              options: {
-                list: [
-                  { title: "Small", value: "small" },
-                  { title: "Medium", value: "medium" },
-                  { title: "Large", value: "large" },
-                ],
-              },
-            }),
-            defineField({
-              name: "type",
-              title: "Type",
-              type: "string",
-              options: {
-                list: [
-                  { title: "Twitter", value: "twitter" },
-                  { title: "Showcase", value: "showcase" },
-                  // Add more placeholder options as needed
-                ],
-              },
-            }),
-          ],
-        }),
+        twitterWidget,
+        mediaWidget,
+        // Add other widget types here
       ],
     }),
     defineField({
