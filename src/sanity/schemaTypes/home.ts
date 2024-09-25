@@ -1,67 +1,104 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
-const createSizeField = (allowedSizes) =>
-  defineField({
-    name: "size",
-    title: "Size",
-    type: "string",
-    options: {
-      list: allowedSizes.map((size) => ({ title: size, value: size })),
+function createWidgetPreview(widgetTitle: string) {
+  return {
+    select: {
+      size: "size",
+      x: "position.x",
+      y: "position.y",
     },
-    validation: (Rule) => Rule.required(),
-  });
+    prepare({ size, x, y }: { size: string; x: number; y: number }) {
+      return {
+        title: `${widgetTitle} (${size}) at (${x}, ${y})`,
+      };
+    },
+  };
+}
 
-const baseWidget = {
+const twitterWidget = defineArrayMember({
+  name: "twitterWidget",
+  title: "Twitter Widget",
+  type: "object",
   fields: [
     defineField({
       name: "position",
       title: "Position",
       type: "object",
       fields: [
-        defineField({ name: "x", type: "number", title: "X Position" }),
-        defineField({ name: "y", type: "number", title: "Y Position" }),
+        { name: "x", type: "number" },
+        { name: "y", type: "number" },
       ],
-      initialValue: { x: 0, y: 0 },
+    }),
+    defineField({
+      name: "size",
+      title: "Size",
+      type: "string",
+      options: {
+        list: ["1x1", "2x2"],
+      },
+      initialValue: "1x1",
+    }),
+    defineField({
+      name: "tweet",
+      title: "Tweet",
+      type: "text",
+    }),
+    defineField({
+      name: "author",
+      title: "Author",
+      type: "string",
+    }),
+    defineField({
+      name: "link",
+      title: "Link",
+      type: "url",
     }),
   ],
-};
-
-const twitterWidget = defineField({
-  name: "twitterWidget",
-  title: "Twitter Widget",
-  type: "object",
-  fields: [
-    ...baseWidget.fields,
-    createSizeField(["1x1", "2x2"]),
-    defineField({ name: "link", type: "url", title: "Tweet Link" }),
-    defineField({ name: "author", type: "string", title: "Author" }),
-    defineField({ name: "tweet", type: "text", title: "Tweet Content" }),
-  ],
+  preview: createWidgetPreview("Twitter Widget"),
 });
 
-const mediaWidget = defineField({
+const mediaWidget = defineArrayMember({
   name: "mediaWidget",
   title: "Media Widget",
   type: "object",
   fields: [
-    ...baseWidget.fields,
-    createSizeField(["2x2", "3x3"]),
+    defineField({
+      name: "position",
+      title: "Position",
+      type: "object",
+      fields: [
+        { name: "x", type: "number" },
+        { name: "y", type: "number" },
+      ],
+    }),
+    defineField({
+      name: "size",
+      title: "Size",
+      type: "string",
+      options: {
+        list: ["2x2", "3x3"],
+      },
+      initialValue: "2x2",
+    }),
     defineField({
       name: "media",
       title: "Media",
       type: "array",
       of: [
-        { type: "image" },
+        {
+          type: "image",
+          title: "Image",
+        },
         {
           type: "file",
+          title: "Video",
           options: { accept: "video/*" },
         },
       ],
       validation: (Rule) => Rule.max(1),
     }),
-    defineField({ name: "caption", type: "string", title: "Caption" }),
-    defineField({ name: "link", type: "url", title: "Link" }),
   ],
+  preview: createWidgetPreview("Media Widget"),
 });
 
 export const home = defineType({
@@ -73,11 +110,7 @@ export const home = defineType({
       name: "widgets",
       title: "Widgets",
       type: "array",
-      of: [
-        twitterWidget,
-        mediaWidget,
-        // Add other widget types here
-      ],
+      of: [twitterWidget, mediaWidget],
     }),
     defineField({
       name: "missionStatement",
