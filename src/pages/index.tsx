@@ -4,7 +4,6 @@ import { PortableText, PortableTextProps } from "@portabletext/react";
 
 // Sanity imports
 import { client } from "@/sanity/lib/client";
-import { urlFor } from "@/sanity/lib/image";
 import type { Home } from "@/sanity/types";
 
 // Component imports
@@ -12,44 +11,85 @@ import Drawer from "@/components/drawer";
 import Reveal from "@/components/animations/reveal";
 import { WidgetGrid } from "@/components/grid";
 import Twitter from "@/components/widgets/twitter";
-import Article from "@/components/article"; // Add this import
+import Media from "@/components/widgets/media";
+import Article from "@/components/article";
 
 // Type imports
 import { LayoutProps } from "@/components/grid/props";
 
 // Home layout configuration
-const homeLayout: LayoutProps.Item[] = [
-  {
-    id: "1",
-    position: { x: 0, y: 0 },
-    size: { w: 2, h: 1 },
-    content: <Twitter />,
-  },
-  {
-    id: "2",
-    position: { x: 0, y: 1 },
-    size: { w: 2, h: 2 },
-    content: "",
-  },
-  {
-    id: "3",
-    position: { x: 2, y: 0 },
-    size: { w: 3, h: 3 },
-    content: "",
-  },
-  {
-    id: "4",
-    position: { x: 5, y: 0 },
-    size: { w: 2, h: 2 },
-    content: "",
-  },
-  {
-    id: "5",
-    position: { x: 5, y: 2 },
-    size: { w: 1, h: 1 },
-    content: "",
-  },
-];
+// const homeLayout: LayoutProps.Item[] = [
+//   {
+//     id: "1",
+//     position: { x: 1, y: 0 },
+//     size: { w: 1, h: 1 },
+//     content: <Twitter />,
+//   },
+//   {
+//     id: "2",
+//     position: { x: 0, y: 1 },
+//     size: { w: 2, h: 2 },
+//     content: "",
+//   },
+//   {
+//     id: "3",
+//     position: { x: 2, y: 0 },
+//     size: { w: 3, h: 3 },
+//     content: "",
+//   },
+//   {
+//     id: "4",
+//     position: { x: 5, y: 0 },
+//     size: { w: 2, h: 2 },
+//     content: "",
+//   },
+//   {
+//     id: "5",
+//     position: { x: 5, y: 2 },
+//     size: { w: 1, h: 1 },
+//     content: "",
+//   },
+// ];
+
+function transformWidgetsToLayout(
+  widgets: Home["widgets"] | undefined,
+): LayoutProps.Item[] {
+  if (!widgets) return [];
+
+  return widgets.map((widget) => {
+    const [w, h] = (widget.size || "1x1").split("x").map(Number);
+
+    let content;
+    switch (widget._type) {
+      case "twitterWidget":
+        content = (
+          <Twitter
+            tweet={widget.tweet}
+            author={widget.author}
+            link={widget.link}
+          />
+        );
+        break;
+      case "mediaWidget":
+        content =
+          widget.media && widget.media.length > 0 ? (
+            // have to figure out how to handle multiple media items
+            // need to pull src asset url, fix groq query maybe.
+            <Media media={widget.media[0]} />
+          ) : null;
+        break;
+      default:
+        content = null;
+    }
+
+    return {
+      id: widget._key,
+      position: { x: widget.position?.x || 0, y: widget.position?.y || 0 },
+      size: { w, h },
+      content,
+    };
+  });
+}
 
 export default function Home({ data }: { data: Home }) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
@@ -76,6 +116,9 @@ export default function Home({ data }: { data: Home }) {
     },
   };
 
+  // Transform Sanity widgets to LayoutProps.Item[]
+  const homeLayout = transformWidgetsToLayout(data?.widgets);
+
   return (
     <main className="relative min-h-[200vh]">
       <div
@@ -85,7 +128,11 @@ export default function Home({ data }: { data: Home }) {
             "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
         }}
       >
-        <WidgetGrid layout={homeLayout} debug />
+        <WidgetGrid
+          layout={homeLayout}
+          heading="A technology first design studio"
+          debug
+        />
       </div>
       {/* Drawer Content */}
       {windowHeight !== null && data && (
