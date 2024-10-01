@@ -1,10 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
 
-const SCALE_FACTOR = 2.5;
-const GAP_SIZE = 20;
+interface GridItem {
+  width: number;
+  height: number;
+}
 
-const GridView: React.FC = () => {
+interface ZoomGridProps {
+  items: GridItem[];
+  renderItem?: (item: GridItem, index: number) => React.ReactNode;
+  scaleFactor?: number;
+  gapSize?: number;
+}
+
+const ZoomGrid: React.FC<ZoomGridProps> = ({
+  items,
+  renderItem,
+  scaleFactor = 2.5,
+  gapSize = 20,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
@@ -12,12 +26,7 @@ const GridView: React.FC = () => {
   const y = useMotionValue(0);
   const scale = useMotionValue(1);
 
-  const gridItems = [
-    { width: 200, height: 300 }, // Item 0
-    { width: 200, height: 300 }, // Item 1
-    { width: 200, height: 300 }, // Item 2
-    { width: 200, height: 300 }, // Item 3
-  ];
+  const gridItems = items;
 
   const GRID_SIZE = Math.ceil(Math.sqrt(gridItems.length));
 
@@ -29,7 +38,7 @@ const GridView: React.FC = () => {
     // Sum up widths and gaps for x position
     const xPos = gridItems
       .slice(row * GRID_SIZE, row * GRID_SIZE + col)
-      .reduce((acc, curr) => acc + curr.width + GAP_SIZE, 0);
+      .reduce((acc, curr) => acc + curr.width + gapSize, 0);
 
     // Sum up heights and gaps for y position
     const yPos = gridItems.slice(0, row).reduce((acc, curr, idx) => {
@@ -38,7 +47,7 @@ const GridView: React.FC = () => {
           .slice(idx, idx + GRID_SIZE)
           .map((item) => item.height);
         const maxHeight = Math.max(...rowHeights);
-        return acc + maxHeight + GAP_SIZE;
+        return acc + maxHeight + gapSize;
       }
       return acc;
     }, 0);
@@ -50,12 +59,12 @@ const GridView: React.FC = () => {
   const gridWidth =
     Math.max(
       ...gridItems.map((item, index) => itemPositions[index].x + item.width),
-    ) + GAP_SIZE;
+    ) + gapSize;
 
   const gridHeight =
     Math.max(
       ...gridItems.map((item, index) => itemPositions[index].y + item.height),
-    ) + GAP_SIZE;
+    ) + gapSize;
 
   const handleItemClick = (index: number) => {
     setFocusedIndex(index);
@@ -66,7 +75,7 @@ const GridView: React.FC = () => {
     const itemCenterX = position.x + item.width / 2;
     const itemCenterY = position.y + item.height / 2;
 
-    const targetScale = SCALE_FACTOR;
+    const targetScale = scaleFactor;
 
     const gridRect = containerRef.current!.getBoundingClientRect();
 
@@ -159,69 +168,76 @@ const GridView: React.FC = () => {
   }, [focusedIndex]);
 
   return (
-    <div className="gap-23 flex flex-col items-center justify-center">
-      <div className="text-xl">Learn about our services</div>
-      <div
-        ref={containerRef}
+    <div
+      ref={containerRef}
+      style={{
+        width: "fit-content",
+        height: "auto",
+        overflow: "visible",
+        position: "relative",
+      }}
+    >
+      <motion.div
         style={{
-          width: "fit-content",
-          height: "auto",
-          overflow: "visible",
+          x,
+          y,
+          cursor: "grab",
+          width: gridWidth,
+          height: gridHeight,
           position: "relative",
         }}
+        drag
+        dragElastic={0.2}
+        dragConstraints={{
+          left: -Infinity,
+          right: Infinity,
+          top: -Infinity,
+          bottom: Infinity,
+        }}
+        onDragEnd={handleDragEnd}
       >
         <motion.div
           style={{
-            x,
-            y,
-            cursor: "grab",
+            scale,
+            transformOrigin: "0% 0%",
             width: gridWidth,
             height: gridHeight,
             position: "relative",
           }}
-          drag
-          dragElastic={0.2}
-          dragConstraints={{
-            left: -Infinity,
-            right: Infinity,
-            top: -Infinity,
-            bottom: Infinity,
-          }}
-          onDragEnd={handleDragEnd}
         >
-          <motion.div
-            style={{
-              scale,
-              transformOrigin: "0% 0%",
-              width: gridWidth,
-              height: gridHeight,
-              position: "relative",
-            }}
-          >
-            {gridItems.map((item, index) => (
-              <motion.div
-                key={index}
-                onClick={() => handleItemClick(index)}
-                style={{
-                  position: "absolute",
-                  left: itemPositions[index].x,
-                  top: itemPositions[index].y,
-                  width: item.width,
-                  height: item.height,
-                  backgroundColor:
-                    index === focusedIndex ? "#e74c3c" : "#3498db",
-                  border: "1px solid #fff",
-                  boxSizing: "border-box",
-                }}
-                whileTap={{ scale: 0.95 }}
-              />
-            ))}
-          </motion.div>
+          {gridItems.map((item, index) => (
+            <motion.div
+              key={index}
+              onClick={() => handleItemClick(index)}
+              style={{
+                position: "absolute",
+                left: itemPositions[index].x,
+                top: itemPositions[index].y,
+                width: item.width,
+                height: item.height,
+                boxSizing: "border-box",
+              }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {renderItem ? (
+                renderItem(item, index)
+              ) : (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor:
+                      index === focusedIndex ? "#e74c3c" : "#3498db",
+                    border: "1px solid #fff",
+                  }}
+                />
+              )}
+            </motion.div>
+          ))}
         </motion.div>
-      </div>
-      <div className="text-xl">Learn about our services</div>
+      </motion.div>
     </div>
   );
 };
 
-export default GridView;
+export default ZoomGrid;
