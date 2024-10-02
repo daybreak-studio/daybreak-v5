@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { motion, useAnimation } from "framer-motion";
 import { GetStaticProps } from "next";
 import { PortableText, PortableTextProps } from "@portabletext/react";
 
@@ -13,80 +14,9 @@ import { WidgetGrid } from "@/components/grid";
 import Twitter from "@/components/widgets/twitter";
 import Media from "@/components/widgets/media";
 import Article from "@/components/article";
-
+import Navigation from "@/components/navigation";
 // Type imports
 import { LayoutProps } from "@/components/grid/props";
-
-// export interface Position {
-//   x: number;
-//   y: number;
-// }
-
-// export interface TwitterWidget {
-//   _key: string;
-//   _type: "twitterWidget";
-//   size: string;
-//   position: Position;
-//   tweet: string;
-//   author: string;
-//   link: string;
-// }
-
-// export interface MediaWidget {
-//   _key: string;
-//   _type: "mediaWidget";
-//   size: string;
-//   position: Position;
-//   media: {
-//     _type: "image" | "file";
-//     asset: {
-//       _ref: string;
-//     };
-//   }[];
-// }
-
-// export type Widget = TwitterWidget | MediaWidget;
-
-// export interface Home {
-//   missionStatement?: any[];
-//   aboutUs?: any[];
-//   newsfeed?: any[];
-//   widgets?: Widget[];
-// }
-
-// Home layout configuration
-// const homeLayout: LayoutProps.Item[] = [
-//   {
-//     id: "1",
-//     position: { x: 1, y: 0 },
-//     size: { w: 1, h: 1 },
-//     content: <Twitter />,
-//   },
-//   {
-//     id: "2",
-//     position: { x: 0, y: 1 },
-//     size: { w: 2, h: 2 },
-//     content: "",
-//   },
-//   {
-//     id: "3",
-//     position: { x: 2, y: 0 },
-//     size: { w: 3, h: 3 },
-//     content: "",
-//   },
-//   {
-//     id: "4",
-//     position: { x: 5, y: 0 },
-//     size: { w: 2, h: 2 },
-//     content: "",
-//   },
-//   {
-//     id: "5",
-//     position: { x: 5, y: 2 },
-//     size: { w: 1, h: 1 },
-//     content: "",
-//   },
-// ];
 
 function transformWidgetsToLayout(widgets: Home["widgets"]) {
   if (!widgets) return [];
@@ -135,7 +65,7 @@ export default function Home({ data }: { data: Home }) {
   }, []);
 
   // Handles text rendering for the CMS text.
-  //We are applying reveal animation and controlling font size.
+  // We are applying reveal animation and controlling font size.
   const components: PortableTextProps["components"] = {
     block: {
       normal: ({ children, index }) => (
@@ -148,9 +78,10 @@ export default function Home({ data }: { data: Home }) {
 
   // Transform Sanity widgets to LayoutProps.Item[]
   const layout = transformWidgetsToLayout(data.widgets);
-  console.log(layout);
+
   return (
     <main className="relative min-h-[200vh]">
+      <Navigation />
       <div
         className="fixed inset-0 z-0"
         style={{
@@ -158,11 +89,11 @@ export default function Home({ data }: { data: Home }) {
             "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
         }}
       >
-        <WidgetGrid
+        {/* <WidgetGrid
           layout={layout}
           heading="A technology first design studio"
           // debug
-        />
+        /> */}
       </div>
       {/* Drawer Content */}
       {windowHeight !== null && data && (
