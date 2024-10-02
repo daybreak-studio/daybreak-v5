@@ -7,7 +7,8 @@ function createWidgetPreview(widgetTitle: string) {
       x: "position.x",
       y: "position.y",
     },
-    prepare({ size, x, y }: { size: string; x: number; y: number }) {
+    prepare(selection: { size?: string; x?: number; y?: number }) {
+      const { size = "Unknown", x = 0, y = 0 } = selection;
       return {
         title: `${widgetTitle} (${size}) at (${x}, ${y})`,
       };
@@ -16,86 +17,88 @@ function createWidgetPreview(widgetTitle: string) {
 }
 
 const twitterWidget = defineArrayMember({
+  type: "object",
   name: "twitterWidget",
   title: "Twitter Widget",
-  type: "object",
   fields: [
     defineField({
       name: "position",
-      title: "Position",
       type: "object",
       fields: [
-        { name: "x", type: "number" },
-        { name: "y", type: "number" },
+        defineField({ name: "x", type: "number" }),
+        defineField({ name: "y", type: "number" }),
       ],
+      initialValue: { x: 0, y: 0 },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "size",
-      title: "Size",
       type: "string",
       options: {
         list: ["1x1", "2x2"],
       },
-      initialValue: "1x1",
+      initialValue: "2x2",
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "tweet",
-      title: "Tweet",
       type: "text",
+      title: "Tweet",
     }),
     defineField({
       name: "author",
-      title: "Author",
       type: "string",
+      title: "Author",
     }),
     defineField({
       name: "link",
-      title: "Link",
       type: "url",
+      title: "Link",
+    }),
+    defineField({
+      name: "media",
+      type: "array",
+      of: [{ type: "image", title: "Image" }],
     }),
   ],
   preview: createWidgetPreview("Twitter Widget"),
 });
 
 const mediaWidget = defineArrayMember({
+  type: "object",
   name: "mediaWidget",
   title: "Media Widget",
-  type: "object",
   fields: [
     defineField({
       name: "position",
-      title: "Position",
       type: "object",
       fields: [
-        { name: "x", type: "number" },
-        { name: "y", type: "number" },
+        defineField({ name: "x", type: "number" }),
+        defineField({ name: "y", type: "number" }),
       ],
+      initialValue: { x: 0, y: 0 },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "size",
-      title: "Size",
       type: "string",
       options: {
         list: ["2x2", "3x3"],
       },
       initialValue: "2x2",
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "media",
-      title: "Media",
       type: "array",
       of: [
-        {
-          type: "image",
-          title: "Image",
-        },
+        { type: "image", title: "Image" },
         {
           type: "file",
           title: "Video",
           options: { accept: "video/*" },
         },
       ],
-      validation: (Rule) => Rule.max(1),
     }),
   ],
   preview: createWidgetPreview("Media Widget"),
@@ -115,18 +118,12 @@ export const home = defineType({
     defineField({
       name: "missionStatement",
       title: "Mission Statement",
-      type: "array", // Change to array for block content
+      type: "array",
       of: [
         {
           type: "block",
-          // styles: [{ title: "Normal", value: "normal" }],
-          // lists: [],
-          // marks: {
-          //   decorators: [], // This disables inline formatting (bold, italic, etc.)
-          //   // annotations: [], // This disables links
-          // },
         },
-      ], // Define block content
+      ],
     }),
     defineField({
       name: "aboutUs",

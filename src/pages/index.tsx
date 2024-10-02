@@ -17,6 +17,43 @@ import Article from "@/components/article";
 // Type imports
 import { LayoutProps } from "@/components/grid/props";
 
+// export interface Position {
+//   x: number;
+//   y: number;
+// }
+
+// export interface TwitterWidget {
+//   _key: string;
+//   _type: "twitterWidget";
+//   size: string;
+//   position: Position;
+//   tweet: string;
+//   author: string;
+//   link: string;
+// }
+
+// export interface MediaWidget {
+//   _key: string;
+//   _type: "mediaWidget";
+//   size: string;
+//   position: Position;
+//   media: {
+//     _type: "image" | "file";
+//     asset: {
+//       _ref: string;
+//     };
+//   }[];
+// }
+
+// export type Widget = TwitterWidget | MediaWidget;
+
+// export interface Home {
+//   missionStatement?: any[];
+//   aboutUs?: any[];
+//   newsfeed?: any[];
+//   widgets?: Widget[];
+// }
+
 // Home layout configuration
 // const homeLayout: LayoutProps.Item[] = [
 //   {
@@ -51,32 +88,25 @@ import { LayoutProps } from "@/components/grid/props";
 //   },
 // ];
 
-function transformWidgetsToLayout(
-  widgets: Home["widgets"] | undefined,
-): LayoutProps.Item[] {
+function transformWidgetsToLayout(widgets: Home["widgets"]) {
   if (!widgets) return [];
 
   return widgets.map((widget) => {
     const [w, h] = (widget.size || "1x1").split("x").map(Number);
 
-    let content;
+    let content: React.ReactNode;
     switch (widget._type) {
       case "twitterWidget":
         content = (
           <Twitter
-            tweet={widget.tweet}
-            author={widget.author}
-            link={widget.link}
+            tweet={widget.tweet || ""}
+            author={widget.author || ""}
+            link={widget.link || ""}
           />
         );
         break;
       case "mediaWidget":
-        content =
-          widget.media && widget.media.length > 0 ? (
-            // have to figure out how to handle multiple media items
-            // need to pull src asset url, fix groq query maybe.
-            <Media media={widget.media[0]} />
-          ) : null;
+        content = widget.media?.[0] ? <Media media={widget.media[0]} /> : null;
         break;
       default:
         content = null;
@@ -117,8 +147,8 @@ export default function Home({ data }: { data: Home }) {
   };
 
   // Transform Sanity widgets to LayoutProps.Item[]
-  const homeLayout = transformWidgetsToLayout(data?.widgets);
-
+  const layout = transformWidgetsToLayout(data.widgets);
+  console.log(layout);
   return (
     <main className="relative min-h-[200vh]">
       <div
@@ -129,9 +159,9 @@ export default function Home({ data }: { data: Home }) {
         }}
       >
         <WidgetGrid
-          layout={homeLayout}
+          layout={layout}
           heading="A technology first design studio"
-          debug
+          // debug
         />
       </div>
       {/* Drawer Content */}
@@ -176,7 +206,26 @@ export default function Home({ data }: { data: Home }) {
 
 // Fetch data from Sanity CMS
 export const getStaticProps: GetStaticProps = async () => {
-  const query = `*[_type=="home"][!(_id in path('drafts.**'))][0]`;
+  const query = `*[_type=="home"][!(_id in path('drafts.**'))][0]{
+  ...,
+  widgets[]{
+    ...,
+    _type == 'mediaWidget' => {
+      "media": media[]{
+        ...,
+        _type,
+        asset->{
+          _id,
+          url,
+          "metadata": metadata{
+            dimensions,
+            lqip
+          }
+        }
+      }
+    }
+  }
+}`;
   const data = await client.fetch(query);
   console.log(data);
 

@@ -437,9 +437,17 @@ export type Home = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  widgets?: Array<{
-    media?: Array<
-      | {
+  widgets?: Array<
+    | {
+        position: {
+          x: number;
+          y: number;
+        };
+        size: "1x1" | "2x2";
+        tweet?: string;
+        author?: string;
+        link?: string;
+        media?: Array<{
           asset?: {
             _ref: string;
             _type: "reference";
@@ -448,32 +456,46 @@ export type Home = {
           };
           hotspot?: SanityImageHotspot;
           crop?: SanityImageCrop;
-          alt?: string;
           _type: "image";
           _key: string;
-        }
-      | {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-          };
-          alt?: string;
-          name?: string;
-          medium?: string;
-          _type: "file";
-          _key: string;
-        }
-    >;
-    link?: string;
-    title?: string;
-    description?: string;
-    size?: "small" | "medium" | "large";
-    type?: "twitter" | "showcase";
-    _type: "widget";
-    _key: string;
-  }>;
+        }>;
+        _type: "twitterWidget";
+        _key: string;
+      }
+    | {
+        position?: {
+          x?: number;
+          y?: number;
+        };
+        size?: "2x2" | "3x3";
+        media?: Array<
+          | {
+              asset?: {
+                _ref: string;
+                _type: "reference";
+                _weak?: boolean;
+                [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+              };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+              _key: string;
+            }
+          | {
+              asset?: {
+                _ref: string;
+                _type: "reference";
+                _weak?: boolean;
+                [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+              };
+              _type: "file";
+              _key: string;
+            }
+        >;
+        _type: "mediaWidget";
+        _key: string;
+      }
+  >;
   missionStatement?: Array<{
     children?: Array<{
       marks?: Array<string>;
