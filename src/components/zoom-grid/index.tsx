@@ -1,21 +1,28 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, createContext } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
 
 interface GridItem {
   width: number;
   height: number;
+  content: React.ReactNode;
 }
 
 interface ZoomGridProps {
   items: GridItem[];
-  renderItem?: (item: GridItem, index: number) => React.ReactNode;
   scaleFactor?: number;
   gapSize?: number;
 }
 
+interface ZoomContextValue {
+  isZoomedIn: boolean;
+}
+
+export const ZoomContext = createContext<ZoomContextValue>({
+  isZoomedIn: false,
+});
+
 const ZoomGrid: React.FC<ZoomGridProps> = ({
   items,
-  renderItem,
   scaleFactor = 2.5,
   gapSize = 20,
 }) => {
@@ -77,7 +84,9 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
 
     const targetScale = scaleFactor;
 
-    const gridRect = containerRef.current!.getBoundingClientRect();
+    const gridRect = containerRef.current?.getBoundingClientRect();
+
+    if (!gridRect) return;
 
     const scaledItemCenterX =
       gridRect.left + itemCenterX * targetScale + x.get();
@@ -109,7 +118,9 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
     const viewportCenterY = window.innerHeight / 2;
 
     // Convert the viewport center point to the grid's coordinate system
-    const gridRect = containerRef.current!.getBoundingClientRect();
+    const gridRect = containerRef.current?.getBoundingClientRect();
+
+    if (!gridRect) return;
 
     // Adjust for grid scaling and translation
     const gridX = (viewportCenterX - gridRect.left - currentX) / currentScale;
@@ -167,6 +178,8 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
     }
   }, [focusedIndex]);
 
+  const isZoomedIn = focusedIndex !== null;
+
   return (
     <div
       ref={containerRef}
@@ -205,35 +218,27 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
             position: "relative",
           }}
         >
-          {gridItems.map((item, index) => (
-            <motion.div
-              key={index}
-              onClick={() => handleItemClick(index)}
-              style={{
-                position: "absolute",
-                left: itemPositions[index].x,
-                top: itemPositions[index].y,
-                width: item.width,
-                height: item.height,
-                boxSizing: "border-box",
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {renderItem ? (
-                renderItem(item, index)
-              ) : (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    backgroundColor:
-                      index === focusedIndex ? "#e74c3c" : "#3498db",
-                    border: "1px solid #fff",
-                  }}
-                />
-              )}
-            </motion.div>
-          ))}
+          <ZoomContext.Provider value={{ isZoomedIn }}>
+            {gridItems.map((item, index) => (
+              <motion.div
+                key={index}
+                onClick={() => handleItemClick(index)}
+                style={{
+                  position: "absolute",
+                  left: itemPositions[index].x,
+                  top: itemPositions[index].y,
+                  width: item.width,
+                  height: item.height,
+                  boxSizing: "border-box",
+                  overflow: "hidden",
+                  cursor: "pointer",
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {item.content}
+              </motion.div>
+            ))}
+          </ZoomContext.Provider>
         </motion.div>
       </motion.div>
     </div>

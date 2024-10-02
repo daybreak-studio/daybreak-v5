@@ -1,37 +1,38 @@
 import React from "react";
-import ZoomGrid from "@/components/zoom-grid";
+import ZoomGrid, { ZoomContext } from "@/components/zoom-grid";
+
+const CustomComponent: React.FC = () => {
+  const { isZoomedIn } = React.useContext(ZoomContext);
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        backgroundColor: isZoomedIn ? "#e74c3c" : "#3498db",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "#fff",
+        fontSize: "24px",
+      }}
+    >
+      {isZoomedIn ? "Zoomed In" : "Zoomed Out"}
+    </div>
+  );
+};
 
 const App: React.FC = () => {
   const gridItems = [
-    { width: 200, height: 300 },
-    { width: 200, height: 300 },
-    { width: 200, height: 300 },
-    { width: 200, height: 300 },
+    { width: 200, height: 300, content: <CustomComponent /> },
+    { width: 250, height: 250, content: <CustomComponent /> },
+    { width: 150, height: 350, content: <CustomComponent /> },
+    { width: 300, height: 200, content: <CustomComponent /> },
   ];
 
   return (
     <div>
-      <ZoomGrid
-        items={gridItems}
-        scaleFactor={3} // Custom scale factor
-        gapSize={15} // Custom gap size
-        renderItem={(item, index) => (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              backgroundColor: index % 2 === 0 ? "#1abc9c" : "#9b59b6",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "#fff",
-              fontSize: "24px",
-            }}
-          >
-            Item {index + 1}
-          </div>
-        )}
-      />
+      <ZoomGrid items={gridItems} />
     </div>
   );
 };
