@@ -2,6 +2,7 @@ import GridLayout from "react-grid-layout";
 import { useBreakpoint, WidgetGridContext } from "@/components/grid/hooks";
 import { Defaults, GridProps } from "@/components/grid/props";
 import clsx from "clsx";
+import { useScramble } from "use-scramble";
 
 // GridOverlay component
 interface GridOverlayProps {
@@ -75,7 +76,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
   const breakpoints: GridProps.Settings = {
     // Proportional to Figma design, but rowHeight can be used as a scaling factor for the entire widget grid to get larger or smaller based on viewport size.
     xl: { rowHeight: 180, margin: [32, 32] },
-    lg: { rowHeight: 120, margin: [16, 16] },
+    lg: { rowHeight: 160, margin: [16, 16] },
     md: { rowHeight: 120, margin: [22, 22] },
     sm: { rowHeight: 110, margin: [19, 19] },
   };
@@ -100,15 +101,29 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
       (settings.rowHeight + settings.margin[1]) -
     settings.margin[1];
 
+  const { ref, replay } = useScramble({
+    text: heading,
+    speed: 1,
+    // tick: 1,
+    // step: 1,
+    // chance: 0.5,
+    // seed: 6,
+    // overflow: true,
+    // ignore: [" ", "-", "_"],
+  });
+
   return (
     <div className="relative h-screen w-screen transition-all">
       <div className="flex h-full w-full flex-col items-center justify-center gap-12">
         {header ? (
           header
         ) : (
-          <h1 className="text w-72 text-center text-4xl text-zinc-400 xl:w-80">
-            {heading}
-          </h1>
+          <h1
+            ref={ref}
+            // onMouseOver={replay}
+            // onFocus={replay}
+            className="line-clamp-2 h-24 w-72 text-center text-4xl text-zinc-400 xl:w-80"
+          ></h1>
         )}
         <div
           style={{ width: `${width}px`, height: `${gridHeight}px` }}
@@ -135,7 +150,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
                   h: item.size.h,
                   ...Defaults.DataGridAttributes,
                 }}
-                className="h-full w-full rounded-2xl bg-zinc-100"
+                className="h-full w-full overflow-hidden rounded-2xl bg-zinc-100 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.05)] xl:rounded-3xl"
               >
                 <div
                   className={clsx({
