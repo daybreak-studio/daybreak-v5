@@ -24,14 +24,14 @@ const CustomComponent: React.FC = () => {
 
 const App: React.FC = () => {
   const gridItems = [
-    { width: 200, height: 300, content: <CustomComponent /> },
-    { width: 250, height: 250, content: <CustomComponent /> },
-    { width: 150, height: 350, content: <CustomComponent /> },
-    { width: 300, height: 200, content: <CustomComponent /> },
+    { width: 300, height: 300, content: <CustomComponent /> },
+    { width: 300, height: 300, content: <CustomComponent /> },
+    { width: 300, height: 300, content: <CustomComponent /> },
+    { width: 300, height: 300, content: <CustomComponent /> },
   ];
 
   return (
-    <div>
+    <div className="flex h-screen items-center justify-center">
       <ZoomGrid items={gridItems} />
     </div>
   );

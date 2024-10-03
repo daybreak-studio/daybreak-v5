@@ -1,22 +1,6 @@
 import React, { useState, useRef, useEffect, createContext } from "react";
 import { motion, useMotionValue, animate } from "framer-motion";
 
-interface GridItem {
-  width: number;
-  height: number;
-  content: React.ReactNode;
-}
-
-interface ZoomGridProps {
-  items: GridItem[];
-  scaleFactor?: number;
-  gapSize?: number;
-}
-
-interface ZoomContextValue {
-  isZoomedIn: boolean;
-}
-
 export const ZoomContext = createContext<ZoomContextValue>({
   isZoomedIn: false,
 });
@@ -26,7 +10,7 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
   scaleFactor = 2.5,
   gapSize = 20,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const x = useMotionValue(0);
@@ -37,17 +21,14 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
 
   const GRID_SIZE = Math.ceil(Math.sqrt(gridItems.length));
 
-  // Pre-compute positions of each item
   const itemPositions = gridItems.map((item, index) => {
     const col = index % GRID_SIZE;
     const row = Math.floor(index / GRID_SIZE);
 
-    // Sum up widths and gaps for x position
     const xPos = gridItems
       .slice(row * GRID_SIZE, row * GRID_SIZE + col)
       .reduce((acc, curr) => acc + curr.width + gapSize, 0);
 
-    // Sum up heights and gaps for y position
     const yPos = gridItems.slice(0, row).reduce((acc, curr, idx) => {
       if (idx % GRID_SIZE === 0) {
         const rowHeights = gridItems
@@ -62,7 +43,6 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
     return { x: xPos, y: yPos };
   });
 
-  // Calculate total grid width and height
   const gridWidth =
     Math.max(
       ...gridItems.map((item, index) => itemPositions[index].x + item.width),
@@ -84,7 +64,7 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
 
     const targetScale = scaleFactor;
 
-    const gridRect = containerRef.current?.getBoundingClientRect();
+    const gridRect = ref.current?.getBoundingClientRect();
 
     if (!gridRect) return;
 
@@ -113,20 +93,16 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
     const currentY = y.get();
     const currentScale = scale.get();
 
-    // Get the center of the viewport
     const viewportCenterX = window.innerWidth / 2;
     const viewportCenterY = window.innerHeight / 2;
 
-    // Convert the viewport center point to the grid's coordinate system
-    const gridRect = containerRef.current?.getBoundingClientRect();
+    const gridRect = ref.current?.getBoundingClientRect();
 
     if (!gridRect) return;
 
-    // Adjust for grid scaling and translation
     const gridX = (viewportCenterX - gridRect.left - currentX) / currentScale;
     const gridY = (viewportCenterY - gridRect.top - currentY) / currentScale;
 
-    // Find the item that contains this point
     let foundIndex = null;
     for (let i = 0; i < gridItems.length; i++) {
       const item = gridItems[i];
@@ -151,7 +127,6 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
       setFocusedIndex(foundIndex);
       handleItemClick(foundIndex);
     } else {
-      // Optionally, reset to initial position or handle as needed
     }
   };
 
@@ -181,15 +156,16 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
   const isZoomedIn = focusedIndex !== null;
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        width: "fit-content",
-        height: "auto",
-        overflow: "visible",
-        position: "relative",
-      }}
-    >
+    <div ref={ref} className="relative h-auto w-fit overflow-visible">
+      {isZoomedIn && (
+        <button
+          onClick={() => setFocusedIndex(null)}
+          className="text-violet11 hover:bg-mauve3 shadow-blackA4 fixed right-8 top-8 z-10 inline-flex h-[35px] items-center justify-center rounded-[4px] bg-white px-[15px] font-medium leading-none"
+        >
+          Close
+        </button>
+      )}
+
       <motion.div
         style={{
           x,
