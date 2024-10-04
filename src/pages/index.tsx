@@ -59,7 +59,7 @@ export default function Home({ data }: { data: Home }) {
     // Set a delay that's slightly longer than your navigation animation
     const timer = setTimeout(() => {
       setIsReady(true);
-    }, 4500); // Adjust this value based on your navigation animation duration
+    }, 1750); // Adjust this value based on your navigation animation duration
 
     return () => clearTimeout(timer);
   }, []);
