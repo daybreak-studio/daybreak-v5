@@ -104,12 +104,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
   const { ref, replay } = useScramble({
     text: heading,
     speed: 1,
-    // tick: 1,
-    // step: 1,
-    // chance: 0.5,
-    // seed: 6,
-    // overflow: true,
-    // ignore: [" ", "-", "_"],
+    playOnMount: false,
   });
 
   return (
@@ -120,8 +115,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
         ) : (
           <h1
             ref={ref}
-            // onMouseOver={replay}
-            // onFocus={replay}
+            onMouseOver={replay}
+            onFocus={replay}
             className="line-clamp-2 h-24 w-72 text-center text-4xl text-zinc-400 xl:w-80"
           ></h1>
         )}
