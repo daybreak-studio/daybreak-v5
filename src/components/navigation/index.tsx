@@ -14,53 +14,62 @@ export default function Navigation() {
   useEffect(() => {
     const runAnimationSequence = async () => {
       if (isHomePage && !hasAnimated) {
-        await animate(
-          ".container",
-          { opacity: 1 },
-          { duration: 1, ease: [0.76, 0, 0.24, 1] },
-        );
-        await animate(
-          ".glyph",
-          { rotate: 0 },
-          { duration: 1, ease: "easeInOut" },
-        );
         await animate([
-          [".glyph_container", { x: "0%" }, { duration: 1, ease: "easeInOut" }],
+          [
+            ".container",
+            { opacity: 1 },
+            { duration: 1.25, ease: [0.76, 0, 0.24, 1] },
+          ],
+          [
+            ".glyph",
+            { rotate: 0 },
+            { duration: 1.25, at: "<", ease: [0.76, 0, 0.24, 1] },
+          ],
+          [
+            ".glyph_container",
+            { x: "0%" },
+            { duration: 1.25, at: "<", ease: [0.76, 0, 0.24, 1] },
+          ],
           [
             ".wordmark",
             { x: 0, opacity: 1, marginTop: "1px" },
-            { duration: 1, at: "<", ease: "easeInOut" },
+            { duration: 1.25, at: "<", ease: [0.76, 0, 0.24, 1] },
           ],
         ]);
         await animate([
           [
             ".logo_container",
             { width: "6rem" },
-            { duration: 1.5, at: "0", ease: [0.76, 0, 0.24, 1] },
+            { duration: 1.25, at: "0", ease: [0.76, 0, 0.24, 1] },
           ],
           [
             scope.current,
             { transform: "0" },
-            { duration: 1.5, ease: [0.76, 0, 0.24, 1], at: "<" },
+            { duration: 1.25, ease: [0.76, 0, 0.24, 1], at: "<" },
           ],
         ]);
         await animate([
           [
             ".items",
             { width: "auto", opacity: 1 },
-            { duration: 1, ease: [0.76, 0, 0.24, 1] },
+            { duration: 0.75, ease: [0.76, 0, 0.24, 1] },
           ],
           [
             ".container",
             { backgroundColor: "rgb(255,255,255,0.5)" },
-            { duration: 1, ease: [0.76, 0, 0.24, 1], at: "<" },
+            { duration: 0.5, ease: [0.76, 0, 0.24, 1], at: "<" },
+          ],
+          [
+            ".items > *",
+            { opacity: 1 },
+            {
+              duration: 0.25,
+              at: "<",
+              delay: stagger(0.1),
+              ease: [0.76, 0, 0.24, 1],
+            },
           ],
         ]);
-        await animate(
-          ".items > *",
-          { opacity: 1 },
-          { duration: 0.5, delay: stagger(0.25), ease: [0.76, 0, 0.24, 1] },
-        );
         await animate(
           ".container",
           { "--shadow-opacity": 1 },
