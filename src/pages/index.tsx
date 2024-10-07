@@ -55,15 +55,6 @@ export default function Home({ data }: { data: Home }) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
-    // Set a delay that's slightly longer than your navigation animation
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 1750); // Adjust this value based on your navigation animation duration
-
-    return () => clearTimeout(timer);
-  }, []);
-
   // Handles updates for window height.
   useEffect(() => {
     const updateHeight = () => {
@@ -91,8 +82,11 @@ export default function Home({ data }: { data: Home }) {
 
   return (
     <main className="relative min-h-[200vh]">
-      <div
+      <motion.div
         className="fixed inset-0 z-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.25, delay: 1.6, ease: "easeInOut" }}
         style={{
           background:
             "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
@@ -100,8 +94,8 @@ export default function Home({ data }: { data: Home }) {
       >
         <motion.div
           initial={{ opacity: 0 }}
-          animate={isReady ? { opacity: 1 } : { opacity: 0 }}
-          transition={{ duration: 1, ease: "easeInOut" }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1.6, ease: "easeInOut" }}
         >
           <WidgetGrid
             layout={layout}
@@ -109,7 +103,7 @@ export default function Home({ data }: { data: Home }) {
             // debug
           />
         </motion.div>
-      </div>
+      </motion.div>
       {/* Drawer Content */}
       {windowHeight !== null && data && (
         <Drawer windowHeight={windowHeight}>
