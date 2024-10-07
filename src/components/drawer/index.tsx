@@ -15,7 +15,6 @@ interface DrawerProps {
 const Drawer: React.FC<DrawerProps> = ({ children, windowHeight }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isDrawerFullyOpen, setIsDrawerFullyOpen] = useState(false);
-  const [isDrawerEnabled, setIsDrawerEnabled] = useState(false);
 
   const { scrollY: windowScrollY } = useScroll();
   const { scrollY: contentScrollY } = useScroll({ container: contentRef });
@@ -44,14 +43,6 @@ const Drawer: React.FC<DrawerProps> = ({ children, windowHeight }) => {
       contentRef.current.scrollTop = 0;
     }
   });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsDrawerEnabled(true);
-    }, 3000); // Adjust this delay as needed
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <motion.div

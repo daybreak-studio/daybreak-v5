@@ -5,10 +5,19 @@ import Link from "next/link";
 import Logo from "/public/logos/daybreak-icon.svg";
 import Wordmark from "/public/logos/daybreak-wordmark.svg";
 
+const tabs = [
+  { href: "/", label: "Home" },
+  { href: "/services", label: "Services" },
+  { href: "/work", label: "Work" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
 export default function Navigation() {
   const [scope, animate] = useAnimate();
   const router = useRouter();
   const isHomePage = router.pathname === "/";
+  const activePath = router.asPath;
   const [hasAnimated, setHasAnimated] = useState(false);
 
   useEffect(() => {
@@ -18,34 +27,34 @@ export default function Navigation() {
           [
             ".container",
             { opacity: 1 },
-            { duration: 1.25, ease: [0.76, 0, 0.24, 1] },
+            { duration: 1, ease: [0.76, 0, 0.24, 1] },
           ],
           [
             ".glyph",
             { rotate: 0 },
-            { duration: 1.25, at: "<", ease: [0.76, 0, 0.24, 1] },
+            { duration: 1, at: "<", ease: [0.76, 0, 0.24, 1] },
           ],
           [
             ".glyph_container",
             { x: "0%" },
-            { duration: 1.25, at: "<", ease: [0.76, 0, 0.24, 1] },
+            { duration: 1, at: "<", ease: [0.76, 0, 0.24, 1] },
           ],
           [
             ".wordmark",
             { x: 0, opacity: 1, marginTop: "1px" },
-            { duration: 1.25, at: "<", ease: [0.76, 0, 0.24, 1] },
+            { duration: 1, at: "<", ease: [0.76, 0, 0.24, 1] },
           ],
         ]);
         await animate([
           [
             ".logo_container",
-            { width: "6rem" },
-            { duration: 1.25, at: "0", ease: [0.76, 0, 0.24, 1] },
+            { width: "5rem" },
+            { duration: 1, at: "0", ease: [0.76, 0, 0.24, 1] },
           ],
           [
             scope.current,
             { transform: "0" },
-            { duration: 1.25, ease: [0.76, 0, 0.24, 1], at: "<" },
+            { duration: 1, ease: [0.76, 0, 0.24, 1], at: "<" },
           ],
         ]);
         await animate([
@@ -90,78 +99,99 @@ export default function Navigation() {
       ref={scope}
     >
       <motion.div
-        className="container relative mt-4 flex w-fit items-center justify-center space-x-8 rounded-xl px-6 py-4"
+        className="container relative mt-4 flex w-fit items-stretch justify-center rounded-2xl p-1"
         initial={{
           opacity: isHomePage ? 0 : 1,
           backgroundColor: isHomePage
             ? "rgb(255,255,255,0)"
-            : "rgb(255,255,255,0.5)",
+            : "rgb(254,254,254,0.5)",
         }}
       >
-        <Link href="/">
-          <motion.div
-            className="logo_container align-center relative flex rounded-xl"
-            initial={{ width: isHomePage ? "16rem" : "6rem", height: "auto" }}
-          >
-            <motion.div
-              className="glyph_container h-fit overflow-hidden"
-              initial={{ width: "25%", x: isHomePage ? "200%" : "0%" }}
+        {tabs.map((tab, index) =>
+          tab.href === "/" ? (
+            <Link
+              key={tab.href}
+              href="/"
+              className="relative flex items-stretch"
             >
               <motion.div
-                className="glyph h-full w-full origin-bottom"
-                initial={{ rotate: isHomePage ? 180 : 0 }}
-              >
-                <Logo className="h-full w-full fill-current text-zinc-700" />
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              className="wordmark_container overflow-hidden pl-[6%] pt-[1%]"
-              initial={{ width: "75%" }}
-            >
-              <motion.div
-                className="wordmark h-full w-full"
+                className="logo_container align-center relative mx-4 flex rounded-xl"
                 initial={{
-                  x: isHomePage ? "100%" : "0%",
-                  opacity: isHomePage ? 0 : 1,
+                  width: isHomePage ? "16rem" : "5rem",
                 }}
               >
-                <Wordmark className="h-full w-full fill-current text-zinc-700" />
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </Link>
+                <motion.div
+                  className="glyph_container z-10 flex items-center overflow-hidden"
+                  initial={{ width: "25%", x: isHomePage ? "200%" : "0%" }}
+                >
+                  <motion.div
+                    className="glyph h-full w-full origin-bottom pb-1"
+                    initial={{ rotate: isHomePage ? 180 : 0 }}
+                  >
+                    <Logo className="h-full w-full fill-current text-zinc-500" />
+                  </motion.div>
+                </motion.div>
 
+                <motion.div
+                  className="wordmark_container z-10 flex items-center overflow-hidden pl-[6%]"
+                  initial={{ width: "75%" }}
+                >
+                  <motion.div
+                    className="wordmark h-full w-full"
+                    initial={{
+                      x: isHomePage ? "100%" : "0%",
+                      opacity: isHomePage ? 0 : 1,
+                    }}
+                  >
+                    <Wordmark className="h-full w-full fill-current text-zinc-500" />
+                  </motion.div>
+                </motion.div>
+              </motion.div>
+              {activePath === tab.href && (
+                <motion.span
+                  layoutId="pill"
+                  className="absolute inset-0 z-0 bg-white"
+                  style={{ borderRadius: "12px" }}
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+            </Link>
+          ) : null,
+        )}
         <motion.div
-          className="items flex space-x-8"
+          className="items flex"
           initial={{
             opacity: isHomePage ? 0 : 1,
             width: isHomePage ? 0 : "auto",
           }}
         >
-          <motion.h1 initial={{ opacity: isHomePage ? 0 : 1 }}>
-            <Link href="/services" className="text-sm text-zinc-500">
-              Services
-            </Link>
-          </motion.h1>
-
-          <motion.h1 initial={{ opacity: isHomePage ? 0 : 1 }}>
-            <Link href="/work" className="text-sm text-zinc-500">
-              Work
-            </Link>
-          </motion.h1>
-
-          <motion.h1 initial={{ opacity: isHomePage ? 0 : 1 }}>
-            <Link href="/about" className="text-sm text-zinc-500">
-              About
-            </Link>
-          </motion.h1>
-
-          <motion.h1 initial={{ opacity: isHomePage ? 0 : 1 }}>
-            <Link href="/contact" className="text-sm text-zinc-500">
-              Contact
-            </Link>
-          </motion.h1>
+          {tabs.map((tab, index) =>
+            tab.href !== "/" ? (
+              <>
+                <motion.h1
+                  key={tab.label}
+                  initial={{ opacity: isHomePage ? 0 : 1 }}
+                  className="relative px-4 py-3 text-xs text-zinc-500"
+                >
+                  <Link href={tab.href} className="0 relative z-10">
+                    {tab.label}
+                  </Link>
+                  {activePath === tab.href && (
+                    <motion.span
+                      layoutId="pill"
+                      className="absolute inset-0 z-0 bg-white"
+                      style={{ borderRadius: "12px" }}
+                      transition={{
+                        type: "spring",
+                        bounce: 0.2,
+                        duration: 0.6,
+                      }}
+                    />
+                  )}
+                </motion.h1>
+              </>
+            ) : null,
+          )}
         </motion.div>
       </motion.div>
     </motion.nav>
