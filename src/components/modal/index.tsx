@@ -10,7 +10,7 @@ import {
   motion,
 } from "framer-motion";
 import { v4 as uuidv4 } from "uuid";
-import { cn } from "../../../lib/utils";
+import { cn } from "@/lib/utils";
 import { useRouter } from "next/router";
 
 const Context = React.createContext<Types.Context | undefined>(undefined);
@@ -95,7 +95,7 @@ const Trigger = React.memo(
     const handleClick = () => {
       if (isAnimating || isClosing) return;
       setIsOpen(true);
-      router.push(`/works?modal=${id}`, undefined, { shallow: true });
+      router.push(`/works#${id}`, undefined, { shallow: true });
     };
 
     return (
