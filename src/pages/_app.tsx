@@ -1,14 +1,15 @@
 import "@/styles/globals.css";
 import { AppProps } from "next/app";
-import Layout from "./_layout";
 import { AnimatePresence } from "framer-motion";
+import Navigation from "@/components/navigation";
 
 export default function App({ Component, pageProps, router }: AppProps) {
   return (
-    <Layout>
+    <main>
+      <Navigation />
       <AnimatePresence mode="wait">
         <Component key={router.route} {...pageProps} />
       </AnimatePresence>
-    </Layout>
+    </main>
   );
 }

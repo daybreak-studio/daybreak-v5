@@ -17,6 +17,7 @@ import Article from "@/components/article";
 import Navigation from "@/components/navigation";
 // Type imports
 import { LayoutProps } from "@/components/grid/props";
+import Layout from "@/components/layout";
 
 function transformWidgetsToLayout(widgets: Home["widgets"]) {
   if (!widgets) return [];
@@ -81,66 +82,64 @@ export default function Home({ data }: { data: Home }) {
   const layout = transformWidgetsToLayout(data.widgets);
 
   return (
-    <main className="relative min-h-[200vh]">
-      <motion.div
-        className="fixed inset-0 z-0"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.25, delay: 1.6, ease: "easeInOut" }}
-        style={{
-          background:
-            "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
-        }}
-      >
+    <Layout>
+      <main className="relative min-h-[200vh]">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.6, ease: "easeInOut" }}
+          className="fixed inset-0 z-0"
+          style={{
+            background:
+              "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
+          }}
         >
-          <WidgetGrid
-            layout={layout}
-            heading="A technology first design studio"
-            // debug
-          />
+          <motion.div>
+            <WidgetGrid
+              layout={layout}
+              heading="A technology first design studio"
+              // debug
+            />
+          </motion.div>
         </motion.div>
-      </motion.div>
-      {/* Drawer Content */}
-      {windowHeight !== null && data && (
-        <Drawer windowHeight={windowHeight}>
-          {/* Mission Statement */}
-          <div className="p-12">
-            {data.missionStatement && (
-              <Reveal>
-                <div className="mb-64 md:w-7/12">
-                  <PortableText
-                    value={data.missionStatement}
-                    components={components}
-                  />
-                </div>
-              </Reveal>
-            )}
-            {/* About Us */}
-            <Reveal>
-              <h2 className="mb-4 text-xl text-zinc-400">About Us</h2>
-              {data?.aboutUs && (
-                <div className="mb-64 md:w-7/12">
-                  <PortableText value={data.aboutUs} components={components} />
-                </div>
+        {/* Drawer Content */}
+        {windowHeight !== null && data && (
+          <Drawer windowHeight={windowHeight}>
+            {/* Mission Statement */}
+            <div className="p-12">
+              {data.missionStatement && (
+                <Reveal>
+                  <div className="mb-64 md:w-7/12">
+                    <PortableText
+                      value={data.missionStatement}
+                      components={components}
+                    />
+                  </div>
+                </Reveal>
               )}
-            </Reveal>
-            {/* Newsfeed */}
-            <Reveal>
-              <h2 className="mb-4 text-xl text-zinc-400">Newsfeed</h2>
-            </Reveal>
-            <div className="md:grid md:grid-cols-2 md:gap-6 xl:grid-cols-3">
-              {data?.newsfeed?.map((article) => (
-                <Article key={article._key} article={article} />
-              ))}
+              {/* About Us */}
+              <Reveal>
+                <h2 className="mb-4 text-xl text-zinc-400">About Us</h2>
+                {data?.aboutUs && (
+                  <div className="mb-64 md:w-7/12">
+                    <PortableText
+                      value={data.aboutUs}
+                      components={components}
+                    />
+                  </div>
+                )}
+              </Reveal>
+              {/* Newsfeed */}
+              <Reveal>
+                <h2 className="mb-4 text-xl text-zinc-400">Newsfeed</h2>
+              </Reveal>
+              <div className="md:grid md:grid-cols-2 md:gap-6 xl:grid-cols-3">
+                {data?.newsfeed?.map((article) => (
+                  <Article key={article._key} article={article} />
+                ))}
+              </div>
             </div>
-          </div>
-        </Drawer>
-      )}
-    </main>
+          </Drawer>
+        )}
+      </main>
+    </Layout>
   );
 }
 
