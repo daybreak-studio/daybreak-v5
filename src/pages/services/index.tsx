@@ -99,7 +99,7 @@ export default function Services() {
 
   return (
     <Layout>
-      <section className="flex h-svh w-full items-center justify-center bg-blue-500 text-center">
+      <section className="flex h-svh w-full items-center justify-center bg-white text-center">
         Intro Section
       </section>
       <section

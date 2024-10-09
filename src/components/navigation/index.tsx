@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Logo from "/public/logos/daybreak-icon.svg";
 import Wordmark from "/public/logos/daybreak-wordmark.svg";
+import { useVisit } from "@/contexts/VisitContext";
 
 const tabs = [
   { href: "/", label: "Home" },
@@ -15,24 +16,30 @@ const tabs = [
 
 export default function Navigation() {
   const [shouldRunAnimation, setShouldRunAnimation] = useState(false);
-  const [hasVisitedBefore, setHasVisitedBefore] = useState<boolean | null>(
-    null,
-  );
+  const { hasVisitedBefore, setHasVisitedBefore } = useVisit();
   const router = useRouter();
   const activePath = router.asPath;
 
   // Check if the user has visited before
+
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const hasVisited = localStorage.getItem("hasVisited");
-      if (!hasVisited) {
-        setShouldRunAnimation(true);
-        setHasVisitedBefore(false);
-      } else {
-        setHasVisitedBefore(true);
-      }
+    if (typeof window !== "undefined" && hasVisitedBefore === false) {
+      setShouldRunAnimation(true);
+      localStorage.setItem("hasVisited", "true");
+      setHasVisitedBefore(true);
     }
-  }, []); // Empty dependency array to run once on mount
+  }, [hasVisitedBefore, setHasVisitedBefore]);
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     const hasVisited = localStorage.getItem("hasVisited");
+  //     if (!hasVisited) {
+  //       setShouldRunAnimation(true);
+  //       setHasVisitedBefore(false);
+  //     } else {
+  //       setHasVisitedBefore(true);
+  //     }
+  //   }
+  // }, []); // Empty dependency array to run once on mount
 
   // Run the animation sequence if needed
   useEffect(() => {
@@ -129,7 +136,7 @@ export default function Navigation() {
         initial={{
           opacity: hasVisitedBefore ? 1 : 0,
           backgroundColor: hasVisitedBefore
-            ? "rgb(255,255,255,0.5)"
+            ? "rgb(248,248,248,0.75)"
             : "rgb(255,255,255,0)",
         }}
       >
