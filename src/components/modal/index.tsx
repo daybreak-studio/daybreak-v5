@@ -17,6 +17,7 @@ const Context = React.createContext<Types.Context | undefined>(undefined);
 
 const useModalContext = (): Types.Context => {
   const context = React.useContext(Context);
+
   if (context === undefined) {
     throw new Error("useModalContext must be used within a Root");
   }
@@ -43,15 +44,18 @@ const Root = React.memo(
 
       const layoutId = React.useRef(`modal-${uuidv4()}`).current;
       const router = useRouter();
+      const { slug } = router.query;
 
       React.useEffect(() => {
-        if (router.pathname === path && router.query.modal === id) {
+        const currentSlug = Array.isArray(slug) ? slug[0] : slug;
+
+        if (currentSlug === id) {
           setIsOpen(true);
           setIsClosing(false);
         } else {
           setIsOpen(false);
         }
-      }, [router.pathname, path, id, router.query.modal]);
+      }, [slug, id]);
 
       return (
         <Context.Provider
@@ -77,7 +81,6 @@ const Root = React.memo(
     },
   ),
 );
-Root.displayName = "Modal.Root";
 
 const Trigger = React.memo(
   React.forwardRef<HTMLDivElement, Types.Trigger>(({ ...props }, ref) => {
@@ -89,13 +92,14 @@ const Trigger = React.memo(
       isAnimating,
       setIsAnimating,
       isClosing,
+      path,
     } = useModalContext();
     const router = useRouter();
 
     const handleClick = () => {
       if (isAnimating || isClosing) return;
       setIsOpen(true);
-      router.push(`/works#${id}`, undefined, { shallow: true });
+      router.replace(`${path}/${id}`, undefined, { shallow: true });
     };
 
     return (
@@ -113,7 +117,6 @@ const Trigger = React.memo(
     );
   }),
 );
-Trigger.displayName = "Modal.Trigger";
 
 const Portal = React.memo(
   React.forwardRef<HTMLDivElement, Types.Portal>(({ ...props }, ref) => {
@@ -139,14 +142,14 @@ Portal.displayName = "Modal.Portal";
 
 const Background = React.memo(
   React.forwardRef<HTMLDivElement, Types.Background>(({ ...props }, ref) => {
-    const { setIsOpen, isAnimating } = useModalContext();
+    const { setIsOpen, isAnimating, path } = useModalContext();
 
     const router = useRouter();
 
     const handleClose = () => {
       if (isAnimating) return;
       setIsOpen(false);
-      router.push("/works", undefined, { shallow: true });
+      router.replace(path, undefined, { shallow: true });
     };
 
     return (
@@ -169,7 +172,6 @@ const Background = React.memo(
     );
   }),
 );
-Background.displayName = "Modal.Background";
 
 const Content = React.memo(
   React.forwardRef<HTMLDivElement, Types.Content>(({ ...props }, ref) => {
