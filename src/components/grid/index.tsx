@@ -46,61 +46,61 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
   };
 
   return (
-    // <div className="relative h-screen w-screen transition-all">
-    <div className="flex h-full w-screen flex-col items-center justify-center gap-12">
-      {header ? (
-        header
-      ) : (
-        <h1 className="text w-80 text-center text-4xl">
-          A technology first design studio.
-        </h1>
-      )}
+    <div className="relative h-screen w-screen transition-all">
+      <div className="flex h-full w-screen flex-col items-center justify-center gap-12">
+        {header ? (
+          header
+        ) : (
+          <h1 className="text w-80 text-center text-4xl">
+            A technology first design studio.
+          </h1>
+        )}
 
-      <GridLayout
-        {...Structure}
-        cols={Structure.cols}
-        style={{ width }}
-        className="overflow flex"
-      >
-        {layout.map((item) => (
-          <div
-            key={item.id}
-            data-grid={{
-              i: item.id,
-              x: item.position.x,
-              y: item.position.y,
-              w: item.size.w,
-              h: item.size.h,
-              ...Defaults.DataGridAttributes,
-            }}
-          >
+        <GridLayout
+          {...Structure}
+          cols={Structure.cols}
+          style={{ width }}
+          className="overflow flex"
+        >
+          {layout.map((item) => (
             <div
-              className={clsx({
-                ["border-2 border-orange-500"]: debug,
-                ["flex h-full w-full overflow-hidden"]: true,
-              })}
+              key={item.id}
+              data-grid={{
+                i: item.id,
+                x: item.position.x,
+                y: item.position.y,
+                w: item.size.w,
+                h: item.size.h,
+                ...Defaults.DataGridAttributes,
+              }}
             >
-              <WidgetGridProvider
-                id={item.id}
-                size={item.size}
-                position={item.position}
-                breakpoint={breakpoint}
+              <div
+                className={clsx({
+                  ["border-2 border-orange-500"]: debug,
+                  ["flex h-full w-full overflow-hidden"]: true,
+                })}
               >
-                {item.content}
-              </WidgetGridProvider>
-              {debug && (
-                <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 p-1 text-xs uppercase text-white">
-                  ID: {item.id}
-                  <br /> Size: {item.size.w}x{item.size.h}
-                  <br />
-                  Position: x: {item.position.x} y:{item.position.y}
-                </div>
-              )}
+                <WidgetGridProvider
+                  id={item.id}
+                  size={item.size}
+                  position={item.position}
+                  breakpoint={breakpoint}
+                >
+                  {item.content}
+                </WidgetGridProvider>
+                {debug && (
+                  <div className="absolute bottom-0 left-0 bg-black bg-opacity-50 p-1 text-xs uppercase text-white">
+                    ID: {item.id}
+                    <br /> Size: {item.size.w}x{item.size.h}
+                    <br />
+                    Position: x: {item.position.x} y:{item.position.y}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </GridLayout>
+          ))}
+        </GridLayout>
+      </div>
     </div>
-    // </div>
   );
 };
