@@ -2,18 +2,16 @@ import { AnimationProps } from "framer-motion";
 import React from "react";
 
 interface Context {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  layoutId: string;
   id: string;
   path: string;
-  layoutId: string;
-
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-
-  isAnimating?: boolean;
-  setIsAnimating: (animating: boolean) => void;
-
-  isClosing?: boolean;
-  setIsClosing: (closing: boolean) => void;
+  isAnimating: boolean;
+  setIsAnimating: React.Dispatch<React.SetStateAction<boolean>>;
+  isClosing: boolean;
+  setIsClosing: React.Dispatch<React.SetStateAction<boolean>>;
+  triggerRef: React.RefObject<HTMLDivElement>;
 }
 
 interface Root extends React.HTMLAttributes<HTMLDivElement> {

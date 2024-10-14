@@ -20,7 +20,7 @@ export default function Page() {
           <Modal.Background />
           <Modal.Content className="relative isolate flex w-[1016px] items-center rounded-[40px] bg-white p-8">
             <Modal.Item
-              id="a"
+              id="superpower"
               className="h-[597px] w-[597px] rounded-3xl bg-[#FFBEE8]"
             />
           </Modal.Content>
@@ -73,7 +73,7 @@ export default function Page() {
           <Modal.Background />
           <Modal.Content className="relative isolate flex w-[1016px] items-center rounded-[40px] bg-white p-8">
             <Modal.Item
-              id="a"
+              id="scroll"
               className="h-[597px] w-[597px] rounded-3xl bg-[#FFBEE8]"
             />
           </Modal.Content>

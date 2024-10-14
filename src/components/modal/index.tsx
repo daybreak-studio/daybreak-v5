@@ -46,12 +46,69 @@ const Root = React.memo(
       const router = useRouter();
       const { slug } = router.query;
 
+      const triggerRef = React.useRef<HTMLDivElement>(null);
+
       React.useEffect(() => {
         const currentSlug = Array.isArray(slug) ? slug[0] : slug;
 
         if (currentSlug === id) {
-          setIsOpen(true);
-          setIsClosing(false);
+          if (triggerRef.current) {
+            const triggerElement = triggerRef.current;
+            const bounding = triggerElement.getBoundingClientRect();
+            const inView =
+              bounding.top >= 0 &&
+              bounding.left >= 0 &&
+              bounding.bottom <=
+                (window.innerHeight || document.documentElement.clientHeight) &&
+              bounding.right <=
+                (window.innerWidth || document.documentElement.clientWidth);
+
+            if (!inView) {
+              triggerElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+
+              setTimeout(() => {
+                setIsOpen(true);
+                setIsClosing(false);
+              }, 500);
+            } else {
+              setIsOpen(true);
+              setIsClosing(false);
+            }
+          } else {
+            const interval = setInterval(() => {
+              if (triggerRef.current) {
+                clearInterval(interval);
+                const triggerElement = triggerRef.current;
+                const bounding = triggerElement.getBoundingClientRect();
+                const inView =
+                  bounding.top >= 0 &&
+                  bounding.left >= 0 &&
+                  bounding.bottom <=
+                    (window.innerHeight ||
+                      document.documentElement.clientHeight) &&
+                  bounding.right <=
+                    (window.innerWidth || document.documentElement.clientWidth);
+
+                if (!inView) {
+                  triggerElement.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
+                  });
+                  setTimeout(() => {
+                    setIsOpen(true);
+                    setIsClosing(false);
+                  }, 500);
+                } else {
+                  setIsOpen(true);
+                  setIsClosing(false);
+                }
+              }
+            }, 100);
+            return () => clearInterval(interval);
+          }
         } else {
           setIsOpen(false);
         }
@@ -69,6 +126,7 @@ const Root = React.memo(
             setIsAnimating,
             isClosing,
             setIsClosing,
+            triggerRef,
           }}
         >
           <MotionConfig transition={transition}>
@@ -81,9 +139,10 @@ const Root = React.memo(
     },
   ),
 );
+Root.displayName = "Modal.Root";
 
 const Trigger = React.memo(
-  React.forwardRef<HTMLDivElement, Types.Trigger>(({ ...props }, ref) => {
+  React.forwardRef<HTMLDivElement, Types.Trigger>((props, ref) => {
     const {
       id,
       layoutId,
@@ -93,6 +152,7 @@ const Trigger = React.memo(
       setIsAnimating,
       isClosing,
       path,
+      triggerRef,
     } = useModalContext();
     const router = useRouter();
 
@@ -104,7 +164,7 @@ const Trigger = React.memo(
 
     return (
       <motion.div
-        ref={ref}
+        ref={triggerRef}
         className={props.className}
         style={props.style}
         layoutId={layoutId}
@@ -117,6 +177,7 @@ const Trigger = React.memo(
     );
   }),
 );
+Trigger.displayName = "Modal.Trigger";
 
 const Portal = React.memo(
   React.forwardRef<HTMLDivElement, Types.Portal>(({ ...props }, ref) => {
@@ -172,6 +233,7 @@ const Background = React.memo(
     );
   }),
 );
+Background.displayName = "Modal.Background";
 
 const Content = React.memo(
   React.forwardRef<HTMLDivElement, Types.Content>(({ ...props }, ref) => {
