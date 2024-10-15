@@ -14,7 +14,6 @@ import { WidgetGrid } from "@/components/grid";
 import Twitter from "@/components/widgets/twitter";
 import Media from "@/components/widgets/media";
 import Article from "@/components/article";
-import Navigation from "@/components/navigation";
 // Type imports
 import { LayoutProps } from "@/components/grid/props";
 import Layout from "@/components/layout";
@@ -54,7 +53,6 @@ function transformWidgetsToLayout(widgets: Home["widgets"]) {
 
 export default function Home({ data }: { data: Home }) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
-  const [isReady, setIsReady] = useState(false);
 
   // Handles updates for window height.
   useEffect(() => {
