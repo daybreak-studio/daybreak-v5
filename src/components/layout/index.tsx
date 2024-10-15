@@ -6,21 +6,23 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { hasVisitedBefore } = useVisit();
-  console.log(hasVisitedBefore);
-  if (hasVisitedBefore !== null) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{
-          duration: hasVisitedBefore ? 0.25 : 1,
-          delay: hasVisitedBefore ? 0 : 1.5,
-        }}
-      >
-        {children}
-      </motion.div>
-    );
+  const { visitStatus, isLoading } = useVisit();
+
+  if (isLoading) {
+    return null; // or a loading spinner
   }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{
+        duration: visitStatus === "new" ? 1 : 0.25,
+        delay: visitStatus === "new" ? 1.5 : 0,
+      }}
+    >
+      {children}
+    </motion.div>
+  );
 }

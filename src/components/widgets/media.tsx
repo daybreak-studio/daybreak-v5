@@ -1,11 +1,8 @@
 import { useWidgetGridContext } from "@/components/grid/hooks";
 import Image from "next/image";
-import { client } from "@/sanity/lib/client";
 import { motion } from "framer-motion";
 
 export default function MediaWidget({ media }: { media: any }) {
-  const { size } = useWidgetGridContext();
-
   if (media._type === "image") {
     return (
       <motion.div className="relative h-full w-full overflow-hidden">
