@@ -146,44 +146,77 @@ export const caseStudy = defineType({
       type: "array",
       of: [
         {
-          type: "image",
-          name: "image",
-          title: "Image",
+          type: "object",
+          name: "mediaGroup",
+          title: "Media Group",
           fields: [
-            {
+            defineField({
               name: "heading",
               title: "Heading",
               type: "string",
-            },
-            {
+            }),
+            defineField({
               name: "caption",
               title: "Caption",
               type: "string",
-            },
+            }),
+            defineField({
+              name: "items",
+              title: "Media Items",
+              type: "array",
+              of: [
+                {
+                  type: "image",
+                  options: {
+                    hotspot: true,
+                    metadata: ["blurhash", "lqip", "palette"],
+                  },
+                },
+                {
+                  type: "file",
+                  options: {
+                    accept: "video/*",
+                  },
+                },
+              ],
+              validation: (Rule) => Rule.max(2),
+            }),
           ],
-          options: {
-            hotspot: true,
-            metadata: ["blurhash", "lqip", "palette"],
-          },
-        },
-        {
-          type: "file",
-          name: "video",
-          title: "Video",
-          fields: [
-            {
-              name: "heading",
-              title: "Heading",
-              type: "string",
+          preview: {
+            select: {
+              heading: "heading",
+              items: "items",
+              firstItemAsset: "items.0.asset",
             },
-            {
-              name: "caption",
-              title: "Caption",
-              type: "string",
+            prepare(selection) {
+              const { heading, items, firstItemAsset } = selection;
+
+              // Helper function to clean and capitalize types
+              const cleanAndCapitalizeType = (type: string): string => {
+                if (type === "file") return "Video";
+                return type.charAt(0).toUpperCase() + type.slice(1);
+              };
+
+              // Convert items to an array if it's not already
+              const itemsArray = items
+                ? Array.isArray(items)
+                  ? items
+                  : Object.values(items)
+                : [];
+
+              const itemTypes = itemsArray.map((item: any) =>
+                cleanAndCapitalizeType(item._type || "Unknown"),
+              );
+
+              const itemCount = itemsArray.length;
+              const title = itemCount === 1 ? "Full" : "Split";
+
+              return {
+                title: `${title}: ${heading || "No Info"}`,
+                subtitle: itemTypes.join(", ") || "No files",
+                media: firstItemAsset,
+              };
             },
-          ],
-          options: {
-            accept: "video/*",
           },
         },
       ],

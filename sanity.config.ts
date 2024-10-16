@@ -29,7 +29,6 @@ export default defineConfig({
       structure: singletonStructure(singletonTypes, schemaTypes),
     }),
     visionTool({ defaultApiVersion: apiVersion }),
-
     singletonPlugin({ types: singletonTypes }),
   ],
 });
