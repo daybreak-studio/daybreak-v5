@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import Card from "./(components)/card";
+import Layout from "@/components/layout";
 
 const cards = [
   { title: "Brand", position: "top-left" },
@@ -97,8 +98,8 @@ export default function Services() {
   };
 
   return (
-    <main className="">
-      <section className="flex h-svh w-full items-center justify-center bg-zinc-100 text-center">
+    <Layout>
+      <section className="flex h-svh w-full items-center justify-center bg-white text-center">
         Intro Section
       </section>
       <section
@@ -140,6 +141,6 @@ export default function Services() {
       <section className="flex h-svh w-full items-center justify-center bg-zinc-100 text-center">
         Testimonials
       </section>
-    </main>
+    </Layout>
   );
 }

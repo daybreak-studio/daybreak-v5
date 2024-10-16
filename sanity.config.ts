@@ -7,8 +7,6 @@
 import { visionTool } from "@sanity/vision";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
-import { presentationTool } from "sanity/presentation";
-import { locate } from "@/sanity/presentation/locate";
 // Go to https://www.sanity.io/docs/api-versioning to learn how API versioning works
 import { apiVersion, dataset, projectId } from "@/sanity/env";
 import { schema } from "@/sanity/schema";
@@ -17,7 +15,7 @@ import {
   singletonStructure,
 } from "@/sanity/plugins/singleton";
 
-const singletonTypes = ["settings", "home", "work", "team", "services"];
+const singletonTypes = ["settings", "home", "team", "services"];
 const schemaTypes = schema.types;
 
 export default defineConfig({
@@ -31,14 +29,6 @@ export default defineConfig({
       structure: singletonStructure(singletonTypes, schemaTypes),
     }),
     visionTool({ defaultApiVersion: apiVersion }),
-    presentationTool({
-      locate,
-      previewUrl: {
-        draftMode: {
-          enable: "/api/draft",
-        },
-      },
-    }),
     singletonPlugin({ types: singletonTypes }),
   ],
 });

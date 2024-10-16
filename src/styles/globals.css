@@ -24,3 +24,14 @@
     scrollbar-width: none;
   }
 }
+
+.container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 0.75rem;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 25px 50px -12px;
+  opacity: var(--shadow-opacity, 0);
+  z-index: -1;
+  pointer-events: none;
+}

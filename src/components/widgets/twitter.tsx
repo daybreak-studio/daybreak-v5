@@ -1,12 +1,18 @@
 import { useWidgetGridContext } from "@/components/grid/hooks";
 
-const Twitter = () => {
-  const { size } = useWidgetGridContext();
+interface TwitterProps {
+  tweet: string;
+  author: string;
+  link: string;
+}
+
+export default function Twitter({ tweet, author, link }: TwitterProps) {
   return (
-    <div>
-      <h1>Twitter {size.w}</h1>
+    <div className="flex h-full w-full flex-col overflow-hidden p-4 text-zinc-500 xl:p-6">
+      <p className="mb-2 line-clamp-6 flex-grow text-sm">{tweet}</p>
+      <div className="mt-auto">
+        <p className="text-sm">{author}</p>
+      </div>
     </div>
   );
-};
-
-export default Twitter;
+}
