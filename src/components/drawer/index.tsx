@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import {
   motion,
   useScroll,
@@ -35,11 +35,7 @@ const Drawer: React.FC<DrawerProps> = ({ children, windowHeight }) => {
 
   // Event handlers
   useMotionValueEvent(yRange, "change", (latest) => {
-    console.log("yRange", latest);
     setIsDrawerFullyOpen(latest === 0);
-    if (latest === 0) {
-      console.log("Drawer is fully open");
-    }
   });
 
   useMotionValueEvent(contentScrollY, "change", (latest) => {
@@ -50,7 +46,7 @@ const Drawer: React.FC<DrawerProps> = ({ children, windowHeight }) => {
 
   return (
     <motion.div
-      className="fixed inset-x-0 bottom-0 z-20 bg-white shadow-lg"
+      className="fixed inset-x-0 bottom-0 z-50 bg-white shadow-lg"
       style={{ borderRadius, height: windowHeight, y }}
     >
       <motion.div

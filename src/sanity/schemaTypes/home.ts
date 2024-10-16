@@ -1,4 +1,108 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
+
+function createWidgetPreview(widgetTitle: string) {
+  return {
+    select: {
+      size: "size",
+      x: "position.x",
+      y: "position.y",
+    },
+    prepare(selection: { size?: string; x?: number; y?: number }) {
+      const { size = "Unknown", x = 0, y = 0 } = selection;
+      return {
+        title: `${widgetTitle} (${size}) at (${x}, ${y})`,
+      };
+    },
+  };
+}
+
+const twitterWidget = defineArrayMember({
+  type: "object",
+  name: "twitterWidget",
+  title: "Twitter Widget",
+  fields: [
+    defineField({
+      name: "position",
+      type: "object",
+      fields: [
+        defineField({ name: "x", type: "number" }),
+        defineField({ name: "y", type: "number" }),
+      ],
+      initialValue: { x: 0, y: 0 },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "size",
+      type: "string",
+      options: {
+        list: ["1x1", "2x2"],
+      },
+      initialValue: "2x2",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "tweet",
+      type: "text",
+      title: "Tweet",
+    }),
+    defineField({
+      name: "author",
+      type: "string",
+      title: "Author",
+    }),
+    defineField({
+      name: "link",
+      type: "url",
+      title: "Link",
+    }),
+    defineField({
+      name: "media",
+      type: "array",
+      of: [{ type: "image", title: "Image" }],
+    }),
+  ],
+  preview: createWidgetPreview("Twitter Widget"),
+});
+
+const mediaWidget = defineArrayMember({
+  type: "object",
+  name: "mediaWidget",
+  title: "Media Widget",
+  fields: [
+    defineField({
+      name: "position",
+      type: "object",
+      fields: [
+        defineField({ name: "x", type: "number" }),
+        defineField({ name: "y", type: "number" }),
+      ],
+      initialValue: { x: 0, y: 0 },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "size",
+      type: "string",
+      options: {
+        list: ["2x2", "3x3"],
+      },
+      initialValue: "2x2",
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "media",
+      type: "array",
+      of: [
+        { type: "image", title: "Image" },
+        {
+          type: "file",
+          title: "Video",
+          options: { accept: "video/*" },
+        },
+      ],
+    }),
+  ],
+  preview: createWidgetPreview("Media Widget"),
+});
 
 export const home = defineType({
   name: "home",
@@ -9,114 +113,17 @@ export const home = defineType({
       name: "widgets",
       title: "Widgets",
       type: "array",
-      of: [
-        defineField({
-          name: "widget",
-          type: "object",
-          fields: [
-            defineField({
-              name: "media",
-              title: "Media",
-              type: "array",
-              of: [
-                {
-                  type: "image",
-                  title: "Image",
-                  fields: [
-                    {
-                      name: "alt",
-                      title: "Alt Text",
-                      type: "string",
-                      description:
-                        "Description of the image for SEO and accessibility.",
-                    },
-                  ],
-                  options: {
-                    metadata: ["blurhash", "lqip", "palette"],
-                  },
-                },
-                {
-                  type: "file",
-                  title: "Video",
-
-                  options: {
-                    accept: "video/*",
-                  },
-                  fields: [
-                    {
-                      name: "alt",
-                      title: "Alt Text",
-                      type: "string",
-                      description:
-                        "Description of the video for SEO and accessibility.",
-                    },
-                    {
-                      name: "name",
-                      title: "Name",
-                      type: "string",
-                    },
-                    {
-                      name: "medium",
-                      title: "Medium",
-                      type: "string",
-                    },
-                  ],
-                },
-              ],
-              options: {
-                layout: "grid",
-              },
-            }),
-            defineField({ name: "link", title: "Link", type: "url" }),
-            defineField({ name: "title", title: "Title", type: "string" }),
-            defineField({
-              name: "description",
-              title: "Description",
-              type: "text",
-            }),
-            defineField({
-              name: "size",
-              title: "Size",
-              type: "string",
-              options: {
-                list: [
-                  { title: "Small", value: "small" },
-                  { title: "Medium", value: "medium" },
-                  { title: "Large", value: "large" },
-                ],
-              },
-            }),
-            defineField({
-              name: "type",
-              title: "Type",
-              type: "string",
-              options: {
-                list: [
-                  { title: "Twitter", value: "twitter" },
-                  { title: "Showcase", value: "showcase" },
-                  // Add more placeholder options as needed
-                ],
-              },
-            }),
-          ],
-        }),
-      ],
+      of: [twitterWidget, mediaWidget],
     }),
     defineField({
       name: "missionStatement",
       title: "Mission Statement",
-      type: "array", // Change to array for block content
+      type: "array",
       of: [
         {
           type: "block",
-          // styles: [{ title: "Normal", value: "normal" }],
-          // lists: [],
-          // marks: {
-          //   decorators: [], // This disables inline formatting (bold, italic, etc.)
-          //   // annotations: [], // This disables links
-          // },
         },
-      ], // Define block content
+      ],
     }),
     defineField({
       name: "aboutUs",
