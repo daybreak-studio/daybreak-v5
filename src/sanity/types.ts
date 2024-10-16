@@ -439,11 +439,11 @@ export type Home = {
   _rev: string;
   widgets?: Array<
     | {
-        position: {
-          x: number;
-          y: number;
+        position?: {
+          x?: number;
+          y?: number;
         };
-        size: "1x1" | "2x2";
+        size?: "1x1" | "2x2";
         tweet?: string;
         author?: string;
         link?: string;

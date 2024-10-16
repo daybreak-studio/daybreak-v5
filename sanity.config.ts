@@ -15,7 +15,7 @@ import {
   singletonStructure,
 } from "@/sanity/plugins/singleton";
 
-const singletonTypes = ["settings", "home", "work", "team", "services"];
+const singletonTypes = ["settings", "home", "team", "services"];
 const schemaTypes = schema.types;
 
 export default defineConfig({
