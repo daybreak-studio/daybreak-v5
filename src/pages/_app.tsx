@@ -1,3 +1,4 @@
+import Layout from "@/components/layout";
 import "@/styles/globals.css";
 import { AppProps } from "next/app";
 import { AnimatePresence } from "framer-motion";
