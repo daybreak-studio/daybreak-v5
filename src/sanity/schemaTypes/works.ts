@@ -47,8 +47,8 @@ export const preview = defineType({
   type: "object",
   fields: [
     defineField({
-      name: "type",
-      title: "Project Type",
+      name: "category",
+      title: "Category",
       type: "string",
       options: {
         list: [
@@ -103,12 +103,12 @@ export const preview = defineType({
   ],
   preview: {
     select: {
-      type: "type",
+      category: "category",
     },
     prepare(selection) {
-      const { type } = selection;
-      const capitalizedType = type
-        ? type.charAt(0).toUpperCase() + type.slice(1)
+      const { category } = selection;
+      const capitalizedType = category
+        ? category.charAt(0).toUpperCase() + category.slice(1)
         : "Unspecified Type";
       return {
         title: `${capitalizedType} – Preview`,
@@ -123,8 +123,8 @@ export const caseStudy = defineType({
   type: "object",
   fields: [
     defineField({
-      name: "type",
-      title: "Type",
+      name: "category",
+      title: "Category",
       type: "string",
       options: {
         list: [
@@ -238,12 +238,12 @@ export const caseStudy = defineType({
   ],
   preview: {
     select: {
-      type: "type",
+      category: "category",
     },
     prepare(selection) {
-      const { type } = selection;
-      const capitalizedType = type
-        ? type.charAt(0).toUpperCase() + type.slice(1)
+      const { category } = selection;
+      const capitalizedType = category
+        ? category.charAt(0).toUpperCase() + category.slice(1)
         : "Unspecified Type";
       return {
         title: `${capitalizedType} – Case Study`,

@@ -93,120 +93,6 @@ export type Settings = {
   };
 };
 
-export type Project = {
-  _id: string;
-  _type: "project";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
-  isActive?: boolean;
-  projectType?: "caseStudy" | "preview";
-  heroImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  headline?: string;
-  content?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          | "normal"
-          | "h1"
-          | "h2"
-          | "h3"
-          | "h4"
-          | "h5"
-          | "h6"
-          | "blockquote";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "block";
-        _key: string;
-      }
-    | {
-        media?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        size?: string;
-        _type: "imageVideo";
-        _key: string;
-      }
-  >;
-  credits?: Array<{
-    name?: string;
-    team?: string;
-    _key: string;
-  }>;
-  media?: Array<
-    | {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-        };
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        _type: "image";
-        _key: string;
-      }
-    | {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-        };
-        _type: "file";
-        _key: string;
-      }
-  >;
-  description?: string;
-  link?: string;
-};
-
-export type Work = {
-  _id: string;
-  _type: "work";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  projects?: Array<{
-    _ref: string;
-    _type: "reference";
-    _weak?: boolean;
-    _key: string;
-    [internalGroqTypeReferenceTo]?: "project";
-  }>;
-};
-
 export type Services = {
   _id: string;
   _type: "services";
@@ -316,14 +202,52 @@ export type Services = {
   };
 };
 
+export type CaseStudy = {
+  _type: "caseStudy";
+  category?: "brand" | "product" | "web" | "motion";
+  heading?: string;
+  media?: Array<{
+    heading?: string;
+    caption?: string;
+    items?: Array<
+      | {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          _key: string;
+        }
+      | {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+          };
+          _type: "file";
+          _key: string;
+        }
+    >;
+    _type: "mediaGroup";
+    _key: string;
+  }>;
+  credits?: Array<{
+    role?: string;
+    names?: Array<string>;
+    _key: string;
+  }>;
+};
+
 export type Preview = {
-  _id: string;
   _type: "preview";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  title?: string;
-  slug?: Slug;
+  category?: "brand" | "product" | "web" | "motion";
+  heading?: string;
+  caption?: string;
   media?: Array<
     | {
         asset?: {
@@ -348,81 +272,26 @@ export type Preview = {
         _key: string;
       }
   >;
-  headline?: string;
-  description?: string;
   link?: string;
+  date?: string;
 };
 
-export type CaseStudy = {
+export type Work = {
   _id: string;
-  _type: "caseStudy";
+  _type: "work";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  title?: string;
+  name?: string;
   slug?: Slug;
-  heroImage?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-    };
-    hotspot?: SanityImageHotspot;
-    crop?: SanityImageCrop;
-    _type: "image";
-  };
-  headline?: string;
-  content?: Array<
-    | {
-        children?: Array<{
-          marks?: Array<string>;
-          text?: string;
-          _type: "span";
-          _key: string;
-        }>;
-        style?:
-          | "normal"
-          | "h1"
-          | "h2"
-          | "h3"
-          | "h4"
-          | "h5"
-          | "h6"
-          | "blockquote";
-        listItem?: "bullet" | "number";
-        markDefs?: Array<{
-          href?: string;
-          _type: "link";
-          _key: string;
-        }>;
-        level?: number;
-        _type: "textBlock";
+  projects?: Array<
+    | ({
         _key: string;
-      }
-    | {
-        media?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        size?: string;
-        _type: "imageVideo";
+      } & Preview)
+    | ({
         _key: string;
-      }
+      } & CaseStudy)
   >;
-  credits?: Array<{
-    name?: string;
-    team?: string;
-    _type: "credit";
-    _key: string;
-  }>;
 };
 
 export type Slug = {
@@ -639,11 +508,10 @@ export type AllSanitySchemaTypes =
   | Geopoint
   | Team
   | Settings
-  | Project
-  | Work
   | Services
-  | Preview
   | CaseStudy
+  | Preview
+  | Work
   | Slug
   | Home
   | SanityFileAsset
@@ -655,7 +523,7 @@ export type AllSanitySchemaTypes =
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/queries.ts
 // Variable: HOME_QUERY
-// Query:   *[_type == "home"][0] {    missionStatement  }
+// Query: *[_type == "home"][0] {    missionStatement  }
 export type HOME_QUERYResult = {
   missionStatement: Array<{
     children?: Array<{
@@ -676,3 +544,11 @@ export type HOME_QUERYResult = {
     _key: string;
   }> | null;
 } | null;
+
+// Query TypeMap
+import "@sanity/client";
+declare module "@sanity/client" {
+  interface SanityQueries {
+    '\n  *[_type == "home"][0] {\n    missionStatement\n  }\n': HOME_QUERYResult;
+  }
+}
