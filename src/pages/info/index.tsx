@@ -65,6 +65,12 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
+    if (latest === 0) {
+      setCurrentMediaGroup(0);
+      setIsViewingInfo(false);
+      return;
+    }
+
     // find out what is the current viewing group
     let targetSection = 0;
     for (let i = 0; i < mediaGroupYPositions.length; i++) {
