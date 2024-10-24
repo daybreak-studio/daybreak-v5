@@ -130,6 +130,10 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
               boundInfo={mediaGroupYPositions[groupIndex]}
               shouldShirnk={isViewingInfo}
               onClick={(e) => {
+                if (isViewingInfo) {
+                  setIsViewingInfo(false);
+                  return;
+                }
                 e.stopPropagation();
                 e.preventDefault();
                 setIsViewingInfo(true);
