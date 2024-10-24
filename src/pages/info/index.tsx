@@ -97,7 +97,7 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
       const target = mediaGroupMeasurement.anchorY + 110 + halfHeight * 0.3;
       window.scrollTo({ top: target, behavior: "smooth" });
     },
-    [mediaGroupYPositions, screenOffset],
+    [mediaGroupYPositions],
   );
 
   const handleNextMediaGroup = useCallback(() => {
