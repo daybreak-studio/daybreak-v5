@@ -152,6 +152,7 @@ const ZoomGrid: React.FC<ZoomGridProps> = ({
       animate(x, 0, { type: "spring", stiffness: 150, damping: 20 });
       animate(y, 0, { type: "spring", stiffness: 150, damping: 20 });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [focusedIndex]);
 
   const isZoomedIn = focusedIndex !== null;
