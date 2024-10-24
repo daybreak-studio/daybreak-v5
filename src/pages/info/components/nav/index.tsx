@@ -80,7 +80,7 @@ const CaseStudyNav = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onNextMediaGroup, onPrevMediaGroup]);
+  }, [onCollapse, onNextMediaGroup, onPrevMediaGroup]);
 
   return (
     <div className="fixed bottom-4 left-0 right-0 z-50 px-4">
