@@ -25,7 +25,8 @@ export const VisitProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const markVisitComplete = () => {
     setVisitStatus("returning");
-    Cookies.set("hasVisitedBefore", "true", { expires: 1 });
+    const thirtyMinutes = new Date(new Date().getTime() + 30 * 60 * 1000);
+    Cookies.set("hasVisitedBefore", "true", { expires: thirtyMinutes });
   };
 
   return (
