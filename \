@@ -1,0 +1,81 @@
+import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+
+// import icons
+import IconChevronDown from "/public/icon-chevron-down.svg";
+import IconChevronUp from "/public/icon-chevron-up.svg";
+import IconCross from "/public/icon-cross.svg";
+
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import MorphingSheet from "./MorphingSheet";
+import Button from "@/components/button";
+import { useClickOutside } from "@sanity/ui";
+
+type HighlightInfo = {
+  heading: string;
+  caption: string;
+};
+
+type Props = {
+  highlightInfoArr: HighlightInfo[];
+  currentInfoIndex: number;
+};
+
+const CaseStudyNav = ({ highlightInfoArr, currentInfoIndex }: Props) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const containerRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const currentInfo =
+    currentInfoIndex === undefined
+      ? undefined
+      : highlightInfoArr[currentInfoIndex];
+  const isViewingInfo = currentInfo !== undefined;
+
+  useClickOutside(() => setIsExpanded(false), containerRef);
+  return (
+    <div ref={containerRef} className="fixed bottom-4 left-0 right-0 z-50 px-4">
+      <MorphingSheet
+        rounded={isViewingInfo ? 32 : 16}
+        withBorder={isViewingInfo}
+      >
+        {!isExpanded && (
+          <>
+            <button>{"<"}</button>
+            <motion.button
+              key={"collapsed"}
+              initial={{ opacity: 0 }}
+              animate={{
+                transition: {
+                  duration: 0.4,
+                },
+                opacity: 1,
+              }}
+              exit={{ opacity: 0 }}
+              className="px-4 py-2"
+              onClick={() => setIsExpanded(true)}
+            >
+              Info
+            </motion.button>
+          </>
+        )}
+
+        {isExpanded && currentInfo && (
+          <motion.div
+            key={`expanded-${currentInfoIndex}`}
+            className="flex w-screen max-w-[400px] flex-col gap-2 px-6 py-5"
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{ opacity: 0 }}
+          >
+            <div className="text-md flex w-full justify-between opacity-70">
+              <h4>{currentInfo.heading}</h4>
+              <Button icon={IconCross} onClick={() => setIsExpanded(false)} />
+            </div>
+            <p className="text-sm opacity-50">{currentInfo.caption}</p>
+          </motion.div>
+        )}
+      </MorphingSheet>
+    </div>
+  );
+};
+export default CaseStudyNav;
