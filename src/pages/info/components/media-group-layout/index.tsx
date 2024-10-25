@@ -73,7 +73,7 @@ const MediaGroupLayout = forwardRef<HTMLDivElement, Props>(
           onMouseUp={(e) => e.stopPropagation()}
           className="grid cursor-pointer grid-cols-1 gap-4 md:grid-cols-2"
         >
-          {mediaGroup.items.map((item, itemIndex) => {
+          {mediaGroup.items.map((item: any, itemIndex: number) => {
             const isSingleItem = mediaGroup.items.length === 1;
             if (item._type === "image") {
               return (
