@@ -73,34 +73,35 @@ const MediaGroupLayout = forwardRef<HTMLDivElement, Props>(
           onMouseUp={(e) => e.stopPropagation()}
           className="grid cursor-pointer grid-cols-1 gap-4 md:grid-cols-2"
         >
-          {mediaGroup.items?.map((item: any, itemIndex: number) => {
-            const isSingleItem = mediaGroup.items.length === 1;
-            if (item._type === "image") {
-              return (
-                <Image
-                  key={`${groupIndex}-${itemIndex}`}
-                  className={`relative w-full ${isSingleItem && "md:col-span-2"} h-full w-full rounded-lg object-cover`}
-                  src={item.asset.url}
-                  alt="Case Study Image"
-                  width={2000}
-                  height={2000}
-                  priority
-                />
-              );
-            } else if (item._type === "file") {
-              return (
-                <video
-                  key={`${groupIndex}-${itemIndex}`}
-                  className={`h-full w-full rounded-lg ${isSingleItem && "md:col-span-2"}`}
-                  src={item.asset.url}
-                  loop
-                  autoPlay
-                  muted
-                />
-              );
-            }
-            return null;
-          })}
+          {mediaGroup.items &&
+            mediaGroup.items.map((item: any, itemIndex: number) => {
+              const isSingleItem = mediaGroup.items.length === 1;
+              if (item._type === "image") {
+                return (
+                  <Image
+                    key={`${groupIndex}-${itemIndex}`}
+                    className={`relative w-full ${isSingleItem && "md:col-span-2"} h-full w-full rounded-lg object-cover`}
+                    src={item.asset.url}
+                    alt="Case Study Image"
+                    width={2000}
+                    height={2000}
+                    priority
+                  />
+                );
+              } else if (item._type === "file") {
+                return (
+                  <video
+                    key={`${groupIndex}-${itemIndex}`}
+                    className={`h-full w-full rounded-lg ${isSingleItem && "md:col-span-2"}`}
+                    src={item.asset.url}
+                    loop
+                    autoPlay
+                    muted
+                  />
+                );
+              }
+              return null;
+            })}
         </motion.div>
       </motion.div>
     );
