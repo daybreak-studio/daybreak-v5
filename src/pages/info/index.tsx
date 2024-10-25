@@ -1,6 +1,7 @@
 import React, {
   MutableRefObject,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -15,7 +16,6 @@ import { CaseStudy } from "@/sanity/types";
 
 // Update the Info component
 export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
-  console.log(caseStudy);
   const [currentMediaGroup, setCurrentMediaGroup] = useState<number>(0);
   const [isViewingInfo, setIsViewingInfo] = useState(false);
   const mediaGroupRefs = useRef([]) as MutableRefObject<HTMLDivElement[]>;
@@ -50,9 +50,22 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
 
   const { scrollY } = useScroll();
 
+  const docRef = useRef() as MutableRefObject<HTMLElement>;
+  useEffect(() => {
+    docRef.current = document.body;
+  }, []);
+  const pageSize = useResizeObserver({ ref: docRef });
+
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (latest === 0) {
       setCurrentMediaGroup(0);
+      setIsViewingInfo(false);
+      return;
+    }
+    if (
+      pageSize.height !== undefined &&
+      latest >= pageSize.height - windowHeight - 200
+    ) {
       setIsViewingInfo(false);
       return;
     }
