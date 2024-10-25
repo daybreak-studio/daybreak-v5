@@ -11,31 +11,17 @@ import CaseStudyNav from "./components/nav";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useResizeObserver, useWindowSize } from "usehooks-ts";
 import MediaGroupLayout from "./components/media-group-layout";
-// import {caseStudy}
-
-export interface CaseStudy {
-  heading: string;
-  media: {
-    heading: string;
-    caption: string;
-    items: {
-      _type: "image" | "file";
-      asset: {
-        url: string;
-      };
-    }[];
-  }[];
-}
+import { CaseStudy } from "@/sanity/types";
 
 // Update the Info component
 export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
-  // console.log(caseStudy);
+  console.log(caseStudy);
   const [currentMediaGroup, setCurrentMediaGroup] = useState<number>(0);
   const [isViewingInfo, setIsViewingInfo] = useState(false);
   const mediaGroupRefs = useRef([]) as MutableRefObject<HTMLDivElement[]>;
 
   const inforArr = useMemo(() => {
-    return caseStudy.media.map((mediaGroup) => {
+    return caseStudy.media?.map((mediaGroup) => {
       return {
         heading: mediaGroup.heading,
         caption: mediaGroup.caption,
@@ -89,6 +75,34 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
     });
   });
 
+  const findNextGroupWithCaption = useCallback(
+    (
+      startIndex: number,
+      direction: 1 | -1,
+      shouldSkipEmpty: boolean = false,
+    ) => {
+      if (!caseStudy.media) return null;
+      let index = startIndex + direction;
+
+      while (index >= 0 && index < caseStudy.media.length) {
+        const mediaItem = caseStudy.media[index];
+
+        if (mediaItem.heading && mediaItem.caption) {
+          return index;
+        }
+
+        if (shouldSkipEmpty) {
+          index += direction;
+        } else {
+          return index;
+        }
+      }
+
+      return null;
+    },
+    [caseStudy],
+  );
+
   const navigateToMediaGroup = useCallback(
     (groupIndex: number) => {
       const mediaGroupMeasurement = mediaGroupYPositions[groupIndex];
@@ -101,12 +115,34 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
   );
 
   const handleNextMediaGroup = useCallback(() => {
-    navigateToMediaGroup(currentMediaGroup + 1);
-  }, [currentMediaGroup, navigateToMediaGroup]);
+    const nextGroup = findNextGroupWithCaption(
+      currentMediaGroup,
+      1,
+      isViewingInfo,
+    );
+    if (nextGroup === null) return;
+    navigateToMediaGroup(nextGroup);
+  }, [
+    currentMediaGroup,
+    findNextGroupWithCaption,
+    isViewingInfo,
+    navigateToMediaGroup,
+  ]);
 
   const handlePrevMediaGroup = useCallback(() => {
-    navigateToMediaGroup(currentMediaGroup - 1);
-  }, [currentMediaGroup, navigateToMediaGroup]);
+    const nextGroup = findNextGroupWithCaption(
+      currentMediaGroup,
+      -1,
+      isViewingInfo,
+    );
+    if (nextGroup === null) return;
+    navigateToMediaGroup(nextGroup);
+  }, [
+    currentMediaGroup,
+    findNextGroupWithCaption,
+    isViewingInfo,
+    navigateToMediaGroup,
+  ]);
 
   return (
     <div className="px-4 py-8 pt-48" ref={containerRef}>
@@ -116,14 +152,18 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
         onNextMediaGroup={handleNextMediaGroup}
         onPrevMediaGroup={handlePrevMediaGroup}
         canPrevMediaGroup={currentMediaGroup !== 0}
-        canNextMediaGroup={currentMediaGroup !== caseStudy.media.length - 1}
+        canNextMediaGroup={
+          caseStudy.media
+            ? currentMediaGroup !== caseStudy.media.length - 1
+            : false
+        }
         onExpand={() => setIsViewingInfo(true)}
         onCollapse={() => setIsViewingInfo(false)}
         isExpanded={isViewingInfo}
       />
       <h1 className="mb-8 py-24 text-center text-4xl">{caseStudy.heading}</h1>
-      <div className="space-y-4">
-        {caseStudy.media.map((mediaGroup, groupIndex) => {
+      <div className="flex flex-col gap-4">
+        {caseStudy.media?.map((mediaGroup, groupIndex) => {
           return (
             <MediaGroupLayout
               key={groupIndex}
@@ -136,7 +176,7 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
               boundInfo={mediaGroupYPositions[groupIndex]}
               shouldShirnk={isViewingInfo}
               onClick={(e) => {
-                if (isViewingInfo) {
+                if (isViewingInfo && groupIndex === currentMediaGroup) {
                   setIsViewingInfo(false);
                   return;
                 }
@@ -148,7 +188,23 @@ export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
             />
           );
         })}
-        <div className="h-screen"></div>
+        <div className="mx-auto mb-96 mt-44 grid w-full max-w-96 grid-cols-2 gap-y-6 text-sm">
+          {caseStudy.credits?.map((team, index) => {
+            return (
+              <React.Fragment key={index}>
+                <div className="flex flex-row">
+                  {team.role}
+                  <div className="mx-4 h-0 flex-grow translate-y-2 border-b border-gray-900 opacity-10" />
+                </div>
+                <div className="opacity-50">
+                  {team.names?.map((name, index) => (
+                    <div key={index}>{name}</div>
+                  ))}
+                </div>
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

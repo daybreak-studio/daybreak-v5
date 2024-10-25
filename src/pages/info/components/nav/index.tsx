@@ -17,14 +17,14 @@ import MorphingSheet from "@/components/morphing-sheet";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
 
 type HighlightInfo = {
-  heading: string;
-  caption: string;
+  heading?: string;
+  caption?: string;
 };
 
 type Props = {
   onExpand: () => void;
   onCollapse: () => void;
-  highlightInfoArr: HighlightInfo[];
+  highlightInfoArr?: HighlightInfo[];
   onNextMediaGroup: () => void;
   onPrevMediaGroup: () => void;
   canNextMediaGroup: boolean;
@@ -48,7 +48,7 @@ const CaseStudyNav = ({
   const currentInfo =
     currentInfoIndex === undefined
       ? undefined
-      : highlightInfoArr[currentInfoIndex];
+      : highlightInfoArr && highlightInfoArr[currentInfoIndex];
 
   useOnClickOutside(
     containerRef,
@@ -63,6 +63,15 @@ const CaseStudyNav = ({
       if (e.code === "Escape") {
         onCollapse();
       }
+
+      if (e.code === "Enter" && isExpanded) {
+        onCollapse();
+      }
+
+      if (e.code === "Enter" && !isExpanded) {
+        onExpand();
+      }
+
       if (e.code === "ArrowDown" || e.code === "Tab") {
         e.preventDefault();
         e.stopPropagation();
@@ -87,7 +96,7 @@ const CaseStudyNav = ({
       <MorphingSheet
         ref={containerRef}
         rounded={isExpanded ? 32 : 16}
-        withBorder={isExpanded}
+        withBorder={currentInfo?.heading ? isExpanded : false}
       >
         {!isExpanded && currentInfo?.heading && (
           <>
@@ -124,9 +133,9 @@ const CaseStudyNav = ({
           </>
         )}
 
-        {isExpanded && currentInfo && (
+        {isExpanded && currentInfo && currentInfo.heading && (
           <div className="relative">
-            {highlightInfoArr.map((info, index) => (
+            {highlightInfoArr?.map((info, index) => (
               <motion.div
                 key={`expanded-${index}`}
                 className="flex w-screen max-w-[400px] flex-col gap-2 px-6 py-5"
@@ -170,14 +179,14 @@ const CaseStudyNav = ({
                 )}
                 <div className="flex gap-1">
                   <IconButton
-                    disabled={!canNextMediaGroup}
-                    icon={IconChevronDown}
-                    onClick={onNextMediaGroup}
-                  />
-                  <IconButton
                     disabled={!canPrevMediaGroup}
                     icon={IconChevronUp}
                     onClick={onPrevMediaGroup}
+                  />
+                  <IconButton
+                    disabled={!canNextMediaGroup}
+                    icon={IconChevronDown}
+                    onClick={onNextMediaGroup}
                   />
                 </div>
               </motion.div>
