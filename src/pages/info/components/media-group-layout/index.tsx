@@ -1,9 +1,9 @@
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
 import { motion, useScroll, useTransform } from "framer-motion";
 import React, { forwardRef } from "react";
-import { MediaGroup } from "../../types";
 import Image from "next/image";
 import { useWindowSize } from "usehooks-ts";
+import { MediaGroup } from "../..";
 
 interface Props {
   groupIndex: number;
