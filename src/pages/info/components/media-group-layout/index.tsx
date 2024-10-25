@@ -3,12 +3,11 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import React, { forwardRef } from "react";
 import Image from "next/image";
 import { useWindowSize } from "usehooks-ts";
-import { MediaGroup } from "../..";
 
 interface Props {
   groupIndex: number;
   currentMediaGroup: number;
-  mediaGroup: MediaGroup;
+  mediaGroup: any;
   boundInfo: {
     anchorY: number;
     height: number;
