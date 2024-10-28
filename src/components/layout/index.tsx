@@ -15,19 +15,14 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   return (
-    <AnimatePresence
-      mode="wait"
-      onExitComplete={() => {
-        window.scrollTo(0, 0);
-      }}
-    >
+    <AnimatePresence mode="wait">
       <motion.div
         key={router.asPath}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{
-          duration: visitStatus === "new" ? 1 : 0.25,
+          duration: visitStatus === "new" ? 1 : 0.4,
           delay: visitStatus === "new" ? 1.5 : 0,
         }}
       >
