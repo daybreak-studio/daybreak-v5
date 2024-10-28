@@ -65,7 +65,7 @@ export default function Navigation() {
       ],
       [
         ".container",
-        { backgroundColor: "rgb(255,255,255,0.5)" },
+        { backgroundColor: "rgb(250,250,250,1)" },
         { duration: 0.5, ease: [0.76, 0, 0.24, 1], at: "<" },
       ],
       [
@@ -88,7 +88,7 @@ export default function Navigation() {
       ".container",
       {
         boxShadow: "rgba(0, 0, 0, 0.08) 0px 2px 8px 0px",
-        border: "1px solid rgba(0, 0, 0, 1)",
+        border: "1px solid rgba(0, 0, 0, 0.05)",
       },
       { duration: 1, ease: [0.76, 0, 0.24, 1] },
     );
@@ -124,7 +124,6 @@ export default function Navigation() {
         {tabs.map((tab) =>
           tab.href === "/" ? (
             <Link
-              scroll={false}
               key={tab.href}
               href="/"
               className="relative flex items-stretch"
@@ -182,7 +181,7 @@ export default function Navigation() {
                 initial={{ opacity: visitStatus === "new" ? 0 : 1 }}
                 className="relative px-4 py-3 text-xs text-zinc-500"
               >
-                <Link scroll={false} href={tab.href} className="relative z-10">
+                <Link href={tab.href} className="relative z-10">
                   {tab.label}
                 </Link>
                 {activePath === tab.href && (
@@ -200,11 +199,18 @@ export default function Navigation() {
 const Pill = ({ isFirstVisit }: { isFirstVisit: boolean }) => {
   return (
     <motion.span
+      layout
+      // layoutRoot
       layoutId="pill"
       className="pill absolute inset-0 z-0 bg-white"
-      style={{ borderRadius: "12px" }}
+      style={{ borderRadius: "12px", originY: "top" }}
       initial={{ opacity: isFirstVisit ? 0 : 1 }}
-      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+      transition={{
+        type: "spring",
+        bounce: 0.2,
+        duration: 0.4,
+        ease: "easeOut",
+      }}
     />
   );
 };
