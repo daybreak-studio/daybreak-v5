@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { forwardRef, MutableRefObject, useRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import { useResizeObserver } from "usehooks-ts";
 
 type Props = {

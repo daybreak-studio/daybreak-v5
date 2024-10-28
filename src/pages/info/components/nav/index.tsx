@@ -1,15 +1,9 @@
-import {
-  AnimatePresence,
-  motion,
-  useMotionValueEvent,
-  useScroll,
-} from "framer-motion";
+import { motion } from "framer-motion";
 
 // import icons
 import IconChevronDown from "/public/icon-chevron-down.svg";
 import IconChevronUp from "/public/icon-chevron-up.svg";
 import IconCross from "/public/icon-cross.svg";
-
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import IconButton from "@/components/buttons/icon-button";
 import { useOnClickOutside } from "usehooks-ts";
@@ -89,7 +83,7 @@ const CaseStudyNav = ({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onCollapse, onNextMediaGroup, onPrevMediaGroup]);
+  }, [onCollapse, onNextMediaGroup, onPrevMediaGroup, isExpanded, onExpand]);
 
   return (
     <div className="fixed bottom-4 left-0 right-0 z-50 px-4">

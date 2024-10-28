@@ -18,17 +18,19 @@ class FileBuilder {
   private asset: SanityReference | null = null;
 
   file(asset: FileAsset): FileBuilder {
-    if ("asset" in asset) {
+    if ("asset" in asset && asset.asset) {
       this.asset = asset.asset;
-    } else {
+    } else if ("_ref" in asset) {
       this.asset = asset;
+    } else {
+      throw new Error("Invalid file asset");
     }
     return this;
   }
 
   url(): string {
-    if (!this.asset) {
-      throw new Error("No file asset specified");
+    if (!this.asset || !this.asset._ref) {
+      throw new Error("No valid file asset specified");
     }
 
     if (!projectId || !dataset) {
@@ -36,7 +38,11 @@ class FileBuilder {
     }
 
     const assetRef = this.asset._ref;
-    const [, assetId, extension] = assetRef.split("-");
+    if (!assetRef.startsWith("file-")) {
+      throw new Error("Invalid file asset reference");
+    }
+
+    const [assetId, extension] = assetRef.split("-");
 
     return buildFileUrl({
       projectId,
