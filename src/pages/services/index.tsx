@@ -9,7 +9,7 @@ export default function Services({ data }: { data: Services }) {
   return (
     <div>
       <div className="h-[100vh] bg-red-200"></div>
-      <div className="p-96 text-center">Insert your section here</div>
+      <div className="p-96 text-center">Insert your section here.</div>
       <div className="h-[100vh] bg-blue-200"></div>
     </div>
   );
