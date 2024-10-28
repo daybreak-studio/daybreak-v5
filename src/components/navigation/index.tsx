@@ -86,7 +86,10 @@ export default function Navigation() {
     );
     await animate(
       ".container",
-      { "--shadow-opacity": 1 },
+      {
+        boxShadow: "rgba(0, 0, 0, 0.08) 0px 2px 8px 0px",
+        border: "1px solid rgba(0, 0, 0, 1)",
+      },
       { duration: 1, ease: [0.76, 0, 0.24, 1] },
     );
   };
@@ -103,18 +106,25 @@ export default function Navigation() {
       }}
     >
       <motion.div
-        className="container relative mt-4 flex w-fit items-stretch justify-center rounded-2xl p-1"
+        className={`container relative mt-4 flex w-fit items-stretch justify-center rounded-2xl p-1`}
         initial={{
+          boxShadow:
+            visitStatus === "new"
+              ? "none"
+              : "rgba(0, 0, 0, 0.08) 0px 2px 8px 0px",
+          border:
+            visitStatus === "new" ? "none" : "1px solid rgba(0, 0, 0, 0.05)",
           opacity: visitStatus === "new" ? 0 : 1,
           backgroundColor:
             visitStatus === "new"
               ? "rgb(255,255,255,0)"
-              : "rgb(248,248,248,0.75)",
+              : "rgb(250,250,250 ,1)",
         }}
       >
         {tabs.map((tab) =>
           tab.href === "/" ? (
             <Link
+              scroll={false}
               key={tab.href}
               href="/"
               className="relative flex items-stretch"
@@ -159,7 +169,7 @@ export default function Navigation() {
           ) : null,
         )}
         <motion.div
-          className="items flex"
+          className="items relative flex"
           initial={{
             opacity: visitStatus === "new" ? 0 : 1,
             width: visitStatus === "new" ? 0 : "auto",
@@ -172,7 +182,7 @@ export default function Navigation() {
                 initial={{ opacity: visitStatus === "new" ? 0 : 1 }}
                 className="relative px-4 py-3 text-xs text-zinc-500"
               >
-                <Link href={tab.href} className="relative z-10">
+                <Link scroll={false} href={tab.href} className="relative z-10">
                   {tab.label}
                 </Link>
                 {activePath === tab.href && (

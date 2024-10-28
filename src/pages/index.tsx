@@ -16,8 +16,8 @@ import Media from "@/components/widgets/media";
 import Article from "@/components/article";
 // Type imports
 import { LayoutProps } from "@/components/grid/props";
+import Navigation from "@/components/navigation";
 import Layout from "@/components/layout";
-
 function transformWidgetsToLayout(widgets: Home["widgets"]) {
   if (!widgets) return [];
 
@@ -80,64 +80,59 @@ export default function Home({ data }: { data: Home }) {
   const layout = transformWidgetsToLayout(data.widgets);
 
   return (
-    <Layout>
-      <main className="relative min-h-[200vh]">
-        <motion.div
-          className="fixed inset-0 z-0"
-          style={{
-            background:
-              "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
-          }}
-        >
-          <motion.div>
-            <WidgetGrid
-              layout={layout}
-              heading="A technology first design studio"
-              // debug
-            />
-          </motion.div>
+    <main className="relative min-h-[200vh]">
+      <motion.div
+        className="fixed inset-0 z-0"
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
+        }}
+      >
+        <motion.div>
+          <WidgetGrid
+            layout={layout}
+            heading="A technology first design studio"
+            // debug
+          />
         </motion.div>
-        {/* Drawer Content */}
-        {windowHeight !== null && data && (
-          <Drawer windowHeight={windowHeight}>
-            {/* Mission Statement */}
-            <div className="p-12">
-              {data.missionStatement && (
-                <Reveal>
-                  <div className="mb-64 md:w-7/12">
-                    <PortableText
-                      value={data.missionStatement}
-                      components={components}
-                    />
-                  </div>
-                </Reveal>
+      </motion.div>
+      {/* Drawer Content */}
+      {windowHeight !== null && data && (
+        <Drawer windowHeight={windowHeight}>
+          {/* Mission Statement */}
+          <div className="p-12">
+            {data.missionStatement && (
+              <Reveal>
+                <div className="mb-64 md:w-7/12">
+                  <PortableText
+                    value={data.missionStatement}
+                    components={components}
+                  />
+                </div>
+              </Reveal>
+            )}
+            {/* About Us */}
+            <Reveal>
+              <h2 className="mb-4 text-xl text-zinc-400">About Us</h2>
+              {data?.aboutUs && (
+                <div className="mb-64 md:w-7/12">
+                  <PortableText value={data.aboutUs} components={components} />
+                </div>
               )}
-              {/* About Us */}
-              <Reveal>
-                <h2 className="mb-4 text-xl text-zinc-400">About Us</h2>
-                {data?.aboutUs && (
-                  <div className="mb-64 md:w-7/12">
-                    <PortableText
-                      value={data.aboutUs}
-                      components={components}
-                    />
-                  </div>
-                )}
-              </Reveal>
-              {/* Newsfeed */}
-              <Reveal>
-                <h2 className="mb-4 text-xl text-zinc-400">Newsfeed</h2>
-              </Reveal>
-              <div className="md:grid md:grid-cols-2 md:gap-6 xl:grid-cols-3">
-                {data?.newsfeed?.map((article) => (
-                  <Article key={article._key} article={article} />
-                ))}
-              </div>
+            </Reveal>
+            {/* Newsfeed */}
+            <Reveal>
+              <h2 className="mb-4 text-xl text-zinc-400">Newsfeed</h2>
+            </Reveal>
+            <div className="md:grid md:grid-cols-2 md:gap-6 xl:grid-cols-3">
+              {data?.newsfeed?.map((article) => (
+                <Article key={article._key} article={article} />
+              ))}
             </div>
-          </Drawer>
-        )}
-      </main>
-    </Layout>
+          </div>
+        </Drawer>
+      )}
+    </main>
   );
 }
 
@@ -163,6 +158,7 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   }
 }`;
+
   const data = await client.fetch(query);
   console.log(data);
 
