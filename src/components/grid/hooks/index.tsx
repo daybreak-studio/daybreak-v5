@@ -20,12 +20,13 @@ export const useBreakpoint = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      const width = window.outerWidth;
-      if (width > 1920) {
+      const width = window.innerWidth;
+      console.log(width);
+      if (width > 1280) {
         setBreakpoint("xl");
-      } else if (width > 834) {
+      } else if (width > 1024) {
         setBreakpoint("lg");
-      } else if (width > 744) {
+      } else if (width > 768) {
         setBreakpoint("md");
       } else {
         setBreakpoint("sm");

@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 
 // import icons
-import IconChevronDown from "/public/icon-chevron-down.svg";
-import IconChevronUp from "/public/icon-chevron-up.svg";
-import IconCross from "/public/icon-cross.svg";
+import IconChevronDown from "/public/icons/icon-chevron-down.svg";
+import IconChevronUp from "/public/icons/icon-chevron-up.svg";
+import IconCross from "/public/icons/icon-cross.svg";
 import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import IconButton from "@/components/buttons/icon-button";
 import { useOnClickOutside } from "usehooks-ts";
