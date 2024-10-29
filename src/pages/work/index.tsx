@@ -1,8 +1,9 @@
-import { GetStaticProps } from "next";
+import { GetStaticProps, GetStaticPaths } from "next";
 import { client } from "@/sanity/lib/client";
 import { Work } from "@/sanity/types";
 import Image from "next/image";
 import { urlFor, fileBuilder } from "@/sanity/lib/builder";
+import Link from "next/link";
 
 export default function Works({ data }: { data: Work[] }) {
   const getFirstMediaAsset = (work: Work) => {
@@ -50,23 +51,25 @@ export default function Works({ data }: { data: Work[] }) {
         console.log(mediaUrl);
 
         return (
-          <div key={work._id}>
-            <h2>{work.name}</h2>
-            {mediaAsset._ref.startsWith("image-") && (
-              <Image
-                src={mediaUrl}
-                alt={work.name ?? ""}
-                width={1000}
-                height={1000}
-              />
-            )}
-            {mediaAsset._ref.startsWith("file-") && (
-              <video width="1000" autoPlay muted>
-                <source src={mediaUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            )}
-          </div>
+          <Link key={work._id} href={`/work/${work?.slug?.current}`}>
+            <div>
+              <h2>{work.name}</h2>
+              {mediaAsset._ref.startsWith("image-") && (
+                <Image
+                  src={mediaUrl}
+                  alt={work.name ?? ""}
+                  width={1000}
+                  height={1000}
+                />
+              )}
+              {mediaAsset._ref.startsWith("file-") && (
+                <video width="1000" autoPlay muted>
+                  <source src={mediaUrl} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              )}
+            </div>
+          </Link>
         );
       })}
     </div>
@@ -75,7 +78,6 @@ export default function Works({ data }: { data: Work[] }) {
 
 export const getStaticProps: GetStaticProps = async () => {
   const query = `*[_type == "work"][!(_id in path('drafts.**'))]`;
-
   const data = await client.fetch<Work[]>(query);
 
   return {

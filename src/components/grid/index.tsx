@@ -75,10 +75,10 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
 }) => {
   const breakpoints: GridProps.Settings = {
     // Proportional to Figma design, but rowHeight can be used as a scaling factor for the entire widget grid to get larger or smaller based on viewport size.
-    xl: { rowHeight: 180, margin: [32, 32] },
-    lg: { rowHeight: 160, margin: [16, 16] },
-    md: { rowHeight: 120, margin: [22, 22] },
-    sm: { rowHeight: 110, margin: [19, 19] },
+    xl: { rowHeight: 160, margin: [32, 32] },
+    lg: { rowHeight: 120, margin: [16, 16] },
+    md: { rowHeight: 110, margin: [22, 22] },
+    sm: { rowHeight: 100, margin: [19, 19] },
   };
   const breakpoint = useBreakpoint() as keyof typeof breakpoints;
   const settings = breakpoints[breakpoint];
@@ -109,7 +109,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
 
   return (
     <div className="relative h-screen w-screen transition-all">
-      <div className="flex h-full w-full flex-col items-center justify-center gap-12">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-6 pt-12 xl:gap-10">
         {header ? (
           header
         ) : (
@@ -117,7 +117,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
             ref={ref}
             onMouseOver={replay}
             onFocus={replay}
-            className="line-clamp-2 h-24 w-72 text-center text-4xl text-zinc-400 xl:w-80"
+            className="line-clamp-2 h-24 w-72 text-center text-3xl text-zinc-400 xl:w-80 xl:text-4xl"
           ></h1>
         )}
         <div

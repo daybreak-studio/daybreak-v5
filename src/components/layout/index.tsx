@@ -17,6 +17,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <AnimatePresence mode="wait">
       <motion.div
+        className="pt-24"
         key={router.asPath}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

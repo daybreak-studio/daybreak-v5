@@ -78,18 +78,18 @@ export default function Navigation() {
           ease: [0.76, 0, 0.24, 1],
         },
       ],
+      [
+        ".container",
+        {
+          border: "1px solid rgba(0, 0, 0, 0.02)",
+          boxShadow: "rgba(0, 0, 0, 0.04) 0px 2px 8px 0px",
+        },
+        { duration: 0.2, ease: [0.76, 0, 0.24, 1] },
+      ],
     ]);
     await animate(
       ".pill",
       { opacity: 1 },
-      { duration: 1, ease: [0.76, 0, 0.24, 1] },
-    );
-    await animate(
-      ".container",
-      {
-        boxShadow: "rgba(0, 0, 0, 0.08) 0px 2px 8px 0px",
-        border: "1px solid rgba(0, 0, 0, 0.05)",
-      },
       { duration: 1, ease: [0.76, 0, 0.24, 1] },
     );
   };
@@ -97,6 +97,10 @@ export default function Navigation() {
   if (isLoading) {
     return null; // or a loading spinner
   }
+
+  const pathParts = activePath.split("/").filter(Boolean); // filter(Boolean) removes empty strings
+  const basePath = pathParts.length > 0 ? `/${pathParts[0]}` : "/"; // Prepend a slash to the first part
+  const isValidPath = tabs.some((tab) => tab.href === basePath);
 
   return (
     <motion.nav
@@ -161,7 +165,7 @@ export default function Navigation() {
                   </motion.div>
                 </motion.div>
               </motion.div>
-              {activePath === tab.href && (
+              {isValidPath && basePath === tab.href && (
                 <Pill isFirstVisit={visitStatus === "new"} />
               )}
             </Link>
@@ -184,7 +188,7 @@ export default function Navigation() {
                 <Link href={tab.href} className="relative z-10">
                   {tab.label}
                 </Link>
-                {activePath === tab.href && (
+                {isValidPath && basePath === tab.href && (
                   <Pill isFirstVisit={visitStatus === "new"} />
                 )}
               </motion.h1>
