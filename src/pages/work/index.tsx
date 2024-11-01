@@ -1,10 +1,9 @@
 import { GetStaticProps, GetStaticPaths } from "next";
-import { client } from "@/sanity/lib/client";
-import { Work } from "@/sanity/types";
+import { worksApi } from "@/sanity/lib/work";
 import Image from "next/image";
-import { assetUrlFor } from "@/sanity/lib/builder";
 import Link from "next/link";
-
+import { Work } from "@/sanity/types";
+import { assetUrlFor } from "@/sanity/lib/builder";
 export default function Works({ data }: { data: Work[] }) {
   const getFirstMediaAsset = (work: Work) => {
     // console.log(work);
@@ -61,13 +60,10 @@ export default function Works({ data }: { data: Work[] }) {
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const query = `*[_type == "work"][!(_id in path('drafts.**'))]`;
-  const data = await client.fetch<Work[]>(query);
+  const data = await worksApi.getAllWorks();
 
   return {
-    props: {
-      data,
-    },
+    props: { data },
     revalidate: 60,
   };
 };

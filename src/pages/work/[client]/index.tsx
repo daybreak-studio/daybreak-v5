@@ -1,50 +1,13 @@
 // src/pages/work/[client]/index.tsx
 import { GetStaticProps, GetStaticPaths } from "next";
-import { client } from "@/sanity/lib/client";
-import { CaseStudy, Preview, Work } from "@/sanity/types"; // Import the Work type
+import { worksApi } from "@/sanity/lib/work";
+import { Work } from "@/sanity/types";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { assetUrlFor } from "@/sanity/lib/builder";
-import Image from "next/image";
-// Function to fetch work data by slug
-const fetchWorkBySlug = async (slug: string): Promise<Work> => {
-  const query = `*[_type == "work" && slug.current == $slug][0]`;
-  const data = await client.fetch<Work>(query, { slug });
-  return data;
-};
-
-// Function to fetch all client slugs
-const fetchAllClientSlugs = async (): Promise<string[]> => {
-  const query = `*[_type == "work"]{slug}`;
-  const data = await client.fetch<{ slug: { current: string } }[]>(query);
-  return data.map((work) => work.slug.current);
-};
-
-const ProjectPreview = ({ project }: { project: Preview }) => {
-  console.log(project);
-  return (
-    <div>
-      <h1>{project._type}</h1>
-      <h2>{project.heading}</h2>
-      <p>{project.caption}</p>
-      {/* Add more project details as needed */}
-    </div>
-  );
-};
-
-const ProjectCaseStudy = ({ project }: { project: CaseStudy }) => {
-  console.log(project);
-
-  return (
-    <div>
-      <h1>{project._type}</h1>
-      <h2>{project.heading}</h2>
-      <p>{project.category}</p>
-      {/* Add more case study details as needed */}
-    </div>
-  );
-};
-
+import ProjectPreview from "./[project]/components/preview";
+import ProjectCaseStudy from "./[project]/components/case-study";
+import { Preview, CaseStudy } from "@/sanity/types";
 const ProjectSelector = ({ data }: { data: Work }) => {
   const { name, slug, projects } = data;
   return (
@@ -64,47 +27,65 @@ const ProjectSelector = ({ data }: { data: Work }) => {
   );
 };
 
-const ClientWorksPage = ({ data }: { data: Work }) => {
-  const { name, slug, projects } = data; // Updated reference
-  console.log(data);
+// const ClientWorksPage = ({ data }: { data: Work }) => {
+//   const router = useRouter();
+//   const { projects, slug } = data;
 
-  return (
-    <div>
-      {projects?.length === 1 ? (
-        // Conditional rendering based on project type
-        projects[0]._type === "preview" ? (
-          <ProjectPreview project={projects[0] as Preview} />
-        ) : projects[0]._type === "caseStudy" ? (
-          <ProjectCaseStudy project={projects[0] as CaseStudy} />
-        ) : null // Fallback if the type doesn't match
-      ) : (
-        // Render project selector if there are multiple projects
-        <ProjectSelector data={data} />
-      )}
-    </div>
-  );
+//   useEffect(() => {
+//     // If there's only one project, redirect to the project page
+//     if (projects?.length === 1) {
+//       const project = projects[0];
+//       // Use replace to avoid adding to browser history
+//       router.replace(`/work/${slug?.current}/${project.category}`, undefined, {
+//         shallow: true, // Prevents unnecessary data fetching
+//       });
+//     }
+//   }, [projects, router, slug]);
+
+//   // If there's only one project, return null as we're redirecting
+//   if (projects?.length === 1) {
+//     return null;
+//   }
+
+//   // Otherwise show the project selector
+//   return <ProjectSelector data={data} />;
+// };
+
+const ClientWorksPage = ({ data }: { data: Work }) => {
+  const { projects } = data;
+
+  // If there's only one project, render it directly here
+  if (projects?.length === 1) {
+    const projectData = projects[0];
+
+    if (projectData._type === "preview") {
+      return <ProjectPreview project={projectData as Preview} />;
+    } else if (projectData._type === "caseStudy") {
+      return <ProjectCaseStudy project={projectData as CaseStudy} />;
+    }
+  }
+
+  // Otherwise show the project selector for multiple projects
+  return <ProjectSelector data={data} />;
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { client } = context.params as { client: string };
-  const data = await fetchWorkBySlug(client);
+  const data = await worksApi.getWorkBySlug(client);
 
   return {
-    props: {
-      data,
-    },
+    props: { data },
     revalidate: 60,
   };
 };
 
-export const getStaticPaths = async () => {
-  const slugs = await fetchAllClientSlugs();
-  const paths = slugs.map((slug) => ({
-    params: { client: slug },
-  }));
+export const getStaticPaths: GetStaticPaths = async () => {
+  const slugs = await worksApi.getAllClientSlugs();
 
   return {
-    paths,
+    paths: slugs.map((slug) => ({
+      params: { client: slug },
+    })),
     fallback: "blocking",
   };
 };
