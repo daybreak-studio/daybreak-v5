@@ -6,7 +6,8 @@ const tab = defineField({
   type: "object",
   fields: [
     defineField({ name: "heading", title: "Heading", type: "string" }),
-    defineField({ name: "copy", title: "Copy", type: "text" }),
+    defineField({ name: "title", title: "Title", type: "string" }),
+    defineField({ name: "caption", title: "Caption", type: "text" }),
     defineField({ name: "image", title: "Image", type: "image" }),
   ],
 });
