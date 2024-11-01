@@ -11,11 +11,11 @@ import { client } from "@/sanity/lib/client";
 import CaseStudyNav from "./components/nav";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useResizeObserver, useWindowSize } from "usehooks-ts";
-import MediaGroupLayout from "./components/media-group-layout";
-import { CaseStudy } from "@/sanity/types";
+import MediaGroupLayout from "./components/layout";
+import { CaseStudy as CaseStudyType } from "@/sanity/types";
 
 // Update the Info component
-export default function Info({ caseStudy }: { caseStudy: CaseStudy }) {
+export default function CaseStudy({ caseStudy }: { caseStudy: CaseStudyType }) {
   const [currentMediaGroup, setCurrentMediaGroup] = useState<number>(0);
   const [isViewingInfo, setIsViewingInfo] = useState(false);
   const mediaGroupRefs = useRef([]) as MutableRefObject<HTMLDivElement[]>;
