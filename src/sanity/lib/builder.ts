@@ -1,41 +1,35 @@
 import createImageUrlBuilder from "@sanity/image-url";
-import { buildFileUrl } from "@sanity/asset-utils";
-import { client } from "./client";
-import { dataset, projectId } from "../env";
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { buildFileUrl, SanityReference } from "@sanity/asset-utils";
+import { dataset, projectId } from "../env";
+// import { FileAsset } from "sanity";
 
-// Define a more flexible asset type
-type SanityReference = {
-  _ref: string;
-  _type?: string;
-};
-
-type AssetObject = {
-  _type?: "file";
-  asset: SanityReference;
-};
-
-type FileAsset = SanityReference | AssetObject;
-
+// Image URL builder
 const imageBuilder = createImageUrlBuilder({ projectId, dataset });
 
-export const urlFor = (source: SanityImageSource) => {
-  return imageBuilder.image(source).auto("format").fit("max");
+export const imageUrlFor = (source: SanityImageSource) => {
+  return imageBuilder.image(source);
 };
 
-export const fileBuilder = {
-  file: (asset: FileAsset) => {
-    const assetRef = "asset" in asset ? asset.asset._ref : asset._ref;
-    const [, assetId, extension] = assetRef.split("-");
+export const fileUrlFor = (fileAsset: any) => {
+  if (!fileAsset || !fileAsset.asset || !fileAsset.asset._ref) {
+    return "";
+  }
+  return `https://cdn.sanity.io/files/${projectId}/${dataset}/${fileAsset.asset._ref
+    .replace("file-", "")
+    .replace("-mp4", ".mp4")}`;
+};
 
-    return {
-      url: () =>
-        buildFileUrl({
-          projectId,
-          dataset,
-          assetId,
-          extension,
-        }),
-    };
-  },
+// Auto-detect asset type and use appropriate URL builder
+export const assetUrlFor = (asset: any) => {
+  if (!asset) return "";
+
+  if (asset._type === "image") {
+    return imageUrlFor(asset).url();
+  } else if (asset._type === "file" || asset._type === "video") {
+    return fileUrlFor(asset);
+  }
+
+  // If asset type is not recognized, return an empty string
+  return "";
 };
