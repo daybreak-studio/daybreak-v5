@@ -8,48 +8,37 @@ import { useEffect, useState } from "react";
 import ProjectPreview from "./[project]/components/preview";
 import ProjectCaseStudy from "./[project]/components/case-study";
 import { Preview, CaseStudy } from "@/sanity/types";
+import { getProjectFirstMedia } from "@/sanity/lib/media";
+import { assetUrlFor } from "@/sanity/lib/builder";
+import Image from "next/image";
+import { MediaRenderer } from "@/components/media-renderer";
+
 const ProjectSelector = ({ data }: { data: Work }) => {
   const { name, slug, projects } = data;
+
   return (
     <div>
       <h1>Select a Project Type</h1>
-      <div>
-        {projects?.map((project) => (
-          <Link
-            key={project._key}
-            href={`/work/${slug?.current}/${project.category}`}
-          >
-            <div>{project.category}</div>
-          </Link>
-        ))}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {projects?.map((project) => {
+          const mediaAsset = getProjectFirstMedia(project);
+          // const mediaUrl = assetUrlFor(mediaAsset);
+
+          return (
+            <Link
+              key={project._key}
+              href={`/work/${slug?.current}/${project.category}`}
+              className="relative"
+            >
+              <MediaRenderer media={mediaAsset} />
+              <div className="mt-2">{project.category}</div>
+            </Link>
+          );
+        })}
       </div>
     </div>
   );
 };
-
-// const ClientWorksPage = ({ data }: { data: Work }) => {
-//   const router = useRouter();
-//   const { projects, slug } = data;
-
-//   useEffect(() => {
-//     // If there's only one project, redirect to the project page
-//     if (projects?.length === 1) {
-//       const project = projects[0];
-//       // Use replace to avoid adding to browser history
-//       router.replace(`/work/${slug?.current}/${project.category}`, undefined, {
-//         shallow: true, // Prevents unnecessary data fetching
-//       });
-//     }
-//   }, [projects, router, slug]);
-
-//   // If there's only one project, return null as we're redirecting
-//   if (projects?.length === 1) {
-//     return null;
-//   }
-
-//   // Otherwise show the project selector
-//   return <ProjectSelector data={data} />;
-// };
 
 const ClientWorksPage = ({ data }: { data: Work }) => {
   const { projects } = data;

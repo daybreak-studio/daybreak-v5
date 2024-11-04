@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import React, { forwardRef } from "react";
 import Image from "next/image";
 import { useWindowSize } from "usehooks-ts";
+import { MediaRenderer } from "@/components/media-renderer";
 
 interface Props {
   groupIndex: number;
@@ -77,30 +78,45 @@ const MediaGroupLayout = forwardRef<HTMLDivElement, Props>(
             mediaGroup.items &&
             mediaGroup.items.map((item: any, itemIndex: number) => {
               const isSingleItem = mediaGroup.items.length === 1;
-              if (item._type === "image") {
-                return (
-                  <Image
-                    key={`${groupIndex}-${itemIndex}`}
-                    className={`relative w-full ${isSingleItem && "md:col-span-2"} h-full w-full rounded-lg object-cover`}
-                    src={item.asset.url}
-                    alt="Case Study Image"
-                    width={2000}
-                    height={2000}
-                    priority
+              return (
+                <div
+                  key={`${groupIndex}-${itemIndex}`}
+                  className={isSingleItem ? "md:col-span-2" : ""}
+                >
+                  <MediaRenderer
+                    media={item}
+                    className="rounded-lg"
+                    // Videos autoplay in case study view
+                    autoPlay={true}
+                    // Optional: add layoutId if you want transitions
+                    layoutId={`case-study-${groupIndex}-${itemIndex}`}
                   />
-                );
-              } else if (item._type === "file") {
-                return (
-                  <video
-                    key={`${groupIndex}-${itemIndex}`}
-                    className={`h-full w-full rounded-lg ${isSingleItem && "md:col-span-2"}`}
-                    src={item.asset.url}
-                    loop
-                    autoPlay
-                    muted
-                  />
-                );
-              }
+                </div>
+              );
+              // if (item._type === "image") {
+              //   return (
+              //     <Image
+              //       key={`${groupIndex}-${itemIndex}`}
+              //       className={`relative w-full ${isSingleItem && "md:col-span-2"} h-full w-full rounded-lg object-cover`}
+              //       src={item.asset.url}
+              //       alt="Case Study Image"
+              //       width={2000}
+              //       height={2000}
+              //       priority
+              //     />
+              //   );
+              // } else if (item._type === "file") {
+              //   return (
+              //     <video
+              //       key={`${groupIndex}-${itemIndex}`}
+              //       className={`h-full w-full rounded-lg ${isSingleItem && "md:col-span-2"}`}
+              //       src={item.asset.url}
+              //       loop
+              //       autoPlay
+              //       muted
+              //     />
+              //   );
+              // }
               return null;
             })}
         </motion.div>
