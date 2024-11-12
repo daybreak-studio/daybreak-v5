@@ -126,7 +126,8 @@ export type Services = {
     brand?: {
       tabs?: Array<{
         heading?: string;
-        copy?: string;
+        title?: string;
+        caption?: string;
         image?: {
           asset?: {
             _ref: string;
@@ -145,7 +146,8 @@ export type Services = {
     product?: {
       tabs?: Array<{
         heading?: string;
-        copy?: string;
+        title?: string;
+        caption?: string;
         image?: {
           asset?: {
             _ref: string;
@@ -164,7 +166,8 @@ export type Services = {
     motion?: {
       tabs?: Array<{
         heading?: string;
-        copy?: string;
+        title?: string;
+        caption?: string;
         image?: {
           asset?: {
             _ref: string;
@@ -183,7 +186,8 @@ export type Services = {
     development?: {
       tabs?: Array<{
         heading?: string;
-        copy?: string;
+        title?: string;
+        caption?: string;
         image?: {
           asset?: {
             _ref: string;
