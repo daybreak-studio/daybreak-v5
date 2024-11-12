@@ -661,7 +661,14 @@
                             },
                             "optional": true
                           },
-                          "copy": {
+                          "title": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          },
+                          "caption": {
                             "type": "objectAttribute",
                             "value": {
                               "type": "string"
@@ -776,7 +783,14 @@
                             },
                             "optional": true
                           },
-                          "copy": {
+                          "title": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          },
+                          "caption": {
                             "type": "objectAttribute",
                             "value": {
                               "type": "string"
@@ -891,7 +905,14 @@
                             },
                             "optional": true
                           },
-                          "copy": {
+                          "title": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          },
+                          "caption": {
                             "type": "objectAttribute",
                             "value": {
                               "type": "string"
@@ -1006,7 +1027,14 @@
                             },
                             "optional": true
                           },
-                          "copy": {
+                          "title": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
+                          },
+                          "caption": {
                             "type": "objectAttribute",
                             "value": {
                               "type": "string"

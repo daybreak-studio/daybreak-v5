@@ -19,11 +19,11 @@ export default function Layout({ children }: LayoutProps) {
       <motion.div
         className="pt-24"
         key={router.asPath}
-        initial={{ opacity: 0 }}
+        initial={{ opacity: visitStatus === "new" ? 0 : 1 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        exit={{ opacity: visitStatus === "new" ? 0 : 1 }}
         transition={{
-          duration: visitStatus === "new" ? 1 : 0.4,
+          duration: visitStatus === "new" ? 1 : 0,
           delay: visitStatus === "new" ? 1.5 : 0,
         }}
       >

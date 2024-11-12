@@ -4,8 +4,6 @@ import { GetStaticProps } from "next";
 import type { Services } from "@/sanity/types";
 
 export default function Services({ data }: { data: Services }) {
-  console.log(data);
-
   return (
     <div>
       <div className="h-[100vh] bg-red-200"></div>

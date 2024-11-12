@@ -18,6 +18,7 @@ export const work = defineType({
         source: "name",
         maxLength: 96,
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "projects",

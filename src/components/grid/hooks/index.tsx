@@ -21,7 +21,6 @@ export const useBreakpoint = () => {
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
-      console.log(width);
       if (width > 1280) {
         setBreakpoint("xl");
       } else if (width > 1024) {

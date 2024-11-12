@@ -160,8 +160,6 @@ export const getStaticProps: GetStaticProps = async () => {
 }`;
 
   const data = await client.fetch(query);
-  console.log(data);
-
   return {
     props: {
       data,
