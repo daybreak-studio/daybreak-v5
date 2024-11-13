@@ -1,73 +1,92 @@
-import { GetStaticPaths, GetStaticProps } from "next";
-import { client } from "@/sanity/lib/client";
+import * as Dialog from "@radix-ui/react-dialog";
+import { AnimatePresence, motion } from "framer-motion";
 import { Work } from "@/sanity/types";
-import ProjectMasonry from "@/components/project/masonry";
+import { useRouter } from "next/router";
+import { MediaRenderer } from "@/components/media-renderer";
+import { getWorkFirstMedia } from "@/sanity/lib/media";
 import ProjectSelector from "@/components/project/selector";
 import ProjectPreview from "@/components/project/preview";
 import ProjectCaseStudy from "@/components/project/case-study";
-import { useRouter } from "next/router";
 import { worksApi } from "@/sanity/lib/work";
-import { useEffect } from "react";
-interface WorkPageProps {
-  data: Work[];
-}
+import { Cross1Icon, Cross2Icon } from "@radix-ui/react-icons";
+import { GetStaticPaths, GetStaticProps } from "next";
+import { cn } from "@/lib/utils";
 
-export default function WorkPage({ data }: WorkPageProps) {
+export default function WorkPage({ data }: { data: Work[] }) {
   const router = useRouter();
   const { slug } = router.query;
+  const [clientSlug, projectSlug] = Array.isArray(slug)
+    ? slug
+    : [slug, undefined];
 
-  useEffect(() => {
-    // Add this page to browser history when mounted
-    if (!slug) {
-      window.history.pushState({ path: "/work" }, "", "/work");
-    }
+  return (
+    <div className="container mx-auto p-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {data.map((client) => {
+          const mediaAsset = getWorkFirstMedia(client);
+          if (!client.slug) return null;
 
-    const handlePopState = (event: PopStateEvent) => {
-      // If we're on a work item page and going back
-      if (slug && event.state?.path === "/work") {
-        router.push("/work", undefined, { shallow: true });
-        event.preventDefault();
-      }
-    };
+          return (
+            <Dialog.Root
+              key={client._id}
+              open={clientSlug === client.slug.current}
+              onOpenChange={(open) => {
+                router.push(
+                  open ? `/work/${client.slug?.current}` : "/work",
+                  undefined,
+                  { shallow: true },
+                );
+              }}
+            >
+              <Dialog.Trigger asChild>
+                <motion.div
+                  layoutId={`image-${client.slug.current}`}
+                  className="group relative aspect-square w-full cursor-pointer overflow-hidden rounded-2xl bg-white"
+                >
+                  <MediaRenderer
+                    media={mediaAsset}
+                    className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                  />
+                </motion.div>
+              </Dialog.Trigger>
 
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, [router, slug]);
+              <Dialog.Portal>
+                <Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-black/30 backdrop-blur-sm" />
+                <Dialog.Content
+                  className={cn(
+                    "fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
+                    "bg-white focus:outline-none",
+                    "data-[state=open]:animate-contentShow",
+                    "shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]",
+                    "w-[90vw] rounded-[40px] p-8",
+                    // Adjust max-width and height constraints
+                    client.projects && client.projects.length > 1
+                      ? "max-w-[800px]"
+                      : client.projects?.[0]._type === "preview"
+                        ? "max-h-[90vh] max-w-[1016px] overflow-y-auto" // Add max-height and scroll
+                        : "min-h-screen max-w-none",
+                  )}
+                >
+                  <div className="w-full">
+                    {client.projects && client.projects.length > 1 ? (
+                      <ProjectSelector data={client} />
+                    ) : client.projects?.[0]._type === "preview" ? (
+                      <ProjectPreview data={client} />
+                    ) : (
+                      <ProjectCaseStudy data={client} />
+                    )}
+                  </div>
 
-  const clientSlug = Array.isArray(slug) ? slug[0] : slug;
-  const projectSlug = Array.isArray(slug) ? slug[1] : undefined;
-
-  const currentClient = data.find((work) => work.slug?.current === clientSlug);
-
-  if (!currentClient?.projects) {
-    return <ProjectMasonry data={data} />;
-  }
-
-  if (currentClient.projects.length === 1) {
-    const project = currentClient.projects[0];
-    return project._type === "preview" ? (
-      <ProjectPreview data={currentClient} />
-    ) : (
-      <ProjectCaseStudy data={currentClient} />
-    );
-  }
-
-  if (!projectSlug) {
-    return <ProjectSelector data={currentClient} />;
-  }
-
-  const selectedProject = currentClient.projects.find(
-    (project) => project.category === projectSlug,
-  );
-
-  if (!selectedProject) {
-    return null;
-  }
-
-  return selectedProject._type === "preview" ? (
-    <ProjectPreview data={currentClient} />
-  ) : (
-    <ProjectCaseStudy data={currentClient} />
+                  <Dialog.Close className="absolute right-6 top-6 inline-flex size-[35px] appearance-none items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 focus:shadow-[0_0_0_2px] focus:shadow-gray-400 focus:outline-none">
+                    <Cross2Icon className="h-6 w-6" />
+                  </Dialog.Close>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
