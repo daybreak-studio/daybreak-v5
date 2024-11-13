@@ -1,5 +1,9 @@
-import { motion } from "framer-motion";
-
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useScroll,
+} from "framer-motion";
 // import icons
 import IconChevronDown from "/public/icons/icon-chevron-down.svg";
 import IconChevronUp from "/public/icons/icon-chevron-up.svg";
@@ -9,12 +13,10 @@ import IconButton from "@/components/buttons/icon-button";
 import { useOnClickOutside } from "usehooks-ts";
 import MorphingSheet from "@/components/morphing-sheet";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
-
 type HighlightInfo = {
   heading?: string;
   caption?: string;
 };
-
 type Props = {
   onExpand: () => void;
   onCollapse: () => void;
@@ -26,7 +28,6 @@ type Props = {
   currentInfoIndex: number;
   isExpanded: boolean;
 };
-
 const CaseStudyNav = ({
   highlightInfoArr,
   onNextMediaGroup,
@@ -43,7 +44,6 @@ const CaseStudyNav = ({
     currentInfoIndex === undefined
       ? undefined
       : highlightInfoArr && highlightInfoArr[currentInfoIndex];
-
   useOnClickOutside(
     containerRef,
     () => {
@@ -51,21 +51,17 @@ const CaseStudyNav = ({
     },
     "mouseup",
   );
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === "Escape") {
         onCollapse();
       }
-
       if (e.code === "Enter" && isExpanded) {
         onCollapse();
       }
-
       if (e.code === "Enter" && !isExpanded) {
         onExpand();
       }
-
       if (e.code === "ArrowDown" || e.code === "Tab") {
         e.preventDefault();
         e.stopPropagation();
@@ -77,14 +73,11 @@ const CaseStudyNav = ({
         onPrevMediaGroup();
       }
     };
-
     window.addEventListener("keydown", handleKeyDown);
-
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [onCollapse, onNextMediaGroup, onPrevMediaGroup, isExpanded, onExpand]);
-
   return (
     <div className="fixed bottom-4 left-0 right-0 z-50 px-4">
       <MorphingSheet
@@ -126,7 +119,6 @@ const CaseStudyNav = ({
             </motion.button>
           </>
         )}
-
         {isExpanded && currentInfo && currentInfo.heading && (
           <div className="relative">
             {highlightInfoArr?.map((info, index) => (
