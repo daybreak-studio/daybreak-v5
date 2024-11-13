@@ -1,8 +1,9 @@
-import { MediaRenderer } from "@/components/media-renderer";
-import * as Modal from "@/components/modal";
-import { getProjectFirstMedia } from "@/sanity/lib/media";
+import * as Dialog from "@radix-ui/react-dialog";
+import { motion } from "framer-motion";
 import { Work } from "@/sanity/types";
 import { useRouter } from "next/router";
+import { MediaRenderer } from "@/components/media-renderer";
+import { getProjectFirstMedia } from "@/sanity/lib/media";
 
 export default function ProjectSelector({ data }: { data: Work }) {
   const router = useRouter();
@@ -16,28 +17,33 @@ export default function ProjectSelector({ data }: { data: Work }) {
         const layoutId = `image-${data.slug?.current}-${project.category}`;
 
         return (
-          <div
+          <Dialog.Root
             key={project._key}
-            onClick={() => {
+            onOpenChange={(open) => {
               router.push(
-                `/work/${data.slug?.current}/${project.category}`,
+                open
+                  ? `/work/${data.slug?.current}/${project.category}`
+                  : `/work/${data.slug?.current}`,
                 undefined,
                 { shallow: true },
               );
             }}
-            className="group cursor-pointer"
           >
-            <Modal.Item id={layoutId} className="overflow-hidden rounded-2xl">
-              <MediaRenderer
-                media={mediaAsset}
-                className="h-full w-full transition-transform duration-300 group-hover:scale-105"
-              />
-            </Modal.Item>
-            <div className="mt-4">
-              <h3 className="text-lg font-medium">{project.heading}</h3>
-              <p className="text-sm text-gray-500">{project.category}</p>
-            </div>
-          </div>
+            <Dialog.Trigger asChild>
+              <motion.div layoutId={layoutId} className="group cursor-pointer">
+                <div className="overflow-hidden rounded-2xl">
+                  <MediaRenderer
+                    media={mediaAsset}
+                    className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">{project.heading}</h3>
+                  <p className="text-sm text-gray-500">{project.category}</p>
+                </div>
+              </motion.div>
+            </Dialog.Trigger>
+          </Dialog.Root>
         );
       })}
     </div>

@@ -10,9 +10,9 @@ export default function App({ Component, pageProps, router }: AppProps) {
     <VisitProvider>
       <Navigation />
       <AnimatePresence mode="wait">
-        <Layout key={router.route}>
-          <Component {...pageProps} />
-        </Layout>
+        {/* <Layout key={router.route}> */}
+        <Component {...pageProps} />
+        {/* </Layout> */}
       </AnimatePresence>
     </VisitProvider>
   );

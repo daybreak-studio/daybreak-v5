@@ -1,56 +1,27 @@
-import { MediaRenderer } from "@/components/media-renderer";
-import * as Modal from "@/components/modal";
-import { getProjectFirstMedia } from "@/sanity/lib/media";
-import { Preview, Work } from "@/sanity/types";
-import { useRouter } from "next/router";
 import { motion } from "framer-motion";
+import { Preview, Work } from "@/sanity/types";
+import { MediaRenderer } from "@/components/media-renderer";
+import { getProjectFirstMedia } from "@/sanity/lib/media";
 
 export default function ProjectPreview({ data }: { data: Work }) {
-  const router = useRouter();
   const project = data.projects?.[0] as Preview;
-  const mediaAsset = getProjectFirstMedia(project);
+  if (!project) return null;
 
-  // Generate layoutId based on whether we're coming from works grid or selector
-  const layoutId = router.query.project
-    ? `image-${data.slug?.current}-${router.query.project}`
-    : `image-${data.slug?.current}`;
+  const mediaAsset = getProjectFirstMedia(project);
+  const layoutId = `image-${data.slug?.current}`;
 
   return (
-    <div className="relative space-y-6">
-      {/* Media Section */}
-      <Modal.Item id={layoutId} className="overflow-hidden rounded-2xl">
-        <MediaRenderer media={mediaAsset} className="h-full w-full" />
-      </Modal.Item>
-
-      {/* Content Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="space-y-4"
-      >
-        {/* Header */}
-        <div>
-          <h2 className="text-2xl font-medium">{project.heading}</h2>
-          <p className="text-gray-500">{project.category}</p>
-        </div>
-
-        {/* Description */}
-        {project.caption && (
-          <div className="prose max-w-none">
-            <p>{project.caption}</p>
-          </div>
-        )}
-
-        {/* Additional Media */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {project.media?.slice(1).map((media, index) => (
-            <div key={media._key} className="overflow-hidden rounded-lg">
-              <MediaRenderer media={media} className="h-full w-full" />
-            </div>
-          ))}
-        </div>
-      </motion.div>
+    <div className="w-full">
+      {/* Wrapper to control aspect ratio */}
+      <div className="relative w-full">
+        <motion.div layoutId={layoutId} className="w-full">
+          <MediaRenderer media={mediaAsset} className="w-full rounded-2xl" />
+        </motion.div>
+      </div>
+      <div className="mt-8">
+        <h2 className="text-2xl font-medium">{project.heading}</h2>
+        <p className="mt-2 text-gray-600">{project.caption}</p>
+      </div>
     </div>
   );
 }
