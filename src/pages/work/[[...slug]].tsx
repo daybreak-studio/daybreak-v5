@@ -26,6 +26,9 @@ export default function WorkPage({ data }: { data: Work[] }) {
           const mediaAsset = getWorkFirstMedia(client);
           if (!client.slug) return null;
 
+          const layoutId = `container-${client.slug.current}`;
+          const imageLayoutId = `image-${client.slug.current}`;
+
           return (
             <Dialog.Root
               key={client._id}
@@ -40,46 +43,53 @@ export default function WorkPage({ data }: { data: Work[] }) {
             >
               <Dialog.Trigger asChild>
                 <motion.div
-                  layoutId={`image-${client.slug.current}`}
-                  className="group relative aspect-square w-full cursor-pointer overflow-hidden rounded-2xl bg-white"
+                  layoutId={layoutId}
+                  className="group relative aspect-square w-full cursor-pointer rounded-2xl bg-white"
                 >
-                  <MediaRenderer
-                    media={mediaAsset}
-                    className="h-full w-full transition-transform duration-300 group-hover:scale-105"
-                  />
+                  <motion.div layoutId={imageLayoutId}>
+                    <MediaRenderer
+                      media={mediaAsset}
+                      className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </motion.div>
                 </motion.div>
               </Dialog.Trigger>
 
               <Dialog.Portal>
-                <Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-black/30 backdrop-blur-sm" />
-                <Dialog.Content
-                  className={cn(
-                    "fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2",
-                    "bg-white focus:outline-none",
-                    "data-[state=open]:animate-contentShow",
-                    "shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px]",
-                    "w-[90vw] rounded-[40px] p-8",
-                    // Adjust max-width and height constraints
-                    client.projects && client.projects.length > 1
-                      ? "max-w-[800px]"
-                      : client.projects?.[0]._type === "preview"
-                        ? "max-h-[90vh] max-w-[1016px] overflow-y-auto" // Add max-height and scroll
-                        : "min-h-screen max-w-none",
-                  )}
-                >
-                  <div className="w-full">
-                    {client.projects && client.projects.length > 1 ? (
-                      <ProjectSelector data={client} />
-                    ) : client.projects?.[0]._type === "preview" ? (
-                      <ProjectPreview data={client} />
-                    ) : (
-                      <ProjectCaseStudy data={client} />
+                <Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-white/10 backdrop-blur-2xl" />
+                <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none">
+                  <motion.div
+                    layoutId={layoutId}
+                    className={cn(
+                      "w-[90vw] rounded-3xl bg-white p-4 shadow-xl",
+                      client.projects && client.projects.length > 1
+                        ? "max-w-1/2"
+                        : client.projects?.[0]._type === "preview"
+                          ? "max-h-[90vh] max-w-[1016px] overflow-y-auto"
+                          : "min-h-screen max-w-none",
                     )}
-                  </div>
+                  >
+                    {client.projects && client.projects.length > 1 ? (
+                      <ProjectSelector
+                        data={client}
+                        imageLayoutId={imageLayoutId}
+                      />
+                    ) : client.projects?.[0]._type === "preview" ? (
+                      <ProjectPreview
+                        data={client}
+                        imageLayoutId={imageLayoutId}
+                      />
+                    ) : (
+                      <ProjectCaseStudy
+                        data={client}
+                        imageLayoutId={imageLayoutId}
+                      />
+                    )}
 
-                  <Dialog.Close className="absolute right-6 top-6 inline-flex size-[35px] appearance-none items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 focus:shadow-[0_0_0_2px] focus:shadow-gray-400 focus:outline-none">
-                    <Cross2Icon className="h-6 w-6" />
-                  </Dialog.Close>
+                    <Dialog.Close className="absolute right-6 top-6 inline-flex size-[35px] appearance-none items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 focus:shadow-gray-400 focus:outline-none">
+                      <Cross2Icon className="h-6 w-6" />
+                    </Dialog.Close>
+                  </motion.div>
                 </Dialog.Content>
               </Dialog.Portal>
             </Dialog.Root>
