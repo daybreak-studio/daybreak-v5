@@ -1,4 +1,3 @@
-import { Work, CaseStudy } from "@/sanity/types";
 import React, {
   MutableRefObject,
   useCallback,
@@ -7,30 +6,22 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { GetStaticProps } from "next";
+import { client } from "@/sanity/lib/client";
 import CaseStudyNav from "./components/nav";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { useResizeObserver, useWindowSize } from "usehooks-ts";
 import MediaGroupLayout from "./components/layout";
-import * as Modal from "@/components/modal";
-import { useRouter } from "next/router";
-import { getProjectFirstMedia } from "@/sanity/lib/media";
-import { MediaRenderer } from "@/components/media-renderer";
+import { CaseStudy, Work } from "@/sanity/types";
 
 // Update the Info component
-export default function ProjectCaseStudy({ data }: { data: Work }) {
-  const router = useRouter();
+export default function Info({ data }: { data: Work }) {
   const project = data.projects?.[0] as CaseStudy;
   const [currentMediaGroup, setCurrentMediaGroup] = useState<number>(0);
-  const [isViewingInfo, setIsViewingInfo] = useState(false);
-  const mediaGroupRefs = useRef([]) as MutableRefObject<HTMLDivElement[]>;
-
-  // Generate layoutId similar to preview component
-  const layoutId = router.query.project
-    ? `image-${data.slug?.current}-${router.query.project}`
-    : `image-${data.slug?.current}`;
-
-  // Extract the hero image
-  const heroMedia = getProjectFirstMedia(project);
+  const [isViewingInfo, setIsViewingInfo] = useState<boolean>(false);
+  const mediaGroupRefs = useRef<HTMLDivElement[]>([]) as MutableRefObject<
+    HTMLDivElement[]
+  >;
 
   const inforArr = useMemo(() => {
     return project.media?.map((mediaGroup) => {
@@ -56,7 +47,8 @@ export default function ProjectCaseStudy({ data }: { data: Work }) {
         };
       }),
     // mediaGroupBounds reacts to viewport size change
-    [screenOffset],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [containerSize.height, screenOffset],
   );
 
   const { scrollY } = useScroll();
@@ -185,15 +177,7 @@ export default function ProjectCaseStudy({ data }: { data: Work }) {
       />
       <h1 className="mb-8 py-24 text-center text-4xl">{project.heading}</h1>
       <div className="flex flex-col gap-4">
-        {/* Hero Section */}
-        <Modal.Item id={layoutId} className="h-screen w-full">
-          <MediaRenderer
-            media={heroMedia}
-            className="h-full w-full object-cover"
-          />
-        </Modal.Item>
-        {/* Remaining Media */}
-        {project.media?.slice(1).map((mediaGroup, groupIndex) => {
+        {project.media?.map((mediaGroup, groupIndex) => {
           return (
             <MediaGroupLayout
               key={groupIndex}
@@ -215,7 +199,6 @@ export default function ProjectCaseStudy({ data }: { data: Work }) {
                 setIsViewingInfo(true);
                 navigateToMediaGroup(groupIndex);
               }}
-              slug={data?.slug?.current}
             />
           );
         })}

@@ -33,7 +33,6 @@ const MediaGroupLayout = forwardRef<HTMLDivElement, Props>(
     const { scrollY } = useScroll();
     const { height: screenHeight } = useWindowSize();
     const transitionZone = screenHeight * 0.5;
-    // const inViewZone = screenHeight * 0.5;
     const boundHeight = boundInfo ? boundInfo.height : 0;
     const yPosition = boundInfo ? boundInfo.anchorY : 0;
 
