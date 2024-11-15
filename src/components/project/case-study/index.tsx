@@ -14,8 +14,15 @@ import { useResizeObserver, useWindowSize } from "usehooks-ts";
 import MediaGroupLayout from "./components/layout";
 import { CaseStudy, Work } from "@/sanity/types";
 
-// Update the Info component
-export default function Info({ data }: { data: Work }) {
+interface ProjectCaseStudyProps {
+  data: Work;
+  imageLayoutId: string;
+}
+
+export default function ProjectCaseStudy({
+  data,
+  imageLayoutId,
+}: ProjectCaseStudyProps) {
   const project = data.projects?.[0] as CaseStudy;
   const [currentMediaGroup, setCurrentMediaGroup] = useState<number>(0);
   const [isViewingInfo, setIsViewingInfo] = useState<boolean>(false);
