@@ -58,7 +58,7 @@ export function MediaRenderer({
   return (
     <motion.div
       layoutId={layoutId}
-      className={`relative overflow-hidden ${className}`}
+      className={`relative overflow-hidden ${className} h-full w-full`}
     >
       {media._type === "image" && (
         <SanityImage

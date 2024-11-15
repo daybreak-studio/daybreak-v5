@@ -11,7 +11,7 @@ import { worksApi } from "@/sanity/lib/work";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function WorkPage({ data }: { data: Work[] }) {
   const router = useRouter();
@@ -19,6 +19,10 @@ export default function WorkPage({ data }: { data: Work[] }) {
   const [clientSlug, projectSlug] = Array.isArray(slug)
     ? slug
     : [slug, undefined];
+
+  // Add state to track the active thumbnail during animation
+  const [activeThumbId, setActiveThumbId] = useState<string | null>(null);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   // Find the current client based on the slug
   const currentClient = data.find(
@@ -46,7 +50,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
 
   return (
     <div className="container mx-auto p-8">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {data.map((client) => {
           const mediaAsset = getWorkFirstMedia(client);
           if (!client.slug) return null;
@@ -61,6 +65,8 @@ export default function WorkPage({ data }: { data: Work[] }) {
               key={client._id}
               open={clientSlug === client.slug.current}
               onOpenChange={(open) => {
+                // Set the active thumbnail ID when dialog state changes
+                setActiveThumbId(client.slug?.current || null);
                 router.push(
                   open ? `/work/${client.slug?.current}` : "/work",
                   undefined,
@@ -70,61 +76,81 @@ export default function WorkPage({ data }: { data: Work[] }) {
             >
               <Dialog.Trigger asChild>
                 <motion.div
+                  layout
                   layoutId={layoutId}
-                  className="group relative aspect-square w-full cursor-pointer rounded-2xl bg-white"
+                  className={cn(
+                    "group relative aspect-square w-full cursor-pointer overflow-hidden rounded-2xl bg-white",
+                    isAnimating &&
+                      activeThumbId === client.slug?.current &&
+                      "z-40",
+                  )}
+                  onLayoutAnimationStart={() => setIsAnimating(true)}
+                  onLayoutAnimationComplete={() => {
+                    setIsAnimating(false);
+                    setActiveThumbId(null);
+                  }}
                 >
                   <motion.div
+                    layout
                     layoutId={imageLayoutId}
-                    className="aspect-square h-full w-full object-cover"
+                    className={cn(
+                      "aspect-square h-full w-full object-cover",
+                      isAnimating &&
+                        activeThumbId === client.slug?.current &&
+                        "relative z-50",
+                    )}
                   >
                     <MediaRenderer
                       media={mediaAsset}
-                      className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                      className="duration-300 group-hover:scale-105"
                     />
                   </motion.div>
                 </motion.div>
               </Dialog.Trigger>
 
               <Dialog.Portal>
-                <Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-black/30" />
-                <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none">
-                  <Dialog.Title className="sr-only">
-                    {client.name} Project Details
-                  </Dialog.Title>
-                  <Dialog.Description className="sr-only">
-                    View details about the {client.name} project.
-                  </Dialog.Description>
+                <Dialog.Overlay className="fixed inset-0 bg-black/30" />
+                <Dialog.Content asChild>
+                  <motion.div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none">
+                    <Dialog.Title className="sr-only">
+                      {client.name} Project Details
+                    </Dialog.Title>
+                    <Dialog.Description className="sr-only">
+                      View details about the {client.name} project.
+                    </Dialog.Description>
 
-                  <motion.div
-                    layoutId={layoutId}
-                    className={cn(
-                      "bg-white",
-                      "w-[90vw] rounded-[40px] p-8",
-                      hasMultipleProjects && !projectSlug
-                        ? "max-w-[800px]"
-                        : "max-h-[90vh] max-w-[1016px] overflow-y-auto",
-                    )}
-                  >
-                    {hasMultipleProjects && !projectSlug ? (
-                      <ProjectSelector
-                        data={client}
-                        imageLayoutId={imageLayoutId}
-                      />
-                    ) : currentProject?._type === "preview" ? (
-                      <ProjectPreview
-                        data={client}
-                        imageLayoutId={imageLayoutId}
-                      />
-                    ) : (
-                      <ProjectCaseStudy
-                        data={client}
-                        imageLayoutId={imageLayoutId}
-                      />
-                    )}
+                    <motion.div
+                      layout
+                      layoutId={layoutId}
+                      className={cn(
+                        "bg-white",
+                        "w-[90vw] rounded-3xl p-8",
+                        hasMultipleProjects && !projectSlug
+                          ? "max-w-[800px]"
+                          : "max-h-[90vh] max-w-[1016px] overflow-y-auto",
+                      )}
+                    >
+                      {hasMultipleProjects && !projectSlug ? (
+                        <ProjectSelector
+                          data={client}
+                          imageLayoutId={imageLayoutId}
+                        />
+                      ) : currentProject?._type === "preview" ? (
+                        <ProjectPreview
+                          data={client}
+                          imageLayoutId={imageLayoutId}
+                        />
+                      ) : (
+                        <ProjectCaseStudy
+                          data={client}
+                          imageLayoutId={imageLayoutId}
+                        />
+                      )}
 
-                    <Dialog.Close className="absolute right-6 top-6 inline-flex size-[35px] appearance-none items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 focus:shadow-gray-400 focus:outline-none">
-                      <Cross2Icon className="h-6 w-6" />
-                    </Dialog.Close>
+                      <Dialog.Close className="absolute right-6 top-6 inline-flex size-[35px] appearance-none items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 focus:shadow-gray-400 focus:outline-none">
+                        <Cross2Icon className="h-6 w-6" />
+                      </Dialog.Close>
+                    </motion.div>
                   </motion.div>
                 </Dialog.Content>
               </Dialog.Portal>

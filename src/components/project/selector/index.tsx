@@ -22,7 +22,6 @@ export default function ProjectSelector({
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       {data.projects?.map((project) => {
         const mediaAsset = getProjectFirstMedia(project);
-        console.log(mediaAsset);
         if (!project.category) return null;
 
         const isFirstProject = project === data.projects?.[0];
@@ -31,6 +30,7 @@ export default function ProjectSelector({
         return (
           <motion.div
             key={project._key}
+            layout
             layoutId={projectLayoutId}
             onClick={() => {
               router.push(
@@ -41,10 +41,10 @@ export default function ProjectSelector({
             }}
             className="group cursor-pointer"
           >
-            <div className="overflow-hidden rounded-2xl">
+            <div className="relative overflow-hidden rounded-2xl">
               <MediaRenderer
                 media={mediaAsset}
-                className="h-full w-full object-cover duration-300 group-hover:scale-105"
+                className="object-cover duration-300 group-hover:scale-105"
               />
             </div>
             <div className="mt-4">

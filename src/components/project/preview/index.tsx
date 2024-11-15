@@ -38,13 +38,11 @@ export default function ProjectPreview({
         <p className="text-zinc-500">{project.caption}</p>
       </div>
       <motion.div
+        layout
         layoutId={imageLayoutId}
-        className="aspect-square h-full w-full object-cover"
+        className="aspect-square h-full w-full"
       >
-        <MediaRenderer
-          media={mediaAsset}
-          className="h-full w-full rounded-3xl"
-        />
+        <MediaRenderer media={mediaAsset} />
       </motion.div>
     </div>
   );
