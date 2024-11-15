@@ -97,7 +97,7 @@ const CaseStudyNav = ({
                 opacity: 1,
               }}
               exit={{ opacity: 0 }}
-              className="flex items-center gap-2 px-4 py-2"
+              className="flex items-center gap-2 px-4 py-2 focus:outline-none"
               // onClick={() => setIsExpanded(true)}
               onClick={() => onExpand()}
             >

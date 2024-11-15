@@ -4,6 +4,8 @@ import { Work } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
+import ProjectPreview from "@/components/project/preview";
+import { Cross2Icon } from "@radix-ui/react-icons";
 
 interface ProjectSelectorProps {
   data: Work;
@@ -20,14 +22,16 @@ export default function ProjectSelector({
     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       {data.projects?.map((project) => {
         const mediaAsset = getProjectFirstMedia(project);
+        console.log(mediaAsset);
         if (!project.category) return null;
 
         const isFirstProject = project === data.projects?.[0];
         const projectLayoutId = isFirstProject ? imageLayoutId : undefined;
 
         return (
-          <div
+          <motion.div
             key={project._key}
+            layoutId={projectLayoutId}
             onClick={() => {
               router.push(
                 `/work/${data.slug?.current}/${project.category}`,
@@ -37,20 +41,17 @@ export default function ProjectSelector({
             }}
             className="group cursor-pointer"
           >
-            <motion.div
-              layoutId={projectLayoutId}
-              className="overflow-hidden rounded-2xl"
-            >
+            <div className="overflow-hidden rounded-2xl">
               <MediaRenderer
                 media={mediaAsset}
-                className="h-full w-full transition-transform duration-300 group-hover:scale-105"
+                className="h-full w-full object-cover duration-300 group-hover:scale-105"
               />
-            </motion.div>
+            </div>
             <div className="mt-4">
               <h3 className="text-lg font-medium">{project.heading}</h3>
               <p className="text-sm text-gray-500">{project.category}</p>
             </div>
-          </div>
+          </motion.div>
         );
       })}
     </div>

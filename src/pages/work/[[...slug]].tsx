@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Work } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
@@ -8,9 +8,10 @@ import ProjectSelector from "@/components/project/selector";
 import ProjectPreview from "@/components/project/preview";
 import ProjectCaseStudy from "@/components/project/case-study";
 import { worksApi } from "@/sanity/lib/work";
-import { Cross1Icon, Cross2Icon } from "@radix-ui/react-icons";
+import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 
 export default function WorkPage({ data }: { data: Work[] }) {
   const router = useRouter();
@@ -18,6 +19,30 @@ export default function WorkPage({ data }: { data: Work[] }) {
   const [clientSlug, projectSlug] = Array.isArray(slug)
     ? slug
     : [slug, undefined];
+
+  // Find the current client based on the slug
+  const currentClient = data.find(
+    (client) => client.slug?.current === clientSlug,
+  );
+
+  // Check if the client has multiple projects
+  const shouldUseProjectSlug =
+    currentClient?.projects && currentClient.projects.length > 1;
+
+  // Get the current project based on the routing logic
+  const currentProject =
+    shouldUseProjectSlug && projectSlug
+      ? currentClient.projects?.find(
+          (project) => project.category === projectSlug,
+        )
+      : currentClient?.projects?.[0];
+
+  // Redirect if on a project route but client has only one project
+  useEffect(() => {
+    if (clientSlug && projectSlug && currentClient?.projects?.length === 1) {
+      router.replace(`/work/${clientSlug}`, undefined, { shallow: true });
+    }
+  }, [clientSlug, projectSlug, currentClient, router]);
 
   return (
     <div className="container mx-auto p-8">
@@ -28,6 +53,8 @@ export default function WorkPage({ data }: { data: Work[] }) {
 
           const layoutId = `container-${client.slug.current}`;
           const imageLayoutId = `image-${client.slug.current}`;
+          const hasMultipleProjects =
+            client.projects && client.projects.length > 1;
 
           return (
             <Dialog.Root
@@ -46,7 +73,10 @@ export default function WorkPage({ data }: { data: Work[] }) {
                   layoutId={layoutId}
                   className="group relative aspect-square w-full cursor-pointer rounded-2xl bg-white"
                 >
-                  <motion.div layoutId={imageLayoutId}>
+                  <motion.div
+                    layoutId={imageLayoutId}
+                    className="aspect-square h-full w-full object-cover"
+                  >
                     <MediaRenderer
                       media={mediaAsset}
                       className="h-full w-full transition-transform duration-300 group-hover:scale-105"
@@ -56,25 +86,31 @@ export default function WorkPage({ data }: { data: Work[] }) {
               </Dialog.Trigger>
 
               <Dialog.Portal>
-                <Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-white/10 backdrop-blur-2xl" />
+                <Dialog.Overlay className="data-[state=open]:animate-overlayShow fixed inset-0 bg-black/30" />
                 <Dialog.Content className="data-[state=open]:animate-contentShow fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none">
+                  <Dialog.Title className="sr-only">
+                    {client.name} Project Details
+                  </Dialog.Title>
+                  <Dialog.Description className="sr-only">
+                    View details about the {client.name} project.
+                  </Dialog.Description>
+
                   <motion.div
                     layoutId={layoutId}
                     className={cn(
-                      "w-[90vw] rounded-3xl bg-white p-4 shadow-xl",
-                      client.projects && client.projects.length > 1
-                        ? "max-w-1/2"
-                        : client.projects?.[0]._type === "preview"
-                          ? "max-h-[90vh] max-w-[1016px] overflow-y-auto"
-                          : "min-h-screen max-w-none",
+                      "bg-white",
+                      "w-[90vw] rounded-[40px] p-8",
+                      hasMultipleProjects && !projectSlug
+                        ? "max-w-[800px]"
+                        : "max-h-[90vh] max-w-[1016px] overflow-y-auto",
                     )}
                   >
-                    {client.projects && client.projects.length > 1 ? (
+                    {hasMultipleProjects && !projectSlug ? (
                       <ProjectSelector
                         data={client}
                         imageLayoutId={imageLayoutId}
                       />
-                    ) : client.projects?.[0]._type === "preview" ? (
+                    ) : currentProject?._type === "preview" ? (
                       <ProjectPreview
                         data={client}
                         imageLayoutId={imageLayoutId}
@@ -100,10 +136,12 @@ export default function WorkPage({ data }: { data: Work[] }) {
   );
 }
 
+// Generate static paths for all possible routes
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
     const works: Work[] = await worksApi.getAllWorks();
 
+    // Create paths for all client/project combinations
     const paths = works.flatMap(
       (work) =>
         work.projects?.map((project) => ({
@@ -126,12 +164,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 };
 
+// Fetch all work data at build time
 export const getStaticProps: GetStaticProps = async () => {
   try {
     const data: Work[] = await worksApi.getAllWorks();
     return {
       props: { data },
-      revalidate: 60,
+      revalidate: 60, // Revalidate every 60 seconds
     };
   } catch (error) {
     console.error("Error fetching works:", error);

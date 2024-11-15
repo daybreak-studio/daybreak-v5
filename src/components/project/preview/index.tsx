@@ -12,10 +12,24 @@ export default function ProjectPreview({
   data,
   imageLayoutId,
 }: ProjectPreviewProps) {
-  const project = data.projects?.[0] as Preview;
-  if (!project) return null;
+  console.log("Preview Data:", data); // Log entire data object
+  console.log("All Projects:", data.projects); // Log all projects
+
+  // Find the preview project and log the search process
+  const project = data.projects?.find((p) => {
+    console.log("Project type:", p._type); // Log each project's type
+    return p._type === "preview";
+  }) as Preview;
+
+  console.log("Found Preview Project:", project); // Log the found project
+
+  if (!project) {
+    console.log("No preview project found");
+    return null;
+  }
 
   const mediaAsset = getProjectFirstMedia(project);
+  console.log("Media Asset:", mediaAsset); // Log the media asset
 
   return (
     <div className="w-full p-4">
@@ -23,8 +37,14 @@ export default function ProjectPreview({
         <h2 className="pb-4 text-3xl">{project.heading}</h2>
         <p className="text-zinc-500">{project.caption}</p>
       </div>
-      <motion.div layoutId={imageLayoutId} className="w-full">
-        <MediaRenderer media={mediaAsset} className="w-full rounded-3xl" />
+      <motion.div
+        layoutId={imageLayoutId}
+        className="aspect-square h-full w-full object-cover"
+      >
+        <MediaRenderer
+          media={mediaAsset}
+          className="h-full w-full rounded-3xl"
+        />
       </motion.div>
     </div>
   );
