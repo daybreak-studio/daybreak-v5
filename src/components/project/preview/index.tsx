@@ -38,9 +38,9 @@ export default function ProjectPreview({
         <p className="text-zinc-500">{project.caption}</p>
       </div>
       <motion.div
-        layout
+        layout="preserve-aspect"
         layoutId={imageLayoutId}
-        className="aspect-square h-full w-full"
+        className="origin center aspect-square h-full w-full"
       >
         <MediaRenderer media={mediaAsset} />
       </motion.div>
