@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 import { useVisit } from "@/contexts/VisitContext";
+import { useBaseRoute } from "@/hooks/useBaseRoute";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -8,10 +9,16 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { visitStatus, isLoading } = useVisit();
+  const { isBaseRoute } = useBaseRoute();
   const router = useRouter();
 
   if (isLoading) {
-    return null; // or a loading spinner
+    return null;
+  }
+
+  // If not a base route, render without transitions
+  if (!isBaseRoute) {
+    return <div className="pt-24">{children}</div>;
   }
 
   return (
