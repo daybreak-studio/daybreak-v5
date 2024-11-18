@@ -5,6 +5,7 @@ import Link from "next/link";
 import Logo from "/public/logos/daybreak-icon.svg";
 import Wordmark from "/public/logos/daybreak-wordmark.svg";
 import { useVisit } from "@/contexts/VisitContext";
+import { useBaseRoute } from "@/hooks/useBaseRoute";
 
 const tabs = [
   { href: "/", label: "Home" },
@@ -16,15 +17,14 @@ const tabs = [
 
 export default function Navigation() {
   const { visitStatus, isLoading, markVisitComplete } = useVisit();
-  const router = useRouter();
-  const activePath = router.asPath;
+  const { isBaseRoute, currentBasePath } = useBaseRoute();
 
   useEffect(() => {
-    if (visitStatus === "new") {
+    if (visitStatus === "new" && isBaseRoute) {
       runAnimationSequence();
       markVisitComplete();
     }
-  }, [visitStatus, markVisitComplete]);
+  }, [visitStatus, isBaseRoute, markVisitComplete]);
 
   const runAnimationSequence = async () => {
     await animate([
@@ -98,9 +98,7 @@ export default function Navigation() {
     return null; // or a loading spinner
   }
 
-  const pathParts = activePath.split("/").filter(Boolean); // filter(Boolean) removes empty strings
-  const basePath = pathParts.length > 0 ? `/${pathParts[0]}` : "/"; // Prepend a slash to the first part
-  const isValidPath = tabs.some((tab) => tab.href === basePath);
+  const isValidPath = tabs.some((tab) => tab.href === currentBasePath);
 
   return (
     <motion.nav
@@ -165,7 +163,7 @@ export default function Navigation() {
                   </motion.div>
                 </motion.div>
               </motion.div>
-              {isValidPath && basePath === tab.href && (
+              {isValidPath && currentBasePath === tab.href && (
                 <Pill isFirstVisit={visitStatus === "new"} />
               )}
             </Link>
@@ -188,7 +186,7 @@ export default function Navigation() {
                 <Link href={tab.href} className="relative z-10">
                   {tab.label}
                 </Link>
-                {isValidPath && basePath === tab.href && (
+                {isValidPath && currentBasePath === tab.href && (
                   <Pill isFirstVisit={visitStatus === "new"} />
                 )}
               </motion.h1>

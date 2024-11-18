@@ -80,7 +80,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
   }, [clientSlug, projectSlug, currentClient, router]);
 
   return (
-    <div className="container mx-auto p-8">
+    <div className="mx-auto p-8">
       <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {data.map((client) => {
           const mediaAsset = getWorkFirstMedia(client);
