@@ -3,6 +3,8 @@ import { useBreakpoint, WidgetGridContext } from "@/components/grid/hooks";
 import { Defaults, GridProps } from "@/components/grid/props";
 import clsx from "clsx";
 import { useScramble } from "use-scramble";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
 
 // GridOverlay component
 interface GridOverlayProps {

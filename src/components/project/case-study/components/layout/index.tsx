@@ -83,13 +83,7 @@ const MediaGroupLayout = forwardRef<HTMLDivElement, Props>(
                   key={`${groupIndex}-${itemIndex}`}
                   className={isSingleItem ? "md:col-span-2" : ""}
                 >
-                  <MediaRenderer
-                    media={item}
-                    autoPlay={true}
-                    layoutId={
-                      groupIndex === 0 && itemIndex === 0 ? slug : undefined
-                    }
-                  />
+                  <MediaRenderer media={item} autoPlay={true} />
                 </div>
               );
             })}

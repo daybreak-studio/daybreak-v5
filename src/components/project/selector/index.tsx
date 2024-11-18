@@ -39,7 +39,7 @@ export default function ProjectSelector({
                 { shallow: true },
               );
             }}
-            className="group cursor-pointer"
+            className="origin center group cursor-pointer"
           >
             <div className="relative overflow-hidden rounded-2xl">
               <MediaRenderer
