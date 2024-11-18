@@ -3,8 +3,7 @@ import { useBreakpoint, WidgetGridContext } from "@/components/grid/hooks";
 import { Defaults, GridProps } from "@/components/grid/props";
 import clsx from "clsx";
 import { useScramble } from "use-scramble";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
+import useEmblaCarousel from "embla-carousel-react";
 
 // GridOverlay component
 interface GridOverlayProps {
@@ -109,6 +108,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
     playOnMount: false,
   });
 
+  const [emblaRef] = useEmblaCarousel();
+
   return (
     <div className="relative h-screen w-screen transition-all">
       <div className="flex h-full w-full flex-col items-center justify-center gap-6 pt-12 xl:gap-10">
@@ -124,7 +125,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
         )}
         <div
           style={{ width: `${width}px`, height: `${gridHeight}px` }}
-          className="relative"
+          className="embla relative"
+          ref={emblaRef}
         >
           {debug && (
             <GridOverlay
@@ -135,46 +137,48 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
               margin={settings.margin}
             />
           )}
-          <GridLayout {...Structure} cols={Structure.cols}>
-            {layout.map((item) => (
-              <div
-                key={item.id}
-                data-grid={{
-                  i: item.id,
-                  x: item.position.x,
-                  y: item.position.y,
-                  w: item.size.w,
-                  h: item.size.h,
-                  ...Defaults.DataGridAttributes,
-                }}
-                className="h-full w-full overflow-hidden rounded-2xl bg-zinc-100 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.05)] xl:rounded-3xl"
-              >
+          <div className="embla__container">
+            <GridLayout {...Structure} cols={Structure.cols}>
+              {layout.map((item) => (
                 <div
-                  className={clsx({
-                    ["border-[1px] border-red-500"]: debug,
-                    ["flex h-full w-full overflow-hidden"]: true,
-                  })}
+                  key={item.id}
+                  data-grid={{
+                    i: item.id,
+                    x: item.position.x,
+                    y: item.position.y,
+                    w: item.size.w,
+                    h: item.size.h,
+                    ...Defaults.DataGridAttributes,
+                  }}
+                  className="embla__slide h-full w-full overflow-hidden rounded-2xl bg-zinc-100 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.05)] xl:rounded-3xl"
                 >
-                  <WidgetGridProvider
-                    id={item.id}
-                    size={item.size}
-                    position={item.position}
-                    breakpoint={breakpoint}
+                  <div
+                    className={clsx({
+                      ["border-[1px] border-red-500"]: debug,
+                      ["flex h-full w-full overflow-hidden"]: true,
+                    })}
                   >
-                    {item.content}
-                  </WidgetGridProvider>
-                  {debug && (
-                    <div className="absolute left-0 top-0 bg-gray-700 bg-opacity-50 p-1 text-xs uppercase text-white">
-                      ID: {item.id}
-                      <br />
-                      {item.size.w}x{item.size.h} — ({item.position.x},
-                      {item.position.y})
-                    </div>
-                  )}
+                    <WidgetGridProvider
+                      id={item.id}
+                      size={item.size}
+                      position={item.position}
+                      breakpoint={breakpoint}
+                    >
+                      {item.content}
+                    </WidgetGridProvider>
+                    {debug && (
+                      <div className="absolute left-0 top-0 bg-gray-700 bg-opacity-50 p-1 text-xs uppercase text-white">
+                        ID: {item.id}
+                        <br />
+                        {item.size.w}x{item.size.h} — ({item.position.x},
+                        {item.position.y})
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </GridLayout>
+              ))}
+            </GridLayout>
+          </div>
         </div>
       </div>
     </div>
