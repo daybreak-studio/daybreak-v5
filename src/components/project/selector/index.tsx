@@ -4,7 +4,7 @@ import { Work } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
-import ProjectPreview from "@/pages/work/components/preview";
+import ProjectPreview from "@/components/project/preview";
 import { Cross2Icon } from "@radix-ui/react-icons";
 
 interface ProjectSelectorProps {

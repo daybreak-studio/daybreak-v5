@@ -3,7 +3,7 @@ import IconChevronDown from "/public/icons/icon-chevron-down.svg";
 import IconChevronUp from "/public/icons/icon-chevron-up.svg";
 import IconCross from "/public/icons/icon-cross.svg";
 import React, { MutableRefObject, useEffect, useRef } from "react";
-import IconButton from "../icon-button";
+import IconButton from "./components/icon-button";
 import { useOnClickOutside } from "usehooks-ts";
 import MorphingSheet from "../morphing-sheet";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
