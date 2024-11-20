@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { useBaseRoute } from "@/hooks/use-base-route";
+import { useBaseRoute } from "../../hooks/use-base-route";
 
 type VisitStatus = "unknown" | "new" | "returning";
 

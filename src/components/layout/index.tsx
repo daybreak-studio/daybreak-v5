@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 import { useVisit } from "@/contexts/VisitContext";
-import { useBaseRoute } from "@/hooks/use-base-route";
+import { useBaseRoute } from "../../hooks/use-base-route";
 import { useEffect, useRef } from "react";
 
 interface LayoutProps {

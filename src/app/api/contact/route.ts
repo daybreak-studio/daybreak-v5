@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { createNotionEntry } from "@/lib/services/notion";
-import { contactFormSchema } from "@/lib/schemas/contact-form";
+import { createNotionEntry } from "@/lib/contact/services/notion";
+import { contactFormSchema } from "@/lib/contact/schemas/contact-form";
 
 export async function POST(request: Request) {
   try {

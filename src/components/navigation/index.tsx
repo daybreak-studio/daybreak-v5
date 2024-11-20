@@ -5,7 +5,7 @@ import Link from "next/link";
 import Logo from "/public/logos/daybreak-icon.svg";
 import Wordmark from "/public/logos/daybreak-wordmark.svg";
 import { useVisit } from "@/contexts/VisitContext";
-import { useBaseRoute } from "@/hooks/use-base-route";
+import { useBaseRoute } from "../../hooks/use-base-route";
 
 const tabs = [
   { href: "/", label: "Home" },
