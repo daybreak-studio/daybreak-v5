@@ -1,19 +1,22 @@
-import Layout from "@/components/layout";
 import "@/styles/globals.css";
 import { AppProps } from "next/app";
 import { AnimatePresence } from "framer-motion";
 import Navigation from "@/components/navigation";
 import { VisitProvider } from "@/contexts/VisitContext";
+import Layout from "@/components/layout";
+import { useBaseRoute } from "../hooks/use-base-route";
 
-export default function App({ Component, pageProps, router }: AppProps) {
+export default function App({ Component, pageProps }: AppProps) {
+  const { isBaseRoute, currentBasePath } = useBaseRoute();
+
   return (
     <VisitProvider>
-      <main>
-        <Navigation />
-        <AnimatePresence mode="wait">
-          <Component key={router.route} {...pageProps} />
-        </AnimatePresence>
-      </main>
+      <Navigation />
+      <AnimatePresence mode="wait">
+        <Layout key={currentBasePath}>
+          <Component {...pageProps} />
+        </Layout>
+      </AnimatePresence>
     </VisitProvider>
   );
 }

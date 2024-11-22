@@ -18,6 +18,7 @@ export const work = defineType({
         source: "name",
         maxLength: 96,
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "projects",
@@ -29,13 +30,37 @@ export const work = defineType({
   preview: {
     select: {
       title: "name",
-      projectCount: "projects.length",
+      projects: "projects", // Select the entire projects array
     },
     prepare(selection) {
-      const { title, projectCount } = selection;
+      const { title, projects } = selection;
+
+      // Helper function to capitalize first letter
+      const capitalize = (s: string) =>
+        s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
+      // Extract unique categories from projects, capitalize them, and append type
+      const categoryTypes = Array.isArray(projects)
+        ? projects.map((project) => {
+            const category = capitalize(project.category || "");
+            const type =
+              project._type === "caseStudy" ? "Case Study" : "Preview";
+            return `${category} (${type})`;
+          })
+        : [];
+
+      // Remove duplicates and sort
+      const uniqueCategoryTypes = [...new Set(categoryTypes)].sort();
+
+      // Join categories into a string
+      const subtitle =
+        uniqueCategoryTypes.length > 0
+          ? uniqueCategoryTypes.join(", ")
+          : "No Categories";
+
       return {
         title,
-        subtitle: `${projectCount} project${projectCount !== 1 ? "s" : ""}`,
+        subtitle,
       };
     },
   },

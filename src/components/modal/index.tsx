@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import * as Types from "./types";
-
 import {
   AnimatePresence,
   LayoutGroup,
@@ -17,13 +16,13 @@ const Context = React.createContext<Types.Context | undefined>(undefined);
 
 const useModalContext = (): Types.Context => {
   const context = React.useContext(Context);
-
   if (context === undefined) {
     throw new Error("useModalContext must be used within a Root");
   }
   return context;
 };
 
+// Root Component
 const Root = React.memo(
   React.forwardRef<HTMLDivElement, Types.Root>(
     (
@@ -41,15 +40,15 @@ const Root = React.memo(
       const [isOpen, setIsOpen] = React.useState(false);
       const [isAnimating, setIsAnimating] = React.useState(false);
       const [isClosing, setIsClosing] = React.useState(false);
-
       const layoutId = React.useRef(`modal-${uuidv4()}`).current;
       const router = useRouter();
-      const { slug } = router.query;
-
       const triggerRef = React.useRef<HTMLDivElement>(null);
 
+      // Handle URL-based modal state
       React.useEffect(() => {
-        const currentSlug = Array.isArray(slug) ? slug[0] : slug;
+        const currentSlug = Array.isArray(router.query.client)
+          ? router.query.client[0]
+          : router.query.client;
 
         if (currentSlug === id) {
           if (triggerRef.current) {
@@ -68,7 +67,6 @@ const Root = React.memo(
                 behavior: "smooth",
                 block: "center",
               });
-
               setTimeout(() => {
                 setIsOpen(true);
                 setIsClosing(false);
@@ -77,42 +75,11 @@ const Root = React.memo(
               setIsOpen(true);
               setIsClosing(false);
             }
-          } else {
-            const interval = setInterval(() => {
-              if (triggerRef.current) {
-                clearInterval(interval);
-                const triggerElement = triggerRef.current;
-                const bounding = triggerElement.getBoundingClientRect();
-                const inView =
-                  bounding.top >= 0 &&
-                  bounding.left >= 0 &&
-                  bounding.bottom <=
-                    (window.innerHeight ||
-                      document.documentElement.clientHeight) &&
-                  bounding.right <=
-                    (window.innerWidth || document.documentElement.clientWidth);
-
-                if (!inView) {
-                  triggerElement.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center",
-                  });
-                  setTimeout(() => {
-                    setIsOpen(true);
-                    setIsClosing(false);
-                  }, 500);
-                } else {
-                  setIsOpen(true);
-                  setIsClosing(false);
-                }
-              }
-            }, 100);
-            return () => clearInterval(interval);
           }
         } else {
           setIsOpen(false);
         }
-      }, [slug, id]);
+      }, [router.query.client, id]);
 
       return (
         <Context.Provider
@@ -141,6 +108,7 @@ const Root = React.memo(
 );
 Root.displayName = "Modal.Root";
 
+// Trigger Component
 const Trigger = React.memo(
   React.forwardRef<HTMLDivElement, Types.Trigger>((props, ref) => {
     const {
@@ -179,16 +147,18 @@ const Trigger = React.memo(
 );
 Trigger.displayName = "Modal.Trigger";
 
+// Portal Component
 const Portal = React.memo(
   React.forwardRef<HTMLDivElement, Types.Portal>(({ ...props }, ref) => {
     const { isOpen } = useModalContext();
+
     return (
       <AnimatePresence>
         {isOpen && (
           <motion.div
             ref={ref}
             className={cn(
-              "fixed inset-0 z-10 flex items-center justify-center",
+              "fixed inset-0 z-50 flex items-center justify-center",
               props.className,
             )}
           >
@@ -201,10 +171,10 @@ const Portal = React.memo(
 );
 Portal.displayName = "Modal.Portal";
 
+// Background Component
 const Background = React.memo(
   React.forwardRef<HTMLDivElement, Types.Background>(({ ...props }, ref) => {
     const { setIsOpen, isAnimating, path } = useModalContext();
-
     const router = useRouter();
 
     const handleClose = () => {
@@ -217,7 +187,7 @@ const Background = React.memo(
       <motion.div
         ref={ref}
         className={cn(
-          "fixed inset-0 bg-[#EBEBEB] bg-opacity-50 backdrop-blur-[16px]",
+          "fixed inset-0 bg-black/50 backdrop-blur-sm",
           props.className,
         )}
         initial={{ opacity: 0 }}
@@ -235,13 +205,13 @@ const Background = React.memo(
 );
 Background.displayName = "Modal.Background";
 
+// Content Component
 const Content = React.memo(
   React.forwardRef<HTMLDivElement, Types.Content>(({ ...props }, ref) => {
-    const { setIsOpen, layoutId } = useModalContext();
+    const { layoutId } = useModalContext();
     return (
       <motion.div
         ref={ref}
-        onClick={() => setIsOpen(false)}
         layoutId={layoutId}
         className={cn(props.className)}
         style={props.style}
@@ -253,7 +223,8 @@ const Content = React.memo(
 );
 Content.displayName = "Modal.Content";
 
-const Item: React.FC<Types.Item> = React.memo(({ id, ...props }) => {
+// Item Component
+const Item = React.memo(({ id, ...props }: Types.Item) => {
   return (
     <motion.div layoutId={id} className={props.className} style={props.style}>
       {props.children}

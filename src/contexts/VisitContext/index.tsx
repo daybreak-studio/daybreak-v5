@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import { useBaseRoute } from "../../hooks/use-base-route";
 
 type VisitStatus = "unknown" | "new" | "returning";
 
@@ -16,16 +18,25 @@ export const VisitProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [visitStatus, setVisitStatus] = useState<VisitStatus>("unknown");
   const [isLoading, setIsLoading] = useState(true);
+  const { isBaseRoute } = useBaseRoute();
+  const router = useRouter();
 
   useEffect(() => {
     const hasVisitedBefore = Cookies.get("hasVisitedBefore");
-    setVisitStatus(hasVisitedBefore === "true" ? "returning" : "new");
+
+    // If they haven't visited before, set the cookie immediately
+    if (!hasVisitedBefore) {
+      const thirtyMinutes = new Date(new Date().getTime() + 30 * 60 * 1000);
+      Cookies.set("hasVisitedBefore", "true", { expires: thirtyMinutes });
+    }
+
+    // Only set as "new" if they haven't visited before AND they're on a base route
+    setVisitStatus(!hasVisitedBefore && isBaseRoute ? "new" : "returning");
     setIsLoading(false);
-  }, []);
+  }, [isBaseRoute]);
 
   const markVisitComplete = () => {
     setVisitStatus("returning");
-    Cookies.set("hasVisitedBefore", "true", { expires: 1 });
   };
 
   return (

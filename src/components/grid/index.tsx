@@ -3,6 +3,7 @@ import { useBreakpoint, WidgetGridContext } from "@/components/grid/hooks";
 import { Defaults, GridProps } from "@/components/grid/props";
 import clsx from "clsx";
 import { useScramble } from "use-scramble";
+import useEmblaCarousel from "embla-carousel-react";
 
 // GridOverlay component
 interface GridOverlayProps {
@@ -75,10 +76,10 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
 }) => {
   const breakpoints: GridProps.Settings = {
     // Proportional to Figma design, but rowHeight can be used as a scaling factor for the entire widget grid to get larger or smaller based on viewport size.
-    xl: { rowHeight: 180, margin: [32, 32] },
-    lg: { rowHeight: 160, margin: [16, 16] },
-    md: { rowHeight: 120, margin: [22, 22] },
-    sm: { rowHeight: 110, margin: [19, 19] },
+    xl: { rowHeight: 160, margin: [32, 32] },
+    lg: { rowHeight: 120, margin: [16, 16] },
+    md: { rowHeight: 110, margin: [22, 22] },
+    sm: { rowHeight: 100, margin: [19, 19] },
   };
   const breakpoint = useBreakpoint() as keyof typeof breakpoints;
   const settings = breakpoints[breakpoint];
@@ -107,9 +108,11 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
     playOnMount: false,
   });
 
+  const [emblaRef] = useEmblaCarousel();
+
   return (
     <div className="relative h-screen w-screen transition-all">
-      <div className="flex h-full w-full flex-col items-center justify-center gap-12">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-6 pt-12 xl:gap-10">
         {header ? (
           header
         ) : (
@@ -117,12 +120,13 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
             ref={ref}
             onMouseOver={replay}
             onFocus={replay}
-            className="line-clamp-2 h-24 w-72 text-center text-4xl text-zinc-400 xl:w-80"
+            className="line-clamp-2 h-24 w-72 text-center text-3xl text-zinc-400 xl:w-80 xl:text-4xl"
           ></h1>
         )}
         <div
           style={{ width: `${width}px`, height: `${gridHeight}px` }}
-          className="relative"
+          className="embla relative"
+          ref={emblaRef}
         >
           {debug && (
             <GridOverlay
@@ -133,46 +137,48 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
               margin={settings.margin}
             />
           )}
-          <GridLayout {...Structure} cols={Structure.cols}>
-            {layout.map((item) => (
-              <div
-                key={item.id}
-                data-grid={{
-                  i: item.id,
-                  x: item.position.x,
-                  y: item.position.y,
-                  w: item.size.w,
-                  h: item.size.h,
-                  ...Defaults.DataGridAttributes,
-                }}
-                className="h-full w-full overflow-hidden rounded-2xl bg-zinc-100 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.05)] xl:rounded-3xl"
-              >
+          <div className="embla__container">
+            <GridLayout {...Structure} cols={Structure.cols}>
+              {layout.map((item) => (
                 <div
-                  className={clsx({
-                    ["border-[1px] border-red-500"]: debug,
-                    ["flex h-full w-full overflow-hidden"]: true,
-                  })}
+                  key={item.id}
+                  data-grid={{
+                    i: item.id,
+                    x: item.position.x,
+                    y: item.position.y,
+                    w: item.size.w,
+                    h: item.size.h,
+                    ...Defaults.DataGridAttributes,
+                  }}
+                  className="embla__slide h-full w-full overflow-hidden rounded-2xl bg-zinc-100 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.05)] xl:rounded-3xl"
                 >
-                  <WidgetGridProvider
-                    id={item.id}
-                    size={item.size}
-                    position={item.position}
-                    breakpoint={breakpoint}
+                  <div
+                    className={clsx({
+                      ["border-[1px] border-red-500"]: debug,
+                      ["flex h-full w-full overflow-hidden"]: true,
+                    })}
                   >
-                    {item.content}
-                  </WidgetGridProvider>
-                  {debug && (
-                    <div className="absolute left-0 top-0 bg-gray-700 bg-opacity-50 p-1 text-xs uppercase text-white">
-                      ID: {item.id}
-                      <br />
-                      {item.size.w}x{item.size.h} — ({item.position.x},
-                      {item.position.y})
-                    </div>
-                  )}
+                    <WidgetGridProvider
+                      id={item.id}
+                      size={item.size}
+                      position={item.position}
+                      breakpoint={breakpoint}
+                    >
+                      {item.content}
+                    </WidgetGridProvider>
+                    {debug && (
+                      <div className="absolute left-0 top-0 bg-gray-700 bg-opacity-50 p-1 text-xs uppercase text-white">
+                        ID: {item.id}
+                        <br />
+                        {item.size.w}x{item.size.h} — ({item.position.x},
+                        {item.position.y})
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </GridLayout>
+              ))}
+            </GridLayout>
+          </div>
         </div>
       </div>
     </div>
