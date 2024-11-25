@@ -13,7 +13,7 @@ const Article: React.FC<{ article: ArticleType }> = ({ article }) => (
     {article.image && (
       <Image
         src={urlFor(article.image)}
-        className="h-[50vw] w-screen rounded-3xl object-cover xl:h-96"
+        className="aspect-square w-screen rounded-3xl object-cover xl:h-96"
         alt={article.title || ""}
         width={600}
         height={400}

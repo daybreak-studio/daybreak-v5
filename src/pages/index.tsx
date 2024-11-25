@@ -18,6 +18,8 @@ import Article from "@/components/article";
 import { LayoutProps } from "@/components/grid/props";
 import Navigation from "@/components/navigation";
 import Layout from "@/components/layout";
+import CarouselComponent from "@/components/carousel";
+import { MediaItem } from "@/components/media-renderer";
 function transformWidgetsToLayout(widgets: Home["widgets"]) {
   if (!widgets) return [];
 
@@ -69,10 +71,15 @@ export default function Home({ data }: { data: Home }) {
   const components: PortableTextProps["components"] = {
     block: {
       normal: ({ children, index }) => (
-        <Reveal delay={index * 0.2}>
+        <div>
           <p className="mb-8 text-3xl text-zinc-400">{children}</p>
-        </Reveal>
+        </div>
       ),
+    },
+    types: {
+      carousel: ({ value }: { value: { media: MediaItem[] } }) => {
+        return <CarouselComponent media={value.media} />;
+      },
     },
   };
 
@@ -100,31 +107,33 @@ export default function Home({ data }: { data: Home }) {
       {windowHeight !== null && data && (
         <Drawer windowHeight={windowHeight}>
           {/* Mission Statement */}
-          <div className="p-12">
-            {data.missionStatement && (
-              <Reveal>
-                <div className="mb-64 md:w-7/12">
-                  <PortableText
-                    value={data.missionStatement}
-                    components={components}
-                  />
-                </div>
-              </Reveal>
+          {data.missionStatement && (
+            <div className="p-8 md:w-7/12">
+              <PortableText
+                value={data.missionStatement}
+                components={components}
+              />
+            </div>
+          )}
+          {/* Carousel */}
+          <div className="pb-12">
+            {data.carousel && <CarouselComponent media={data.carousel} />}
+          </div>
+          {/* About Us */}
+          <div className="p-8">
+            <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">About Us</h2>
+            {data?.aboutUs && (
+              <div className="md:w-7/12">
+                <PortableText value={data.aboutUs} components={components} />
+              </div>
             )}
-            {/* About Us */}
-            <Reveal>
-              <h2 className="mb-4 text-xl text-zinc-400">About Us</h2>
-              {data?.aboutUs && (
-                <div className="mb-64 md:w-7/12">
-                  <PortableText value={data.aboutUs} components={components} />
-                </div>
-              )}
-            </Reveal>
-            {/* Newsfeed */}
-            <Reveal>
-              <h2 className="mb-4 text-xl text-zinc-400">Newsfeed</h2>
-            </Reveal>
-            <div className="md:grid md:grid-cols-2 md:gap-6 xl:grid-cols-3">
+          </div>
+          {/* Newsfeed */}
+          <div className="p-8">
+            <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
+              Newsfeed
+            </h2>
+            <div className="md:grid md:grid-cols-2 md:gap-6 xl:grid-cols-4">
               {data?.newsfeed?.map((article) => (
                 <Article key={article._key} article={article} />
               ))}

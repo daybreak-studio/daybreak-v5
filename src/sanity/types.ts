@@ -387,6 +387,34 @@ export type Home = {
     _type: "block";
     _key: string;
   }>;
+  carousel?: Array<
+    | {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        };
+        hotspot?: SanityImageHotspot;
+        crop?: SanityImageCrop;
+        alt?: string;
+        width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+        _type: "image";
+        _key: string;
+      }
+    | {
+        asset?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
+        };
+        alt?: string;
+        width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+        _type: "file";
+        _key: string;
+      }
+  >;
   aboutUs?: Array<{
     children?: Array<{
       marks?: Array<string>;
