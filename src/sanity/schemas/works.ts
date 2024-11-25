@@ -108,10 +108,8 @@ export const preview = defineType({
         }),
         defineField({
           name: "video",
-          type: "file",
-          options: {
-            accept: "video/*",
-          },
+          type: "mux.video",
+          title: "Video",
         }),
       ],
     }),

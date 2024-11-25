@@ -43,6 +43,7 @@
     "react-grid-layout": "^1.4.4",
     "react-hook-form": "^7.53.2",
     "sanity": "^3.61.0",
+    "sanity-plugin-mux-input": "^2.4.0",
     "styled-components": "^6.1.12",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",

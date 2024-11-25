@@ -14,6 +14,7 @@ import {
   singletonPlugin,
   singletonStructure,
 } from "@/sanity/plugins/singleton";
+import { muxInput } from "sanity-plugin-mux-input";
 
 const singletonTypes = ["settings", "home", "team", "services"];
 const schemaTypes = schema.types;
@@ -25,6 +26,9 @@ export default defineConfig({
   // Add and edit the content schema in the './sanity/schema' folder
   schema,
   plugins: [
+    muxInput({
+      mp4_support: "standard",
+    }),
     structureTool({
       structure: singletonStructure(singletonTypes, schemaTypes),
     }),

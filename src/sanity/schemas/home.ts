@@ -93,11 +93,7 @@ const mediaWidget = defineArrayMember({
       type: "array",
       of: [
         { type: "image", title: "Image" },
-        {
-          type: "file",
-          title: "Video",
-          options: { accept: "video/*" },
-        },
+        { type: "mux.video", title: "Video" },
       ],
     }),
   ],

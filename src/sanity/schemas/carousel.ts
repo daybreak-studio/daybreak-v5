@@ -51,12 +51,9 @@ const carousel = {
         {
           name: "video",
           title: "Video",
-          type: "file",
+          type: "mux.video",
           icon: DocumentVideoIcon,
           fields: [...fields],
-          options: {
-            accept: "video/*",
-          },
         },
       ],
     },
