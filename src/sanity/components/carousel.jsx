@@ -16,8 +16,8 @@ export default function CarouselPreview(props) {
       return null;
     }
 
-    if (item._type === "image") {
-      const imageAsset = getImageAsset(item, {
+    if (item._type === "imageItem") {
+      const imageAsset = getImageAsset(item.asset, {
         projectId: "js0wg8n9",
         dataset: "production",
       });
@@ -34,34 +34,20 @@ export default function CarouselPreview(props) {
           alt={item.alt}
         />
       );
-    } else if (item._type === "video") {
-      const videoAsset = getFileAsset(item, {
-        projectId: "js0wg8n9",
-        dataset: "production",
-      });
-
-      if (!videoAsset) {
-        console.error("Failed to resolve video asset:", item);
-        return null;
-      }
-
-      const videoUrl = videoAsset.url;
+    } else if (item._type === "videoItem") {
+      const thumbnailUrl = `https://image.mux.com/${item.asset.playbackId}/thumbnail.jpg`;
 
       return (
-        <video
-          onClick={() => video.play()}
+        <img
           key={item._key}
-          src={videoUrl}
+          src={thumbnailUrl}
           style={{
             width: "fit-content",
             height: "400px",
-            objectFit: "cover",
+            objectFit: "contain",
           }}
-          controls
-          playsInline
-        >
-          <source src={videoUrl} type="video/mp4" />
-        </video>
+          alt={item.alt || "Video thumbnail"}
+        />
       );
     }
     return null;

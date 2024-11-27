@@ -39,6 +39,28 @@ export type SanityImageDimensions = {
   aspectRatio?: number;
 };
 
+export type SanityFileAsset = {
+  _id: string;
+  _type: "sanity.fileAsset";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  originalFilename?: string;
+  label?: string;
+  title?: string;
+  description?: string;
+  altText?: string;
+  sha1hash?: string;
+  extension?: string;
+  mimeType?: string;
+  size?: number;
+  assetId?: string;
+  uploadId?: string;
+  path?: string;
+  url?: string;
+  source?: SanityAssetSourceData;
+};
+
 export type Geopoint = {
   _type: "geopoint";
   lat?: number;
@@ -215,25 +237,27 @@ export type CaseStudy = {
     caption?: string;
     items?: Array<
       | {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          source?: {
+            asset?: {
+              _ref: string;
+              _type: "reference";
+              _weak?: boolean;
+              [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+            };
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
           };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
+          width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+          alt?: string;
+          _type: "imageItem";
           _key: string;
         }
       | {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-          };
-          _type: "file";
+          source?: MuxVideo;
+          width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+          alt?: string;
+          _type: "videoItem";
           _key: string;
         }
     >;
@@ -254,25 +278,27 @@ export type Preview = {
   caption?: string;
   media?: Array<
     | {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        source?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
         };
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        _type: "image";
+        width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+        alt?: string;
+        _type: "imageItem";
         _key: string;
       }
     | {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-        };
-        _type: "video";
+        source?: MuxVideo;
+        width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+        alt?: string;
+        _type: "videoItem";
         _key: string;
       }
   >;
@@ -343,25 +369,27 @@ export type Home = {
         size?: "2x2" | "3x3";
         media?: Array<
           | {
-              asset?: {
-                _ref: string;
-                _type: "reference";
-                _weak?: boolean;
-                [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+              source?: {
+                asset?: {
+                  _ref: string;
+                  _type: "reference";
+                  _weak?: boolean;
+                  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+                };
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
               };
-              hotspot?: SanityImageHotspot;
-              crop?: SanityImageCrop;
-              _type: "image";
+              width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+              alt?: string;
+              _type: "imageItem";
               _key: string;
             }
           | {
-              asset?: {
-                _ref: string;
-                _type: "reference";
-                _weak?: boolean;
-                [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-              };
-              _type: "file";
+              source?: MuxVideo;
+              width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+              alt?: string;
+              _type: "videoItem";
               _key: string;
             }
         >;
@@ -387,31 +415,29 @@ export type Home = {
     _type: "block";
     _key: string;
   }>;
-  carousel?: Array<
+  media?: Array<
     | {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+        source?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
         };
-        hotspot?: SanityImageHotspot;
-        crop?: SanityImageCrop;
-        alt?: string;
         width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
-        _type: "image";
+        alt?: string;
+        _type: "imageItem";
         _key: string;
       }
     | {
-        asset?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          [internalGroqTypeReferenceTo]?: "sanity.fileAsset";
-        };
-        alt?: string;
+        source?: MuxVideo;
         width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
-        _type: "file";
+        alt?: string;
+        _type: "videoItem";
         _key: string;
       }
   >;
@@ -452,28 +478,6 @@ export type Home = {
     _type: "article";
     _key: string;
   }>;
-};
-
-export type SanityFileAsset = {
-  _id: string;
-  _type: "sanity.fileAsset";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  originalFilename?: string;
-  label?: string;
-  title?: string;
-  description?: string;
-  altText?: string;
-  sha1hash?: string;
-  extension?: string;
-  mimeType?: string;
-  size?: number;
-  assetId?: string;
-  uploadId?: string;
-  path?: string;
-  url?: string;
-  source?: SanityAssetSourceData;
 };
 
 export type SanityImageCrop = {
@@ -533,10 +537,97 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
+export type MuxVideo = {
+  _type: "mux.video";
+  asset?: {
+    _ref: string;
+    _type: "reference";
+    _weak?: boolean;
+    [internalGroqTypeReferenceTo]?: "mux.videoAsset";
+    playbackId?: string; // Add this for expanded references
+  };
+};
+
+export type MuxVideoAsset = {
+  _type: "mux.videoAsset";
+  status?: string;
+  assetId?: string;
+  playbackId?: string;
+  filename?: string;
+  thumbTime?: number;
+  data?: MuxAssetData;
+};
+
+export type MuxAssetData = {
+  _type: "mux.assetData";
+  resolution_tier?: string;
+  upload_id?: string;
+  created_at?: string;
+  id?: string;
+  status?: string;
+  max_stored_resolution?: string;
+  passthrough?: string;
+  encoding_tier?: string;
+  master_access?: string;
+  aspect_ratio?: string;
+  duration?: number;
+  max_stored_frame_rate?: number;
+  mp4_support?: string;
+  max_resolution_tier?: string;
+  tracks?: Array<
+    {
+      _key: string;
+    } & MuxTrack
+  >;
+  playback_ids?: Array<
+    {
+      _key: string;
+    } & MuxPlaybackId
+  >;
+  static_renditions?: MuxStaticRenditions;
+};
+
+export type MuxStaticRenditions = {
+  _type: "mux.staticRenditions";
+  status?: string;
+  files?: Array<
+    {
+      _key: string;
+    } & MuxStaticRenditionFile
+  >;
+};
+
+export type MuxStaticRenditionFile = {
+  _type: "mux.staticRenditionFile";
+  ext?: string;
+  name?: string;
+  width?: number;
+  bitrate?: number;
+  filesize?: number;
+  height?: number;
+};
+
+export type MuxPlaybackId = {
+  _type: "mux.playbackId";
+  id?: string;
+  policy?: string;
+};
+
+export type MuxTrack = {
+  _type: "mux.track";
+  id?: string;
+  type?: string;
+  max_width?: number;
+  max_frame_rate?: number;
+  duration?: number;
+  max_height?: number;
+};
+
 export type AllSanitySchemaTypes =
   | SanityImagePaletteSwatch
   | SanityImagePalette
   | SanityImageDimensions
+  | SanityFileAsset
   | Geopoint
   | Team
   | Settings
@@ -546,12 +637,18 @@ export type AllSanitySchemaTypes =
   | Work
   | Slug
   | Home
-  | SanityFileAsset
   | SanityImageCrop
   | SanityImageHotspot
   | SanityImageAsset
   | SanityAssetSourceData
-  | SanityImageMetadata;
+  | SanityImageMetadata
+  | MuxVideo
+  | MuxVideoAsset
+  | MuxAssetData
+  | MuxStaticRenditions
+  | MuxStaticRenditionFile
+  | MuxPlaybackId
+  | MuxTrack;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/queries.ts
 // Variable: HOME_QUERY

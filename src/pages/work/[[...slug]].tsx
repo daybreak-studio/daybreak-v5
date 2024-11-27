@@ -45,6 +45,7 @@ const getModalVariant = (client: Work, projectSlug: string | undefined) => {
 };
 
 export default function WorkPage({ data }: { data: Work[] }) {
+  console.log(data);
   const router = useRouter();
   const { slug } = router.query;
   const [clientSlug, projectSlug] = Array.isArray(slug)

@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { createMediaArray } from "./media";
 
 export const work = defineType({
   name: "work",
@@ -94,25 +95,7 @@ export const preview = defineType({
       title: "Caption",
       type: "string",
     }),
-    defineField({
-      name: "media",
-      title: "Media",
-      type: "array",
-      of: [
-        defineField({
-          name: "image",
-          type: "image",
-          options: {
-            metadata: ["blurhash", "lqip", "palette"],
-          },
-        }),
-        defineField({
-          name: "video",
-          type: "mux.video",
-          title: "Video",
-        }),
-      ],
-    }),
+    createMediaArray(),
     defineField({
       name: "link",
       title: "External Link",
@@ -127,14 +110,16 @@ export const preview = defineType({
   preview: {
     select: {
       category: "category",
+      media: "media.0",
     },
     prepare(selection) {
-      const { category } = selection;
+      const { category, media } = selection;
       const capitalizedType = category
         ? category.charAt(0).toUpperCase() + category.slice(1)
         : "Unspecified Type";
       return {
         title: `${capitalizedType} – Preview`,
+        media: media?.asset,
       };
     },
   },
@@ -165,10 +150,10 @@ export const caseStudy = defineType({
     }),
     defineField({
       name: "media",
-      title: "Media",
+      title: "Media Groups",
       type: "array",
       of: [
-        {
+        defineField({
           type: "object",
           name: "mediaGroup",
           title: "Media Group",
@@ -183,25 +168,7 @@ export const caseStudy = defineType({
               title: "Caption",
               type: "string",
             }),
-            defineField({
-              name: "items",
-              title: "Media Items",
-              type: "array",
-              of: [
-                {
-                  type: "image",
-                  options: {
-                    hotspot: true,
-                    metadata: ["blurhash", "lqip", "palette"],
-                  },
-                },
-                {
-                  type: "file",
-                  options: {
-                    accept: "video/*",
-                  },
-                },
-              ],
+            createMediaArray({
               validation: (Rule) => Rule.max(2),
             }),
           ],
@@ -209,26 +176,14 @@ export const caseStudy = defineType({
             select: {
               heading: "heading",
               items: "items",
-              firstItemAsset: "items.0.asset",
+              firstItem: "items.0",
             },
             prepare(selection) {
-              const { heading, items, firstItemAsset } = selection;
+              const { heading, items, firstItem } = selection;
 
-              // Helper function to clean and capitalize types
-              const cleanAndCapitalizeType = (type: string): string => {
-                if (type === "file") return "Video";
-                return type.charAt(0).toUpperCase() + type.slice(1);
-              };
-
-              // Convert items to an array if it's not already
-              const itemsArray = items
-                ? Array.isArray(items)
-                  ? items
-                  : Object.values(items)
-                : [];
-
-              const itemTypes = itemsArray.map((item: any) =>
-                cleanAndCapitalizeType(item._type || "Unknown"),
+              const itemsArray = Array.isArray(items) ? items : [];
+              const itemTypes = itemsArray.map((item) =>
+                item._type === "imageItem" ? "Image" : "Video",
               );
 
               const itemCount = itemsArray.length;
@@ -237,11 +192,11 @@ export const caseStudy = defineType({
               return {
                 title: `${title}: ${heading || "No Info"}`,
                 subtitle: itemTypes.join(", ") || "No files",
-                media: firstItemAsset,
+                media: firstItem?.asset,
               };
             },
           },
-        },
+        }),
       ],
     }),
     defineField({
@@ -262,14 +217,16 @@ export const caseStudy = defineType({
   preview: {
     select: {
       category: "category",
+      media: "media.0.items.0",
     },
     prepare(selection) {
-      const { category } = selection;
+      const { category, media } = selection;
       const capitalizedType = category
         ? category.charAt(0).toUpperCase() + category.slice(1)
         : "Unspecified Type";
       return {
         title: `${capitalizedType} – Case Study`,
+        media: media?.asset,
       };
     },
   },

@@ -3,8 +3,7 @@
 
 import useEmblaCarousel from "embla-carousel-react";
 import { MediaRenderer } from "@/components/media-renderer";
-import type { MediaItem } from "@/components/media-renderer";
-
+import { MediaItem } from "@/sanity/lib/media";
 type CarouselWidth = "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
 
 const sizeOptions: Record<CarouselWidth, string> = {
@@ -28,6 +27,7 @@ interface CarouselProps {
 
 export default function CarouselComponent({ media, className }: CarouselProps) {
   const [emblaRef] = useEmblaCarousel({ align: "start" });
+  console.log("CarouselComponent media:", media);
 
   return (
     <div className={`relative col-span-full ${className} xl:py-16`}>
@@ -49,7 +49,7 @@ export default function CarouselComponent({ media, className }: CarouselProps) {
                   {/* Set a fixed height */}
                   <MediaRenderer
                     media={item}
-                    autoPlay={item._type === "video"}
+                    autoPlay={item._type === "videoItem"}
                     className="h-full w-full object-cover" // Use object-cover to fill the container
                   />
                 </div>

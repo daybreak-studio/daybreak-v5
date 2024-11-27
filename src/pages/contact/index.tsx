@@ -22,7 +22,7 @@ import {
   ContactFormValues,
   ProjectTypes,
 } from "@/lib/contact/schemas/contact-form";
-import { usePersistedForm } from "@/hooks/use-persisted-form";
+import { usePersistedForm } from "@/hooks/usePersistedForm";
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -77,7 +77,7 @@ export default function ContactPage() {
       <div className="mx-auto max-w-2xl">
         <div className="mb-8">
           <h1 className="text-4xl font-bold tracking-tight">Get in touch</h1>
-          <p className="text-muted-foreground mt-2 text-lg">
+          <p className="mt-2 text-lg text-muted-foreground">
             We&apos;d love to hear about your project. Let us know what
             you&apos;re looking to create.
           </p>

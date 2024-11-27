@@ -1,4 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { createMediaArray } from "./media";
 
 function createWidgetPreview(widgetTitle: string) {
   return {
@@ -88,14 +89,7 @@ const mediaWidget = defineArrayMember({
       initialValue: "2x2",
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: "media",
-      type: "array",
-      of: [
-        { type: "image", title: "Image" },
-        { type: "mux.video", title: "Video" },
-      ],
-    }),
+    createMediaArray(),
   ],
   preview: createWidgetPreview("Media Widget"),
 });
@@ -121,42 +115,7 @@ export const home = defineType({
         },
       ],
     }),
-    defineField({
-      name: "carousel",
-      title: "Carousel",
-      type: "array",
-      of: [
-        {
-          type: "image",
-          title: "Image",
-          fields: [
-            { name: "alt", type: "string", title: "Alt Text" },
-            {
-              name: "width",
-              type: "string",
-              options: {
-                list: ["1/4", "1/3", "1/2", "2/3", "3/4", "1/1"],
-              },
-            },
-          ],
-        },
-        {
-          type: "file",
-          title: "Video",
-          options: { accept: "video/*" },
-          fields: [
-            { name: "alt", type: "string", title: "Alt Text" },
-            {
-              name: "width",
-              type: "string",
-              options: {
-                list: ["1/4", "1/3", "1/2", "2/3", "3/4", "1/1"],
-              },
-            },
-          ],
-        },
-      ],
-    }),
+    createMediaArray(),
     defineField({
       name: "aboutUs",
       title: "About Us",

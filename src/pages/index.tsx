@@ -19,7 +19,8 @@ import { LayoutProps } from "@/components/grid/props";
 import Navigation from "@/components/navigation";
 import Layout from "@/components/layout";
 import CarouselComponent from "@/components/carousel";
-import { MediaItem } from "@/components/media-renderer";
+import { HOME_QUERY } from "@/sanity/lib/queries";
+import { MediaItem } from "@/sanity/lib/media";
 function transformWidgetsToLayout(widgets: Home["widgets"]) {
   if (!widgets) return [];
 
@@ -54,6 +55,7 @@ function transformWidgetsToLayout(widgets: Home["widgets"]) {
 }
 
 export default function Home({ data }: { data: Home }) {
+  console.log(data);
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
 
   // Handles updates for window height.
@@ -117,7 +119,7 @@ export default function Home({ data }: { data: Home }) {
           )}
           {/* Carousel */}
           <div className="pb-12">
-            {data.carousel && <CarouselComponent media={data.carousel} />}
+            {data.media && <CarouselComponent media={data.media} />}
           </div>
           {/* About Us */}
           <div className="p-8">
@@ -147,28 +149,7 @@ export default function Home({ data }: { data: Home }) {
 
 // Fetch data from Sanity CMS
 export const getStaticProps: GetStaticProps = async () => {
-  const query = `*[_type=="home"][!(_id in path('drafts.**'))][0]{
-  ...,
-  widgets[]{
-    ...,
-    _type == 'mediaWidget' => {
-      "media": media[]{
-        ...,
-        _type,
-        asset->{
-          _id,
-          url,
-          "metadata": metadata{
-            dimensions,
-            lqip
-          }
-        }
-      }
-    }
-  }
-}`;
-
-  const data = await client.fetch(query);
+  const data = await client.fetch(HOME_QUERY);
   return {
     props: {
       data,

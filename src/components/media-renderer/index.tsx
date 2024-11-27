@@ -1,20 +1,9 @@
+import { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { useRef, useEffect, useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import { useNextSanityImage } from "next-sanity-image";
-import { client } from "@/sanity/lib/client";
-import { useInView } from "framer-motion";
-
-export type MediaItem = {
-  asset?: {
-    _ref: string;
-    _type: "reference";
-  };
-  _type: "image" | "mux.video";
-  _key: string;
-  playbackId?: string;
-  alt?: string;
-};
+import { motion, useInView } from "framer-motion";
+import { urlFor, getMuxThumbnailUrl } from "@/sanity/lib/image";
+import { useLowPowerMode } from "@/hooks/useLowPowerMode";
+import { MediaItem, VideoItem, ImageItem } from "@/sanity/lib/media";
 
 interface MediaRendererProps {
   media: MediaItem | null;
@@ -26,104 +15,154 @@ interface MediaRendererProps {
   onError?: () => void;
 }
 
-// Custom hook for detecting low power mode
-const useLowPowerMode = () => {
-  const [isLowPowerMode, setIsLowPowerMode] = useState(false);
-
-  useEffect(() => {
-    // Check battery status if available
-    if ("getBattery" in navigator) {
-      // @ts-ignore - getBattery() is not in the typescript definitions
-      navigator.getBattery().then((battery) => {
-        const updatePowerMode = () => {
-          setIsLowPowerMode(battery.charging === false && battery.level <= 0.2);
-        };
-
-        updatePowerMode();
-        battery.addEventListener("levelchange", updatePowerMode);
-        battery.addEventListener("chargingchange", updatePowerMode);
-
-        return () => {
-          battery.removeEventListener("levelchange", updatePowerMode);
-          battery.removeEventListener("chargingchange", updatePowerMode);
-        };
-      });
-    }
-
-    // Check for reduced motion/data preference
-    const mediaQuery = window.matchMedia(
-      "(prefers-reduced-motion: reduce), (prefers-reduced-data: reduce)",
-    );
-    const handleChange = (e: MediaQueryListEvent) =>
-      setIsLowPowerMode(e.matches);
-
-    setIsLowPowerMode(mediaQuery.matches);
-    mediaQuery.addEventListener("change", handleChange);
-
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
-
-  return isLowPowerMode;
+// Utils
+const isMuxVideo = (media: MediaItem): media is VideoItem => {
+  return (
+    media._type === "videoItem" &&
+    media.source?._type === "mux.video" &&
+    !!media.source?.asset?._ref
+  );
 };
 
-// Mux thumbnail component
-const MuxThumbnail = ({
-  playbackId,
+const isValidMedia = (media: MediaItem | null): media is MediaItem => {
+  if (!media) {
+    console.log("Invalid media: media is null");
+    return false;
+  }
+
+  if (!media.source) {
+    console.log("Invalid media: missing source", { media });
+    return false;
+  }
+
+  if (!media.source.asset) {
+    console.log("Invalid media: missing asset", {
+      media,
+      source: media.source,
+    });
+    return false;
+  }
+
+  if (!media.source.asset._ref) {
+    console.log("Invalid media: missing asset._ref", {
+      media,
+      source: media.source,
+      asset: media.source.asset,
+    });
+    return false;
+  }
+
+  return true;
+};
+
+const getMediaUrl = (media: MediaItem): string => {
+  if (!media.source?.asset?._ref) {
+    console.warn("Missing asset reference", media);
+    return "";
+  }
+
+  if (isMuxVideo(media)) {
+    return getMuxThumbnailUrl(media);
+  }
+
+  return urlFor(media.source);
+};
+
+// Components
+const OptimizedImage = ({
+  media,
   className = "",
   priority = false,
   alt = "",
   onLoad,
 }: {
-  playbackId: string;
+  media: MediaItem;
   className?: string;
   priority?: boolean;
   alt?: string;
   onLoad?: () => void;
-}) => {
-  return (
-    <div className="relative h-full w-full">
-      <Image
-        src={`https://image.mux.com/${playbackId}/thumbnail.jpg`}
-        alt={alt}
-        className={`object-cover ${className}`}
-        fill
-        priority={priority}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        onLoad={onLoad}
-      />
-    </div>
-  );
-};
+}) => (
+  <div className="relative h-full w-full">
+    <Image
+      src={getMediaUrl(media)}
+      alt={alt || media.alt || ""}
+      className={`object-cover ${className}`}
+      fill
+      priority={priority}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      onLoad={onLoad}
+    />
+  </div>
+);
 
-// Sanity image component
-const SanityImage = ({
+const VideoPlayer = ({
   media,
   className = "",
+  autoPlay = false,
+  isInView = false,
   priority = false,
+  poster,
+  onError,
   onLoad,
 }: {
-  media: MediaItem;
+  media: VideoItem;
   className?: string;
+  autoPlay?: boolean;
+  isInView?: boolean;
   priority?: boolean;
+  poster: string;
+  onError?: () => void;
   onLoad?: () => void;
 }) => {
-  const imageProps = useNextSanityImage(client, media);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const playbackId = media.source?.asset?.playbackId;
+
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement || !autoPlay || !isInView) return;
+
+    const playVideo = async () => {
+      try {
+        await videoElement.play();
+      } catch (error) {
+        console.warn("Autoplay prevented:", error);
+        onError?.();
+      }
+    };
+
+    playVideo();
+
+    return () => {
+      videoElement.pause();
+      videoElement.src = "";
+      videoElement.load();
+    };
+  }, [isInView, autoPlay, onError]);
+
+  if (!playbackId) return null;
 
   return (
-    <div className="relative h-full w-full">
-      <Image
-        {...imageProps}
-        alt={media.alt || ""}
-        className={`object-cover ${className}`}
-        fill
-        priority={priority}
-        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        onLoad={onLoad}
+    <video
+      ref={videoRef}
+      className={`h-full w-full object-cover ${className}`}
+      autoPlay={autoPlay && isInView}
+      muted
+      playsInline
+      loop
+      poster={poster}
+      onError={() => onError?.()}
+      onLoadedData={() => onLoad?.()}
+      preload={priority ? "auto" : "metadata"}
+    >
+      <source
+        src={`https://stream.mux.com/${playbackId}/high.mp4`}
+        type="video/mp4"
       />
-    </div>
+    </video>
   );
 };
 
+// Main Component
 export function MediaRenderer({
   media,
   layoutId,
@@ -133,55 +172,25 @@ export function MediaRenderer({
   onLoad,
   onError,
 }: MediaRendererProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isLowPowerMode = useLowPowerMode();
   const [videoError, setVideoError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const isInView = useInView(containerRef, { once: true, amount: 0.3 });
-
-  const handleVideoError = useCallback(() => {
-    setVideoError(true);
-    onError?.();
-  }, [onError]);
+  const isLowPowerMode = useLowPowerMode();
 
   const handleLoadSuccess = useCallback(() => {
     setIsLoading(false);
     onLoad?.();
   }, [onLoad]);
 
-  // Cleanup video resources when component unmounts
-  useEffect(() => {
-    const videoElement = videoRef.current;
-    return () => {
-      if (videoElement) {
-        videoElement.pause();
-        videoElement.src = "";
-        videoElement.load();
-      }
-    };
-  }, []);
+  const handleVideoError = useCallback(() => {
+    setVideoError(true);
+    onError?.();
+  }, [onError]);
 
-  // Handle autoplay when in view
-  useEffect(() => {
-    if (!isInView || !autoPlay || isLowPowerMode || videoError) return;
+  if (!isValidMedia(media)) return null;
 
-    const videoElement = videoRef.current;
-    if (!videoElement) return;
-
-    const playVideo = async () => {
-      try {
-        await videoElement.play();
-      } catch (error) {
-        console.warn("Autoplay prevented:", error);
-        handleVideoError();
-      }
-    };
-
-    playVideo();
-  }, [isInView, autoPlay, isLowPowerMode, videoError, handleVideoError]);
-
-  if (!media?.asset) return null;
+  const shouldShowThumbnail = isLowPowerMode || videoError;
 
   return (
     <motion.div
@@ -193,45 +202,35 @@ export function MediaRenderer({
         <div className="absolute inset-0 animate-pulse bg-gray-100" />
       )}
 
-      {media._type === "image" && (
-        <SanityImage
+      {isMuxVideo(media) ? (
+        <div className="relative h-full w-full">
+          {shouldShowThumbnail ? (
+            <OptimizedImage
+              media={media}
+              className="rounded-xl"
+              priority={priority}
+              onLoad={handleLoadSuccess}
+            />
+          ) : (
+            <VideoPlayer
+              media={media}
+              className="rounded-xl"
+              autoPlay={autoPlay}
+              isInView={isInView}
+              priority={priority}
+              poster={getMediaUrl(media)}
+              onError={handleVideoError}
+              onLoad={handleLoadSuccess}
+            />
+          )}
+        </div>
+      ) : (
+        <OptimizedImage
           media={media}
           className="rounded-xl"
           priority={priority}
           onLoad={handleLoadSuccess}
         />
-      )}
-
-      {media._type === "mux.video" && media.playbackId && (
-        <div className="relative h-full w-full">
-          {isLowPowerMode || videoError ? (
-            <MuxThumbnail
-              playbackId={media.playbackId}
-              className="rounded-xl"
-              priority={priority}
-              alt={media.alt || ""}
-              onLoad={handleLoadSuccess}
-            />
-          ) : (
-            <video
-              ref={videoRef}
-              className="h-full w-full rounded-xl object-cover"
-              autoPlay={autoPlay && isInView}
-              muted
-              playsInline
-              loop
-              poster={`https://image.mux.com/${media.playbackId}/thumbnail.jpg`}
-              onError={handleVideoError}
-              onLoadedData={handleLoadSuccess}
-              preload={priority ? "auto" : "metadata"}
-            >
-              <source
-                src={`https://stream.mux.com/${media.playbackId}/medium.mp4`}
-                type="video/mp4"
-              />
-            </video>
-          )}
-        </div>
       )}
     </motion.div>
   );
