@@ -41,7 +41,7 @@ export default function ProjectSelector({
             }}
             className="origin center group cursor-pointer"
           >
-            <div className="relative overflow-hidden rounded-2xl">
+            <div className="relative h-[300px] overflow-hidden rounded-2xl">
               <MediaRenderer
                 media={mediaAsset}
                 className="object-cover duration-300 group-hover:scale-105"

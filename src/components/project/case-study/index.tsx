@@ -1,230 +1,229 @@
-import React, {
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { motion } from "framer-motion";
+import { CaseStudy } from "@/sanity/types";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import CaseStudyNav from "./components/nav";
-import { useMotionValueEvent, useScroll } from "framer-motion";
-import { useResizeObserver, useWindowSize } from "usehooks-ts";
-import MediaGroupLayout from "./components/layout";
-import { CaseStudy, Work } from "@/sanity/types";
+import MediaGroup from "./components/media-group";
+import { AnimationConfig } from "@/components/animations/AnimationConfig";
+import { Fragment } from "react";
 
 interface ProjectCaseStudyProps {
-  data: Work;
+  data: {
+    projects: CaseStudy[];
+  };
   imageLayoutId: string;
 }
 
-export default function ProjectCaseStudy({
-  data,
-  imageLayoutId,
-}: ProjectCaseStudyProps) {
+export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   const project = data.projects?.[0] as CaseStudy;
-  const [currentMediaGroup, setCurrentMediaGroup] = useState<number>(0);
-  const [isViewingInfo, setIsViewingInfo] = useState<boolean>(false);
-  const mediaGroupRefs = useRef<HTMLDivElement[]>([]) as MutableRefObject<
-    HTMLDivElement[]
-  >;
+  const [activeGroupIndex, setActiveGroupIndex] = useState<number>(0);
+  const [isNavVisible, setIsNavVisible] = useState(false);
+  const [isInfoVisible, setIsInfoVisible] = useState(false);
 
-  const inforArr = useMemo(() => {
-    return project.media?.map((mediaGroup) => {
-      return {
-        heading: mediaGroup.heading,
-        caption: mediaGroup.caption,
-      };
-    });
-  }, [project]);
-
-  const containerRef = useRef() as MutableRefObject<HTMLDivElement>;
-  const containerSize = useResizeObserver({ ref: containerRef });
-  const { height: windowHeight, width: windowWidth } = useWindowSize();
-  const screenOffset = 0.5 * windowHeight + 0.13 * windowWidth;
-
-  const mediaGroupYPositions = useMemo(
-    () =>
-      mediaGroupRefs.current.map((elm) => {
-        const bound = elm.getBoundingClientRect();
-        return {
-          anchorY: bound.y + bound.height / 2 + window.scrollY - screenOffset,
-          height: bound.height || 0,
-        };
-      }),
-    // mediaGroupBounds reacts to viewport size change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [containerSize.height, screenOffset],
-  );
-
-  const { scrollY } = useScroll();
-
-  const docRef = useRef() as MutableRefObject<HTMLElement>;
   useEffect(() => {
-    docRef.current = document.body;
-  }, []);
-  const pageSize = useResizeObserver({ ref: docRef });
-
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    if (latest === 0) {
-      setCurrentMediaGroup(0);
-      setIsViewingInfo(false);
-      return;
+    const firstGroup = project.mediaGroups?.[0];
+    if (firstGroup?.heading && firstGroup?.caption) {
+      setIsNavVisible(true);
     }
-    if (
-      pageSize.height !== undefined &&
-      latest >= pageSize.height - windowHeight - 200
-    ) {
-      setIsViewingInfo(false);
-      return;
-    }
+  }, [project.mediaGroups]);
 
-    // find out what is the current viewing group
-    let targetSection = 0;
-    for (let i = 0; i < mediaGroupYPositions.length; i++) {
-      if (mediaGroupYPositions[i].anchorY < latest) {
-        targetSection = i;
+  const navigateToGroup = useCallback(
+    (index: number) => {
+      setActiveGroupIndex(index);
+
+      // Check if the target group has a caption
+      const targetGroup = project.mediaGroups?.[index];
+      const hasCaption = !!(targetGroup?.heading && targetGroup?.caption);
+
+      if (hasCaption) {
+        // If there's a caption, show nav and expand it
+        setIsNavVisible(true);
+        setIsInfoVisible(true);
       } else {
-        break;
-      }
-    }
-
-    setCurrentMediaGroup((prev) => {
-      if (prev === targetSection) {
-        return prev;
-      }
-      return targetSection;
-    });
-  });
-
-  const findNextGroupWithCaption = useCallback(
-    (
-      startIndex: number,
-      direction: 1 | -1,
-      shouldSkipEmpty: boolean = false,
-    ) => {
-      if (!project.media) return null;
-      let index = startIndex + direction;
-
-      while (index >= 0 && index < project.media.length) {
-        const mediaItem = project.media[index];
-
-        if (mediaItem.heading && mediaItem.caption) {
-          return index;
-        }
-
-        if (shouldSkipEmpty) {
-          index += direction;
-        } else {
-          return index;
-        }
+        // If no caption, hide nav completely
+        setIsNavVisible(false);
+        setIsInfoVisible(false);
       }
 
-      return null;
+      // Scroll the element into view
+      const element = document.getElementById(`media-group-${index}`);
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }
     },
-    [project],
+    [project.mediaGroups],
   );
 
-  const navigateToMediaGroup = useCallback(
-    (groupIndex: number) => {
-      const mediaGroupMeasurement = mediaGroupYPositions[groupIndex];
-      if (!mediaGroupMeasurement) return;
-      const halfHeight = mediaGroupMeasurement.height / 2;
-      const target = mediaGroupMeasurement.anchorY + 110 + halfHeight * 0.3;
-      window.scrollTo({ top: target, behavior: "smooth" });
+  // Get indices of groups with captions
+  const groupsWithCaptions = useMemo(() => {
+    return (
+      project.mediaGroups?.reduce<number[]>((acc, group, index) => {
+        if (group.heading && group.caption) {
+          acc.push(index);
+        }
+        return acc;
+      }, []) ?? []
+    );
+  }, [project.mediaGroups]);
+
+  // Find next captioned group after current index
+  const findNextCaptionedGroup = useCallback(
+    (currentIndex: number, direction: 1 | -1) => {
+      if (direction === 1) {
+        // Find the first caption group that comes after current index
+        return groupsWithCaptions.find((index) => index > currentIndex) ?? null;
+      } else {
+        // Find the last caption group that comes before current index
+        return (
+          groupsWithCaptions.reverse().find((index) => index < currentIndex) ??
+          null
+        );
+      }
     },
-    [mediaGroupYPositions],
+    [groupsWithCaptions],
   );
 
-  const handleNextMediaGroup = useCallback(() => {
-    const nextGroup = findNextGroupWithCaption(
-      currentMediaGroup,
-      1,
-      isViewingInfo,
-    );
-    if (nextGroup === null) return;
-    navigateToMediaGroup(nextGroup);
+  // Handle scroll-based group tracking
+  const handleGroupInView = useCallback((index: number) => {
+    setActiveGroupIndex(index);
+  }, []);
+
+  // Update keyboard handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!document.querySelector('[role="dialog"]')) return;
+
+      switch (e.code) {
+        case "Escape":
+          e.preventDefault();
+          e.stopPropagation();
+          setIsInfoVisible(false);
+          break;
+        case "Enter":
+          e.preventDefault();
+          e.stopPropagation();
+          setIsInfoVisible(!isInfoVisible);
+          break;
+        case "ArrowDown":
+        case "ArrowUp":
+          e.preventDefault();
+          e.stopPropagation();
+          const nextIndex = findNextCaptionedGroup(
+            activeGroupIndex,
+            e.code === "ArrowDown" ? 1 : -1,
+          );
+          if (nextIndex !== null) {
+            navigateToGroup(nextIndex);
+          }
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
   }, [
-    currentMediaGroup,
-    findNextGroupWithCaption,
-    isViewingInfo,
-    navigateToMediaGroup,
+    activeGroupIndex,
+    isInfoVisible,
+    findNextCaptionedGroup,
+    navigateToGroup,
   ]);
 
-  const handlePrevMediaGroup = useCallback(() => {
-    const nextGroup = findNextGroupWithCaption(
-      currentMediaGroup,
-      -1,
-      isViewingInfo,
-    );
-    if (nextGroup === null) return;
-    navigateToMediaGroup(nextGroup);
-  }, [
-    currentMediaGroup,
-    findNextGroupWithCaption,
-    isViewingInfo,
-    navigateToMediaGroup,
-  ]);
+  // Check if current group has caption
+  const currentGroupHasCaption = useMemo(() => {
+    const currentGroup = project.mediaGroups?.[activeGroupIndex];
+    return !!(currentGroup?.heading && currentGroup?.caption);
+  }, [project.mediaGroups, activeGroupIndex]);
+
+  // Get current group info
+  const currentGroup = project.mediaGroups?.[activeGroupIndex];
 
   return (
-    <div className="px-4 py-8 pt-48" ref={containerRef}>
-      <CaseStudyNav
-        currentInfoIndex={currentMediaGroup}
-        highlightInfoArr={inforArr}
-        onNextMediaGroup={handleNextMediaGroup}
-        onPrevMediaGroup={handlePrevMediaGroup}
-        canPrevMediaGroup={currentMediaGroup !== 0}
-        canNextMediaGroup={
-          project.media ? currentMediaGroup !== project.media.length - 1 : false
-        }
-        onExpand={() => setIsViewingInfo(true)}
-        onCollapse={() => setIsViewingInfo(false)}
-        isExpanded={isViewingInfo}
-      />
-      <h1 className="mb-8 py-24 text-center text-4xl">{project.heading}</h1>
-      <div className="flex flex-col gap-4">
-        {project.media?.map((mediaGroup, groupIndex) => {
-          return (
-            <MediaGroupLayout
-              key={groupIndex}
-              ref={(ref) => {
-                mediaGroupRefs.current[groupIndex] = ref as HTMLDivElement;
-              }}
-              groupIndex={groupIndex}
-              currentMediaGroup={currentMediaGroup}
-              mediaGroup={mediaGroup}
-              boundInfo={mediaGroupYPositions[groupIndex]}
-              shouldShirnk={isViewingInfo}
-              onClick={(e) => {
-                if (isViewingInfo && groupIndex === currentMediaGroup) {
-                  setIsViewingInfo(false);
-                  return;
-                }
-                e.stopPropagation();
-                e.preventDefault();
-                setIsViewingInfo(true);
-                navigateToMediaGroup(groupIndex);
-              }}
-            />
-          );
-        })}
-        <div className="mx-auto mb-96 mt-44 grid w-full max-w-96 grid-cols-2 gap-y-6 text-sm">
-          {project.credits?.map((team, index) => {
-            return (
-              <React.Fragment key={index}>
+    <motion.div
+      className="px-4 py-8 pt-48"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4, ease: AnimationConfig.EASE_OUT }}
+    >
+      <motion.h1
+        className="mb-8 py-24 text-center text-4xl"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: AnimationConfig.EASE_OUT }}
+      >
+        {project.heading}
+      </motion.h1>
+
+      <div className="flex flex-col gap-8">
+        {project.mediaGroups?.map((group, index) => (
+          <MediaGroup
+            key={index}
+            id={`media-group-${index}`}
+            group={group}
+            index={index}
+            isActive={activeGroupIndex === index}
+            isZoomed={isInfoVisible}
+            isInfoVisible={currentGroupHasCaption}
+            onScroll={handleGroupInView}
+            onActivate={() => {
+              navigateToGroup(index);
+            }}
+          />
+        ))}
+
+        {project.credits && (
+          <motion.div
+            className="mx-auto mb-96 mt-44 grid w-full max-w-96 grid-cols-2 gap-y-6 text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+          >
+            {project.credits.map((credit, index) => (
+              <Fragment key={index}>
                 <div className="flex flex-row">
-                  {team.role}
+                  {credit.role}
                   <div className="mx-4 h-0 flex-grow translate-y-2 border-b border-gray-900 opacity-10" />
                 </div>
                 <div className="opacity-50">
-                  {team.names?.map((name, index) => (
+                  {credit.names?.map((name, index) => (
                     <div key={index}>{name}</div>
                   ))}
                 </div>
-              </React.Fragment>
-            );
-          })}
-        </div>
+              </Fragment>
+            ))}
+          </motion.div>
+        )}
       </div>
-    </div>
+
+      {/* Show nav when there's a caption, with collapsed/expanded states */}
+      {currentGroupHasCaption && isNavVisible && (
+        <CaseStudyNav
+          activeGroup={activeGroupIndex}
+          groups={project.mediaGroups ?? []}
+          isInfoVisible={isInfoVisible}
+          onShowInfo={() => {
+            setIsInfoVisible(true);
+          }}
+          onHideInfo={() => {
+            setIsInfoVisible(false);
+          }}
+          onNext={() => {
+            const nextIndex = findNextCaptionedGroup(activeGroupIndex, 1);
+            if (nextIndex !== null) {
+              navigateToGroup(nextIndex);
+            }
+          }}
+          onPrev={() => {
+            const prevIndex = findNextCaptionedGroup(activeGroupIndex, -1);
+            if (prevIndex !== null) {
+              navigateToGroup(prevIndex);
+            }
+          }}
+          canGoNext={findNextCaptionedGroup(activeGroupIndex, 1) !== null}
+          canGoPrev={findNextCaptionedGroup(activeGroupIndex, -1) !== null}
+        />
+      )}
+    </motion.div>
   );
 }

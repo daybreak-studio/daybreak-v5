@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import { urlFor, getMuxThumbnailUrl } from "@/sanity/lib/image";
 import { useLowPowerMode } from "@/hooks/useLowPowerMode";
 import { MediaItem, VideoItem, ImageItem } from "@/sanity/lib/media";
@@ -62,7 +62,7 @@ const getMediaUrl = (media: MediaItem): string => {
   }
 
   if (isMuxVideo(media)) {
-    return getMuxThumbnailUrl(media);
+    return getMuxThumbnailUrl(media as any);
   }
 
   return urlFor(media.source);
@@ -99,7 +99,6 @@ const VideoPlayer = ({
   media,
   className = "",
   autoPlay = false,
-  isInView = false,
   priority = false,
   poster,
   onError,
@@ -108,7 +107,6 @@ const VideoPlayer = ({
   media: VideoItem;
   className?: string;
   autoPlay?: boolean;
-  isInView?: boolean;
   priority?: boolean;
   poster: string;
   onError?: () => void;
@@ -116,10 +114,11 @@ const VideoPlayer = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const playbackId = media.source?.asset?.playbackId;
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (!videoElement || !autoPlay || !isInView) return;
+    if (!videoElement || !autoPlay || !hasInteracted) return;
 
     const playVideo = async () => {
       try {
@@ -137,7 +136,15 @@ const VideoPlayer = ({
       videoElement.src = "";
       videoElement.load();
     };
-  }, [isInView, autoPlay, onError]);
+  }, [autoPlay, hasInteracted, onError]);
+
+  // Set hasInteracted after a delay to improve initial load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHasInteracted(true);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   if (!playbackId) return null;
 
@@ -145,7 +152,7 @@ const VideoPlayer = ({
     <video
       ref={videoRef}
       className={`h-full w-full object-cover ${className}`}
-      autoPlay={autoPlay && isInView}
+      autoPlay={autoPlay && hasInteracted}
       muted
       playsInline
       loop
@@ -175,7 +182,6 @@ export function MediaRenderer({
   const containerRef = useRef<HTMLDivElement>(null);
   const [videoError, setVideoError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const isInView = useInView(containerRef, { once: true, amount: 0.3 });
   const isLowPowerMode = useLowPowerMode();
 
   const handleLoadSuccess = useCallback(() => {
@@ -216,7 +222,6 @@ export function MediaRenderer({
               media={media}
               className="rounded-xl"
               autoPlay={autoPlay}
-              isInView={isInView}
               priority={priority}
               poster={getMediaUrl(media)}
               onError={handleVideoError}

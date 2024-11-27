@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { createMediaArray } from "./media";
+import { MuxThumbnail } from "../components/mux-thumbnail";
 
 export const work = defineType({
   name: "work",
@@ -149,55 +150,88 @@ export const caseStudy = defineType({
       type: "string",
     }),
     defineField({
-      name: "media",
+      name: "mediaGroups",
       title: "Media Groups",
       type: "array",
       of: [
-        defineField({
+        {
           type: "object",
           name: "mediaGroup",
-          title: "Media Group",
           fields: [
             defineField({
               name: "heading",
-              title: "Heading",
               type: "string",
+              title: "Heading",
             }),
             defineField({
               name: "caption",
+              type: "text",
               title: "Caption",
-              type: "string",
             }),
             createMediaArray({
-              validation: (Rule) => Rule.max(2),
+              name: "media",
+              title: "Media",
+              validation: (Rule) => Rule.required().min(1).max(2),
             }),
           ],
           preview: {
             select: {
               heading: "heading",
-              items: "items",
-              firstItem: "items.0",
+              media: "media",
+              caption: "caption",
+              playbackId: "media.0.source.asset.playbackId",
             },
-            prepare(selection) {
-              const { heading, items, firstItem } = selection;
+            prepare({ heading, media, caption, playbackId }) {
+              // Check if media exists and get its length
+              const mediaCount = media ? Object.keys(media).length : 0;
 
-              const itemsArray = Array.isArray(items) ? items : [];
-              const itemTypes = itemsArray.map((item) =>
-                item._type === "imageItem" ? "Image" : "Video",
+              // Count media types
+              const mediaItems = Object.values(media || {});
+              const hasImage = mediaItems.some(
+                (item: any) => item._type === "imageItem",
+              );
+              const hasVideo = mediaItems.some(
+                (item: any) => item._type === "videoItem",
               );
 
-              const itemCount = itemsArray.length;
-              const title = itemCount === 1 ? "Full" : "Split";
+              // Create media string
+              let mediaString = "";
+              if (hasImage && hasVideo) {
+                mediaString = "Image + Video";
+              } else if (hasImage) {
+                mediaString = mediaCount > 1 ? "Image + Image" : "Image";
+              } else if (hasVideo) {
+                mediaString = mediaCount > 1 ? "Video + Video" : "Video";
+              }
+
+              // Set title based on media count
+              const title = `${mediaCount === 1 ? "Full" : "Split"} - ${mediaString}`;
+
+              // Use heading as subtitle, if available
+              const subtitle = heading || "";
+
+              // Get preview media from the first item
+              const firstMedia = media?.[0];
+              let previewMedia;
+
+              if (firstMedia) {
+                if (firstMedia._type === "videoItem" && playbackId) {
+                  previewMedia = () => MuxThumbnail({ value: playbackId });
+                } else {
+                  previewMedia = firstMedia.source;
+                }
+              }
 
               return {
-                title: `${title}: ${heading || "No Info"}`,
-                subtitle: itemTypes.join(", ") || "No files",
-                media: firstItem?.asset,
+                title,
+                subtitle,
+                media: previewMedia,
               };
             },
           },
-        }),
+        },
       ],
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "credits",

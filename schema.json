@@ -1317,7 +1317,7 @@
           },
           "optional": true
         },
-        "media": {
+        "mediaGroups": {
           "type": "objectAttribute",
           "value": {
             "type": "array",
@@ -1338,7 +1338,7 @@
                   },
                   "optional": true
                 },
-                "items": {
+                "media": {
                   "type": "objectAttribute",
                   "value": {
                     "type": "array",

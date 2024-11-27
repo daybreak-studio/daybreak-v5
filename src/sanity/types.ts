@@ -232,10 +232,10 @@ export type CaseStudy = {
   _type: "caseStudy";
   category?: "brand" | "product" | "web" | "motion";
   heading?: string;
-  media?: Array<{
+  mediaGroups?: Array<{
     heading?: string;
     caption?: string;
-    items?: Array<
+    media?: Array<
       | {
           source?: {
             asset?: {
@@ -537,16 +537,15 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
-export type MuxVideo = {
+export interface MuxVideo {
   _type: "mux.video";
   asset?: {
     _ref: string;
     _type: "reference";
     _weak?: boolean;
-    [internalGroqTypeReferenceTo]?: "mux.videoAsset";
-    playbackId?: string; // Add this for expanded references
+    playbackId?: string;
   };
-};
+}
 
 export type MuxVideoAsset = {
   _type: "mux.videoAsset";
@@ -652,9 +651,96 @@ export type AllSanitySchemaTypes =
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./src/sanity/lib/queries.ts
 // Variable: HOME_QUERY
-// Query: *[_type == "home"][0] {    missionStatement  }
+// Query: *[_type == "home"][!(_id in path('drafts.**'))][0] {    ...,      media[] {      ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }  },    widgets[] {      ...,        media[] {      ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }  }    }  }
 export type HOME_QUERYResult = {
-  missionStatement: Array<{
+  _id: string;
+  _type: "home";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  widgets: Array<
+    | {
+        position?: {
+          x?: number;
+          y?: number;
+        };
+        size?: "2x2" | "3x3";
+        media: Array<
+          | {
+              source: {
+                asset:
+                  | {
+                      _ref: string | null;
+                      _type: "reference" | null;
+                      playbackId: null;
+                      assetId: string | null;
+                      status: null;
+                      metadata: {
+                        dimensions: SanityImageDimensions | null;
+                        lqip: string | null;
+                        palette: SanityImagePalette | null;
+                        hasAlpha: boolean | null;
+                        isOpaque: boolean | null;
+                        blurHash: string | null;
+                      } | null;
+                    }
+                  | {
+                      _ref: string | null;
+                      _type: "reference" | null;
+                    };
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
+              } | null;
+              width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+              alt?: string;
+              _type: "imageItem";
+              _key: string;
+            }
+          | {
+              source: {
+                _type: "mux.video";
+                asset: {
+                  _ref: string | null;
+                  _type: "reference" | null;
+                };
+              } | null;
+              width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+              alt?: string;
+              _type: "videoItem";
+              _key: string;
+            }
+        > | null;
+        _type: "mediaWidget";
+        _key: string;
+      }
+    | {
+        position?: {
+          x?: number;
+          y?: number;
+        };
+        size?: "1x1" | "2x2";
+        tweet?: string;
+        author?: string;
+        link?: string;
+        media: Array<{
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          _key: string;
+          source: null;
+        }> | null;
+        _type: "twitterWidget";
+        _key: string;
+      }
+  > | null;
+  missionStatement?: Array<{
     children?: Array<{
       marks?: Array<string>;
       text?: string;
@@ -671,13 +757,209 @@ export type HOME_QUERYResult = {
     level?: number;
     _type: "block";
     _key: string;
-  }> | null;
+  }>;
+  media: Array<
+    | {
+        source: {
+          asset:
+            | {
+                _ref: string | null;
+                _type: "reference" | null;
+                playbackId: null;
+                assetId: string | null;
+                status: null;
+                metadata: {
+                  dimensions: SanityImageDimensions | null;
+                  lqip: string | null;
+                  palette: SanityImagePalette | null;
+                  hasAlpha: boolean | null;
+                  isOpaque: boolean | null;
+                  blurHash: string | null;
+                } | null;
+              }
+            | {
+                _ref: string | null;
+                _type: "reference" | null;
+              };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        } | null;
+        width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+        alt?: string;
+        _type: "imageItem";
+        _key: string;
+      }
+    | {
+        source: {
+          _type: "mux.video";
+          asset: {
+            _ref: string | null;
+            _type: "reference" | null;
+          };
+        } | null;
+        width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+        alt?: string;
+        _type: "videoItem";
+        _key: string;
+      }
+  > | null;
+  aboutUs?: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+    listItem?: "bullet" | "number";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  }>;
+  newsfeed?: Array<{
+    image?: {
+      asset?: {
+        _ref: string;
+        _type: "reference";
+        _weak?: boolean;
+        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+      };
+      hotspot?: SanityImageHotspot;
+      crop?: SanityImageCrop;
+      _type: "image";
+    };
+    date?: string;
+    title?: string;
+    description?: string;
+    link?: string;
+    _type: "article";
+    _key: string;
+  }>;
 } | null;
+// Variable: WORKS_QUERY
+// Query: *[_type == "work"][!(_id in path('drafts.**'))] {    ...,    projects[] {      ...,        media[] {      ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }  }    }  }
+export type WORKS_QUERYResult = Array<{
+  _id: string;
+  _type: "work";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  name?: string;
+  slug?: Slug;
+  projects: Array<
+    | {
+        _key: string;
+        _type: "caseStudy";
+        category?: "brand" | "motion" | "product" | "web";
+        heading?: string;
+        mediaGroups?: Array<{
+          heading?: string;
+          caption?: string;
+          media?: Array<
+            | {
+                source?: {
+                  asset?: {
+                    _ref: string;
+                    _type: "reference";
+                    _weak?: boolean;
+                    [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+                  };
+                  hotspot?: SanityImageHotspot;
+                  crop?: SanityImageCrop;
+                  _type: "image";
+                };
+                width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+                alt?: string;
+                _type: "imageItem";
+                _key: string;
+              }
+            | {
+                source?: MuxVideo;
+                width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+                alt?: string;
+                _type: "videoItem";
+                _key: string;
+              }
+          >;
+          _type: "mediaGroup";
+          _key: string;
+        }>;
+        credits?: Array<{
+          role?: string;
+          names?: Array<string>;
+          _key: string;
+        }>;
+        media: null;
+      }
+    | {
+        _key: string;
+        _type: "preview";
+        category?: "brand" | "motion" | "product" | "web";
+        heading?: string;
+        caption?: string;
+        media: Array<
+          | {
+              source: {
+                asset:
+                  | {
+                      _ref: string | null;
+                      _type: "reference" | null;
+                      playbackId: null;
+                      assetId: string | null;
+                      status: null;
+                      metadata: {
+                        dimensions: SanityImageDimensions | null;
+                        lqip: string | null;
+                        palette: SanityImagePalette | null;
+                        hasAlpha: boolean | null;
+                        isOpaque: boolean | null;
+                        blurHash: string | null;
+                      } | null;
+                    }
+                  | {
+                      _ref: string | null;
+                      _type: "reference" | null;
+                    };
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
+              } | null;
+              width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+              alt?: string;
+              _type: "imageItem";
+              _key: string;
+            }
+          | {
+              source: {
+                _type: "mux.video";
+                asset: {
+                  _ref: string | null;
+                  _type: "reference" | null;
+                };
+              } | null;
+              width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+              alt?: string;
+              _type: "videoItem";
+              _key: string;
+            }
+        > | null;
+        link?: string;
+        date?: string;
+      }
+  > | null;
+}>;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
-    '\n  *[_type == "home"][0] {\n    missionStatement\n  }\n': HOME_QUERYResult;
+    '\n  *[_type == "home"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    \n  media[] {\n    \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n  }\n,\n    widgets[] {\n      ...,\n      \n  media[] {\n    \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n  }\n\n    }\n  }\n': HOME_QUERYResult;
+    '\n  *[_type == "work"][!(_id in path(\'drafts.**\'))] {\n    ...,\n    projects[] {\n      ...,\n      \n  media[] {\n    \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n  }\n\n    }\n  }\n': WORKS_QUERYResult;
   }
 }

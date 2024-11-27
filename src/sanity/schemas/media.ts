@@ -1,4 +1,5 @@
 import { defineField } from "sanity";
+import { MuxThumbnail } from "../components/mux-thumbnail";
 
 const widthOptions = [
   { title: "Quarter (25%)", value: "1/4" },
@@ -52,15 +53,15 @@ export const createMediaArray = ({
         ],
         preview: {
           select: {
-            image: "image",
+            source: "source",
             width: "width",
             alt: "alt",
           },
-          prepare({ image, width, alt }) {
+          prepare({ source, width, alt }) {
             return {
               title: alt || "Image",
               subtitle: `Width: ${width || "100%"}`,
-              media: image,
+              media: source,
             };
           },
         },
@@ -90,15 +91,15 @@ export const createMediaArray = ({
         ],
         preview: {
           select: {
-            video: "video",
+            playbackId: "source.asset.playbackId",
             width: "width",
             alt: "alt",
           },
-          prepare({ video, width, alt }) {
+          prepare({ playbackId, width, alt }) {
             return {
               title: alt || "Video",
               subtitle: `Width: ${width || "100%"}`,
-              media: video,
+              media: () => MuxThumbnail({ value: playbackId }),
             };
           },
         },

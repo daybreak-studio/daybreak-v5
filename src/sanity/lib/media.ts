@@ -35,11 +35,36 @@ export type VideoItem = BaseMediaItem & {
 
 export type MediaItem = ImageItem | VideoItem;
 
+// Define the enriched asset type that includes queried fields
+interface EnrichedMuxAsset {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  playbackId?: string;
+  assetId?: string;
+  status?: string;
+  metadata?: {
+    dimensions?: any;
+    lqip?: string;
+    palette?: any;
+    hasAlpha?: boolean;
+    isOpaque?: boolean;
+    blurHash?: string;
+  };
+}
+
+// Extend the VideoItem type to include the enriched asset
+export interface EnrichedVideoItem extends Omit<VideoItem, "source"> {
+  source?: {
+    asset?: EnrichedMuxAsset;
+  } & MuxVideo;
+}
+
 // Gets first media from a CaseStudy (which has mediaGroups)
 const getCaseStudyFirstMedia = (project: CaseStudy): MediaItem | null => {
-  const firstMediaGroup = project.media?.[0];
-  if (!firstMediaGroup?.items?.length) return null;
-  return firstMediaGroup.items[0] as MediaItem;
+  const firstMediaGroup = project.mediaGroups?.[0];
+  if (!firstMediaGroup?.media?.length) return null;
+  return firstMediaGroup.media[0] as MediaItem;
 };
 
 // Gets first media from a Preview (which has direct media array)
@@ -64,4 +89,14 @@ export const getWorkFirstMedia = (work: Work): MediaItem | null => {
   if (!firstProject) return null;
 
   return getProjectFirstMedia(firstProject);
+};
+
+// Update the getMuxThumbnailUrl function to use the enriched type
+export const getMuxThumbnailUrl = (media: EnrichedVideoItem): string => {
+  const playbackId = media.source?.asset?.playbackId;
+  if (!playbackId) {
+    console.warn("No playbackId found for video");
+    return "";
+  }
+  return `https://image.mux.com/${playbackId}/thumbnail.jpg`;
 };

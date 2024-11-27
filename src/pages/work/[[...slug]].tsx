@@ -7,12 +7,13 @@ import { getWorkFirstMedia } from "@/sanity/lib/media";
 import ProjectSelector from "@/components/project/selector";
 import ProjectPreview from "@/components/project/preview";
 import ProjectCaseStudy from "@/components/project/case-study";
-import { worksApi } from "@/sanity/lib/work";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { client } from "@/sanity/lib/client";
+import { WORKS_QUERY } from "@/sanity/lib/queries";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -37,15 +38,20 @@ const getModalVariant = (client: Work, projectSlug: string | undefined) => {
     return MODAL_VARIANTS.selector;
   }
 
-  // Otherwise, show the current project
-  const currentProject = client.projects?.[0];
-  return currentProject?._type === "preview"
-    ? MODAL_VARIANTS.preview
-    : MODAL_VARIANTS.caseStudy;
+  // Find the current project based on the slug or use the first one
+  const currentProject = projectSlug
+    ? client.projects?.find((project) => project.category === projectSlug)
+    : client.projects?.[0];
+
+  const variant =
+    currentProject?._type === "preview"
+      ? MODAL_VARIANTS.preview
+      : MODAL_VARIANTS.caseStudy;
+
+  return variant;
 };
 
 export default function WorkPage({ data }: { data: Work[] }) {
-  console.log(data);
   const router = useRouter();
   const { slug } = router.query;
   const [clientSlug, projectSlug] = Array.isArray(slug)
@@ -214,10 +220,10 @@ export default function WorkPage({ data }: { data: Work[] }) {
   );
 }
 
-// Generate static paths for all possible routes
+// Update getStaticPaths
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    const works: Work[] = await worksApi.getAllWorks();
+    const works: Work[] = await client.fetch(WORKS_QUERY);
 
     // Create paths for all client/project combinations
     const paths = works.flatMap(
@@ -242,10 +248,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
   }
 };
 
-// Fetch all work data at build time
+// Update getStaticProps
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    const data: Work[] = await worksApi.getAllWorks();
+    const data: Work[] = await client.fetch(WORKS_QUERY);
     return {
       props: { data },
       revalidate: 60, // Revalidate every 60 seconds
