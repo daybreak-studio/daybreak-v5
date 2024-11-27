@@ -1,10 +1,16 @@
-import { motion } from "framer-motion";
+import { motion, animate } from "framer-motion";
 import { CaseStudy } from "@/sanity/types";
-import { useCallback, useEffect, useState, useMemo } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+  Fragment,
+} from "react";
 import CaseStudyNav from "./components/nav";
 import MediaGroup from "./components/media-group";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
-import { Fragment } from "react";
 
 interface ProjectCaseStudyProps {
   data: {
@@ -15,133 +21,73 @@ interface ProjectCaseStudyProps {
 
 export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   const project = data.projects?.[0] as CaseStudy;
-  const [activeGroupIndex, setActiveGroupIndex] = useState<number>(0);
-  const [isNavVisible, setIsNavVisible] = useState(false);
-  const [isInfoVisible, setIsInfoVisible] = useState(false);
+  const [activeGroupIndex, setActiveGroupIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
 
-  useEffect(() => {
-    const firstGroup = project.mediaGroups?.[0];
-    if (firstGroup?.heading && firstGroup?.caption) {
-      setIsNavVisible(true);
-    }
-  }, [project.mediaGroups]);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const navigateToGroup = useCallback(
+  const scrollToGroup = useCallback((index: number) => {
+    const element = document.getElementById(`media-group-${index}`);
+    if (!element || !containerRef.current) return;
+
+    const container = containerRef.current;
+    const elementTop = element.offsetTop;
+    const containerHeight = container.clientHeight;
+    const elementHeight = element.clientHeight;
+    const targetScroll = elementTop - (containerHeight - elementHeight) / 2;
+
+    animate(container.scrollTop, targetScroll, {
+      type: "spring",
+      stiffness: 100,
+      damping: 20,
+      onUpdate: (value) => container.scrollTo(0, value),
+    });
+  }, []);
+
+  const handleGroupActivate = useCallback(
     (index: number) => {
       setActiveGroupIndex(index);
+      setIsZoomed(true);
+      scrollToGroup(index);
+    },
+    [scrollToGroup],
+  );
 
-      // Check if the target group has a caption
-      const targetGroup = project.mediaGroups?.[index];
-      const hasCaption = !!(targetGroup?.heading && targetGroup?.caption);
+  const findNextGroupWithCaption = useCallback(
+    (currentIndex: number, direction: 1 | -1) => {
+      if (!project.mediaGroups) return null;
+      let index = currentIndex + direction;
 
-      if (hasCaption) {
-        // If there's a caption, show nav and expand it
-        setIsNavVisible(true);
-        setIsInfoVisible(true);
-      } else {
-        // If no caption, hide nav completely
-        setIsNavVisible(false);
-        setIsInfoVisible(false);
+      while (index >= 0 && index < project.mediaGroups.length) {
+        const group = project.mediaGroups[index];
+        if (group.heading && group.caption) return index;
+        index += direction;
       }
 
-      // Scroll the element into view
-      const element = document.getElementById(`media-group-${index}`);
-      if (element) {
-        element.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
-      }
+      return null;
     },
     [project.mediaGroups],
   );
 
-  // Get indices of groups with captions
-  const groupsWithCaptions = useMemo(() => {
-    return (
-      project.mediaGroups?.reduce<number[]>((acc, group, index) => {
-        if (group.heading && group.caption) {
-          acc.push(index);
-        }
-        return acc;
-      }, []) ?? []
-    );
-  }, [project.mediaGroups]);
-
-  // Find next captioned group after current index
-  const findNextCaptionedGroup = useCallback(
-    (currentIndex: number, direction: 1 | -1) => {
-      if (direction === 1) {
-        // Find the first caption group that comes after current index
-        return groupsWithCaptions.find((index) => index > currentIndex) ?? null;
-      } else {
-        // Find the last caption group that comes before current index
-        return (
-          groupsWithCaptions.reverse().find((index) => index < currentIndex) ??
-          null
-        );
-      }
-    },
-    [groupsWithCaptions],
-  );
-
-  // Handle scroll-based group tracking
-  const handleGroupInView = useCallback((index: number) => {
-    setActiveGroupIndex(index);
-  }, []);
-
-  // Update keyboard handler
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!document.querySelector('[role="dialog"]')) return;
 
-      switch (e.code) {
-        case "Escape":
-          e.preventDefault();
-          e.stopPropagation();
-          setIsInfoVisible(false);
-          break;
-        case "Enter":
-          e.preventDefault();
-          e.stopPropagation();
-          setIsInfoVisible(!isInfoVisible);
-          break;
-        case "ArrowDown":
-        case "ArrowUp":
-          e.preventDefault();
-          e.stopPropagation();
-          const nextIndex = findNextCaptionedGroup(
-            activeGroupIndex,
-            e.code === "ArrowDown" ? 1 : -1,
-          );
-          if (nextIndex !== null) {
-            navigateToGroup(nextIndex);
-          }
-          break;
+      if (e.code === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsZoomed(false);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown, true);
     return () => window.removeEventListener("keydown", handleKeyDown, true);
-  }, [
-    activeGroupIndex,
-    isInfoVisible,
-    findNextCaptionedGroup,
-    navigateToGroup,
-  ]);
-
-  // Check if current group has caption
-  const currentGroupHasCaption = useMemo(() => {
-    const currentGroup = project.mediaGroups?.[activeGroupIndex];
-    return !!(currentGroup?.heading && currentGroup?.caption);
-  }, [project.mediaGroups, activeGroupIndex]);
-
-  // Get current group info
-  const currentGroup = project.mediaGroups?.[activeGroupIndex];
+  }, []);
 
   return (
     <motion.div
-      className="px-4 py-8 pt-48"
+      ref={containerRef}
+      className="h-screen overflow-y-auto px-4 py-8 pt-48"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4, ease: AnimationConfig.EASE_OUT }}
@@ -163,12 +109,9 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
             group={group}
             index={index}
             isActive={activeGroupIndex === index}
-            isZoomed={isInfoVisible}
-            isInfoVisible={currentGroupHasCaption}
-            onScroll={handleGroupInView}
-            onActivate={() => {
-              navigateToGroup(index);
-            }}
+            isZoomed={isZoomed}
+            onScroll={setActiveGroupIndex}
+            onActivate={() => handleGroupActivate(index)}
           />
         ))}
 
@@ -196,32 +139,22 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
         )}
       </div>
 
-      {/* Show nav when there's a caption, with collapsed/expanded states */}
-      {currentGroupHasCaption && isNavVisible && (
+      {isZoomed && project.mediaGroups?.[activeGroupIndex]?.heading && (
         <CaseStudyNav
           activeGroup={activeGroupIndex}
           groups={project.mediaGroups ?? []}
-          isInfoVisible={isInfoVisible}
-          onShowInfo={() => {
-            setIsInfoVisible(true);
-          }}
-          onHideInfo={() => {
-            setIsInfoVisible(false);
-          }}
+          isExpanded={isZoomed}
+          onToggleExpand={() => setIsZoomed(false)}
           onNext={() => {
-            const nextIndex = findNextCaptionedGroup(activeGroupIndex, 1);
-            if (nextIndex !== null) {
-              navigateToGroup(nextIndex);
-            }
+            const nextIndex = findNextGroupWithCaption(activeGroupIndex, 1);
+            if (nextIndex !== null) scrollToGroup(nextIndex);
           }}
           onPrev={() => {
-            const prevIndex = findNextCaptionedGroup(activeGroupIndex, -1);
-            if (prevIndex !== null) {
-              navigateToGroup(prevIndex);
-            }
+            const nextIndex = findNextGroupWithCaption(activeGroupIndex, -1);
+            if (nextIndex !== null) scrollToGroup(nextIndex);
           }}
-          canGoNext={findNextCaptionedGroup(activeGroupIndex, 1) !== null}
-          canGoPrev={findNextCaptionedGroup(activeGroupIndex, -1) !== null}
+          canGoNext={findNextGroupWithCaption(activeGroupIndex, 1) !== null}
+          canGoPrev={findNextGroupWithCaption(activeGroupIndex, -1) !== null}
         />
       )}
     </motion.div>

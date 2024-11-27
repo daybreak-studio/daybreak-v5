@@ -14,7 +14,6 @@ interface MediaGroupProps {
   index: number;
   isActive: boolean;
   isZoomed: boolean;
-  isInfoVisible: boolean;
   onScroll: (index: number) => void;
   onActivate: () => void;
 }
@@ -25,46 +24,36 @@ export default function MediaGroup({
   index,
   isActive,
   isZoomed,
-  isInfoVisible,
   onScroll,
   onActivate,
 }: MediaGroupProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, {
     amount: 0.5,
-    once: false,
-    margin: "-10% 0px",
+    margin: "-10% 0px -10% 0px",
   });
 
-  // Only track scroll position
   useEffect(() => {
     if (isInView) {
       onScroll(index);
     }
   }, [isInView, index, onScroll]);
 
-  // Consider a group "active" if it's in view during zoomed mode
-  const isActiveInView = isZoomed && isInView;
-
   return (
     <motion.div
-      id={id}
       ref={ref}
+      id={id}
       initial={false}
       animate={{
-        opacity: isActiveInView ? 1 : isZoomed ? 0.3 : 1,
-        scale: isActiveInView ? 1 : isZoomed ? 0.85 : 1,
+        opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
+        scale: isZoomed ? (isActive ? 1 : 0.95) : 1,
       }}
-      whileHover={
-        !isActiveInView
-          ? {
-              scale: isZoomed ? 0.87 : 1.02,
-              opacity: isZoomed ? 0.4 : 1,
-            }
-          : undefined
-      }
+      whileHover={{
+        scale: isZoomed ? (isActive ? 1 : 0.97) : 1.02,
+        opacity: isZoomed ? (isActive ? 1 : 0.4) : 1,
+      }}
       transition={{
-        duration: 0.6,
+        duration: 0.4,
         ease: AnimationConfig.EASE_OUT,
       }}
       className={cn(
@@ -73,16 +62,7 @@ export default function MediaGroup({
           ? "grid-cols-1"
           : "grid-cols-1 md:grid-cols-2",
       )}
-      onClick={() => {
-        const element = ref.current as HTMLElement | null;
-        if (element) {
-          element.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
-        onActivate();
-      }}
+      onClick={onActivate}
     >
       {group.media?.map((item, itemIndex) => (
         <div
@@ -91,7 +71,7 @@ export default function MediaGroup({
         >
           <MediaRenderer
             media={item}
-            autoPlay={isActiveInView}
+            autoPlay={isActive && isZoomed}
             className="absolute inset-0"
           />
         </div>

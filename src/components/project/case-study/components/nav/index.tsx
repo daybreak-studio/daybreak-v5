@@ -3,7 +3,7 @@ import IconChevronDown from "/public/icons/icon-chevron-down.svg";
 import IconChevronUp from "/public/icons/icon-chevron-up.svg";
 import IconCross from "/public/icons/icon-cross.svg";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 
 interface NavProps {
   activeGroup: number;
@@ -11,9 +11,8 @@ interface NavProps {
     heading?: string;
     caption?: string;
   }>;
-  isInfoVisible: boolean;
-  onShowInfo: () => void;
-  onHideInfo: () => void;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
   onNext: () => void;
   onPrev: () => void;
   canGoNext: boolean;
@@ -23,9 +22,8 @@ interface NavProps {
 export default function CaseStudyNav({
   activeGroup,
   groups,
-  isInfoVisible,
-  onShowInfo,
-  onHideInfo,
+  isExpanded,
+  onToggleExpand,
   onNext,
   onPrev,
   canGoNext,
@@ -33,63 +31,93 @@ export default function CaseStudyNav({
 }: NavProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const currentGroup = groups[activeGroup];
-  const hasCaption = !!(currentGroup?.heading && currentGroup?.caption);
 
-  // Common styles for transform origin
-  const originStyles = { transformOrigin: "bottom center" };
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!document.querySelector('[role="dialog"]')) return;
 
-  // Common transition settings
-  const commonTransition = {
+      switch (e.code) {
+        case "Escape":
+          e.preventDefault();
+          e.stopPropagation();
+          if (isExpanded) onToggleExpand();
+          break;
+        case "Enter":
+          e.preventDefault();
+          e.stopPropagation();
+          onToggleExpand();
+          break;
+        case "Tab":
+          e.preventDefault();
+          e.stopPropagation();
+          e.shiftKey ? onPrev() : onNext();
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          e.stopPropagation();
+          onNext();
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          e.stopPropagation();
+          onPrev();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [isExpanded, onToggleExpand, onNext, onPrev]);
+
+  // Common animation settings
+  const transition = {
     duration: 0.4,
-    ease: AnimationConfig.EASE_OUT,
+    ease: [0.32, 0.72, 0, 1],
   };
 
   return (
     <AnimatePresence mode="wait">
-      {hasCaption && (
+      {currentGroup?.heading && (
         <motion.div
           ref={containerRef}
           className="fixed bottom-4 left-0 right-0 z-50 px-4"
-          initial={{ opacity: 0, y: 20, scale: 0.8 }}
+          initial={{ opacity: 0, y: 40, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 20, scale: 0.8 }}
-          transition={commonTransition}
-          style={originStyles}
+          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          transition={transition}
         >
           <motion.div
             layoutId="nav-container"
             className="mx-auto h-min w-min overflow-hidden bg-white bg-opacity-60 text-black drop-shadow-2xl backdrop-blur-2xl"
             animate={{
-              borderRadius: isInfoVisible ? 32 : 16,
+              borderRadius: isExpanded ? 32 : 16,
               padding: "6px",
             }}
-            transition={commonTransition}
-            style={originStyles}
+            transition={transition}
           >
             <motion.div
               className="relative bg-white"
               animate={{
-                borderRadius: isInfoVisible ? 28 : 12,
+                borderRadius: isExpanded ? 28 : 12,
               }}
-              transition={commonTransition}
-              style={originStyles}
+              transition={transition}
             >
               <AnimatePresence mode="wait">
-                {!isInfoVisible ? (
+                {!isExpanded ? (
                   <motion.button
                     className="flex w-full items-center justify-between gap-2 px-4 py-2 focus:outline-none"
-                    onClick={onShowInfo}
+                    onClick={onToggleExpand}
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.3 }}
-                    style={originStyles}
+                    transition={transition}
                   >
                     <span className="opacity-50">{currentGroup.heading}</span>
                     <motion.div
+                      layoutId={`expand-toggle-${activeGroup}`}
                       animate={{ rotate: 45 }}
-                      transition={commonTransition}
-                      style={originStyles}
+                      transition={transition}
                     >
                       <IconCross className="h-4 w-4 opacity-60" />
                     </motion.div>
@@ -100,8 +128,7 @@ export default function CaseStudyNav({
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
-                    transition={commonTransition}
-                    style={originStyles}
+                    transition={transition}
                   >
                     <div className="flex w-full flex-col gap-2 px-6 py-5">
                       {currentGroup.heading && (
@@ -133,15 +160,15 @@ export default function CaseStudyNav({
                     </div>
 
                     <button
-                      onClick={onHideInfo}
+                      onClick={onToggleExpand}
                       className={`absolute right-6 ${
                         currentGroup.heading ? "top-[1.45rem]" : "top-[2rem]"
                       }`}
                     >
                       <motion.div
+                        layoutId={`expand-toggle-${activeGroup}`}
                         animate={{ rotate: 0 }}
-                        transition={commonTransition}
-                        style={originStyles}
+                        transition={transition}
                       >
                         <IconCross className="h-4 w-4 opacity-60" />
                       </motion.div>
