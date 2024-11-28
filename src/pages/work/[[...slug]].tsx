@@ -154,7 +154,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                   <Dialog.Portal forceMount>
                     <Dialog.Overlay asChild>
                       <motion.div
-                        className="fixed inset-0 bg-white/50 backdrop-blur-2xl"
+                        className="fixed inset-0 z-30 bg-white/50 backdrop-blur-2xl"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -163,7 +163,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                     </Dialog.Overlay>
                     <Dialog.Content asChild>
                       <motion.div
-                        className="hide-scrollbar fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none"
+                        className="hide-scrollbar fixed left-1/2 top-1/2 z-30 -translate-x-1/2 -translate-y-1/2 focus:outline-none"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}

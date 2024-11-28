@@ -102,7 +102,7 @@ export default function Navigation() {
 
   return (
     <motion.nav
-      className="parent fixed z-50 mx-auto flex h-fit w-full items-center justify-center"
+      className="parent pointer-events-auto fixed z-50 mx-auto flex h-fit w-full items-center justify-center"
       initial={{
         transform: visitStatus === "new" ? "translateY(50vh)" : "translateY(0)",
       }}
