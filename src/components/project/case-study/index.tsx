@@ -12,6 +12,7 @@ import CaseStudyNav from "./components/nav";
 import MediaGroup from "./components/media-group";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
 import { Cross2Icon } from "@radix-ui/react-icons";
+import { AnimatePresence } from "framer-motion";
 
 interface ProjectCaseStudyProps {
   data: Work;
@@ -169,24 +170,26 @@ export default function ProjectCaseStudy({
         )}
       </div>
 
-      {project.mediaGroups?.[activeGroupIndex]?.heading && (
-        <CaseStudyNav
-          activeGroup={activeGroupIndex}
-          groups={project.mediaGroups ?? []}
-          isExpanded={isZoomed}
-          onToggleExpand={() => setIsZoomed(!isZoomed)}
-          onNext={() => {
-            const nextIndex = findNextGroupWithCaption(activeGroupIndex, 1);
-            if (nextIndex !== null) scrollToGroup(nextIndex);
-          }}
-          onPrev={() => {
-            const nextIndex = findNextGroupWithCaption(activeGroupIndex, -1);
-            if (nextIndex !== null) scrollToGroup(nextIndex);
-          }}
-          canGoNext={findNextGroupWithCaption(activeGroupIndex, 1) !== null}
-          canGoPrev={findNextGroupWithCaption(activeGroupIndex, -1) !== null}
-        />
-      )}
+      <AnimatePresence mode="popLayout">
+        {project.mediaGroups?.[activeGroupIndex]?.heading && (
+          <CaseStudyNav
+            activeGroup={activeGroupIndex}
+            groups={project.mediaGroups ?? []}
+            isExpanded={isZoomed}
+            onToggleExpand={() => setIsZoomed(!isZoomed)}
+            onNext={() => {
+              const nextIndex = findNextGroupWithCaption(activeGroupIndex, 1);
+              if (nextIndex !== null) scrollToGroup(nextIndex);
+            }}
+            onPrev={() => {
+              const nextIndex = findNextGroupWithCaption(activeGroupIndex, -1);
+              if (nextIndex !== null) scrollToGroup(nextIndex);
+            }}
+            canGoNext={findNextGroupWithCaption(activeGroupIndex, 1) !== null}
+            canGoPrev={findNextGroupWithCaption(activeGroupIndex, -1) !== null}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
