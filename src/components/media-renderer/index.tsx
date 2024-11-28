@@ -114,18 +114,45 @@ const VideoPlayer = ({
   onLoad?: () => void;
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const playbackId = media.source?.asset?.playbackId;
-  const [hasInteracted, setHasInteracted] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(true);
+  const isLowPowerMode = useLowPowerMode();
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const videoElement = videoRef.current;
-    if (!videoElement || !autoPlay || !hasInteracted) return;
+    if (!videoElement || !isReady) return;
 
     const playVideo = async () => {
       try {
-        await videoElement.play();
+        videoElement.muted = true;
+        videoElement.playsInline = true;
+        videoElement.setAttribute("playsinline", "");
+        videoElement.setAttribute("webkit-playsinline", "");
+
+        console.log("Video Playback Attempt:", {
+          videoId: media.source?.asset?.playbackId,
+          autoPlay,
+          isLowPowerMode,
+          muted: videoElement.muted,
+          playsInline: videoElement.playsInline,
+        });
+
+        if (autoPlay && !isLowPowerMode) {
+          const playPromise = videoElement.play();
+          if (playPromise !== undefined) {
+            await playPromise;
+            console.log(
+              "✅ Video started playing:",
+              media.source?.asset?.playbackId,
+            );
+          }
+        }
       } catch (error) {
-        console.warn("Autoplay prevented:", error);
+        console.warn("❌ Playback failed:", {
+          error,
+          videoId: media.source?.asset?.playbackId,
+          userAgent: navigator.userAgent,
+        });
         onError?.();
       }
     };
@@ -133,37 +160,36 @@ const VideoPlayer = ({
     playVideo();
 
     return () => {
-      videoElement.pause();
-      videoElement.src = "";
-      videoElement.load();
+      if (videoElement) {
+        videoElement.pause();
+        videoElement.src = "";
+        videoElement.load();
+      }
     };
-  }, [autoPlay, hasInteracted, onError]);
+  }, [autoPlay, isLowPowerMode, media.source?.asset?.playbackId, isReady]);
 
-  // Set hasInteracted after a delay to improve initial load
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setHasInteracted(true);
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+  const handleLoadedMetadata = () => {
+    setIsReady(true);
+    onLoad?.();
+  };
 
-  if (!playbackId) return null;
+  if (!media.source?.asset?.playbackId) return null;
 
   return (
     <video
       ref={videoRef}
       className={`h-full w-full object-cover ${className}`}
-      autoPlay={autoPlay && hasInteracted}
+      autoPlay={autoPlay && !isLowPowerMode}
       muted
       playsInline
       loop
       poster={poster}
       onError={() => onError?.()}
-      onLoadedData={() => onLoad?.()}
+      onLoadedMetadata={handleLoadedMetadata}
       preload={priority ? "auto" : "metadata"}
     >
       <source
-        src={`https://stream.mux.com/${playbackId}/high.mp4`}
+        src={`https://stream.mux.com/${media.source.asset.playbackId}/high.mp4`}
         type="video/mp4"
       />
     </video>

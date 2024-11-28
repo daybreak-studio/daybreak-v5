@@ -142,6 +142,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                   >
                     <MediaRenderer
                       media={mediaAsset}
+                      autoPlay={false}
                       className="duration-300 group-hover:scale-105"
                     />
                   </motion.div>

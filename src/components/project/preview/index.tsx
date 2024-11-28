@@ -42,7 +42,7 @@ export default function ProjectPreview({
         layoutId={imageLayoutId}
         className="origin center aspect-square h-full w-full"
       >
-        <MediaRenderer media={mediaAsset} />
+        <MediaRenderer media={mediaAsset} autoPlay={true} />
       </motion.div>
     </div>
   );

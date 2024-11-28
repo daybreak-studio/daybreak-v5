@@ -88,7 +88,7 @@ export default function MediaGroup({
         >
           <MediaRenderer
             media={item}
-            autoPlay={isActive && isZoomed}
+            autoPlay={true}
             className="absolute inset-0"
           />
         </div>
