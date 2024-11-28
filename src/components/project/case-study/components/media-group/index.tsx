@@ -3,19 +3,22 @@ import { MediaRenderer } from "@/components/media-renderer";
 import { useEffect, useRef } from "react";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
 import { cn } from "@/lib/utils";
+import { MediaItem } from "@/sanity/lib/media";
+import { CaseStudy } from "@/sanity/types";
 
 interface MediaGroupProps {
   id: string;
   group: {
-    media: any[];
     heading?: string;
     caption?: string;
+    media?: MediaItem[];
   };
   index: number;
   isActive: boolean;
   isZoomed: boolean;
   onScroll: (index: number) => void;
   onActivate: () => void;
+  layoutId?: string;
 }
 
 export default function MediaGroup({
@@ -26,6 +29,7 @@ export default function MediaGroup({
   isZoomed,
   onScroll,
   onActivate,
+  layoutId,
 }: MediaGroupProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, {
@@ -81,15 +85,16 @@ export default function MediaGroup({
       )}
       onClick={onActivate}
     >
-      {group.media?.map((item, itemIndex) => (
+      {group.media?.map((media, mediaIndex) => (
         <div
-          key={`${index}-${itemIndex}`}
+          key={`${index}-${mediaIndex}`}
           className="relative aspect-[16/9] overflow-hidden rounded-xl"
         >
           <MediaRenderer
-            media={item}
+            media={media}
             autoPlay={true}
             className="absolute inset-0"
+            layoutId={index === 0 && mediaIndex === 0 ? layoutId : undefined}
           />
         </div>
       ))}

@@ -113,6 +113,7 @@ const VideoPlayer = ({
   onError?: () => void;
   onLoad?: () => void;
 }) => {
+  const playbackId = media.source?.asset?.playbackId;
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasInteracted, setHasInteracted] = useState(true);
   const isLowPowerMode = useLowPowerMode();
@@ -130,7 +131,7 @@ const VideoPlayer = ({
         videoElement.setAttribute("webkit-playsinline", "");
 
         console.log("Video Playback Attempt:", {
-          videoId: media.source?.asset?.playbackId,
+          videoId: playbackId,
           autoPlay,
           isLowPowerMode,
           muted: videoElement.muted,
@@ -141,16 +142,13 @@ const VideoPlayer = ({
           const playPromise = videoElement.play();
           if (playPromise !== undefined) {
             await playPromise;
-            console.log(
-              "✅ Video started playing:",
-              media.source?.asset?.playbackId,
-            );
+            console.log("✅ Video started playing:", playbackId);
           }
         }
       } catch (error) {
         console.warn("❌ Playback failed:", {
           error,
-          videoId: media.source?.asset?.playbackId,
+          videoId: playbackId,
           userAgent: navigator.userAgent,
         });
         onError?.();
@@ -166,14 +164,14 @@ const VideoPlayer = ({
         videoElement.load();
       }
     };
-  }, [autoPlay, isLowPowerMode, media.source?.asset?.playbackId, isReady]);
+  }, [autoPlay, isLowPowerMode, playbackId, isReady, onError]);
 
   const handleLoadedMetadata = () => {
     setIsReady(true);
     onLoad?.();
   };
 
-  if (!media.source?.asset?.playbackId) return null;
+  if (!playbackId) return null;
 
   return (
     <video
@@ -189,7 +187,7 @@ const VideoPlayer = ({
       preload={priority ? "auto" : "metadata"}
     >
       <source
-        src={`https://stream.mux.com/${media.source.asset.playbackId}/high.mp4`}
+        src={`https://stream.mux.com/${playbackId}/high.mp4`}
         type="video/mp4"
       />
     </video>

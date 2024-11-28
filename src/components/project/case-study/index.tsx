@@ -1,5 +1,5 @@
 import { motion, animate } from "framer-motion";
-import { CaseStudy } from "@/sanity/types";
+import { CaseStudy, Work } from "@/sanity/types";
 import {
   useCallback,
   useEffect,
@@ -13,14 +13,15 @@ import MediaGroup from "./components/media-group";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
 
 interface ProjectCaseStudyProps {
-  data: {
-    projects: CaseStudy[];
-  };
+  data: Work;
   imageLayoutId: string;
 }
 
-export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
-  const project = data.projects?.[0] as CaseStudy;
+export default function ProjectCaseStudy({
+  data,
+  imageLayoutId,
+}: ProjectCaseStudyProps) {
+  const project = data.projects?.[0] as CaseStudy & { _key: string };
   const [activeGroupIndex, setActiveGroupIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
 
@@ -139,6 +140,7 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
             isZoomed={isZoomed}
             onScroll={handleGroupScroll}
             onActivate={() => handleGroupActivate(index)}
+            layoutId={index === 0 ? imageLayoutId : undefined}
           />
         ))}
 
