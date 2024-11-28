@@ -9,7 +9,12 @@ export const urlFor = (source: SanityImageSource | undefined): string => {
     console.warn("No source provided to urlFor");
     return "";
   }
-  return imageBuilder.image(source).auto("format").fit("max").url();
+  return imageBuilder
+    .image(source)
+    .auto("format")
+    .quality(100)
+    .fit("max")
+    .url();
 };
 
 export const getMuxThumbnailUrl = (media: {

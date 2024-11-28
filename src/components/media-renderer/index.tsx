@@ -88,8 +88,9 @@ const OptimizedImage = ({
       alt={alt || media.alt || ""}
       className={`object-cover ${className}`}
       fill
+      quality={95}
       priority={priority}
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px"
       onLoad={onLoad}
     />
   </div>
