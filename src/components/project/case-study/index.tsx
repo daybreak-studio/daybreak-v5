@@ -48,10 +48,17 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
     (index: number) => {
       setActiveGroupIndex(index);
       setIsZoomed(true);
-      scrollToGroup(index);
+
+      requestAnimationFrame(() => {
+        scrollToGroup(index);
+      });
     },
     [scrollToGroup],
   );
+
+  const handleGroupScroll = useCallback((index: number) => {
+    setActiveGroupIndex(index);
+  }, []);
 
   const findNextGroupWithCaption = useCallback(
     (currentIndex: number, direction: 1 | -1) => {
@@ -73,16 +80,36 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!document.querySelector('[role="dialog"]')) return;
 
-      if (e.code === "Escape") {
-        e.preventDefault();
-        e.stopPropagation();
-        setIsZoomed(false);
+      switch (e.code) {
+        case "Escape":
+          e.preventDefault();
+          e.stopPropagation();
+          setIsZoomed(false);
+          break;
+        case "Enter":
+        case "Tab":
+          e.preventDefault();
+          e.stopPropagation();
+          setIsZoomed(!isZoomed);
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          e.stopPropagation();
+          const prevIndex = findNextGroupWithCaption(activeGroupIndex, -1);
+          if (prevIndex !== null) scrollToGroup(prevIndex);
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          e.stopPropagation();
+          const nextIndex = findNextGroupWithCaption(activeGroupIndex, 1);
+          if (nextIndex !== null) scrollToGroup(nextIndex);
+          break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown, true);
     return () => window.removeEventListener("keydown", handleKeyDown, true);
-  }, []);
+  }, [isZoomed, activeGroupIndex, findNextGroupWithCaption, scrollToGroup]);
 
   return (
     <motion.div
@@ -110,7 +137,7 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
             index={index}
             isActive={activeGroupIndex === index}
             isZoomed={isZoomed}
-            onScroll={setActiveGroupIndex}
+            onScroll={handleGroupScroll}
             onActivate={() => handleGroupActivate(index)}
           />
         ))}
@@ -139,12 +166,12 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
         )}
       </div>
 
-      {isZoomed && project.mediaGroups?.[activeGroupIndex]?.heading && (
+      {project.mediaGroups?.[activeGroupIndex]?.heading && (
         <CaseStudyNav
           activeGroup={activeGroupIndex}
           groups={project.mediaGroups ?? []}
           isExpanded={isZoomed}
-          onToggleExpand={() => setIsZoomed(false)}
+          onToggleExpand={() => setIsZoomed(!isZoomed)}
           onNext={() => {
             const nextIndex = findNextGroupWithCaption(activeGroupIndex, 1);
             if (nextIndex !== null) scrollToGroup(nextIndex);

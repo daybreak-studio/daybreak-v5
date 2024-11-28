@@ -45,19 +45,36 @@ export default function MediaGroup({
       id={id}
       initial={false}
       animate={{
-        opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
-        scale: isZoomed ? (isActive ? 1 : 0.95) : 1,
+        opacity: isZoomed
+          ? isActive
+            ? 1
+            : 0.2 // More contrast between active/inactive
+          : 1,
+        scale: isZoomed
+          ? isActive
+            ? 0.95
+            : 0.85 // Active slightly smaller, inactive even smaller
+          : 1,
+        y: isZoomed
+          ? isActive
+            ? 0
+            : 20 // Add slight vertical offset for inactive
+          : 0,
       }}
       whileHover={{
-        scale: isZoomed ? (isActive ? 1 : 0.97) : 1.02,
-        opacity: isZoomed ? (isActive ? 1 : 0.4) : 1,
+        scale: isZoomed
+          ? isActive
+            ? 0.95
+            : 0.88 // Subtle hover effect
+          : 1.02,
+        opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
       }}
       transition={{
-        duration: 0.4,
+        duration: 0.6,
         ease: AnimationConfig.EASE_OUT,
       }}
       className={cn(
-        "grid cursor-pointer gap-4",
+        "grid origin-center cursor-pointer gap-4",
         group.media?.length === 1
           ? "grid-cols-1"
           : "grid-cols-1 md:grid-cols-2",
