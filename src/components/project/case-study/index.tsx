@@ -11,6 +11,7 @@ import {
 import CaseStudyNav from "./components/nav";
 import MediaGroup from "./components/media-group";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
+import { Cross2Icon } from "@radix-ui/react-icons";
 
 interface ProjectCaseStudyProps {
   data: Work;
@@ -115,7 +116,7 @@ export default function ProjectCaseStudy({
   return (
     <motion.div
       ref={containerRef}
-      className="h-screen overflow-y-auto px-4 py-8 pt-48"
+      className="hide-scrollbar h-screen overflow-y-auto px-4 py-8 pt-48"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4, ease: AnimationConfig.EASE_OUT }}

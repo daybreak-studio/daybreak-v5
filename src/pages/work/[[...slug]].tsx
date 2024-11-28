@@ -163,7 +163,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                     </Dialog.Overlay>
                     <Dialog.Content asChild>
                       <motion.div
-                        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none"
+                        className="hide-scrollbar fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -204,7 +204,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                             />
                           )}
 
-                          <Dialog.Close className="absolute right-6 top-6 inline-flex size-[35px] appearance-none items-center justify-center rounded-full text-gray-600 hover:bg-gray-100 focus:shadow-gray-400 focus:outline-none">
+                          <Dialog.Close className="absolute right-6 top-6 inline-flex size-12 appearance-none items-center justify-center rounded-xl bg-white text-gray-600 shadow-md hover:bg-zinc-100 focus:shadow-gray-400 focus:outline-none">
                             <Cross2Icon className="h-6 w-6" />
                           </Dialog.Close>
                         </motion.div>
