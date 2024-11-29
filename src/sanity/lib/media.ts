@@ -1,13 +1,28 @@
 import { Preview, CaseStudy, Work } from "@/sanity/types";
-import { MuxVideo, SanityImageCrop, SanityImageHotspot } from "@/sanity/types";
+import {
+  SanityImageCrop,
+  SanityImageHotspot,
+  SanityImageMetadata,
+} from "@/sanity/types";
+
+// Base enriched asset type
+interface EnrichedAsset {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  metadata?: SanityImageMetadata;
+}
+
+// Extend for Mux-specific properties
+interface EnrichedMuxAsset extends EnrichedAsset {
+  playbackId?: string;
+  assetId?: string;
+  status?: string;
+}
 
 export type BaseMediaItem = {
   source?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-    };
+    asset?: EnrichedAsset | EnrichedMuxAsset;
   };
   width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
   alt?: string;
@@ -17,11 +32,7 @@ export type BaseMediaItem = {
 export type ImageItem = BaseMediaItem & {
   _type: "imageItem";
   source?: {
-    asset?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-    };
+    asset?: EnrichedAsset;
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
     _type: "image";
@@ -30,35 +41,13 @@ export type ImageItem = BaseMediaItem & {
 
 export type VideoItem = BaseMediaItem & {
   _type: "videoItem";
-  source?: MuxVideo;
+  source?: {
+    asset?: EnrichedMuxAsset;
+    _type: "mux.video";
+  };
 };
 
 export type MediaItem = ImageItem | VideoItem;
-
-// Define the enriched asset type that includes queried fields
-interface EnrichedMuxAsset {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  playbackId?: string;
-  assetId?: string;
-  status?: string;
-  metadata?: {
-    dimensions?: any;
-    lqip?: string;
-    palette?: any;
-    hasAlpha?: boolean;
-    isOpaque?: boolean;
-    blurHash?: string;
-  };
-}
-
-// Extend the VideoItem type to include the enriched asset
-export interface EnrichedVideoItem extends Omit<VideoItem, "source"> {
-  source?: {
-    asset?: EnrichedMuxAsset;
-  } & MuxVideo;
-}
 
 // Gets first media from a CaseStudy (which has mediaGroups)
 const getCaseStudyFirstMedia = (project: CaseStudy): MediaItem | null => {
@@ -92,7 +81,7 @@ export const getWorkFirstMedia = (work: Work): MediaItem | null => {
 };
 
 // Update the getMuxThumbnailUrl function to use the enriched type
-export const getMuxThumbnailUrl = (media: EnrichedVideoItem): string => {
+export const getMuxThumbnailUrl = (media: VideoItem): string => {
   const playbackId = media.source?.asset?.playbackId;
   if (!playbackId) {
     console.warn("No playbackId found for video");

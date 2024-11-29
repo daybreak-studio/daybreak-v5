@@ -1,6 +1,8 @@
 // src/components/carousel/index.tsx
 "use client";
 
+import { memo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import { MediaRenderer } from "@/components/media-renderer";
 import { MediaItem } from "@/sanity/lib/media";
@@ -25,7 +27,7 @@ interface CarouselProps {
   className?: string;
 }
 
-export default function CarouselComponent({ media, className }: CarouselProps) {
+const CarouselComponent = memo(({ media, className }: CarouselProps) => {
   const [emblaRef] = useEmblaCarousel({ align: "start" });
   console.log("CarouselComponent media:", media);
 
@@ -49,7 +51,7 @@ export default function CarouselComponent({ media, className }: CarouselProps) {
                   {/* Set a fixed height */}
                   <MediaRenderer
                     media={item}
-                    autoPlay={item._type === "videoItem"}
+                    autoPlay={true}
                     className="h-full w-full object-cover" // Use object-cover to fill the container
                   />
                 </div>
@@ -61,4 +63,8 @@ export default function CarouselComponent({ media, className }: CarouselProps) {
       </div>
     </div>
   );
-}
+});
+
+export default CarouselComponent;
+
+CarouselComponent.displayName = "CarouselComponent";

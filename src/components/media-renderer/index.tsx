@@ -20,7 +20,7 @@ const isMuxVideo = (media: MediaItem): media is VideoItem => {
   return (
     media._type === "videoItem" &&
     media.source?._type === "mux.video" &&
-    !!media.source?.asset?._ref
+    "playbackId" in (media.source?.asset || {})
   );
 };
 
@@ -92,6 +92,8 @@ const OptimizedImage = ({
       priority={priority}
       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px"
       onLoad={onLoad}
+      placeholder="blur"
+      blurDataURL={media.source?.asset?.metadata?.lqip}
     />
   </div>
 );

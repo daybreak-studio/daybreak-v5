@@ -1,7 +1,7 @@
 import { groq } from "next-sanity";
 
 // Base media projection that handles both images and videos
-const MEDIA_PROJECTION = `
+const MEDIA_PROJECTION = groq`
   ...,
   _type,
   source {

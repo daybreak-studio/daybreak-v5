@@ -21,6 +21,7 @@ import Layout from "@/components/layout";
 import CarouselComponent from "@/components/carousel";
 import { HOME_QUERY } from "@/sanity/lib/queries";
 import { MediaItem } from "@/sanity/lib/media";
+
 function transformWidgetsToLayout(widgets: Home["widgets"]) {
   if (!widgets) return [];
 
@@ -55,7 +56,6 @@ function transformWidgetsToLayout(widgets: Home["widgets"]) {
 }
 
 export default function Home({ data }: { data: Home }) {
-  console.log(data);
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
 
   // Handles updates for window height.
@@ -89,7 +89,7 @@ export default function Home({ data }: { data: Home }) {
   const layout = transformWidgetsToLayout(data.widgets);
 
   return (
-    <main className="relative min-h-[200vh]">
+    <main className="relative">
       <motion.div
         className="fixed inset-0 z-0"
         style={{
@@ -109,37 +109,65 @@ export default function Home({ data }: { data: Home }) {
       {windowHeight !== null && data && (
         <Drawer windowHeight={windowHeight}>
           {/* Mission Statement */}
-          {data.missionStatement && (
-            <div className="p-8 md:w-7/12">
-              <PortableText
-                value={data.missionStatement}
-                components={components}
-              />
-            </div>
-          )}
-          {/* Carousel */}
-          <div className="pb-12">
-            {data.media && <CarouselComponent media={data.media} />}
-          </div>
-          {/* About Us */}
-          <div className="p-8">
-            <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">About Us</h2>
-            {data?.aboutUs && (
-              <div className="md:w-7/12">
-                <PortableText value={data.aboutUs} components={components} />
-              </div>
+          <div className="space-y-12">
+            {data.missionStatement && (
+              <Reveal className="p-8 md:w-7/12">
+                <motion.div
+                  initial={{ opacity: 0.8 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <PortableText
+                    value={data.missionStatement}
+                    components={components}
+                  />
+                </motion.div>
+              </Reveal>
             )}
-          </div>
-          {/* Newsfeed */}
-          <div className="p-8">
-            <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
-              Newsfeed
-            </h2>
-            <div className="md:grid md:grid-cols-2 md:gap-6 xl:grid-cols-4">
-              {data?.newsfeed?.map((article) => (
-                <Article key={article._key} article={article} />
-              ))}
-            </div>
+
+            {/* Carousel - Lazy load when drawer is open */}
+            <Reveal className="pb-12">
+              {data.media && <CarouselComponent media={data.media} />}
+            </Reveal>
+
+            {/* About Us - Simplified animation */}
+            <Reveal className="p-8">
+              <motion.div
+                initial={{ opacity: 0.8 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
+                  About Us
+                </h2>
+                {data?.aboutUs && (
+                  <div className="md:w-7/12">
+                    <PortableText
+                      value={data.aboutUs}
+                      components={components}
+                    />
+                  </div>
+                )}
+              </motion.div>
+            </Reveal>
+
+            {/* Newsfeed - Simplified grid */}
+            <Reveal className="p-8">
+              <motion.div
+                initial={{ opacity: 0.8 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
+                  Newsfeed
+                </h2>
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+                  {data?.newsfeed?.map((article) => (
+                    <Article key={article._key} article={article} />
+                  ))}
+                </div>
+              </motion.div>
+            </Reveal>
           </div>
         </Drawer>
       )}
