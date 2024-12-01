@@ -1,7 +1,7 @@
 import { groq } from "next-sanity";
 
 // Base media projection that handles both images and videos
-const MEDIA_PROJECTION = groq`
+const MEDIA_PROJECTION = `
   ...,
   _type,
   source {
@@ -59,6 +59,12 @@ export const HOME_QUERY = groq`
       ${MEDIA_PROJECTION}
     },
     widgets[] {
+      ...,
+      media[] {
+        ${MEDIA_PROJECTION}
+      }
+    },
+    newsfeed[] {
       ...,
       media[] {
         ${MEDIA_PROJECTION}

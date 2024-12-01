@@ -13,6 +13,7 @@ export default function MediaWidget({ media }: MediaWidgetProps) {
       <MediaRenderer
         media={media}
         priority
+        fill
         className="transition-transform duration-700 hover:scale-105"
         autoPlay={true}
       />

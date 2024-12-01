@@ -18,7 +18,7 @@ import { WORKS_QUERY } from "@/sanity/lib/queries";
 // Define modal variants
 const MODAL_VARIANTS = {
   selector: {
-    className: "max-w-[800px]",
+    className: "max-w-[800px] p-4",
     type: "selector",
   },
   preview: {
@@ -141,6 +141,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                     )}
                   >
                     <MediaRenderer
+                      fill
                       media={mediaAsset}
                       autoPlay={false}
                       className="duration-300 group-hover:scale-105"
@@ -180,8 +181,8 @@ export default function WorkPage({ data }: { data: Work[] }) {
                           layout
                           layoutId={layoutId}
                           className={cn(
-                            "w-[90vw] origin-center rounded-3xl bg-white p-8",
-                            "shadow-2xl",
+                            "w-[90vw] origin-center rounded-3xl bg-white",
+                            "overflow-y-auto shadow-2xl",
                             modalVariant.className,
                           )}
                         >

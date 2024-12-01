@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import { GetStaticProps } from "next";
 import { PortableText, PortableTextProps } from "@portabletext/react";
-
-// Sanity imports
 import { client } from "@/sanity/lib/client";
 import type { Home } from "@/sanity/types";
-
-// Component imports
 import Drawer from "@/components/drawer";
 import Reveal from "@/components/animations/reveal";
 import { WidgetGrid } from "@/components/grid";
 import Twitter from "@/components/widgets/twitter";
 import Media from "@/components/widgets/media";
 import Article from "@/components/article";
-// Type imports
-import { LayoutProps } from "@/components/grid/props";
-import Navigation from "@/components/navigation";
-import Layout from "@/components/layout";
 import CarouselComponent from "@/components/carousel";
 import { HOME_QUERY } from "@/sanity/lib/queries";
 import { MediaItem } from "@/sanity/lib/media";
+import Footer from "@/components/footer";
+import MasonryGrid from "@/components/masonry-grid";
 
 function transformWidgetsToLayout(widgets: Home["widgets"]) {
   if (!widgets) return [];
@@ -109,66 +103,41 @@ export default function Home({ data }: { data: Home }) {
       {windowHeight !== null && data && (
         <Drawer windowHeight={windowHeight}>
           {/* Mission Statement */}
-          <div className="space-y-12">
-            {data.missionStatement && (
-              <Reveal className="p-8 md:w-7/12">
-                <motion.div
-                  initial={{ opacity: 0.8 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <PortableText
-                    value={data.missionStatement}
-                    components={components}
-                  />
-                </motion.div>
-              </Reveal>
-            )}
+          <div className="space-y-12 xl:p-32">
+            <Reveal className="px-8 md:w-8/12 xl:p-0 2xl:w-7/12">
+              {data.missionStatement && (
+                <PortableText
+                  value={data.missionStatement}
+                  components={components}
+                />
+              )}
+            </Reveal>
 
             {/* Carousel - Lazy load when drawer is open */}
-            <Reveal className="pb-12">
+            <Reveal>
               {data.media && <CarouselComponent media={data.media} />}
             </Reveal>
 
             {/* About Us - Simplified animation */}
-            <Reveal className="p-8">
-              <motion.div
-                initial={{ opacity: 0.8 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
-                  About Us
-                </h2>
-                {data?.aboutUs && (
-                  <div className="md:w-7/12">
-                    <PortableText
-                      value={data.aboutUs}
-                      components={components}
-                    />
-                  </div>
-                )}
-              </motion.div>
+            <Reveal className="px-8">
+              <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
+                About Us
+              </h2>
+              {data?.aboutUs && (
+                <PortableText value={data.aboutUs} components={components} />
+              )}
             </Reveal>
 
-            {/* Newsfeed - Simplified grid */}
-            <Reveal className="p-8">
-              <motion.div
-                initial={{ opacity: 0.8 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
-                  Newsfeed
-                </h2>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-                  {data?.newsfeed?.map((article) => (
-                    <Article key={article._key} article={article} />
-                  ))}
-                </div>
-              </motion.div>
+            {/* Newsfeed with Masonry Layout */}
+            <Reveal className="px-8">
+              <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
+                Newsfeed
+              </h2>
+              <MasonryGrid articles={data?.newsfeed || []} />
             </Reveal>
           </div>
+
+          <Footer />
         </Drawer>
       )}
     </main>

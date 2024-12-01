@@ -131,7 +131,9 @@ export const home = defineType({
           name: "article",
           type: "object",
           fields: [
-            defineField({ name: "image", title: "Image", type: "image" }),
+            createMediaArray({
+              validation: (Rule) => Rule.required().length(1),
+            }),
             defineField({ name: "date", title: "Date", type: "datetime" }),
             defineField({ name: "title", title: "Title", type: "string" }),
             defineField({

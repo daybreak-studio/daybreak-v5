@@ -52,7 +52,7 @@ export default function MediaGroup({
         scale: isZoomed ? (isActive ? 0.95 : 0.85) : 1,
       }}
       whileHover={{
-        scale: isZoomed ? (isActive ? 0.95 : 0.88) : 1.02,
+        scale: isZoomed ? (isActive ? 0.95 : 0.88) : 0.99,
         opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
       }}
       transition={{
@@ -68,17 +68,13 @@ export default function MediaGroup({
       onClick={onActivate}
     >
       {group.media?.map((media, mediaIndex) => (
-        <div
+        <MediaRenderer
+          className="max-h-[95vh] rounded-xl"
           key={`${index}-${mediaIndex}`}
-          className="relative aspect-[16/9] overflow-hidden rounded-xl"
-        >
-          <MediaRenderer
-            media={media}
-            autoPlay={true}
-            className="absolute inset-0"
-            layoutId={index === 0 && mediaIndex === 0 ? layoutId : undefined}
-          />
-        </div>
+          media={media}
+          autoPlay={true}
+          layoutId={index === 0 && mediaIndex === 0 ? layoutId : undefined}
+        />
       ))}
     </motion.div>
   );

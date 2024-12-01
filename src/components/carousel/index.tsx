@@ -50,6 +50,7 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
                 <div className="h-[400px] w-full pb-2 md:h-[600px]">
                   {/* Set a fixed height */}
                   <MediaRenderer
+                    fill
                     media={item}
                     autoPlay={true}
                     className="h-full w-full object-cover" // Use object-cover to fill the container

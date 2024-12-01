@@ -1,17 +1,16 @@
 import React, { ReactNode } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import { cn } from "@/lib/utils";
 
 interface RevealProps {
   children: ReactNode;
-  width?: "fit-content" | "100%";
   className?: string;
   delay?: number;
 }
 
 const Reveal: React.FC<RevealProps> = ({
   children,
-  width = "fit-content",
   className = "",
   delay = 0,
 }) => {
@@ -21,8 +20,8 @@ const Reveal: React.FC<RevealProps> = ({
   return (
     <div
       ref={ref}
-      style={{ position: "relative", width, overflow: "hidden" }}
-      className={className}
+      className={cn(className)}
+      style={{ position: "relative", overflow: "hidden" }}
     >
       <motion.div
         variants={{

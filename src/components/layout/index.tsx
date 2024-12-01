@@ -47,6 +47,10 @@ export default function Layout({ children }: LayoutProps) {
           duration: visitStatus === "new" ? 1 : 0.3,
           delay: visitStatus === "new" ? 1.5 : 0,
         }}
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
+        }}
       >
         {children}
       </motion.div>
