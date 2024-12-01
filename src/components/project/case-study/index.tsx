@@ -22,27 +22,47 @@ export default function ProjectCaseStudy({
   const [activeGroupIndex, setActiveGroupIndex] = useState(0);
   // Track whether we're in zoomed/focused mode
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<{ stop: () => void }>();
 
   // Smoothly scroll to a media group by its index
   const scrollToGroup = useCallback((index: number) => {
     const element = document.getElementById(`media-group-${index}`);
     if (!element || !containerRef.current) return;
 
+    // Cancel any existing animation
+    if (animationRef.current) {
+      animationRef.current.stop();
+    }
+
     const container = containerRef.current;
     const elementTop = element.offsetTop;
     const containerHeight = container.clientHeight;
     const elementHeight = element.clientHeight;
-    // Center the element in the viewport
     const targetScroll = elementTop - (containerHeight - elementHeight) / 2;
 
-    animate(container.scrollTop, targetScroll, {
+    // Store the animation control in the ref
+    animationRef.current = animate(container.scrollTop, targetScroll, {
       type: "spring",
       stiffness: 100,
       damping: 20,
       onUpdate: (value) => container.scrollTo(0, value),
+      onComplete: () => {
+        animationRef.current = undefined;
+      },
     });
+  }, []);
+
+  // Clean up animation on unmount
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        animationRef.current.stop();
+      }
+    };
   }, []);
 
   // Handle clicking on a media group
