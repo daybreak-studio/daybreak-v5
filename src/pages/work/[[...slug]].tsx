@@ -153,7 +153,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
               <AnimatePresence>
                 {clientSlug === client.slug?.current && (
                   <Dialog.Portal>
-                    <Dialog.Overlay asChild className="fixed inset-0 z-[9998]">
+                    <Dialog.Overlay asChild className="fixed inset-0 z-20">
                       <motion.div
                         className="fixed inset-0 bg-white/50 backdrop-blur-2xl"
                         initial={{ opacity: 0 }}
@@ -164,7 +164,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                     </Dialog.Overlay>
                     <Dialog.Content
                       asChild
-                      className="fixed left-1/2 top-1/2 z-[9998] -translate-x-1/2 -translate-y-1/2"
+                      className="fixed left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
                     >
                       <motion.div
                         className="hide-scrollbar focus:outline-none"

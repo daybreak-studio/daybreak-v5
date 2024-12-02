@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 
 interface DrawerProps {
   children: React.ReactNode;
+  className?: string;
   windowHeight: number;
 }
 
@@ -16,16 +17,33 @@ const DrawerButton = ({
   isHovered: boolean;
   onClick: () => void;
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Check initially
+    checkMobile();
+
+    // Add resize listener
+    window.addEventListener("resize", checkMobile);
+
+    // Cleanup
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
   return (
-    <div className="absolute flex w-full justify-center p-8">
+    <div className="absolute flex w-full justify-center p-4 md:p-8">
       <motion.button
         onClick={onClick}
-        className={`flex h-8 w-8 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm ${
+        className={`flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm shadow-zinc-300 md:shadow-md ${
           isOpen ? "sticky" : "absolute"
         }`}
         initial={{ opacity: 0 }}
         animate={{
-          opacity: isOpen || isHovered ? 1 : 0,
+          opacity: isOpen || isHovered || isMobile ? 1 : 0,
           y: isHovered && !isOpen ? -2 : 0,
         }}
         exit={{ opacity: 0 }}
@@ -35,18 +53,22 @@ const DrawerButton = ({
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronUp className="h-4 w-4 text-zinc-500" />
+          <ChevronUp className="h-4 w-4 text-zinc-400" />
         </motion.div>
       </motion.button>
     </div>
   );
 };
 
-const Drawer: React.FC<DrawerProps> = ({ children, windowHeight }) => {
+const Drawer: React.FC<DrawerProps> = ({
+  children,
+  windowHeight,
+  className,
+}) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const PEEK_HEIGHT = windowHeight * 0.05;
+  const PEEK_HEIGHT = windowHeight * 0.07;
   const HOVER_PEEK_AMOUNT = 200;
 
   const toggleDrawer = () => {
@@ -73,7 +95,7 @@ const Drawer: React.FC<DrawerProps> = ({ children, windowHeight }) => {
   return (
     <motion.div
       id="drawer"
-      className="fixed inset-x-0 bottom-0 z-50 bg-white/90 shadow-2xl backdrop-blur-2xl"
+      className={`fixed inset-x-0 bottom-0 z-50 bg-white/90 shadow-2xl backdrop-blur-2xl ${className}`}
       style={{ height: windowHeight }}
       initial="closed"
       animate={isOpen ? "open" : "closed"}

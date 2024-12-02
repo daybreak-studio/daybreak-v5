@@ -84,13 +84,7 @@ export default function Home({ data }: { data: Home }) {
 
   return (
     <main className="relative">
-      <motion.div
-        className="fixed inset-0 z-0"
-        style={{
-          background:
-            "linear-gradient(0deg, rgba(240,240,220,1) 0%, rgba(249,221,213,1) 25%, rgba(236,236,240,1) 75%)",
-        }}
-      >
+      <motion.div className="fixed inset-0">
         <motion.div>
           <WidgetGrid
             layout={layout}
@@ -103,7 +97,7 @@ export default function Home({ data }: { data: Home }) {
       {windowHeight !== null && data && (
         <Drawer windowHeight={windowHeight}>
           {/* Mission Statement */}
-          <div className="space-y-12 xl:p-32">
+          <div className="space-y-12 pt-20 md:p-8 md:pt-32 lg:p-32">
             <Reveal className="px-8 md:w-8/12 xl:p-0 2xl:w-7/12">
               {data.missionStatement && (
                 <PortableText

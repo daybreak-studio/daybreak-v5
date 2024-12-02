@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
+import "../../public/fonts/font-face.css";
 import { AppProps } from "next/app";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Navigation from "@/components/navigation";
 import { VisitProvider } from "@/contexts/VisitContext";
 import Layout from "@/components/layout";
@@ -18,6 +19,12 @@ export default function App({ Component, pageProps }: AppProps) {
     <div className={`${aspekta.className}`}>
       <VisitProvider>
         <Navigation />
+        <motion.div
+          className="main-gradient fixed inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        />
         <AnimatePresence mode="wait">
           <Layout key={currentBasePath}>
             <Component {...pageProps} />

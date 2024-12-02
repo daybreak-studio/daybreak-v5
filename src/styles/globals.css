@@ -35,6 +35,12 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --main-gradient: linear-gradient(
+      0deg,
+      rgba(240, 240, 220, 1) 0%,
+      rgba(249, 221, 213, 1) 25%,
+      rgba(236, 236, 240, 1) 75%
+    );
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -102,4 +108,8 @@
 
 .pb-safe-bottom {
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+.main-gradient {
+  background: var(--main-gradient);
 }
