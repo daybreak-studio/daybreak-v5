@@ -4,6 +4,7 @@ import { Defaults, GridProps } from "@/components/grid/props";
 import clsx from "clsx";
 import { useScramble } from "use-scramble";
 import useEmblaCarousel from "embla-carousel-react";
+import { useDebug } from "@/contexts/DebugContext";
 
 // GridOverlay component
 interface GridOverlayProps {
@@ -37,7 +38,7 @@ const GridOverlay: React.FC<GridOverlayProps> = ({
           return (
             <div
               key={index}
-              className="absolute z-20 flex items-center justify-center border border-blue-300 bg-blue-100 bg-opacity-20 text-xs font-bold text-blue-600 opacity-25"
+              className="absolute z-20 flex items-center justify-center rounded-3xl border border-blue-500 bg-blue-100 bg-opacity-20 text-xs font-bold text-blue-600 opacity-50"
               style={{
                 left: `${left}px`,
                 top: `${top}px`,
@@ -74,6 +75,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
   layout,
   debug,
 }) => {
+  const { debug: globalDebug } = useDebug();
   const breakpoints: GridProps.Settings = {
     // Proportional to Figma design, but rowHeight can be used as a scaling factor for the entire widget grid to get larger or smaller based on viewport size.
     xl: { rowHeight: 160, margin: [32, 32] },
@@ -111,8 +113,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
   const [emblaRef] = useEmblaCarousel();
 
   return (
-    <div className="relative h-screen w-screen transition-all">
-      <div className="flex h-full w-full flex-col items-center justify-center gap-6 pt-12 xl:gap-10">
+    <div className="relative h-screen w-screen">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 pb-20 xl:gap-10 xl:pb-0">
         {header ? (
           header
         ) : (
@@ -120,7 +122,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
             ref={ref}
             onMouseOver={replay}
             onFocus={replay}
-            className="line-clamp-2 h-24 w-72 text-center text-3xl text-zinc-400 xl:w-80 xl:text-4xl"
+            className="line-clamp-2 h-24 w-72 text-center text-3xl font-[450] text-zinc-400 xl:w-80 xl:text-4xl"
           ></h1>
         )}
         <div
@@ -128,7 +130,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
           className="embla relative"
           ref={emblaRef}
         >
-          {debug && (
+          {globalDebug && (
             <GridOverlay
               cols={cols}
               rowHeight={settings.rowHeight}
@@ -150,14 +152,17 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
                     h: item.size.h,
                     ...Defaults.DataGridAttributes,
                   }}
-                  className="embla__slide h-full w-full overflow-hidden rounded-2xl bg-zinc-100 shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.05)] xl:rounded-3xl"
+                  className={clsx(
+                    "embla__slide h-full w-full overflow-hidden rounded-2xl bg-zinc-100",
+                    "shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.05)]",
+                    "xl:rounded-3xl",
+                    {
+                      "transition-all duration-200 hover:opacity-10 hover:blur-xl":
+                        globalDebug,
+                    },
+                  )}
                 >
-                  <div
-                    className={clsx({
-                      ["border-[1px] border-red-500"]: debug,
-                      ["flex h-full w-full overflow-hidden"]: true,
-                    })}
-                  >
+                  <div className="flex h-full w-full overflow-hidden">
                     <WidgetGridProvider
                       id={item.id}
                       size={item.size}
@@ -166,8 +171,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
                     >
                       {item.content}
                     </WidgetGridProvider>
-                    {debug && (
-                      <div className="absolute left-0 top-0 bg-gray-700 bg-opacity-50 p-1 text-xs uppercase text-white">
+                    {globalDebug && (
+                      <div className="absolute left-0 top-0 m-2 rounded-2xl bg-gray-700/50 p-3 text-xs uppercase text-white transition-opacity hover:opacity-0">
                         ID: {item.id}
                         <br />
                         {item.size.w}x{item.size.h} — ({item.position.x},

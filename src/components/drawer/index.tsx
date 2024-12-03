@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
+import clsx from "clsx";
 
 interface DrawerProps {
   children: React.ReactNode;
@@ -35,27 +36,35 @@ const DrawerButton = ({
   }, []);
 
   return (
-    <div className="absolute flex w-full justify-center p-4 md:p-8">
-      <motion.button
+    <div className={clsx("absolute flex w-full justify-center p-4 md:p-8")}>
+      <div
         onClick={onClick}
-        className={`flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm shadow-zinc-300 md:shadow-md ${
-          isOpen ? "sticky" : "absolute"
-        }`}
-        initial={{ opacity: 0 }}
-        animate={{
-          opacity: isOpen || isHovered || isMobile ? 1 : 0,
-          y: isHovered && !isOpen ? -2 : 0,
-        }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.2 }}
+        className={clsx(
+          "relative z-20 flex cursor-pointer items-center justify-center p-8",
+          isMobile && !isOpen ? "bottom-20" : "bottom-6",
+        )}
       >
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
+        <motion.button
+          className={clsx(
+            "pointer-events-none flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm shadow-zinc-300 md:shadow-md",
+            isOpen ? "sticky" : "absolute",
+          )}
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: isOpen || isHovered || isMobile ? 1 : 0,
+            y: isHovered && !isOpen ? -2 : 0,
+          }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          <ChevronUp className="h-4 w-4 text-zinc-400" />
-        </motion.div>
-      </motion.button>
+          <motion.div
+            animate={{ rotate: isOpen ? 180 : 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronUp className="h-4 w-4 text-zinc-400" />
+          </motion.div>
+        </motion.button>
+      </div>
     </div>
   );
 };
@@ -68,7 +77,7 @@ const Drawer: React.FC<DrawerProps> = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const PEEK_HEIGHT = windowHeight * 0.07;
+  const PEEK_HEIGHT = windowHeight * 0.06;
   const HOVER_PEEK_AMOUNT = 200;
 
   const toggleDrawer = () => {
@@ -127,14 +136,16 @@ const Drawer: React.FC<DrawerProps> = ({
 
       <motion.div
         ref={contentRef}
-        className="pb-safe-bottom h-full overflow-y-auto overscroll-contain"
+        className={clsx(
+          "hide-scrollbar pb-safe-bottom h-full overscroll-contain",
+          isOpen ? "overflow-y-auto" : "overflow-hidden",
+        )}
         animate={{
           opacity: isOpen ? 1 : 0.95,
         }}
         transition={{ duration: 0.2 }}
       >
         <div className="relative">
-          {/* Top lip activation zone for opening / closing drawer. Clicking this will act as a toggle, but we want it larger than the hitbox of the chevron. */}
           <motion.div
             className="absolute top-0 z-20 flex w-full cursor-pointer justify-center p-36"
             onClick={toggleDrawer}

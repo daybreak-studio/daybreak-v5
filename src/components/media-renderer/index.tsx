@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 interface MediaRendererProps {
   media: MediaItem | null;
+  layout?: boolean | "position" | "size" | "preserve-aspect";
   layoutId?: string;
   className?: string;
   autoPlay?: boolean;
@@ -27,6 +28,7 @@ const isMuxVideo = (media: MediaItem): media is VideoItem => {
 
 export function MediaRenderer({
   media,
+  layout,
   layoutId,
   className = "",
   autoPlay = false,
@@ -35,18 +37,10 @@ export function MediaRenderer({
   onLoad,
   onError,
 }: MediaRendererProps) {
-  if (!media || !media.source?.asset) {
-    return null;
-  }
-
   const [videoError, setVideoError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const isLowPowerMode = useLowPowerMode();
   const videoRef = useRef<HTMLVideoElement>(null);
-
-  const dimensions = media.source?.asset?.metadata?.dimensions;
-  const lqip = media.source?.asset?.metadata?.lqip;
-
   const handleLoadSuccess = useCallback(() => {
     setIsLoading(false);
     onLoad?.();
@@ -56,6 +50,13 @@ export function MediaRenderer({
     setVideoError(true);
     onError?.();
   }, [onError]);
+
+  if (!media || !media.source?.asset) {
+    return null;
+  }
+
+  const dimensions = media.source?.asset?.metadata?.dimensions;
+  const lqip = media.source?.asset?.metadata?.lqip;
 
   const shouldShowThumbnail = isLowPowerMode || videoError;
 
@@ -111,8 +112,9 @@ export function MediaRenderer({
 
   return (
     <motion.div
+      layout={layout}
       layoutId={layoutId}
-      className={fill ? "relative h-full w-full" : ""}
+      className={fill ? "relative h-full w-full will-change-transform" : ""}
     >
       {isMuxVideo(media) ? (
         shouldShowThumbnail ? (

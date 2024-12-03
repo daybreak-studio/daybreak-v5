@@ -61,6 +61,7 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
         transition={transition}
       >
         <motion.div
+          layout
           layoutId="nav-container"
           className="mx-auto h-min w-min overflow-hidden bg-white/60 p-1 drop-shadow-2xl backdrop-blur-2xl"
           animate={{

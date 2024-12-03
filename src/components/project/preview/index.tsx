@@ -38,7 +38,7 @@ export default function ProjectPreview({
         <p className="text-zinc-500">{project.caption}</p>
       </div>
       <motion.div
-        layout="preserve-aspect"
+        layout
         layoutId={imageLayoutId}
         className="origin center aspect-square h-full w-full"
       >

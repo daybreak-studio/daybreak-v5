@@ -1,98 +1,6 @@
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineField, defineType } from "sanity";
 import { createMediaArray } from "./media";
-
-function createWidgetPreview(widgetTitle: string) {
-  return {
-    select: {
-      size: "size",
-      x: "position.x",
-      y: "position.y",
-    },
-    prepare(selection: { size?: string; x?: number; y?: number }) {
-      const { size = "Unknown", x = 0, y = 0 } = selection;
-      return {
-        title: `${widgetTitle} (${size}) at (${x}, ${y})`,
-      };
-    },
-  };
-}
-
-const twitterWidget = defineArrayMember({
-  type: "object",
-  name: "twitterWidget",
-  title: "Twitter Widget",
-  fields: [
-    defineField({
-      name: "position",
-      type: "object",
-      fields: [
-        defineField({ name: "x", type: "number" }),
-        defineField({ name: "y", type: "number" }),
-      ],
-      initialValue: { x: 0, y: 0 },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "size",
-      type: "string",
-      options: {
-        list: ["1x1", "2x2"],
-      },
-      initialValue: "2x2",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "tweet",
-      type: "text",
-      title: "Tweet",
-    }),
-    defineField({
-      name: "author",
-      type: "string",
-      title: "Author",
-    }),
-    defineField({
-      name: "link",
-      type: "url",
-      title: "Link",
-    }),
-    defineField({
-      name: "media",
-      type: "array",
-      of: [{ type: "image", title: "Image" }],
-    }),
-  ],
-  preview: createWidgetPreview("Twitter Widget"),
-});
-
-const mediaWidget = defineArrayMember({
-  type: "object",
-  name: "mediaWidget",
-  title: "Media Widget",
-  fields: [
-    defineField({
-      name: "position",
-      type: "object",
-      fields: [
-        defineField({ name: "x", type: "number" }),
-        defineField({ name: "y", type: "number" }),
-      ],
-      initialValue: { x: 0, y: 0 },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "size",
-      type: "string",
-      options: {
-        list: ["2x2", "3x3"],
-      },
-      initialValue: "2x2",
-      validation: (Rule) => Rule.required(),
-    }),
-    createMediaArray(),
-  ],
-  preview: createWidgetPreview("Media Widget"),
-});
+import { widgets } from "./widgets";
 
 export const home = defineType({
   name: "home",
@@ -103,7 +11,7 @@ export const home = defineType({
       name: "widgets",
       title: "Widgets",
       type: "array",
-      of: [twitterWidget, mediaWidget],
+      of: widgets,
     }),
     defineField({
       name: "missionStatement",
@@ -119,8 +27,8 @@ export const home = defineType({
     defineField({
       name: "aboutUs",
       title: "About Us",
-      type: "array", // Change to array for block content
-      of: [{ type: "block" }], // Define block content
+      type: "array",
+      of: [{ type: "block" }],
     }),
     defineField({
       name: "newsfeed",

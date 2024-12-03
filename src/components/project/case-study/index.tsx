@@ -130,6 +130,7 @@ export default function ProjectCaseStudy({
           setIsZoomed(false);
           break;
         case "Enter":
+        case "Space":
         case "Tab":
           e.preventDefault();
           e.stopPropagation();
@@ -159,14 +160,14 @@ export default function ProjectCaseStudy({
   return (
     <motion.div
       ref={containerRef}
-      className="hide-scrollbar h-screen overflow-y-auto px-4 py-8 pt-48"
+      className="hide-scrollbar h-screen overflow-y-auto px-4 py-8 pt-24 xl:px-8 xl:pt-32"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4, ease: AnimationConfig.EASE_OUT }}
     >
       {/* Project Title */}
       <motion.h1
-        className="mb-8 py-24 text-center text-4xl"
+        className="mb-8 py-24 text-center text-4xl xl:text-5xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: AnimationConfig.EASE_OUT }}
@@ -174,7 +175,7 @@ export default function ProjectCaseStudy({
         {project.heading}
       </motion.h1>
 
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-4 xl:gap-8">
         {/* Media Groups */}
         {project.mediaGroups?.map((group, index) => (
           <MediaGroup
@@ -193,7 +194,7 @@ export default function ProjectCaseStudy({
         {/* Credits Section */}
         {project.credits && (
           <motion.div
-            className="mx-auto mb-96 mt-44 grid w-full max-w-96 grid-cols-2 gap-y-6 text-sm"
+            className="mx-auto my-72 grid w-full grid-cols-2 gap-y-6 text-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}
@@ -202,7 +203,7 @@ export default function ProjectCaseStudy({
               <Fragment key={index}>
                 <div className="flex flex-row">
                   {credit.role}
-                  <div className="mx-4 h-0 flex-grow translate-y-2 border-b border-gray-900 opacity-10" />
+                  <div className="mx-4 h-0 flex-grow translate-y-2 border-b border-gray-200" />
                 </div>
                 <div className="opacity-50">
                   {credit.names?.map((name, index) => (

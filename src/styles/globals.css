@@ -113,3 +113,38 @@
 .main-gradient {
   background: var(--main-gradient);
 }
+
+/* Font Optimization */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Ensure consistent font sizing on iOS */
+@supports (-webkit-touch-callout: none) {
+  body {
+    /* Prevent font scaling in landscape while allowing user zoom */
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+  }
+}
+
+* {
+  letter-spacing: -0.01em;
+}
+
+/* Optional: If you want to prevent text inflation on mobile */
+html {
+  max-height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Prevent text resizing in orientation changes */
+* {
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+}

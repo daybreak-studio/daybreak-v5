@@ -122,7 +122,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                     "group relative aspect-square w-full origin-center cursor-pointer overflow-hidden rounded-2xl bg-white",
                     isAnimating &&
                       activeThumbId === client.slug?.current &&
-                      "z-40",
+                      "z-50",
                   )}
                   onLayoutAnimationStart={() => setIsAnimating(true)}
                   onLayoutAnimationComplete={() => {
@@ -131,10 +131,8 @@ export default function WorkPage({ data }: { data: Work[] }) {
                   }}
                 >
                   <motion.div
-                    layout="preserve-aspect"
-                    layoutId={imageLayoutId}
                     className={cn(
-                      "aspect-square h-full w-full origin-center object-cover",
+                      "relative aspect-square h-full w-full origin-center object-cover",
                       isAnimating &&
                         activeThumbId === client.slug?.current &&
                         "relative z-50",
@@ -142,6 +140,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                   >
                     <MediaRenderer
                       fill
+                      layoutId={imageLayoutId}
                       media={mediaAsset}
                       autoPlay={false}
                       className="duration-300 group-hover:scale-105"
@@ -153,26 +152,14 @@ export default function WorkPage({ data }: { data: Work[] }) {
               <AnimatePresence>
                 {clientSlug === client.slug?.current && (
                   <Dialog.Portal>
-                    <Dialog.Overlay asChild className="fixed inset-0 z-20">
-                      <motion.div
-                        className="fixed inset-0 bg-white/50 backdrop-blur-2xl"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                      />
+                    <Dialog.Overlay asChild className="fixed inset-0">
+                      <motion.div className="fixed inset-0 bg-white/50 backdrop-blur-2xl" />
                     </Dialog.Overlay>
                     <Dialog.Content
                       asChild
-                      className="fixed left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2"
+                      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                     >
-                      <motion.div
-                        className="hide-scrollbar focus:outline-none"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
+                      <motion.div className="hide-scrollbar z-50 focus:outline-none">
                         <Dialog.Title className="sr-only">
                           {client.name} Project Details
                         </Dialog.Title>
@@ -208,8 +195,8 @@ export default function WorkPage({ data }: { data: Work[] }) {
                             />
                           )}
 
-                          <Dialog.Close className="absolute right-6 top-6 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl bg-white text-gray-600 shadow-md hover:bg-zinc-100 focus:shadow-gray-400 focus:outline-none">
-                            <Cross2Icon className="h-6 w-6" />
+                          <Dialog.Close className="absolute right-4 top-4 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl border-[1px] border-zinc-100 bg-white text-zinc-500 hover:bg-zinc-100 focus:shadow-gray-400 focus:outline-none">
+                            <Cross2Icon className="h-4 w-4" />
                           </Dialog.Close>
                         </motion.div>
                       </motion.div>

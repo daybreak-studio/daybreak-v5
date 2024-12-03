@@ -85,13 +85,11 @@ export default function Home({ data }: { data: Home }) {
   return (
     <main className="relative">
       <motion.div className="fixed inset-0">
-        <motion.div>
-          <WidgetGrid
-            layout={layout}
-            heading="A technology first design studio"
-            // debug
-          />
-        </motion.div>
+        <WidgetGrid
+          layout={layout}
+          heading="A technology first design studio"
+          // debug
+        />
       </motion.div>
       {/* Drawer Content */}
       {windowHeight !== null && data && (

@@ -73,7 +73,6 @@ export default function MediaGroup({
           key={`${index}-${mediaIndex}`}
           media={media}
           autoPlay={true}
-          layoutId={index === 0 && mediaIndex === 0 ? layoutId : undefined}
         />
       ))}
     </motion.div>
