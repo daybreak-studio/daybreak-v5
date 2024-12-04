@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { Work } from "@/sanity/types";
+import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
@@ -10,7 +10,7 @@ import { ChevronRight } from "lucide-react";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
 
 interface ProjectSelectorProps {
-  data: Work;
+  data: Clients;
   imageLayoutId: string;
 }
 

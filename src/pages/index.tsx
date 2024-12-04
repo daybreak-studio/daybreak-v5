@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { GetStaticProps } from "next";
 import { PortableText, PortableTextProps } from "@portabletext/react";
 import { client } from "@/sanity/lib/client";
-import type { Home } from "@/sanity/types";
+import type { Home, Clients } from "@/sanity/types";
 import Drawer from "@/components/drawer";
 import Reveal from "@/components/animations/reveal";
 import { WidgetGrid } from "@/components/grid";
@@ -15,26 +15,34 @@ import { HOME_QUERY } from "@/sanity/lib/queries";
 import { MediaItem } from "@/sanity/lib/media";
 import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
+import Project from "@/components/widgets/project";
 
-function transformWidgetsToLayout(widgets: Home["widgets"]) {
-  if (!widgets) return [];
+function transformWidgetsToLayout(data: Home) {
+  if (!data.widgets) return [];
 
-  return widgets.map((widget) => {
+  return data.widgets.map((widget) => {
     const [w, h] = (widget.size || "1x1").split("x").map(Number);
 
     let content: React.ReactNode;
     switch (widget._type) {
       case "twitterWidget":
-        content = (
-          <Twitter
-            tweet={widget.tweet || ""}
-            author={widget.author || ""}
-            link={widget.link || ""}
-          />
-        );
+        const { tweet, author, link } = widget;
+        content = <Twitter tweet={tweet} author={author} link={link} />;
         break;
       case "mediaWidget":
-        content = widget.media?.[0] ? <Media media={widget.media[0]} /> : null;
+        const { media } = widget;
+        content = <Media media={media?.[0]} />;
+        break;
+      case "projectWidget":
+        const { client, projectType, projectCategory } = widget;
+        content = (
+          <Project
+            data={data}
+            client={client}
+            projectType={projectType}
+            projectCategory={projectCategory}
+          />
+        );
         break;
       default:
         content = null;
@@ -51,6 +59,8 @@ function transformWidgetsToLayout(widgets: Home["widgets"]) {
 
 export default function Home({ data }: { data: Home }) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
+
+  console.log(data);
 
   // Handles updates for window height.
   useEffect(() => {
@@ -80,7 +90,7 @@ export default function Home({ data }: { data: Home }) {
   };
 
   // Transform Sanity widgets to LayoutProps.Item[]
-  const layout = transformWidgetsToLayout(data.widgets);
+  const layout = transformWidgetsToLayout(data);
 
   return (
     <main className="relative">

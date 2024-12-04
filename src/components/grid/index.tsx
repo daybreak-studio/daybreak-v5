@@ -153,16 +153,14 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
                     ...Defaults.DataGridAttributes,
                   }}
                   className={clsx(
-                    "embla__slide h-full w-full overflow-hidden rounded-2xl bg-zinc-100",
-                    "shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_8px_10px_-6px_rgba(0,0,0,0.05)]",
-                    "xl:rounded-3xl",
+                    "embla__slide frame-outer h-full w-full shadow",
                     {
                       "transition-all duration-200 hover:opacity-10 hover:blur-xl":
                         globalDebug,
                     },
                   )}
                 >
-                  <div className="flex h-full w-full overflow-hidden">
+                  <div className="flex h-full w-full">
                     <WidgetGridProvider
                       id={item.id}
                       size={item.size}

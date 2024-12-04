@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
-import { Preview, Work } from "@/sanity/types";
+import { Preview, Clients } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
 
 interface ProjectPreviewProps {
-  data: Work;
+  data: Clients;
   imageLayoutId: string;
 }
 

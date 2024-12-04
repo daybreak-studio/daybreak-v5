@@ -17,9 +17,7 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ articles }) => {
       }}
     >
       {articles?.map((article) => (
-        <div key={article._key} className="break-inside-avoid">
-          <Article article={article} />
-        </div>
+        <Article key={article._key} article={article} />
       ))}
     </div>
   );

@@ -52,16 +52,16 @@ export const mediaWidget = {
   fields: createWidgetFields([createMediaArray()]),
 };
 
-export const projectHighlightWidget = {
+export const projectWidget = {
   type: "object",
-  name: "projectHighlightWidget",
-  title: "Project Highlight Widget",
+  name: "projectWidget",
+  title: "Project Widget",
   fields: createWidgetFields([
     defineField({
       name: "client",
       title: "Select Client",
       type: "reference",
-      to: [{ type: "work" }],
+      to: [{ type: "clients" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -93,4 +93,4 @@ export const projectHighlightWidget = {
   ]),
 };
 
-export const widgets = [twitterWidget, mediaWidget, projectHighlightWidget];
+export const widgets = [twitterWidget, mediaWidget, projectWidget];

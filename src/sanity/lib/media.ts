@@ -1,4 +1,4 @@
-import { Preview, CaseStudy, Work } from "@/sanity/types";
+import { Preview, CaseStudy, Clients } from "@/sanity/types";
 import {
   SanityImageCrop,
   SanityImageHotspot,
@@ -73,8 +73,8 @@ export const getProjectFirstMedia = (
 };
 
 // Used specifically for work index thumbnails
-export const getWorkFirstMedia = (work: Work): MediaItem | null => {
-  const firstProject = work.projects?.[0];
+export const getClientFirstMedia = (client: Clients): MediaItem | null => {
+  const firstProject = client.projects?.[0];
   if (!firstProject) return null;
 
   return getProjectFirstMedia(firstProject);

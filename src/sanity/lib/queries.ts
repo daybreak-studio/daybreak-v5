@@ -28,8 +28,8 @@ const MEDIA_PROJECTION = `
 `;
 
 // Main queries
-export const WORKS_QUERY = groq`
-  *[_type == "work"][!(_id in path('drafts.**'))] {
+export const CLIENTS_QUERY = groq`
+  *[_type == "clients"][!(_id in path('drafts.**'))] {
     ...,
     projects[] {
       ...,

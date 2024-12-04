@@ -40,19 +40,18 @@ const DrawerButton = ({
       <div
         onClick={onClick}
         className={clsx(
-          "relative z-20 flex cursor-pointer items-center justify-center p-8",
+          "relative z-30 flex cursor-pointer items-center justify-center p-8",
           isMobile && !isOpen ? "bottom-20" : "bottom-6",
         )}
       >
         <motion.button
           className={clsx(
-            "pointer-events-none flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm shadow-zinc-300 md:shadow-md",
+            "flex h-8 w-8 items-center justify-center rounded-full bg-white/70 shadow-sm shadow-zinc-300 transition-all duration-300 hover:scale-110 md:shadow-md",
             isOpen ? "sticky" : "absolute",
           )}
           initial={{ opacity: 0 }}
           animate={{
             opacity: isOpen || isHovered || isMobile ? 1 : 0,
-            y: isHovered && !isOpen ? -2 : 0,
           }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
@@ -61,7 +60,7 @@ const DrawerButton = ({
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronUp className="h-4 w-4 text-zinc-400" />
+            <ChevronUp className="h-4 w-4 text-black/50" />
           </motion.div>
         </motion.button>
       </div>
@@ -104,7 +103,10 @@ const Drawer: React.FC<DrawerProps> = ({
   return (
     <motion.div
       id="drawer"
-      className={`fixed inset-x-0 bottom-0 z-50 bg-white/90 shadow-2xl backdrop-blur-2xl ${className}`}
+      className={clsx(
+        "fixed inset-x-0 bottom-0 z-50 bg-white/80 shadow backdrop-blur-2xl",
+        className,
+      )}
       style={{ height: windowHeight }}
       initial="closed"
       animate={isOpen ? "open" : "closed"}

@@ -3,18 +3,19 @@ import { MediaRenderer } from "@/components/media-renderer";
 import type { MediaItem } from "@/sanity/lib/media";
 
 interface MediaWidgetProps {
-  media: MediaItem;
+  media?: MediaItem;
 }
 
 export default function MediaWidget({ media }: MediaWidgetProps) {
-  console.log(media);
+  if (!media) return null;
+
   return (
-    <motion.div className="relative h-full w-full overflow-hidden">
+    <motion.div className="relative h-full w-full">
       <MediaRenderer
+        className="frame-inner"
         media={media}
         priority
         fill
-        className="transition-transform duration-700 hover:scale-105"
         autoPlay={true}
       />
     </motion.div>

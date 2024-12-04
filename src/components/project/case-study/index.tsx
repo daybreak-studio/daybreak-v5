@@ -1,13 +1,14 @@
 import { motion, animate } from "framer-motion";
-import { CaseStudy, Work } from "@/sanity/types";
+import { CaseStudy, Clients } from "@/sanity/types";
 import { useCallback, useEffect, useState, useRef, Fragment } from "react";
 import CaseStudyNav from "./components/nav";
 import MediaGroup from "./components/media-group";
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
 import { AnimatePresence } from "framer-motion";
+import { useRouter } from "next/router";
 
 interface ProjectCaseStudyProps {
-  data: Work;
+  data: Clients;
   imageLayoutId: string; // Used for shared element transitions
 }
 
@@ -15,6 +16,8 @@ export default function ProjectCaseStudy({
   data,
   imageLayoutId,
 }: ProjectCaseStudyProps) {
+  const router = useRouter();
+
   // Get the first project which should be a case study
   const project = data.projects?.[0] as CaseStudy & { _key: string };
 
@@ -127,7 +130,17 @@ export default function ProjectCaseStudy({
         case "Escape":
           e.preventDefault();
           e.stopPropagation();
-          setIsZoomed(false);
+          if (isZoomed) {
+            setIsZoomed(false);
+          } else {
+            // If not zoomed, go back to selector view
+            const clientSlug = data.slug?.current;
+            if (clientSlug) {
+              router.push(`/Clients/${clientSlug}`, undefined, {
+                shallow: true,
+              });
+            }
+          }
           break;
         case "Enter":
         case "Space":
@@ -155,7 +168,14 @@ export default function ProjectCaseStudy({
 
     window.addEventListener("keydown", handleKeyDown, true);
     return () => window.removeEventListener("keydown", handleKeyDown, true);
-  }, [isZoomed, activeGroupIndex, findNextGroup, scrollToGroup]);
+  }, [
+    isZoomed,
+    activeGroupIndex,
+    findNextGroup,
+    scrollToGroup,
+    router,
+    data.slug,
+  ]);
 
   return (
     <motion.div

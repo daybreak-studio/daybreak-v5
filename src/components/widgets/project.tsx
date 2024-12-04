@@ -1,25 +1,33 @@
 import { motion } from "framer-motion";
 import { MediaRenderer } from "@/components/media-renderer";
 import Link from "next/link";
-import { Work } from "@/sanity/types";
+import { Clients, Home } from "@/sanity/types";
 
-interface ProjectHighlightProps {
-  work: Work;
-  projectType: "caseStudy" | "preview";
-  category: string;
+interface ProjectProps {
+  data: Home;
+  client?: {
+    _ref: string;
+    _type: string;
+  };
+  projectType?: "caseStudy" | "preview" | undefined;
+  projectCategory?: string | undefined;
 }
 
-export default function ProjectHighlight({
-  work,
+export default function Project({
+  data,
+  client,
   projectType,
-  category,
-}: ProjectHighlightProps) {
-  // Find the project that matches both type and category
-  const project = work?.projects?.find(
-    (p) => p._type === projectType && p.category === category,
-  );
+  projectCategory,
+}: ProjectProps) {
+  console.log(client);
+  console.log(projectType);
+  console.log(projectCategory);
 
-  if (!project || !work?.slug?.current) return null;
+  // const project = data.clients?.find(
+  //   (p) => p._type === projectType && p.category === projectCategory,
+  // );
+
+  // if (!project || !client?.slug?.current) return null;
 
   // Get first media item either from mediaGroups or media array
   // const firstImage =
@@ -27,7 +35,7 @@ export default function ProjectHighlight({
   //     ? project.mediaGroups?.[0]?.media[0]
   //     : project.media?.[0];
 
-  return <div>Hello</div>;
+  return <div className="frame-inner bg-white/50">Hello</div>;
 
   // return (
   //   <Link

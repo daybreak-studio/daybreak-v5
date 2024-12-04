@@ -1,9 +1,9 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
-import { Work } from "@/sanity/types";
+import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
-import { getWorkFirstMedia } from "@/sanity/lib/media";
+import { getClientFirstMedia } from "@/sanity/lib/media";
 import ProjectSelector from "@/components/project/selector";
 import ProjectPreview from "@/components/project/preview";
 import ProjectCaseStudy from "@/components/project/case-study";
@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { Fragment, useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { client } from "@/sanity/lib/client";
-import { WORKS_QUERY } from "@/sanity/lib/queries";
+import { CLIENTS_QUERY } from "@/sanity/lib/queries";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -32,7 +32,7 @@ const MODAL_VARIANTS = {
 } as const;
 
 // Helper function to determine modal variant
-const getModalVariant = (client: Work, projectSlug: string | undefined) => {
+const getModalVariant = (client: Clients, projectSlug: string | undefined) => {
   // If the client has multiple projects and no project slug, show the selector
   if (client.projects && client.projects.length > 1 && !projectSlug) {
     return MODAL_VARIANTS.selector;
@@ -51,7 +51,7 @@ const getModalVariant = (client: Work, projectSlug: string | undefined) => {
   return variant;
 };
 
-export default function WorkPage({ data }: { data: Work[] }) {
+export default function WorkPage({ data }: { data: Clients[] }) {
   const router = useRouter();
   const { slug } = router.query;
   const [clientSlug, projectSlug] = Array.isArray(slug)
@@ -72,12 +72,12 @@ export default function WorkPage({ data }: { data: Work[] }) {
     currentClient?.projects && currentClient.projects.length > 1;
 
   // Get the current project based on the routing logic
-  const currentProject =
-    shouldUseProjectSlug && projectSlug
-      ? currentClient.projects?.find(
-          (project) => project.category === projectSlug,
-        )
-      : currentClient?.projects?.[0];
+  // const currentProject =
+  //   shouldUseProjectSlug && projectSlug
+  //     ? currentClient.projects?.find(
+  //         (project) => project.category === projectSlug,
+  //       )
+  //     : currentClient?.projects?.[0];
 
   // Redirect if on a project route but client has only one project
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
     <div className="mx-auto p-8">
       <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {data.map((client) => {
-          const mediaAsset = getWorkFirstMedia(client);
+          const mediaAsset = getClientFirstMedia(client);
           if (!client.slug) return null;
 
           const layoutId = `container-${client.slug.current}`;
@@ -105,13 +105,17 @@ export default function WorkPage({ data }: { data: Work[] }) {
               key={client._id}
               open={clientSlug === client.slug.current}
               onOpenChange={(open) => {
-                // Set the active thumbnail ID when dialog state changes
                 setActiveThumbId(client.slug?.current || null);
-                router.push(
-                  open ? `/work/${client.slug?.current}` : "/work",
-                  undefined,
-                  { shallow: true },
-                );
+                if (!open) {
+                  // Only close completely if we're in selector view
+                  if (!projectSlug) {
+                    router.push("/work", undefined, { shallow: true });
+                  }
+                } else {
+                  router.push(`/work/${client.slug?.current}`, undefined, {
+                    shallow: true,
+                  });
+                }
               }}
             >
               <Dialog.Trigger asChild>
@@ -119,7 +123,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
                   layout
                   layoutId={layoutId}
                   className={cn(
-                    "group relative aspect-square w-full origin-center cursor-pointer overflow-hidden rounded-2xl bg-white",
+                    "frame-outer group relative aspect-square w-full origin-center cursor-pointer overflow-hidden",
                     isAnimating &&
                       activeThumbId === client.slug?.current &&
                       "z-50",
@@ -139,11 +143,11 @@ export default function WorkPage({ data }: { data: Work[] }) {
                     )}
                   >
                     <MediaRenderer
+                      className="frame-inner"
                       fill
                       layoutId={imageLayoutId}
                       media={mediaAsset}
                       autoPlay={false}
-                      className="duration-300 group-hover:scale-105"
                     />
                   </motion.div>
                 </motion.div>
@@ -195,7 +199,23 @@ export default function WorkPage({ data }: { data: Work[] }) {
                             />
                           )}
 
-                          <Dialog.Close className="absolute right-4 top-4 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl border-[1px] border-zinc-100 bg-white text-zinc-500 hover:bg-zinc-100 focus:shadow-gray-400 focus:outline-none">
+                          <Dialog.Close
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (projectSlug) {
+                                // If we're in a project view, go back to selector
+                                router.push(`/work/${clientSlug}`, undefined, {
+                                  shallow: true,
+                                });
+                              } else {
+                                // If we're in selector view, close the modal
+                                router.push("/work", undefined, {
+                                  shallow: true,
+                                });
+                              }
+                            }}
+                            className="absolute right-4 top-4 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl border-[1px] border-zinc-100 bg-white text-zinc-500 hover:bg-zinc-100 focus:shadow-gray-400 focus:outline-none"
+                          >
                             <Cross2Icon className="h-4 w-4" />
                           </Dialog.Close>
                         </motion.div>
@@ -215,7 +235,7 @@ export default function WorkPage({ data }: { data: Work[] }) {
 // Update getStaticPaths
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
-    const works: Work[] = await client.fetch(WORKS_QUERY);
+    const works: Clients[] = await client.fetch(CLIENTS_QUERY);
 
     // Create paths for all client/project combinations
     const paths = works.flatMap(
@@ -243,7 +263,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 // Update getStaticProps
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    const data: Work[] = await client.fetch(WORKS_QUERY);
+    const data: Clients[] = await client.fetch(CLIENTS_QUERY);
     return {
       props: { data },
       revalidate: 60, // Revalidate every 60 seconds

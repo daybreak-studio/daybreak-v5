@@ -2,9 +2,9 @@ import { defineField, defineType } from "sanity";
 import { createMediaArray } from "./media";
 import { MuxThumbnail } from "../components/mux-thumbnail";
 
-export const work = defineType({
-  name: "work",
-  title: "Clients",
+export const clients = defineType({
+  name: "clients",
+  title: "Client",
   type: "document",
   fields: [
     defineField({
