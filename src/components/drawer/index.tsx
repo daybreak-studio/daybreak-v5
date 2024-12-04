@@ -1,10 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import { ReactNode, useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 import clsx from "clsx";
 
 interface DrawerProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   windowHeight: number;
 }
@@ -46,7 +46,7 @@ const DrawerButton = ({
       >
         <motion.button
           className={clsx(
-            "flex h-8 w-8 items-center justify-center rounded-full bg-white/70 shadow-sm shadow-zinc-300 transition-all duration-300 hover:scale-110 md:shadow-md",
+            "flex h-8 w-8 items-center justify-center rounded-full bg-white/80 shadow-sm shadow-zinc-300 transition-all duration-300 hover:scale-110 md:shadow-md",
             isOpen ? "sticky" : "absolute",
           )}
           initial={{ opacity: 0 }}
@@ -60,7 +60,7 @@ const DrawerButton = ({
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronUp className="h-4 w-4 text-black/50" />
+            <ChevronUp className="h-4 w-4 text-zinc-400" />
           </motion.div>
         </motion.button>
       </div>
@@ -87,7 +87,7 @@ const Drawer: React.FC<DrawerProps> = ({
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
@@ -104,7 +104,7 @@ const Drawer: React.FC<DrawerProps> = ({
     <motion.div
       id="drawer"
       className={clsx(
-        "fixed inset-x-0 bottom-0 z-50 bg-white/80 shadow backdrop-blur-2xl",
+        "fixed inset-x-0 bottom-0 z-50 bg-white/90 shadow backdrop-blur-2xl",
         className,
       )}
       style={{ height: windowHeight }}

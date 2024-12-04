@@ -11,16 +11,16 @@ import Twitter from "@/components/widgets/twitter";
 import Media from "@/components/widgets/media";
 import Article from "@/components/article";
 import CarouselComponent from "@/components/carousel";
-import { HOME_QUERY } from "@/sanity/lib/queries";
+import { CLIENTS_QUERY, HOME_QUERY } from "@/sanity/lib/queries";
 import { MediaItem } from "@/sanity/lib/media";
 import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
 import Project from "@/components/widgets/project";
 
-function transformWidgetsToLayout(data: Home) {
-  if (!data.widgets) return [];
+function transformWidgetsToLayout(homeData: Home, clientsData: Clients[]) {
+  if (!homeData.widgets) return [];
 
-  return data.widgets.map((widget) => {
+  return homeData.widgets.map((widget) => {
     const [w, h] = (widget.size || "1x1").split("x").map(Number);
 
     let content: React.ReactNode;
@@ -34,11 +34,11 @@ function transformWidgetsToLayout(data: Home) {
         content = <Media media={media?.[0]} />;
         break;
       case "projectWidget":
-        const { client, projectType, projectCategory } = widget;
+        const { selectedClient, projectType, projectCategory } = widget;
         content = (
           <Project
-            data={data}
-            client={client}
+            clientsData={clientsData}
+            selectedClient={selectedClient}
             projectType={projectType}
             projectCategory={projectCategory}
           />
@@ -51,16 +51,21 @@ function transformWidgetsToLayout(data: Home) {
     return {
       id: widget._key,
       position: { x: widget.position?.x || 0, y: widget.position?.y || 0 },
-      size: { w, h },
+      dimensions: { w, h },
+      size: widget.size || "1x1",
       content,
     };
   });
 }
 
-export default function Home({ data }: { data: Home }) {
+export default function Home({
+  homeData,
+  clientsData,
+}: {
+  homeData: Home;
+  clientsData: Clients[];
+}) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
-
-  console.log(data);
 
   // Handles updates for window height.
   useEffect(() => {
@@ -88,9 +93,8 @@ export default function Home({ data }: { data: Home }) {
       },
     },
   };
-
-  // Transform Sanity widgets to LayoutProps.Item[]
-  const layout = transformWidgetsToLayout(data);
+  // Corrected the argument type for transformWidgetsToLayout by wrapping clientsData in an array.
+  const layout = transformWidgetsToLayout(homeData, clientsData);
 
   return (
     <main className="relative">
@@ -102,14 +106,14 @@ export default function Home({ data }: { data: Home }) {
         />
       </motion.div>
       {/* Drawer Content */}
-      {windowHeight !== null && data && (
+      {windowHeight !== null && homeData && (
         <Drawer windowHeight={windowHeight}>
           {/* Mission Statement */}
           <div className="space-y-12 pt-20 md:p-8 md:pt-32 lg:p-32">
             <Reveal className="px-8 md:w-8/12 xl:p-0 2xl:w-7/12">
-              {data.missionStatement && (
+              {homeData.missionStatement && (
                 <PortableText
-                  value={data.missionStatement}
+                  value={homeData.missionStatement}
                   components={components}
                 />
               )}
@@ -117,7 +121,7 @@ export default function Home({ data }: { data: Home }) {
 
             {/* Carousel - Lazy load when drawer is open */}
             <Reveal>
-              {data.media && <CarouselComponent media={data.media} />}
+              {homeData.media && <CarouselComponent media={homeData.media} />}
             </Reveal>
 
             {/* About Us - Simplified animation */}
@@ -125,8 +129,11 @@ export default function Home({ data }: { data: Home }) {
               <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
                 About Us
               </h2>
-              {data?.aboutUs && (
-                <PortableText value={data.aboutUs} components={components} />
+              {homeData?.aboutUs && (
+                <PortableText
+                  value={homeData.aboutUs}
+                  components={components}
+                />
               )}
             </Reveal>
 
@@ -135,7 +142,7 @@ export default function Home({ data }: { data: Home }) {
               <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
                 Newsfeed
               </h2>
-              <MasonryGrid articles={data?.newsfeed || []} />
+              <MasonryGrid articles={homeData?.newsfeed || []} />
             </Reveal>
           </div>
 
@@ -148,10 +155,15 @@ export default function Home({ data }: { data: Home }) {
 
 // Fetch data from Sanity CMS
 export const getStaticProps: GetStaticProps = async () => {
-  const data = await client.fetch(HOME_QUERY);
+  const [homeData, clientsData] = await Promise.all([
+    client.fetch(HOME_QUERY),
+    client.fetch(CLIENTS_QUERY),
+  ]);
+
   return {
     props: {
-      data,
+      homeData,
+      clientsData,
     },
     revalidate: 60,
   };

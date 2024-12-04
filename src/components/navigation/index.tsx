@@ -31,10 +31,6 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    console.log(isOpen);
-  }, [isOpen]);
-
-  useEffect(() => {
     if (visitStatus === "new" && isBaseRoute) {
       runAnimationSequence();
       markVisitComplete();

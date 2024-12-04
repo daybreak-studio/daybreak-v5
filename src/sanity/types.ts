@@ -378,7 +378,7 @@ export type Home = {
           y?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
-        client?: {
+        selectedClient?: {
           _ref: string;
           _type: "reference";
           _weak?: boolean;
@@ -883,7 +883,7 @@ export type HOME_QUERYResult = {
           y?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
-        client?: {
+        selectedClient?: {
           _ref: string;
           _type: "reference";
           _weak?: boolean;

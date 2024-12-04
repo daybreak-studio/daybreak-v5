@@ -2417,7 +2417,7 @@
                     },
                     "optional": true
                   },
-                  "client": {
+                  "selectedClient": {
                     "type": "objectAttribute",
                     "value": {
                       "type": "object",

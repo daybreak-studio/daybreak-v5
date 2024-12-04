@@ -12,24 +12,24 @@ export default function ProjectPreview({
   data,
   imageLayoutId,
 }: ProjectPreviewProps) {
-  console.log("Preview Data:", data); // Log entire data object
-  console.log("All Projects:", data.projects); // Log all projects
+  // console.log("Preview Data:", data); // Log entire data object
+  // console.log("All Projects:", data.projects); // Log all projects
 
   // Find the preview project and log the search process
   const project = data.projects?.find((p) => {
-    console.log("Project type:", p._type); // Log each project's type
+    // console.log("Project type:", p._type); // Log each project's type
     return p._type === "preview";
   }) as Preview;
 
-  console.log("Found Preview Project:", project); // Log the found project
+  // console.log("Found Preview Project:", project); // Log the found project
 
   if (!project) {
-    console.log("No preview project found");
+    // console.log("No preview project found");
     return null;
   }
 
   const mediaAsset = getProjectFirstMedia(project);
-  console.log("Media Asset:", mediaAsset); // Log the media asset
+  // console.log("Media Asset:", mediaAsset); // Log the media asset
 
   return (
     <div className="w-full p-4">

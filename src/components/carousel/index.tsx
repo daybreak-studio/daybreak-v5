@@ -29,7 +29,7 @@ interface CarouselProps {
 
 const CarouselComponent = memo(({ media, className }: CarouselProps) => {
   const [emblaRef] = useEmblaCarousel({ align: "start" });
-  console.log("CarouselComponent media:", media);
+  // console.log("CarouselComponent media:", media);
 
   return (
     <div className={`relative col-span-full ${className} xl:py-16`}>

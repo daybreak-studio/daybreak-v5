@@ -58,7 +58,7 @@ export const projectWidget = {
   title: "Project Widget",
   fields: createWidgetFields([
     defineField({
-      name: "client",
+      name: "selectedClient",
       title: "Select Client",
       type: "reference",
       to: [{ type: "clients" }],

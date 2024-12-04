@@ -57,13 +57,16 @@ const GridOverlay: React.FC<GridOverlayProps> = ({
 
 export const WidgetGridProvider: React.FC<GridProps.Provider> = ({
   size,
+  dimensions,
   id,
   position,
   children,
   breakpoint,
 }) => {
   return (
-    <WidgetGridContext.Provider value={{ size, id, position, breakpoint }}>
+    <WidgetGridContext.Provider
+      value={{ size, dimensions, id, position, breakpoint }}
+    >
       {children}
     </WidgetGridContext.Provider>
   );
@@ -86,7 +89,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
   const breakpoint = useBreakpoint() as keyof typeof breakpoints;
   const settings = breakpoints[breakpoint];
   const cols = Math.max(
-    ...layout.map((item) => item.position.x + item.size.w),
+    ...layout.map((item) => item.position.x + item.dimensions.w),
     0,
   );
   const width = cols * settings.rowHeight + (cols - 1) * settings.margin[0];
@@ -100,7 +103,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
   };
 
   const gridHeight =
-    Math.max(...layout.map((item) => item.position.y + item.size.h)) *
+    Math.max(...layout.map((item) => item.position.y + item.dimensions.h)) *
       (settings.rowHeight + settings.margin[1]) -
     settings.margin[1];
 
@@ -148,8 +151,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
                     i: item.id,
                     x: item.position.x,
                     y: item.position.y,
-                    w: item.size.w,
-                    h: item.size.h,
+                    w: item.dimensions.w,
+                    h: item.dimensions.h,
                     ...Defaults.DataGridAttributes,
                   }}
                   className={clsx(
@@ -163,6 +166,7 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
                   <div className="flex h-full w-full">
                     <WidgetGridProvider
                       id={item.id}
+                      dimensions={item.dimensions}
                       size={item.size}
                       position={item.position}
                       breakpoint={breakpoint}
@@ -173,8 +177,8 @@ export const WidgetGrid: React.FC<GridProps.Layout> = ({
                       <div className="absolute left-0 top-0 m-2 rounded-2xl bg-gray-700/50 p-3 text-xs uppercase text-white transition-opacity hover:opacity-0">
                         ID: {item.id}
                         <br />
-                        {item.size.w}x{item.size.h} — ({item.position.x},
-                        {item.position.y})
+                        {item.dimensions.w}x{item.dimensions.h} — (
+                        {item.position.x},{item.position.y})
                       </div>
                     )}
                   </div>
