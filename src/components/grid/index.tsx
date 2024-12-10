@@ -1,191 +1,178 @@
-import GridLayout from "react-grid-layout";
-import { useBreakpoint, WidgetGridContext } from "@/components/grid/hooks";
-import { Defaults, GridProps } from "@/components/grid/props";
-import clsx from "clsx";
-import { useScramble } from "use-scramble";
-import useEmblaCarousel from "embla-carousel-react";
 import { useDebug } from "@/contexts/DebugContext";
+import useEmblaCarousel from "embla-carousel-react";
+import { useScramble } from "use-scramble";
+import { WidgetGridContext } from "./hooks";
+import { GridProps } from "./props";
+import clsx from "clsx";
+import Twitter from "@/components/widgets/twitter";
+import Media from "@/components/widgets/media";
+import Project from "@/components/widgets/project";
+import type { Home, Clients } from "@/sanity/types";
 
-// GridOverlay component
-interface GridOverlayProps {
-  cols: number;
-  rowHeight: number;
-  width: number;
-  height: number;
-  margin: [number, number];
+// Define widget size constants and types
+const WIDGET_SIZES = {
+  "1x1": { width: 1, height: 1 },
+  "2x2": { width: 2, height: 2 },
+  "3x3": { width: 3, height: 3 },
+} as const;
+
+type WidgetSize = keyof typeof WIDGET_SIZES;
+
+// Grid constants
+const GRID_CONFIG = {
+  CELL_SIZE: 160,
+  GAP: 32,
+  COLUMNS: 7,
+  ROWS: 3,
+} as const;
+
+type Widget = NonNullable<Home["widgets"]>[number];
+
+interface WidgetGridProps {
+  header?: React.ReactNode;
+  heading?: string;
+  widgets: Widget[];
+  clientsData: Clients[];
+  debug?: boolean;
 }
 
-const GridOverlay: React.FC<GridOverlayProps> = ({
-  cols,
-  rowHeight,
-  width,
-  height,
-  margin,
-}) => {
-  const [marginX, marginY] = margin;
-  const cellWidth = (width - (cols - 1) * marginX) / cols;
-  const rows = Math.floor((height + marginY) / (rowHeight + marginY));
-
-  return (
-    <div className="pointer-events-none absolute inset-0">
-      <div className="relative h-full w-full">
-        {Array.from({ length: cols * rows }).map((_, index) => {
-          const col = index % cols;
-          const row = Math.floor(index / cols);
-          const left = col * (cellWidth + marginX);
-          const top = row * (rowHeight + marginY);
-
-          return (
-            <div
-              key={index}
-              className="absolute z-20 flex items-center justify-center rounded-3xl border border-blue-500 bg-blue-100 bg-opacity-20 text-xs font-bold text-blue-600 opacity-50"
-              style={{
-                left: `${left}px`,
-                top: `${top}px`,
-                width: `${cellWidth}px`,
-                height: `${rowHeight}px`,
-              }}
-            >
-              {col},{row}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-export const WidgetGridProvider: React.FC<GridProps.Provider> = ({
-  size,
-  dimensions,
+// Provider Component
+export const WidgetGridProvider = ({
   id,
+  size,
   position,
-  children,
+  dimensions,
   breakpoint,
-}) => {
-  return (
-    <WidgetGridContext.Provider
-      value={{ size, dimensions, id, position, breakpoint }}
-    >
-      {children}
-    </WidgetGridContext.Provider>
-  );
+  children,
+}: GridProps.Provider) => (
+  <WidgetGridContext.Provider
+    value={{ id, size, position, dimensions, breakpoint }}
+  >
+    {children}
+  </WidgetGridContext.Provider>
+);
+
+// Helper functions
+const getWidgetDimensions = (size: WidgetSize | undefined) => {
+  return WIDGET_SIZES[size || "1x1"];
 };
 
-export const WidgetGrid: React.FC<GridProps.Layout> = ({
+const getGridPosition = (position: { x?: number; y?: number } | undefined) => {
+  return {
+    x: position?.x ?? 0,
+    y: position?.y ?? 0,
+  };
+};
+
+const renderWidgetContent = (widget: Widget, clientsData: Clients[]) => {
+  switch (widget._type) {
+    case "twitterWidget":
+      return (
+        <Twitter
+          tweet={widget.tweet}
+          author={widget.author}
+          link={widget.link}
+        />
+      );
+    case "mediaWidget":
+      return <Media media={widget.media?.[0]} />;
+    case "projectWidget":
+      return (
+        <Project
+          clientsData={clientsData}
+          selectedClient={widget.selectedClient}
+          projectType={widget.projectType}
+          projectCategory={widget.projectCategory}
+        />
+      );
+    default:
+      return null;
+  }
+};
+
+// Main Component
+export const WidgetGrid = ({
   header,
   heading,
-  layout,
+  widgets,
+  clientsData,
   debug,
-}) => {
+}: WidgetGridProps) => {
   const { debug: globalDebug } = useDebug();
-  const breakpoints: GridProps.Settings = {
-    // Proportional to Figma design, but rowHeight can be used as a scaling factor for the entire widget grid to get larger or smaller based on viewport size.
-    xl: { rowHeight: 160, margin: [32, 32] },
-    lg: { rowHeight: 120, margin: [16, 16] },
-    md: { rowHeight: 110, margin: [22, 22] },
-    sm: { rowHeight: 100, margin: [19, 19] },
-  };
-  const breakpoint = useBreakpoint() as keyof typeof breakpoints;
-  const settings = breakpoints[breakpoint];
-  const cols = Math.max(
-    ...layout.map((item) => item.position.x + item.dimensions.w),
-    0,
-  );
-  const width = cols * settings.rowHeight + (cols - 1) * settings.margin[0];
-
-  const Structure: GridProps.Structure = {
-    cols,
-    width,
-    rowHeight: settings.rowHeight,
-    margin: settings.margin,
-    ...Defaults.Structure,
-  };
-
-  const gridHeight =
-    Math.max(...layout.map((item) => item.position.y + item.dimensions.h)) *
-      (settings.rowHeight + settings.margin[1]) -
-    settings.margin[1];
-
+  const [emblaRef] = useEmblaCarousel();
   const { ref, replay } = useScramble({
     text: heading,
     speed: 1,
     playOnMount: false,
   });
 
-  const [emblaRef] = useEmblaCarousel();
+  if (!widgets?.length) return null;
 
   return (
     <div className="relative h-screen w-screen">
-      <div className="flex h-full w-full flex-col items-center justify-center gap-4 pb-20 xl:gap-10 xl:pb-0">
-        {header ? (
-          header
-        ) : (
+      <div className="flex h-full w-full flex-col items-center justify-center">
+        {header || (
           <h1
             ref={ref}
             onMouseOver={replay}
             onFocus={replay}
-            className="line-clamp-2 h-24 w-72 text-center text-3xl font-[450] text-zinc-400 xl:w-80 xl:text-4xl"
-          ></h1>
+            className="mb-4 text-center text-4xl font-[450] text-zinc-400"
+          >
+            {heading}
+          </h1>
         )}
+
         <div
-          style={{ width: `${width}px`, height: `${gridHeight}px` }}
-          className="embla relative"
-          ref={emblaRef}
+          className="grid w-screen items-center justify-center overflow-x-scroll"
+          style={{
+            gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZE}px)`,
+            gridAutoRows: `${GRID_CONFIG.CELL_SIZE}px`,
+            gap: `${GRID_CONFIG.GAP}px`,
+            padding: `${GRID_CONFIG.GAP}px`,
+          }}
         >
-          {globalDebug && (
-            <GridOverlay
-              cols={cols}
-              rowHeight={settings.rowHeight}
-              width={width}
-              height={gridHeight}
-              margin={settings.margin}
-            />
-          )}
-          <div className="embla__container">
-            <GridLayout {...Structure} cols={Structure.cols}>
-              {layout.map((item) => (
-                <div
-                  key={item.id}
-                  data-grid={{
-                    i: item.id,
-                    x: item.position.x,
-                    y: item.position.y,
-                    w: item.dimensions.w,
-                    h: item.dimensions.h,
-                    ...Defaults.DataGridAttributes,
-                  }}
-                  className={clsx(
-                    "embla__slide frame-outer h-full w-full shadow",
-                    {
-                      "transition-all duration-200 hover:opacity-10 hover:blur-xl":
-                        globalDebug,
-                    },
-                  )}
-                >
-                  <div className="flex h-full w-full">
-                    <WidgetGridProvider
-                      id={item.id}
-                      dimensions={item.dimensions}
-                      size={item.size}
-                      position={item.position}
-                      breakpoint={breakpoint}
-                    >
-                      {item.content}
-                    </WidgetGridProvider>
-                    {globalDebug && (
-                      <div className="absolute left-0 top-0 m-2 rounded-2xl bg-gray-700/50 p-3 text-xs uppercase text-white transition-opacity hover:opacity-0">
-                        ID: {item.id}
-                        <br />
-                        {item.dimensions.w}x{item.dimensions.h} — (
-                        {item.position.x},{item.position.y})
-                      </div>
-                    )}
-                  </div>
+          {widgets.map((widget) => {
+            const { width, height } = getWidgetDimensions(
+              widget.size as WidgetSize,
+            );
+            const position = getGridPosition(widget.position);
+
+            return (
+              <div
+                key={widget._key}
+                className={clsx(
+                  "frame-outer relative overflow-hidden transition-transform",
+                  {
+                    "hover:scale-[101%]": !globalDebug,
+                    "hover:opacity-50": globalDebug,
+                  },
+                )}
+                style={{
+                  gridColumn: `${position.x + 1} / span ${width}`,
+                  gridRow: `${position.y + 1} / span ${height}`,
+                  aspectRatio: "1 / 1",
+                }}
+              >
+                <div className="h-full w-full">
+                  <WidgetGridProvider
+                    id={widget._key || ""}
+                    size={widget.size || "1x1"}
+                    position={position}
+                    dimensions={{ w: width, h: height }}
+                    breakpoint="lg"
+                  >
+                    {renderWidgetContent(widget, clientsData)}
+                  </WidgetGridProvider>
                 </div>
-              ))}
-            </GridLayout>
-          </div>
+
+                {globalDebug && (
+                  <div className="absolute left-2 top-2 rounded bg-black/50 p-2 text-xs text-white">
+                    {widget._key} ({position.x}, {position.y}) - {widget.size}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

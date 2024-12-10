@@ -16,9 +16,13 @@ import { MediaItem } from "@/sanity/lib/media";
 import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
 import Project from "@/components/widgets/project";
+import { LayoutProps } from "@/components/grid/props";
 
-function transformWidgetsToLayout(homeData: Home, clientsData: Clients[]) {
-  if (!homeData.widgets) return [];
+function transformWidgetsToLayout(
+  homeData: Home,
+  clientsData: Clients[],
+): LayoutProps.Item[] {
+  if (!homeData?.widgets) return [];
 
   return homeData.widgets.map((widget) => {
     const [w, h] = (widget.size || "1x1").split("x").map(Number);
@@ -26,21 +30,24 @@ function transformWidgetsToLayout(homeData: Home, clientsData: Clients[]) {
     let content: React.ReactNode;
     switch (widget._type) {
       case "twitterWidget":
-        const { tweet, author, link } = widget;
-        content = <Twitter tweet={tweet} author={author} link={link} />;
+        content = (
+          <Twitter
+            tweet={widget.tweet}
+            author={widget.author}
+            link={widget.link}
+          />
+        );
         break;
       case "mediaWidget":
-        const { media } = widget;
-        content = <Media media={media?.[0]} />;
+        content = <Media media={widget.media?.[0]} />;
         break;
       case "projectWidget":
-        const { selectedClient, projectType, projectCategory } = widget;
         content = (
           <Project
             clientsData={clientsData}
-            selectedClient={selectedClient}
-            projectType={projectType}
-            projectCategory={projectCategory}
+            selectedClient={widget.selectedClient}
+            projectType={widget.projectType}
+            projectCategory={widget.projectCategory}
           />
         );
         break;
@@ -49,7 +56,7 @@ function transformWidgetsToLayout(homeData: Home, clientsData: Clients[]) {
     }
 
     return {
-      id: widget._key,
+      id: widget._key || String(Math.random()),
       position: { x: widget.position?.x || 0, y: widget.position?.y || 0 },
       dimensions: { w, h },
       size: widget.size || "1x1",
@@ -100,17 +107,17 @@ export default function Home({
     <main className="relative">
       <motion.div className="fixed inset-0">
         <WidgetGrid
-          layout={layout}
-          heading="A technology first design studio"
-          // debug
+          heading="A technology first <br/> design studio"
+          widgets={homeData.widgets || []}
+          clientsData={clientsData}
         />
       </motion.div>
       {/* Drawer Content */}
       {windowHeight !== null && homeData && (
         <Drawer windowHeight={windowHeight}>
           {/* Mission Statement */}
-          <div className="space-y-12 pt-20 md:p-8 md:pt-32 lg:p-32">
-            <Reveal className="px-8 md:w-8/12 xl:p-0 2xl:w-7/12">
+          <div className="space-y-12 pt-20 md:pt-32">
+            <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
               {homeData.missionStatement && (
                 <PortableText
                   value={homeData.missionStatement}
@@ -125,7 +132,7 @@ export default function Home({
             </Reveal>
 
             {/* About Us - Simplified animation */}
-            <Reveal className="px-8">
+            <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
               <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
                 About Us
               </h2>
@@ -138,7 +145,7 @@ export default function Home({
             </Reveal>
 
             {/* Newsfeed with Masonry Layout */}
-            <Reveal className="px-8">
+            <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
               <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
                 Newsfeed
               </h2>

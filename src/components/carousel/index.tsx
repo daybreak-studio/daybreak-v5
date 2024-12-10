@@ -37,26 +37,18 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
         className="hide-scrollbar cursor-ew-resize overflow-x-scroll"
         ref={emblaRef}
       >
-        <div className="mx-6 flex items-start gap-4 md:mx-12 xl:gap-6">
+        <div className="flex items-start gap-4 pl-8">
           {media.map((item) => {
             const widthClass =
               sizeOptions[item.width as CarouselWidth] || "md:w-full";
 
             return (
               <div
-                className={`mx-auto min-w-[85%] snap-center xl:min-w-0 xl:max-w-[600px] xl:flex-shrink-0 ${widthClass}`}
+                className={`h-[400px] min-w-[85%] snap-center overflow-hidden rounded-xl md:min-w-0 md:max-w-[600px] lg:h-[500px] xl:flex-shrink-0 ${widthClass}`}
                 key={item._key}
               >
-                <div className="h-[400px] w-full pb-2 md:h-[600px]">
-                  {/* Set a fixed height */}
-                  <MediaRenderer
-                    fill
-                    media={item}
-                    autoPlay={true}
-                    className="h-full w-full object-cover" // Use object-cover to fill the container
-                  />
-                </div>
-                {item.alt && <h5>{item.alt}</h5>}
+                <MediaRenderer fill media={item} autoPlay={true} />
+                {/* {item.alt && <h5>{item.alt}</h5>} */}
               </div>
             );
           })}

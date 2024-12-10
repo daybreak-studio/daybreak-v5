@@ -10,7 +10,7 @@ const Article = memo(({ article }: { article: ArticleType }) => {
   return (
     <Reveal
       key={article._key}
-      className="mb-4 w-full break-inside-avoid rounded-3xl bg-white/50 p-2 shadow-xl"
+      className="mb-4 w-full break-inside-avoid rounded-3xl bg-white/50 p-2 shadow"
     >
       {/* Media Container that respects natural aspect ratio */}
       <div className="relative w-full">
