@@ -1,7 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
-import IconChevronDown from "/public/icons/icon-chevron-down.svg";
-import IconChevronUp from "/public/icons/icon-chevron-up.svg";
-import IconCross from "/public/icons/icon-cross.svg";
+import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
+
 import { AnimationConfig } from "@/components/animations/AnimationConfig";
 import { useRef, useEffect, useState, forwardRef } from "react";
 
@@ -93,7 +92,7 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
                   transition={transition}
                 >
                   <span className="opacity-50">{currentGroup.heading}</span>
-                  <IconCross className="h-4 w-4 translate-y-[-1px] rotate-45 opacity-60" />
+                  <XIcon className="h-4 w-4 rotate-45 opacity-60" />
                 </motion.button>
               ) : (
                 <motion.div
@@ -135,14 +134,14 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
                         disabled={!canGoPrev}
                         className="rounded-full bg-white/80 p-2 transition-opacity hover:bg-white/90 disabled:opacity-30"
                       >
-                        <IconChevronUp className="h-4 w-4" />
+                        <ChevronUpIcon className="h-4 w-4" />
                       </button>
                       <button
                         onClick={onNext}
                         disabled={!canGoNext}
                         className="rounded-full bg-white/80 p-2 transition-opacity hover:bg-white/90 disabled:opacity-30"
                       >
-                        <IconChevronDown className="h-4 w-4" />
+                        <ChevronDownIcon className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -153,7 +152,7 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
                       currentGroup.heading ? "top-[1.5rem]" : "top-[2rem]"
                     }`}
                   >
-                    <IconCross className="h-4 w-4 opacity-60" />
+                    <XIcon className="h-4 w-4 opacity-60" />
                   </button>
                 </motion.div>
               )}

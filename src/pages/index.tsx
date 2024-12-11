@@ -63,13 +63,13 @@ export default function Home({
 
   return (
     <main className="relative">
-      <motion.div className="fixed inset-0 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-8">
+      <motion.div className="fixed inset-0">
+        <div className="flex h-full flex-col items-center justify-center space-y-8">
           <h1
             ref={headingRef}
             onMouseOver={replay}
             onFocus={replay}
-            className="max-w-[16ch] text-center text-3xl font-[450] text-zinc-400"
+            className="max-w-[16ch] text-center text-3xl font-[450] text-zinc-400 lg:text-4xl"
           />
           <WidgetGrid
             widgets={homeData.widgets ?? []}

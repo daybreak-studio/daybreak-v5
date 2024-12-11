@@ -146,64 +146,60 @@ export const WidgetGrid: React.FC<WidgetGridProps> = ({
   }, [widgets, breakpoint]);
 
   return (
-    // <div className="relative h-screen w-screen">
-    <div className="flex h-full w-full flex-col items-center justify-center">
+    <div
+      ref={containerRef}
+      className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1"
+    >
       <div
-        ref={containerRef}
-        className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1"
+        className="grid"
+        style={{
+          gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]}px)`,
+          gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]}px)`,
+          padding: `1rem`,
+          gap: `10px`,
+        }}
       >
-        <div
-          className="grid"
-          style={{
-            gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]}px)`,
-            gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]}px)`,
-            padding: `1rem`,
-            gap: `10px`,
-          }}
-        >
-          {widgets.filter(isValidWidget).map((widget) => {
-            const { width, height } = getWidgetDimensions(widget.size);
+        {widgets.filter(isValidWidget).map((widget) => {
+          const { width, height } = getWidgetDimensions(widget.size);
 
-            return (
-              <div
-                key={widget._key}
-                className={clsx(
-                  "frame-outer relative overflow-hidden transition-transform",
-                  {
-                    "hover:scale-[101%]": !globalDebug,
-                    "hover:opacity-50": globalDebug,
-                  },
-                )}
-                style={{
-                  gridColumn: `${widget.position.column} / span ${width}`,
-                  gridRow: `${widget.position.row} / span ${height}`,
-                  aspectRatio: "1 / 1",
-                }}
-              >
-                <div className="h-full w-full">
-                  <WidgetGridProvider
-                    id={widget._key}
-                    size={widget.size || "1x1"}
-                    position={widget.position}
-                    dimensions={{ w: width, h: height }}
-                    breakpoint="lg"
-                  >
-                    {renderWidgetContent(widget, clientsData)}
-                  </WidgetGridProvider>
-                </div>
-
-                {globalDebug && (
-                  <div className="absolute left-2 top-2 rounded bg-black/50 p-2 text-xs text-white">
-                    {widget._key} ({widget.position.row},{" "}
-                    {widget.position.column}) - {widget.size}
-                  </div>
-                )}
+          return (
+            <div
+              key={widget._key}
+              className={clsx(
+                "frame-outer relative overflow-hidden transition-transform",
+                {
+                  "hover:scale-[101%]": !globalDebug,
+                  "hover:opacity-50": globalDebug,
+                },
+              )}
+              style={{
+                gridColumn: `${widget.position.column} / span ${width}`,
+                gridRow: `${widget.position.row} / span ${height}`,
+                aspectRatio: "1 / 1",
+              }}
+            >
+              <div className="h-full w-full">
+                <WidgetGridProvider
+                  id={widget._key}
+                  size={widget.size || "1x1"}
+                  position={widget.position}
+                  dimensions={{ w: width, h: height }}
+                  breakpoint="lg"
+                >
+                  {renderWidgetContent(widget, clientsData)}
+                </WidgetGridProvider>
               </div>
-            );
-          })}
-        </div>
+
+              {globalDebug && (
+                <div className="absolute left-2 top-2 rounded bg-black/50 p-2 text-xs text-white">
+                  {widget._key} ({widget.position.row}, {widget.position.column}
+                  ) - {widget.size}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
-    // </div>
   );
 };
