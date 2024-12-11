@@ -1939,14 +1939,14 @@
                     "value": {
                       "type": "object",
                       "attributes": {
-                        "x": {
+                        "row": {
                           "type": "objectAttribute",
                           "value": {
                             "type": "number"
                           },
                           "optional": true
                         },
-                        "y": {
+                        "column": {
                           "type": "objectAttribute",
                           "value": {
                             "type": "number"
@@ -2103,14 +2103,14 @@
                     "value": {
                       "type": "object",
                       "attributes": {
-                        "x": {
+                        "row": {
                           "type": "objectAttribute",
                           "value": {
                             "type": "number"
                           },
                           "optional": true
                         },
-                        "y": {
+                        "column": {
                           "type": "objectAttribute",
                           "value": {
                             "type": "number"
@@ -2378,14 +2378,14 @@
                     "value": {
                       "type": "object",
                       "attributes": {
-                        "x": {
+                        "row": {
                           "type": "objectAttribute",
                           "value": {
                             "type": "number"
                           },
                           "optional": true
                         },
-                        "y": {
+                        "column": {
                           "type": "objectAttribute",
                           "value": {
                             "type": "number"

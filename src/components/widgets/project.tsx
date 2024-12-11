@@ -46,7 +46,7 @@ export default function Project({
   switch (size) {
     case "1x1":
       return (
-        <div className="frame-outer relative h-full w-full bg-white/50 transition-all duration-300 hover:scale-[101%]">
+        <div className="h-full w-full">
           <Link
             href={`/work/${foundClient.slug.current}/${foundProject.category}`}
           >
@@ -61,15 +61,11 @@ export default function Project({
     case "2x2":
     case "3x3":
       return (
-        <div className="frame-outer relative h-full w-full bg-white/50 transition-all duration-300 hover:scale-[101%]">
+        <div className="h-full w-full">
           <Link
             href={`/work/${foundClient.slug.current}/${foundProject.category}`}
           >
-            <MediaRenderer
-              className="frame-inner absolute inset-0"
-              fill
-              media={mediaAsset}
-            />
+            <MediaRenderer className="frame-inner" fill media={mediaAsset} />
             <div className="absolute bottom-8 left-8 z-20">
               <h2 className="text-sm text-white">{foundClient.name}</h2>
               <h2 className="text-sm text-white/70">

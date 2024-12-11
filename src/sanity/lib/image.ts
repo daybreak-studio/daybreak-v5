@@ -9,6 +9,7 @@ export const urlFor = (source: SanityImageSource | undefined): string => {
     console.warn("No source provided to urlFor");
     return "";
   }
+
   return imageBuilder
     .image(source)
     .auto("format")
@@ -18,12 +19,13 @@ export const urlFor = (source: SanityImageSource | undefined): string => {
 };
 
 export const getMuxThumbnailUrl = (media: {
-  source?: { asset?: { playbackId?: string } };
-}): string => {
+  source?: {
+    asset?: {
+      playbackId?: string;
+    };
+  };
+}) => {
   const playbackId = media.source?.asset?.playbackId;
-  if (!playbackId) {
-    console.warn("No playbackId found for video");
-    return "";
-  }
-  return `https://image.mux.com/${playbackId}/thumbnail.jpg`;
+  if (!playbackId) return "";
+  return `https://image.mux.com/${playbackId}/thumbnail.jpg?time=0`;
 };

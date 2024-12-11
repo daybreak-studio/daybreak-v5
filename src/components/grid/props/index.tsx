@@ -1,7 +1,10 @@
 import { ReactGridLayoutProps } from "react-grid-layout";
 
 export type Dimensions = { w: number; h: number };
-export type Position = { x: number; y: number };
+export type Position = {
+  row: number;
+  column: number;
+};
 
 export namespace LayoutProps {
   export type Item = {

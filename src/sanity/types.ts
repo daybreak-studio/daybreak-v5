@@ -315,8 +315,8 @@ export type Home = {
   widgets?: Array<
     | {
         position?: {
-          x?: number;
-          y?: number;
+          row?: number;
+          column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
         tweet?: string;
@@ -339,8 +339,8 @@ export type Home = {
       }
     | {
         position?: {
-          x?: number;
-          y?: number;
+          row?: number;
+          column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
         media?: Array<
@@ -374,8 +374,8 @@ export type Home = {
       }
     | {
         position?: {
-          x?: number;
-          y?: number;
+          row?: number;
+          column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
         selectedClient?: {
@@ -824,8 +824,8 @@ export type HOME_QUERYResult = {
   widgets: Array<
     | {
         position?: {
-          x?: number;
-          y?: number;
+          row?: number;
+          column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
         media: Array<
@@ -879,8 +879,8 @@ export type HOME_QUERYResult = {
       }
     | {
         position?: {
-          x?: number;
-          y?: number;
+          row?: number;
+          column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
         selectedClient?: {
@@ -897,8 +897,8 @@ export type HOME_QUERYResult = {
       }
     | {
         position?: {
-          x?: number;
-          y?: number;
+          row?: number;
+          column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
         tweet?: string;

@@ -18,18 +18,12 @@ const sizeOptions: Record<CarouselWidth, string> = {
 };
 
 interface CarouselProps {
-  media: Array<
-    MediaItem & {
-      alt?: string;
-      width?: CarouselWidth;
-    }
-  >;
+  media: MediaItem[];
   className?: string;
 }
 
 const CarouselComponent = memo(({ media, className }: CarouselProps) => {
   const [emblaRef] = useEmblaCarousel({ align: "start" });
-  // console.log("CarouselComponent media:", media);
 
   return (
     <div className={`relative col-span-full ${className} xl:py-16`}>

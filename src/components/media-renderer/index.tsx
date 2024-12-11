@@ -19,11 +19,7 @@ interface MediaRendererProps {
 }
 
 const isMuxVideo = (media: MediaItem): media is VideoItem => {
-  return (
-    media._type === "videoItem" &&
-    media.source?._type === "mux.video" &&
-    "playbackId" in (media.source?.asset || {})
-  );
+  return media._type === "videoItem" && media.source?._type === "mux.video";
 };
 
 export function MediaRenderer({
@@ -38,76 +34,24 @@ export function MediaRenderer({
   onError,
 }: MediaRendererProps) {
   const [videoError, setVideoError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const isLowPowerMode = useLowPowerMode();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const handleLoadSuccess = useCallback(() => {
-    setIsLoading(false);
+
+  const handleLoad = useCallback(() => {
     onLoad?.();
   }, [onLoad]);
 
-  const handleVideoError = useCallback(() => {
-    setVideoError(true);
-    onError?.();
-  }, [onError]);
+  if (!media?.source?.asset) return null;
 
-  if (!media || !media.source?.asset) {
-    return null;
-  }
-
-  const dimensions = media.source?.asset?.metadata?.dimensions;
-  const lqip = media.source?.asset?.metadata?.lqip;
-
-  const shouldShowThumbnail = isLowPowerMode || videoError;
-
-  const renderImage = () => {
-    if (fill) {
-      return (
-        <Image
-          src={urlFor(media.source)}
-          alt={media.alt || ""}
-          className={cn("object-cover", className)}
-          fill
-          quality={95}
-          priority={priority}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px"
-          onLoad={handleLoadSuccess}
-          {...(lqip ? { placeholder: "blur", blurDataURL: lqip } : {})}
-        />
-      );
-    }
-
-    if (dimensions) {
-      return (
-        <Image
-          src={urlFor(media.source)}
-          alt={media.alt || ""}
-          width={dimensions.width}
-          height={dimensions.height}
-          className={cn("object-cover", className)}
-          quality={95}
-          priority={priority}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px"
-          onLoad={handleLoadSuccess}
-          {...(lqip ? { placeholder: "blur", blurDataURL: lqip } : {})}
-        />
-      );
-    }
-
-    // Fallback to fill mode if no dimensions available
-    return (
-      <Image
-        src={urlFor(media.source)}
-        alt={media.alt || ""}
-        className={cn("object-cover", className)}
-        fill
-        quality={95}
-        priority={priority}
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px"
-        onLoad={handleLoadSuccess}
-        {...(lqip ? { placeholder: "blur", blurDataURL: lqip } : {})}
-      />
-    );
+  const { dimensions } = media.source.asset.metadata || {};
+  const imageProps = {
+    quality: 95,
+    priority,
+    className: cn("object-cover", className),
+    onLoad: handleLoad,
+    alt: media.alt || "",
+    sizes:
+      "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px",
   };
 
   return (
@@ -116,30 +60,46 @@ export function MediaRenderer({
       layoutId={layoutId}
       className={fill ? "relative h-full w-full will-change-transform" : ""}
     >
-      {isMuxVideo(media) ? (
-        shouldShowThumbnail ? (
-          renderImage()
-        ) : (
-          <video
-            ref={videoRef}
-            className={cn("h-full w-full object-cover", className)}
-            autoPlay={autoPlay && !isLowPowerMode}
-            muted
-            playsInline
-            loop
-            poster={getMuxThumbnailUrl(media)}
-            onError={handleVideoError}
-            onLoadedMetadata={handleLoadSuccess}
-            preload={priority ? "auto" : "metadata"}
-          >
-            <source
-              src={`https://stream.mux.com/${media.source?.asset?.playbackId}/high.mp4`}
-              type="video/mp4"
-            />
-          </video>
-        )
+      {isMuxVideo(media) && !isLowPowerMode && !videoError ? (
+        <video
+          ref={videoRef}
+          className={cn("h-full w-full object-cover", className)}
+          autoPlay={autoPlay && !isLowPowerMode}
+          muted
+          playsInline
+          loop
+          poster={getMuxThumbnailUrl(media)}
+          onError={() => {
+            setVideoError(true);
+            onError?.();
+          }}
+          onLoadedMetadata={handleLoad}
+          preload={priority ? "auto" : "metadata"}
+        >
+          <source
+            src={`https://stream.mux.com/${media.source.asset.playbackId}/high.mp4`}
+            type="video/mp4"
+          />
+        </video>
       ) : (
-        renderImage()
+        <Image
+          src={
+            isMuxVideo(media) ? getMuxThumbnailUrl(media) : urlFor(media.source)
+          }
+          {...imageProps}
+          {...(fill
+            ? { fill: true }
+            : {
+                width: dimensions?.width || 1920,
+                height: dimensions?.height || 1080,
+              })}
+          {...(media.source.asset.metadata?.lqip
+            ? {
+                placeholder: "blur",
+                blurDataURL: media.source.asset.metadata.lqip,
+              }
+            : {})}
+        />
       )}
     </motion.div>
   );

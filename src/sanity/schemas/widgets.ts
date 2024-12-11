@@ -10,10 +10,21 @@ const createWidgetFields = (uniqueFields: any[]) => [
     title: "Position",
     type: "object",
     fields: [
-      defineField({ name: "x", type: "number", title: "X position" }),
-      defineField({ name: "y", type: "number", title: "Y position" }),
+      defineField({
+        name: "row",
+        type: "number",
+        title: "Row (1-3)",
+        validation: (Rule) => Rule.required().min(1).max(3),
+        initialValue: 1,
+      }),
+      defineField({
+        name: "column",
+        type: "number",
+        title: "Column (1-7)",
+        validation: (Rule) => Rule.required().min(1).max(7),
+        initialValue: 1,
+      }),
     ],
-    initialValue: { x: 0, y: 0 },
     validation: (Rule) => Rule.required(),
   }),
   defineField({

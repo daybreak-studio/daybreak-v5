@@ -17,53 +17,7 @@ import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
 import Project from "@/components/widgets/project";
 import { LayoutProps } from "@/components/grid/props";
-
-function transformWidgetsToLayout(
-  homeData: Home,
-  clientsData: Clients[],
-): LayoutProps.Item[] {
-  if (!homeData?.widgets) return [];
-
-  return homeData.widgets.map((widget) => {
-    const [w, h] = (widget.size || "1x1").split("x").map(Number);
-
-    let content: React.ReactNode;
-    switch (widget._type) {
-      case "twitterWidget":
-        content = (
-          <Twitter
-            tweet={widget.tweet}
-            author={widget.author}
-            link={widget.link}
-          />
-        );
-        break;
-      case "mediaWidget":
-        content = <Media media={widget.media?.[0]} />;
-        break;
-      case "projectWidget":
-        content = (
-          <Project
-            clientsData={clientsData}
-            selectedClient={widget.selectedClient}
-            projectType={widget.projectType}
-            projectCategory={widget.projectCategory}
-          />
-        );
-        break;
-      default:
-        content = null;
-    }
-
-    return {
-      id: widget._key || String(Math.random()),
-      position: { x: widget.position?.x || 0, y: widget.position?.y || 0 },
-      dimensions: { w, h },
-      size: widget.size || "1x1",
-      content,
-    };
-  });
-}
+import { useScramble } from "use-scramble";
 
 export default function Home({
   homeData,
@@ -73,6 +27,12 @@ export default function Home({
   clientsData: Clients[];
 }) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
+
+  const { ref: headingRef, replay } = useScramble({
+    text: "A technology first design studio",
+    speed: 1,
+    playOnMount: false,
+  });
 
   // Handles updates for window height.
   useEffect(() => {
@@ -100,17 +60,22 @@ export default function Home({
       },
     },
   };
-  // Corrected the argument type for transformWidgetsToLayout by wrapping clientsData in an array.
-  const layout = transformWidgetsToLayout(homeData, clientsData);
 
   return (
     <main className="relative">
-      <motion.div className="fixed inset-0">
-        <WidgetGrid
-          heading="A technology first <br/> design studio"
-          widgets={homeData.widgets || []}
-          clientsData={clientsData}
-        />
+      <motion.div className="fixed inset-0 flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-8">
+          <h1
+            ref={headingRef}
+            onMouseOver={replay}
+            onFocus={replay}
+            className="max-w-[16ch] text-center text-3xl font-[450] text-zinc-400"
+          />
+          <WidgetGrid
+            widgets={homeData.widgets ?? []}
+            clientsData={clientsData}
+          />
+        </div>
       </motion.div>
       {/* Drawer Content */}
       {windowHeight !== null && homeData && (

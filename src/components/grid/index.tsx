@@ -1,5 +1,5 @@
 import { useDebug } from "@/contexts/DebugContext";
-import useEmblaCarousel from "embla-carousel-react";
+import Lenis from "lenis";
 import { useScramble } from "use-scramble";
 import { WidgetGridContext } from "./hooks";
 import { GridProps } from "./props";
@@ -8,35 +8,43 @@ import Twitter from "@/components/widgets/twitter";
 import Media from "@/components/widgets/media";
 import Project from "@/components/widgets/project";
 import type { Home, Clients } from "@/sanity/types";
+import { useEffect, useRef } from "react";
+import { useViewport } from "@/hooks/useViewport";
 
-// Define widget size constants and types
+type Widget = NonNullable<Home["widgets"]>[number];
+
+interface WidgetGridProps {
+  widgets: NonNullable<Home["widgets"]>;
+  clientsData: Clients[];
+  debug?: boolean;
+}
+
+// Grid Configuration
+const GRID_CONFIG = {
+  COLUMNS: 7,
+  ROWS: 3,
+  GAP: 32,
+  CELL_SIZES: {
+    xs: 105,
+    sm: 120,
+    md: 130,
+    lg: 140,
+    xl: 160,
+    "2xl": 180,
+    "3xl": 220,
+  },
+} as const;
+
 const WIDGET_SIZES = {
   "1x1": { width: 1, height: 1 },
   "2x2": { width: 2, height: 2 },
   "3x3": { width: 3, height: 3 },
 } as const;
 
-type WidgetSize = keyof typeof WIDGET_SIZES;
+const getWidgetDimensions = (size: Widget["size"]) => {
+  return WIDGET_SIZES[size || "1x1"];
+};
 
-// Grid constants
-const GRID_CONFIG = {
-  CELL_SIZE: 160,
-  GAP: 32,
-  COLUMNS: 7,
-  ROWS: 3,
-} as const;
-
-type Widget = NonNullable<Home["widgets"]>[number];
-
-interface WidgetGridProps {
-  header?: React.ReactNode;
-  heading?: string;
-  widgets: Widget[];
-  clientsData: Clients[];
-  debug?: boolean;
-}
-
-// Provider Component
 export const WidgetGridProvider = ({
   id,
   size,
@@ -51,18 +59,6 @@ export const WidgetGridProvider = ({
     {children}
   </WidgetGridContext.Provider>
 );
-
-// Helper functions
-const getWidgetDimensions = (size: WidgetSize | undefined) => {
-  return WIDGET_SIZES[size || "1x1"];
-};
-
-const getGridPosition = (position: { x?: number; y?: number } | undefined) => {
-  return {
-    x: position?.x ?? 0,
-    y: position?.y ?? 0,
-  };
-};
 
 const renderWidgetContent = (widget: Widget, clientsData: Clients[]) => {
   switch (widget._type) {
@@ -90,52 +86,83 @@ const renderWidgetContent = (widget: Widget, clientsData: Clients[]) => {
   }
 };
 
-// Main Component
-export const WidgetGrid = ({
-  header,
-  heading,
+function isValidWidget(widget: Widget): widget is Widget & {
+  position: { row: number; column: number };
+  size: "1x1" | "2x2" | "3x3";
+} {
+  return (
+    widget.position !== undefined &&
+    widget.position.row !== undefined &&
+    widget.position.column !== undefined &&
+    widget.size !== undefined
+  );
+}
+
+export const WidgetGrid: React.FC<WidgetGridProps> = ({
   widgets,
   clientsData,
   debug,
-}: WidgetGridProps) => {
+}) => {
   const { debug: globalDebug } = useDebug();
-  const [emblaRef] = useEmblaCarousel();
-  const { ref, replay } = useScramble({
-    text: heading,
-    speed: 1,
-    playOnMount: false,
-  });
+  const { breakpoint } = useViewport();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  if (!widgets?.length) return null;
+  const centerScroll = () => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const scrollWidth = container.scrollWidth;
+    const clientWidth = container.clientWidth;
+    const targetScroll = Math.max(0, (scrollWidth - clientWidth) / 2);
+
+    container.scrollTo({
+      left: targetScroll,
+      behavior: "instant",
+    });
+  };
+
+  // Initialize Lenis and handle scroll centering
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const lenis = new Lenis({
+      autoRaf: true,
+      wrapper: containerRef.current,
+      orientation: "horizontal",
+      gestureOrientation: "horizontal",
+      syncTouch: true,
+    });
+
+    centerScroll();
+
+    const resizeObserver = new ResizeObserver(() => {
+      requestAnimationFrame(centerScroll);
+    });
+
+    resizeObserver.observe(containerRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [widgets, breakpoint]);
 
   return (
-    <div className="relative h-screen w-screen">
-      <div className="flex h-full w-full flex-col items-center justify-center">
-        {header || (
-          <h1
-            ref={ref}
-            onMouseOver={replay}
-            onFocus={replay}
-            className="mb-4 text-center text-4xl font-[450] text-zinc-400"
-          >
-            {heading}
-          </h1>
-        )}
-
+    // <div className="relative h-screen w-screen">
+    <div className="flex h-full w-full flex-col items-center justify-center">
+      <div
+        ref={containerRef}
+        className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1"
+      >
         <div
-          className="grid w-screen items-center justify-center overflow-x-scroll"
+          className="grid"
           style={{
-            gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZE}px)`,
-            gridAutoRows: `${GRID_CONFIG.CELL_SIZE}px`,
-            gap: `${GRID_CONFIG.GAP}px`,
-            padding: `${GRID_CONFIG.GAP}px`,
+            gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]}px)`,
+            gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]}px)`,
+            padding: `1rem`,
+            gap: `10px`,
           }}
         >
-          {widgets.map((widget) => {
-            const { width, height } = getWidgetDimensions(
-              widget.size as WidgetSize,
-            );
-            const position = getGridPosition(widget.position);
+          {widgets.filter(isValidWidget).map((widget) => {
+            const { width, height } = getWidgetDimensions(widget.size);
 
             return (
               <div
@@ -148,16 +175,16 @@ export const WidgetGrid = ({
                   },
                 )}
                 style={{
-                  gridColumn: `${position.x + 1} / span ${width}`,
-                  gridRow: `${position.y + 1} / span ${height}`,
+                  gridColumn: `${widget.position.column} / span ${width}`,
+                  gridRow: `${widget.position.row} / span ${height}`,
                   aspectRatio: "1 / 1",
                 }}
               >
                 <div className="h-full w-full">
                   <WidgetGridProvider
-                    id={widget._key || ""}
+                    id={widget._key}
                     size={widget.size || "1x1"}
-                    position={position}
+                    position={widget.position}
                     dimensions={{ w: width, h: height }}
                     breakpoint="lg"
                   >
@@ -167,7 +194,8 @@ export const WidgetGrid = ({
 
                 {globalDebug && (
                   <div className="absolute left-2 top-2 rounded bg-black/50 p-2 text-xs text-white">
-                    {widget._key} ({position.x}, {position.y}) - {widget.size}
+                    {widget._key} ({widget.position.row},{" "}
+                    {widget.position.column}) - {widget.size}
                   </div>
                 )}
               </div>
@@ -176,5 +204,6 @@ export const WidgetGrid = ({
         </div>
       </div>
     </div>
+    // </div>
   );
 };
