@@ -61,6 +61,11 @@ const useMediaProps = (media: MediaItem | null, props: MediaRendererProps) => {
         placeholder: "blur" as const,
         blurDataURL: lqip,
       }),
+      onError: () => {
+        setError(true);
+        props.onError?.();
+      },
+      onLoad: () => props.onLoad?.(),
     };
   };
 
@@ -126,11 +131,7 @@ export function MediaRenderer(props: MediaRendererProps) {
       className={fill ? "relative h-full w-full will-change-transform" : ""}
       role="img"
     >
-      {shouldShowVideo ? (
-        <video {...videoProps} />
-      ) : (
-        <Image {...imageProps} onLoad={onLoad} />
-      )}
+      {shouldShowVideo ? <video {...videoProps} /> : <Image {...imageProps} />}
     </motion.figure>
   );
 }
