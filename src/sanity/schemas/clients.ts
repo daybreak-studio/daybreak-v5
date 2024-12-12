@@ -1,8 +1,10 @@
 import { defineField, defineType } from "sanity";
+import { createMediaArray } from "./media";
+import { MuxThumbnail } from "../components/mux-thumbnail";
 
-export const work = defineType({
-  name: "work",
-  title: "Work",
+export const clients = defineType({
+  name: "clients",
+  title: "Client",
   type: "document",
   fields: [
     defineField({
@@ -94,27 +96,7 @@ export const preview = defineType({
       title: "Caption",
       type: "string",
     }),
-    defineField({
-      name: "media",
-      title: "Media",
-      type: "array",
-      of: [
-        defineField({
-          name: "image",
-          type: "image",
-          options: {
-            metadata: ["blurhash", "lqip", "palette"],
-          },
-        }),
-        defineField({
-          name: "video",
-          type: "file",
-          options: {
-            accept: "video/*",
-          },
-        }),
-      ],
-    }),
+    createMediaArray(),
     defineField({
       name: "link",
       title: "External Link",
@@ -129,14 +111,16 @@ export const preview = defineType({
   preview: {
     select: {
       category: "category",
+      media: "media.0",
     },
     prepare(selection) {
-      const { category } = selection;
+      const { category, media } = selection;
       const capitalizedType = category
         ? category.charAt(0).toUpperCase() + category.slice(1)
         : "Unspecified Type";
       return {
         title: `${capitalizedType} – Preview`,
+        media: media?.asset,
       };
     },
   },
@@ -166,85 +150,88 @@ export const caseStudy = defineType({
       type: "string",
     }),
     defineField({
-      name: "media",
-      title: "Media",
+      name: "mediaGroups",
+      title: "Media Groups",
       type: "array",
       of: [
         {
           type: "object",
           name: "mediaGroup",
-          title: "Media Group",
           fields: [
             defineField({
               name: "heading",
-              title: "Heading",
               type: "string",
+              title: "Heading",
             }),
             defineField({
               name: "caption",
+              type: "text",
               title: "Caption",
-              type: "string",
             }),
-            defineField({
-              name: "items",
-              title: "Media Items",
-              type: "array",
-              of: [
-                {
-                  type: "image",
-                  options: {
-                    hotspot: true,
-                    metadata: ["blurhash", "lqip", "palette"],
-                  },
-                },
-                {
-                  type: "file",
-                  options: {
-                    accept: "video/*",
-                  },
-                },
-              ],
-              validation: (Rule) => Rule.max(2),
+            createMediaArray({
+              name: "media",
+              title: "Media",
+              validation: (Rule) => Rule.required().min(1).max(2),
             }),
           ],
           preview: {
             select: {
               heading: "heading",
-              items: "items",
-              firstItemAsset: "items.0.asset",
+              media: "media",
+              caption: "caption",
+              playbackId: "media.0.source.asset.playbackId",
             },
-            prepare(selection) {
-              const { heading, items, firstItemAsset } = selection;
+            prepare({ heading, media, caption, playbackId }) {
+              // Check if media exists and get its length
+              const mediaCount = media ? Object.keys(media).length : 0;
 
-              // Helper function to clean and capitalize types
-              const cleanAndCapitalizeType = (type: string): string => {
-                if (type === "file") return "Video";
-                return type.charAt(0).toUpperCase() + type.slice(1);
-              };
-
-              // Convert items to an array if it's not already
-              const itemsArray = items
-                ? Array.isArray(items)
-                  ? items
-                  : Object.values(items)
-                : [];
-
-              const itemTypes = itemsArray.map((item: any) =>
-                cleanAndCapitalizeType(item._type || "Unknown"),
+              // Count media types
+              const mediaItems = Object.values(media || {});
+              const hasImage = mediaItems.some(
+                (item: any) => item._type === "imageItem",
+              );
+              const hasVideo = mediaItems.some(
+                (item: any) => item._type === "videoItem",
               );
 
-              const itemCount = itemsArray.length;
-              const title = itemCount === 1 ? "Full" : "Split";
+              // Create media string
+              let mediaString = "";
+              if (hasImage && hasVideo) {
+                mediaString = "Image + Video";
+              } else if (hasImage) {
+                mediaString = mediaCount > 1 ? "Image + Image" : "Image";
+              } else if (hasVideo) {
+                mediaString = mediaCount > 1 ? "Video + Video" : "Video";
+              }
+
+              // Set title based on media count
+              const title = `${mediaCount === 1 ? "Full" : "Split"} - ${mediaString}`;
+
+              // Use heading as subtitle, if available
+              const subtitle = heading || "";
+
+              // Get preview media from the first item
+              const firstMedia = media?.[0];
+              let previewMedia;
+
+              if (firstMedia) {
+                if (firstMedia._type === "videoItem" && playbackId) {
+                  previewMedia = () => MuxThumbnail({ value: playbackId });
+                } else {
+                  previewMedia = firstMedia.source;
+                }
+              }
 
               return {
-                title: `${title}: ${heading || "No Info"}`,
-                subtitle: itemTypes.join(", ") || "No files",
-                media: firstItemAsset,
+                title,
+                subtitle,
+                media: previewMedia,
               };
             },
           },
         },
       ],
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "credits",
@@ -264,14 +251,16 @@ export const caseStudy = defineType({
   preview: {
     select: {
       category: "category",
+      media: "media.0.items.0",
     },
     prepare(selection) {
-      const { category } = selection;
+      const { category, media } = selection;
       const capitalizedType = category
         ? category.charAt(0).toUpperCase() + category.slice(1)
         : "Unspecified Type";
       return {
         title: `${capitalizedType} – Case Study`,
+        media: media?.asset,
       };
     },
   },

@@ -1,13 +1,17 @@
 import { ReactGridLayoutProps } from "react-grid-layout";
 
-export type Size = { w: number; h: number };
-export type Position = { x: number; y: number };
+export type Dimensions = { w: number; h: number };
+export type Position = {
+  row: number;
+  column: number;
+};
 
 export namespace LayoutProps {
   export type Item = {
     id: string;
     position: Position;
-    size: Size;
+    size: string;
+    dimensions: Dimensions;
     content: React.ReactNode;
   };
 }
@@ -16,14 +20,16 @@ export namespace GridProps {
   export interface Context {
     id: string;
     position: Position;
-    size: Size;
+    size: string;
+    dimensions: Dimensions;
     breakpoint: string;
   }
 
   export interface Provider {
     id: string;
     position: Position;
-    size: { w: number; h: number };
+    size: string;
+    dimensions: Dimensions;
     children: React.ReactNode;
     breakpoint: string;
   }
@@ -50,7 +56,9 @@ export namespace GridProps {
   export interface Widget {
     id: string;
     position: Position;
-    size: Size;
+    size: string;
+
+    dimensions: Dimensions;
     content: React.ReactNode;
   }
 

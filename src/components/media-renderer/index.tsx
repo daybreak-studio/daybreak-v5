@@ -1,91 +1,137 @@
+import { useRef, useState, useCallback } from "react";
 import Image from "next/image";
-import { useRef } from "react";
-import { easeInOut, motion } from "framer-motion";
-import { assetUrlFor } from "@/sanity/lib/builder";
-import { useNextSanityImage } from "next-sanity-image";
-import { client } from "@/sanity/lib/client";
-import { AnimationConfig } from "../animations/AnimationConfig";
+import { motion } from "framer-motion";
+import { urlFor, getMuxThumbnailUrl } from "@/sanity/lib/image";
+import { useLowPowerMode } from "@/hooks/useLowPowerMode";
+import { MediaItem, VideoItem } from "@/sanity/lib/media";
+import { cn } from "@/lib/utils";
 
-type MediaItem = {
-  asset?: {
-    _ref: string;
-    _type: "reference";
-  };
-  _type: "image" | "video" | "file";
-  _key: string;
+interface MediaRendererProps {
+  media: MediaItem | null;
+  layout?: boolean | "position" | "size" | "preserve-aspect";
+  layoutId?: string;
+  className?: string;
+  autoPlay?: boolean;
+  priority?: boolean;
+  fill?: boolean;
+  onLoad?: () => void;
+  onError?: () => void;
+}
+
+interface ImageProps {
+  priority: boolean;
+  fill: boolean;
+  className?: string;
+}
+
+interface VideoProps {
+  autoPlay: boolean;
+  className?: string;
+}
+
+const isMuxVideo = (media: MediaItem): media is VideoItem => {
+  return media._type === "videoItem" && media.source?._type === "mux.video";
 };
 
-interface MediaRendererProps {
-  media: MediaItem | null;
-  layoutId?: string;
-  className?: string;
-  autoPlay?: boolean;
-  isExiting?: boolean; // Add this prop to control exit animations
-}
-
-// Separate component for images that uses the hook
-function SanityImage({
-  media,
-  className,
-}: {
-  media: MediaItem;
-  className?: string;
-}) {
-  const imageProps = useNextSanityImage(client, media);
-
-  return (
-    <Image
-      {...imageProps}
-      alt=""
-      className={className}
-      priority
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-    />
-  );
-}
-
-interface MediaRendererProps {
-  media: MediaItem | null;
-  layoutId?: string;
-  className?: string;
-  autoPlay?: boolean;
-}
-
-export function MediaRenderer({
-  media,
-  layoutId,
-  className = "",
-  autoPlay = false,
-}: MediaRendererProps) {
+const useMediaProps = (media: MediaItem | null, props: MediaRendererProps) => {
+  const isLowPowerMode = useLowPowerMode();
+  const [error, setError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  if (!media?.asset) return null;
-  const mediaUrl = assetUrlFor(media);
-  if (!mediaUrl) return null;
+  const getImageProps = ({ priority, fill, className = "" }: ImageProps) => {
+    if (!media) return null;
+    const dimensions = media.source?.asset?.metadata?.dimensions;
+    const lqip = media.source?.asset?.metadata?.lqip;
+
+    return {
+      src: isMuxVideo(media) ? getMuxThumbnailUrl(media) : urlFor(media.source),
+      alt: media.alt || "",
+      className: cn("object-cover", className),
+      ...(fill
+        ? { fill: true }
+        : {
+            width: dimensions?.width || 2000,
+            height: dimensions?.height || 2000,
+          }),
+      priority,
+      quality: 95,
+      sizes:
+        "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px",
+      ...(lqip && {
+        placeholder: "blur" as const,
+        blurDataURL: lqip,
+      }),
+      onError: () => {
+        setError(true);
+        props.onError?.();
+      },
+      onLoad: () => props.onLoad?.(),
+    };
+  };
+
+  const getVideoProps = ({ autoPlay, className = "" }: VideoProps) => {
+    if (!media) return null;
+
+    return {
+      ref: videoRef,
+      className: cn("h-full w-full object-cover", className),
+      src: `https://stream.mux.com/${media.source?.asset?.playbackId}/high.mp4`,
+      type: "video/mp4",
+      autoPlay: autoPlay && !isLowPowerMode,
+      muted: true,
+      playsInline: true,
+      loop: true,
+      poster: getMuxThumbnailUrl(media),
+      onError: () => {
+        setError(true);
+        props.onError?.();
+      },
+      onLoadedMetadata: () => props.onLoad?.(),
+    };
+  };
+
+  return {
+    isLowPowerMode,
+    error,
+    getImageProps,
+    getVideoProps,
+  } as const;
+};
+
+export function MediaRenderer(props: MediaRendererProps) {
+  const {
+    media,
+    layout,
+    layoutId,
+    className = "",
+    autoPlay = false,
+    priority = false,
+    fill = false,
+    onLoad,
+    onError,
+  } = props;
+
+  const { isLowPowerMode, error, getImageProps, getVideoProps } = useMediaProps(
+    media,
+    props,
+  );
+
+  if (!media?.source?.asset) return null;
+
+  const shouldShowVideo = isMuxVideo(media) && !isLowPowerMode && !error;
+  const imageProps = getImageProps({ priority, fill, className });
+  const videoProps = getVideoProps({ autoPlay, className });
+
+  if (!imageProps || !videoProps) return null;
 
   return (
-    <motion.div
+    <motion.figure
+      layout={layout}
       layoutId={layoutId}
-      className={`relative overflow-hidden ${className} h-full w-full`}
+      className={fill ? "relative h-full w-full will-change-transform" : ""}
+      role="img"
     >
-      {media._type === "image" && (
-        <SanityImage
-          media={media}
-          className="h-full w-full rounded-xl object-cover"
-        />
-      )}
-      {(media._type === "video" || media._type === "file") && (
-        <video
-          ref={videoRef}
-          className="h-full w-full rounded-xl object-cover"
-          autoPlay={autoPlay}
-          muted
-          playsInline
-          loop
-        >
-          <source src={mediaUrl} type="video/mp4" />
-        </video>
-      )}
-    </motion.div>
+      {shouldShowVideo ? <video {...videoProps} /> : <Image {...imageProps} />}
+    </motion.figure>
   );
 }

@@ -1,40 +1,52 @@
-import { Preview, CaseStudy, Work } from "@/sanity/types";
+import { Preview, CaseStudy, Clients } from "@/sanity/types";
+import {
+  SanityImageCrop,
+  SanityImageHotspot,
+  SanityImageMetadata,
+} from "@/sanity/types";
 
-type MediaItem = {
-  asset?: {
-    _ref: string;
-    _type: "reference";
+export type MediaItem = {
+  _type: "imageItem" | "videoItem";
+  source?: {
+    _type: "image" | "mux.video";
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      metadata?: SanityImageMetadata;
+      playbackId?: string; // For mux videos
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
   };
-  _type: "image" | "video" | "file";
+  width?: string;
+  alt?: string;
   _key: string;
 };
 
-// Gets first media from a CaseStudy (which has mediaGroups)
-const getCaseStudyFirstMedia = (project: CaseStudy): MediaItem | null => {
-  const firstMediaGroup = project.media?.[0];
-  if (!firstMediaGroup?.items?.length) return null;
-  return firstMediaGroup.items[0];
+export type VideoItem = MediaItem & {
+  _type: "videoItem";
+  source?: {
+    _type: "mux.video";
+    asset?: {
+      playbackId?: string;
+    };
+  };
 };
 
-// Gets first media from a Preview (which has direct media array)
-const getPreviewFirstMedia = (project: Preview): MediaItem | null => {
-  return project.media?.[0] || null;
-};
-
-// Main utility function that handles both project types
 export const getProjectFirstMedia = (
-  project: Preview | CaseStudy,
+  project: Preview | CaseStudy | null,
 ): MediaItem | null => {
+  if (!project) return null;
+
   if (project._type === "preview") {
-    return getPreviewFirstMedia(project);
-  } else {
-    return getCaseStudyFirstMedia(project);
+    return project.media?.[0] ?? null;
   }
+
+  return project.mediaGroups?.[0]?.media?.[0] ?? null;
 };
 
-// Used specifically for work index thumbnails
-export const getWorkFirstMedia = (work: Work): MediaItem | null => {
-  const firstProject = work.projects?.[0];
+export const getClientFirstMedia = (client: Clients): MediaItem | null => {
+  const firstProject = client.projects?.[0];
   if (!firstProject) return null;
 
   return getProjectFirstMedia(firstProject);
