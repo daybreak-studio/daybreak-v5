@@ -1,5 +1,5 @@
-import { BaseWidget } from "../widget-grid/base-widget";
-import { TwitterWidget } from "../widget-grid/types";
+import { BaseWidget } from "../grid/base-widget";
+import { TwitterWidget } from "../grid/types";
 
 interface TwitterProps {
   data: TwitterWidget;

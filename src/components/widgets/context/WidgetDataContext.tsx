@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { Widget } from "@/components/widget-grid/types";
+import { Widget } from "@/components/widgets/grid/types";
 
 interface WidgetDataContextValue {
   widgets: Widget[]; // Only widgets is required

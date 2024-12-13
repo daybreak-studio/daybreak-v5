@@ -1,6 +1,6 @@
-import { BaseWidget } from "../widget-grid/base-widget";
-import { ProjectWidget } from "../widget-grid/types";
-import { MediaRenderer } from "../media-renderer";
+import { BaseWidget } from "../grid/base-widget";
+import { ProjectWidget } from "../grid/types";
+import { MediaRenderer } from "../../media-renderer";
 import Link from "next/link";
 import { useWidgetData } from "@/contexts/WidgetDataContext";
 import { Clients } from "@/sanity/types";

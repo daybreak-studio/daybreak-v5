@@ -1,9 +1,9 @@
 import { useViewport } from "@/hooks/useViewport";
 import { useWidgetData } from "@/contexts/WidgetDataContext";
 import { Widget } from "./types";
-import Twitter from "../widgets/twitter";
-import Media from "../widgets/media";
-import Project from "../widgets/project";
+import Twitter from "../variants/twitter";
+import Media from "../variants/media";
+import Project from "../variants/project";
 
 const WIDGETS: Record<Widget["_type"], React.ComponentType<any>> = {
   twitterWidget: Twitter,

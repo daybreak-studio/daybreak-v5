@@ -6,15 +6,15 @@ import { client } from "@/sanity/lib/client";
 import type { Home, Clients } from "@/sanity/types";
 import Drawer from "@/components/drawer";
 import Reveal from "@/components/animations/reveal";
-import { WidgetGrid } from "@/components/widget-grid";
+import { WidgetGrid } from "@/components/widgets/grid";
 import CarouselComponent from "@/components/carousel";
 import { CLIENTS_QUERY, HOME_QUERY } from "@/sanity/lib/queries";
 import { MediaItem } from "@/sanity/lib/media";
 import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
 import { useScramble } from "use-scramble";
-import { WidgetDataProvider } from "@/contexts/WidgetDataContext";
-import { Widget } from "@/components/widget-grid/types";
+import { WidgetDataProvider } from "@/components/widgets/context/WidgetDataContext";
+import { Widget } from "@/components/widgets/grid/types";
 
 export default function Home({
   homeData,

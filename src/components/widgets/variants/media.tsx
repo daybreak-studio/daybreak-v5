@@ -1,6 +1,6 @@
-import { BaseWidget } from "../widget-grid/base-widget";
-import { MediaWidget } from "../widget-grid/types";
-import { MediaRenderer } from "../media-renderer";
+import { BaseWidget } from "../grid/base-widget";
+import { MediaWidget } from "../grid/types";
+import { MediaRenderer } from "../../media-renderer";
 
 interface MediaProps {
   data: MediaWidget;

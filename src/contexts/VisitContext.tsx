@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { useBaseRoute } from "../../hooks/useBaseRoute";
+import { useBaseRoute } from "@/hooks/useBaseRoute";
 
 type VisitStatus = "unknown" | "new" | "returning";
 
@@ -19,7 +19,6 @@ export const VisitProvider: React.FC<{ children: React.ReactNode }> = ({
   const [visitStatus, setVisitStatus] = useState<VisitStatus>("unknown");
   const [isLoading, setIsLoading] = useState(true);
   const { isBaseRoute } = useBaseRoute();
-  const router = useRouter();
 
   useEffect(() => {
     const hasVisitedBefore = Cookies.get("hasVisitedBefore");
