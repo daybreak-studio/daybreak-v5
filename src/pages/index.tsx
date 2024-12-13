@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { GetStaticProps } from "next";
 import { PortableText, PortableTextProps } from "@portabletext/react";
@@ -6,18 +6,15 @@ import { client } from "@/sanity/lib/client";
 import type { Home, Clients } from "@/sanity/types";
 import Drawer from "@/components/drawer";
 import Reveal from "@/components/animations/reveal";
-import { WidgetGrid } from "@/components/grid";
-import Twitter from "@/components/widgets/twitter";
-import Media from "@/components/widgets/media";
-import Article from "@/components/article";
+import { WidgetGrid } from "@/components/widget-grid";
 import CarouselComponent from "@/components/carousel";
 import { CLIENTS_QUERY, HOME_QUERY } from "@/sanity/lib/queries";
 import { MediaItem } from "@/sanity/lib/media";
 import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
-import Project from "@/components/widgets/project";
-import { LayoutProps } from "@/components/grid/props";
 import { useScramble } from "use-scramble";
+import { WidgetDataProvider } from "@/contexts/WidgetDataContext";
+import { Widget } from "@/components/widget-grid/types";
 
 export default function Home({
   homeData,
@@ -71,10 +68,14 @@ export default function Home({
             onFocus={replay}
             className="max-w-[16ch] text-center text-3xl font-[450] text-zinc-400 lg:text-4xl"
           />
-          <WidgetGrid
-            widgets={homeData.widgets ?? []}
-            clientsData={clientsData}
-          />
+          <WidgetDataProvider
+            data={{
+              widgets: homeData.widgets as Widget[],
+              clients: clientsData,
+            }}
+          >
+            <WidgetGrid />
+          </WidgetDataProvider>
         </div>
       </motion.div>
       {/* Drawer Content */}

@@ -1,23 +1,51 @@
-import { motion } from "framer-motion";
-import { MediaRenderer } from "@/components/media-renderer";
-import type { MediaItem } from "@/sanity/lib/media";
+import { BaseWidget } from "../widget-grid/base-widget";
+import { MediaWidget } from "../widget-grid/types";
+import { MediaRenderer } from "../media-renderer";
 
-interface MediaWidgetProps {
-  media?: MediaItem;
+interface MediaProps {
+  data: MediaWidget;
 }
 
-export default function MediaWidget({ media }: MediaWidgetProps) {
-  if (!media) return null;
+export default function Media({ data }: MediaProps) {
+  const renderContent = () => {
+    const mediaItem = data.media?.[0] ?? null;
+
+    switch (data.size) {
+      case "1x1":
+        return (
+          <MediaRenderer
+            className="frame-inner"
+            media={mediaItem}
+            priority
+            fill
+          />
+        );
+      case "2x2":
+        return (
+          <MediaRenderer
+            className="frame-inner"
+            media={mediaItem}
+            priority
+            fill
+            autoPlay
+          />
+        );
+      case "3x3":
+        return (
+          <MediaRenderer
+            className="frame-inner"
+            media={mediaItem}
+            priority
+            fill
+            autoPlay
+          />
+        );
+    }
+  };
 
   return (
-    <motion.div className="relative h-full w-full">
-      <MediaRenderer
-        className="frame-inner"
-        media={media}
-        priority
-        fill
-        autoPlay={true}
-      />
-    </motion.div>
+    <BaseWidget position={data.position} size={data.size}>
+      {renderContent()}
+    </BaseWidget>
   );
 }
