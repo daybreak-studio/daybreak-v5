@@ -2079,7 +2079,7 @@
                     "type": "objectAttribute",
                     "value": {
                       "type": "string",
-                      "value": "twitterWidget"
+                      "value": "twitter"
                     }
                   }
                 },
@@ -2354,7 +2354,7 @@
                     "type": "objectAttribute",
                     "value": {
                       "type": "string",
-                      "value": "mediaWidget"
+                      "value": "media"
                     }
                   }
                 },
@@ -2417,7 +2417,7 @@
                     },
                     "optional": true
                   },
-                  "selectedClient": {
+                  "client": {
                     "type": "objectAttribute",
                     "value": {
                       "type": "object",
@@ -2447,7 +2447,7 @@
                     },
                     "optional": true
                   },
-                  "projectCategory": {
+                  "category": {
                     "type": "objectAttribute",
                     "value": {
                       "type": "union",
@@ -2472,7 +2472,7 @@
                     },
                     "optional": true
                   },
-                  "projectType": {
+                  "type": {
                     "type": "objectAttribute",
                     "value": {
                       "type": "union",
@@ -2493,7 +2493,7 @@
                     "type": "objectAttribute",
                     "value": {
                       "type": "string",
-                      "value": "projectWidget"
+                      "value": "project"
                     }
                   }
                 },

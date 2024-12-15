@@ -38,11 +38,23 @@ const createWidgetFields = (uniqueFields: any[]) => [
   ...uniqueFields,
 ];
 
+const createWidgetPreview = (name: string) => ({
+  select: {
+    size: "size",
+  },
+  prepare({ size }) {
+    return {
+      title: `${name} Widget`,
+      subtitle: `Size: ${size || "1x1"}`,
+    };
+  },
+});
+
 // Widget Definitions
-export const twitterWidget = {
+export const twitter = {
   type: "object",
-  name: "twitterWidget",
-  title: "Twitter Widget",
+  name: "twitter",
+  title: "Twitter",
   fields: createWidgetFields([
     defineField({ name: "tweet", type: "text", title: "Tweet" }),
     defineField({ name: "author", type: "string", title: "Author" }),
@@ -54,29 +66,31 @@ export const twitterWidget = {
       of: [{ type: "image", title: "Image" }],
     }),
   ]),
+  preview: createWidgetPreview("Twitter"),
 };
 
-export const mediaWidget = {
+export const media = {
   type: "object",
-  name: "mediaWidget",
-  title: "Media Widget",
+  name: "media",
+  title: "Media",
   fields: createWidgetFields([createMediaArray()]),
+  preview: createWidgetPreview("Media"),
 };
 
-export const projectWidget = {
+export const project = {
   type: "object",
-  name: "projectWidget",
-  title: "Project Widget",
+  name: "project",
+  title: "Project",
   fields: createWidgetFields([
     defineField({
-      name: "selectedClient",
-      title: "Select Client",
+      name: "client",
+      title: "Client",
       type: "reference",
       to: [{ type: "clients" }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "projectCategory",
+      name: "category",
       title: "Category",
       type: "string",
       options: {
@@ -90,7 +104,7 @@ export const projectWidget = {
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "projectType",
+      name: "type",
       title: "Type",
       type: "string",
       options: {
@@ -102,6 +116,22 @@ export const projectWidget = {
       validation: (Rule) => Rule.required(),
     }),
   ]),
+  preview: createWidgetPreview("Project"),
 };
 
-export const widgets = [twitterWidget, mediaWidget, projectWidget];
+export const recents = {
+  type: "object",
+  name: "recents",
+  title: "Recents",
+  fields: createWidgetFields([
+    defineField({
+      name: "projects",
+      title: "Projects",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "projects" }] }],
+      validation: (Rule) => Rule.required().max(3),
+    }),
+  ]),
+};
+
+export const widgets = [twitter, media, project];

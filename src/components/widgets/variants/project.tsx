@@ -14,7 +14,7 @@ export default function Project({ data }: ProjectProps) {
   const clients = useWidgetData<Clients[]>("clients");
 
   const foundClient = clients?.find(
-    (client) => client._id === data.selectedClient?._ref,
+    (client) => client._id === data.client?._ref,
   );
 
   console.log(foundClient);
@@ -23,8 +23,7 @@ export default function Project({ data }: ProjectProps) {
 
   const foundProject = foundClient.projects?.find(
     (project) =>
-      project._type === data.projectType &&
-      project.category === data.projectCategory,
+      project._type === data.type && project.category === data.category,
   );
 
   if (!foundProject || !foundProject.category) {

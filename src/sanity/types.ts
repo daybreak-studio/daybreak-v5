@@ -334,7 +334,7 @@ export type Home = {
           _type: "image";
           _key: string;
         }>;
-        _type: "twitterWidget";
+        _type: "twitter";
         _key: string;
       }
     | {
@@ -369,7 +369,7 @@ export type Home = {
               _key: string;
             }
         >;
-        _type: "mediaWidget";
+        _type: "media";
         _key: string;
       }
     | {
@@ -378,15 +378,15 @@ export type Home = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
-        selectedClient?: {
+        client?: {
           _ref: string;
           _type: "reference";
           _weak?: boolean;
           [internalGroqTypeReferenceTo]?: "clients";
         };
-        projectCategory?: "brand" | "product" | "motion" | "web";
-        projectType?: "caseStudy" | "preview";
-        _type: "projectWidget";
+        category?: "brand" | "product" | "motion" | "web";
+        type?: "caseStudy" | "preview";
+        _type: "project";
         _key: string;
       }
   >;
@@ -874,7 +874,7 @@ export type HOME_QUERYResult = {
               _key: string;
             }
         > | null;
-        _type: "mediaWidget";
+        _type: "media";
         _key: string;
       }
     | {
@@ -883,15 +883,15 @@ export type HOME_QUERYResult = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
-        selectedClient?: {
+        client?: {
           _ref: string;
           _type: "reference";
           _weak?: boolean;
           [internalGroqTypeReferenceTo]?: "clients";
         };
-        projectCategory?: "brand" | "motion" | "product" | "web";
-        projectType?: "caseStudy" | "preview";
-        _type: "projectWidget";
+        category?: "brand" | "motion" | "product" | "web";
+        type?: "caseStudy" | "preview";
+        _type: "project";
         _key: string;
         media: null;
       }
@@ -917,7 +917,7 @@ export type HOME_QUERYResult = {
           _key: string;
           source: null;
         }> | null;
-        _type: "twitterWidget";
+        _type: "twitter";
         _key: string;
       }
   > | null;

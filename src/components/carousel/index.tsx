@@ -2,7 +2,6 @@
 "use client";
 
 import { memo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import { MediaRenderer } from "@/components/media-renderer";
 import { MediaItem } from "@/sanity/lib/media";
@@ -31,14 +30,14 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
         className="hide-scrollbar cursor-ew-resize overflow-x-scroll"
         ref={emblaRef}
       >
-        <div className="flex items-start gap-4 pl-8">
+        <div className="flex items-start pl-8 md:pl-20 xl:pl-36">
           {media.map((item) => {
             const widthClass =
               sizeOptions[item.width as CarouselWidth] || "md:w-full";
 
             return (
               <div
-                className={`h-[400px] min-w-[85%] snap-center overflow-hidden rounded-xl md:min-w-0 md:max-w-[600px] lg:h-[500px] xl:flex-shrink-0 ${widthClass}`}
+                className={`mr-8 h-[400px] min-w-[85%] snap-center overflow-hidden rounded-xl md:min-w-0 md:max-w-[600px] md:flex-shrink-0 lg:h-[500px] ${widthClass}`}
                 key={item._key}
               >
                 <MediaRenderer fill media={item} autoPlay={true} />

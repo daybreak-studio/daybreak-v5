@@ -8,9 +8,9 @@ import Project from "../variants/project";
 import Lenis from "lenis";
 
 const WIDGETS: Record<Widget["_type"], React.ComponentType<any>> = {
-  twitterWidget: Twitter,
-  mediaWidget: Media,
-  projectWidget: Project,
+  twitter: Twitter,
+  media: Media,
+  project: Project,
 };
 
 const GRID_CONFIG = {

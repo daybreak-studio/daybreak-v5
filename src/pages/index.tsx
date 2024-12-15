@@ -82,20 +82,22 @@ export default function Home({
       {windowHeight !== null && homeData && (
         <Drawer windowHeight={windowHeight}>
           {/* Mission Statement */}
-          <div className="space-y-12 pt-20 md:pt-32">
-            <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
-              {homeData.missionStatement && (
-                <PortableText
-                  value={homeData.missionStatement}
-                  components={components}
-                />
-              )}
-            </Reveal>
+          <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
+            <div>
+              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
+                {homeData.missionStatement && (
+                  <PortableText
+                    value={homeData.missionStatement}
+                    components={components}
+                  />
+                )}
+              </Reveal>
 
-            {/* Carousel - Lazy load when drawer is open */}
-            <Reveal>
-              {homeData.media && <CarouselComponent media={homeData.media} />}
-            </Reveal>
+              {/* Carousel - Lazy load when drawer is open */}
+              <Reveal>
+                {homeData.media && <CarouselComponent media={homeData.media} />}
+              </Reveal>
+            </div>
 
             {/* About Us - Simplified animation */}
             <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
