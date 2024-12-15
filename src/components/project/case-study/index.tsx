@@ -136,7 +136,7 @@ export default function ProjectCaseStudy({
             // If not zoomed, go back to selector view
             const clientSlug = data.slug?.current;
             if (clientSlug) {
-              router.push(`/Clients/${clientSlug}`, undefined, {
+              router.push(`/work/${clientSlug}`, undefined, {
                 shallow: true,
               });
             }
