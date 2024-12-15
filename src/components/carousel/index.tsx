@@ -42,13 +42,14 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
               sizeOptions[item.width as CarouselWidth] || "md:w-full";
 
             return (
-              <HoverCard
-                className={`h-[400px] min-w-[85%] overflow-hidden rounded-xl md:min-w-0 md:max-w-[600px] md:flex-shrink-0 lg:h-[500px] ${widthClass}`}
+              <div
                 key={item._key}
+                className={`my-8 h-[400px] min-w-[85%] lg:h-[500px] lg:min-w-0 lg:max-w-[600px] lg:flex-shrink-0 ${widthClass}`}
               >
-                <MediaRenderer fill media={item} autoPlay={true} />
-                {/* {item.alt && <h5>{item.alt}</h5>} */}
-              </HoverCard>
+                <HoverCard>
+                  <MediaRenderer fill media={item} autoPlay={true} />
+                </HoverCard>
+              </div>
             );
           })}
         </div>

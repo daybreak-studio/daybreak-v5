@@ -2,6 +2,7 @@ import { ReactNode, useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 import clsx from "clsx";
+import Lenis from "lenis";
 
 interface DrawerProps {
   children: ReactNode;
@@ -78,6 +79,23 @@ const Drawer: React.FC<DrawerProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const PEEK_HEIGHT = windowHeight * 0.06;
   const HOVER_PEEK_AMOUNT = 200;
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+
+    const lenis = new Lenis({
+      wrapper: contentRef.current,
+      autoRaf: true,
+      smoothWheel: true,
+      syncTouch: true,
+      gestureOrientation: "vertical",
+      orientation: "vertical",
+    });
+
+    return () => {
+      lenis.destroy();
+    };
+  }, [contentRef]);
 
   const toggleDrawer = () => {
     setIsOpen(!isOpen);
