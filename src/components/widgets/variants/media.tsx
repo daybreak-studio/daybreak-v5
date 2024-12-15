@@ -1,6 +1,7 @@
 import { BaseWidget } from "../grid/base-widget";
 import { MediaWidget } from "../grid/types";
 import { MediaRenderer } from "../../media-renderer";
+import { HoverCard } from "@/components/hover-card";
 
 interface MediaProps {
   data: MediaWidget;
@@ -12,34 +13,11 @@ export default function Media({ data }: MediaProps) {
 
     switch (data.size) {
       case "1x1":
-        return (
-          <MediaRenderer
-            className="frame-inner"
-            media={mediaItem}
-            priority
-            fill
-          />
-        );
+        return <MediaRenderer media={mediaItem} priority />;
       case "2x2":
-        return (
-          <MediaRenderer
-            className="frame-inner"
-            media={mediaItem}
-            priority
-            fill
-            autoPlay
-          />
-        );
+        return <MediaRenderer media={mediaItem} priority autoPlay />;
       case "3x3":
-        return (
-          <MediaRenderer
-            className="frame-inner"
-            media={mediaItem}
-            priority
-            fill
-            autoPlay
-          />
-        );
+        return <MediaRenderer media={mediaItem} priority autoPlay />;
     }
   };
 

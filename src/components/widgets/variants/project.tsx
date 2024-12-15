@@ -39,7 +39,7 @@ export default function Project({ data }: ProjectProps) {
           <Link
             href={`/work/${foundClient?.slug?.current}/${foundProject.category}`}
           >
-            <MediaRenderer className="frame-inner" fill media={mediaAsset} />
+            <MediaRenderer media={mediaAsset} />
           </Link>
         );
       case "2x2":
@@ -48,7 +48,7 @@ export default function Project({ data }: ProjectProps) {
           <Link
             href={`/work/${foundClient?.slug?.current}/${foundProject.category}`}
           >
-            <MediaRenderer className="frame-inner" fill media={mediaAsset} />
+            <MediaRenderer className="aspect-square" media={mediaAsset} />
             <div className="absolute bottom-8 left-8 z-20">
               <h2
                 className={`text-white ${data.size === "2x2" ? "text-sm" : "text-base"}`}

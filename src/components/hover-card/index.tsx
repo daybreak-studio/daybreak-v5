@@ -4,19 +4,16 @@ import {
   useMotionValue,
   useSpring,
 } from "framer-motion";
-import { MouseEvent, ReactNode } from "react";
+import { CSSProperties, MouseEvent, ReactNode } from "react";
 
 interface HoverCardProps {
   children: ReactNode;
   className?: string;
-  backgroundClassName?: string;
+  contentClassName?: string;
+  style?: CSSProperties;
 }
 
-export const HoverCard = ({
-  children,
-  className = "",
-  backgroundClassName = "",
-}: HoverCardProps) => {
+export const HoverCard = ({ children, className, style }: HoverCardProps) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -39,7 +36,8 @@ export const HoverCard = ({
 
   return (
     <motion.div
-      className={`group relative flex overflow-hidden rounded-xl border border-orange-300/10 shadow-lg shadow-orange-300/5 transition-all duration-500 ease-in-out hover:scale-[99%] hover:border-orange-300/20 hover:shadow-sm hover:shadow-orange-300/5 ${className}`}
+      className={`group relative flex h-full w-full overflow-hidden rounded-xl border border-orange-300/10 shadow-lg shadow-orange-300/5 transition-all duration-500 ease-in-out hover:scale-[99%] hover:border-orange-300/20 hover:shadow-sm hover:shadow-orange-300/5 ${className}`}
+      style={style}
       onMouseMove={handleMouseMove}
     >
       {/* Border glow effect - similar to card::after */}
@@ -77,13 +75,7 @@ export const HoverCard = ({
           zIndex: 3,
         }}
       />
-
-      {/* Main content container - similar to card-content */}
-      <div
-        className={`relative flex h-full w-full flex-col overflow-hidden rounded-xl bg-white/50 p-1 ${backgroundClassName}`}
-      >
-        {children}
-      </div>
+      {children}
     </motion.div>
   );
 };

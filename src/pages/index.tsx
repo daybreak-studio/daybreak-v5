@@ -84,7 +84,7 @@ export default function Home({
           {/* Mission Statement */}
           <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
             <div>
-              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
+              <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
                 {homeData.missionStatement && (
                   <PortableText
                     value={homeData.missionStatement}
@@ -101,7 +101,7 @@ export default function Home({
 
             {/* About Us - Simplified animation */}
             <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
-              <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
+              <h2 className="mb-4 text-lg text-zinc-400 md:text-xl">
                 About Us
               </h2>
               {homeData?.aboutUs && (
@@ -114,7 +114,7 @@ export default function Home({
 
             {/* Newsfeed with Masonry Layout */}
             <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
-              <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
+              <h2 className="mb-4 text-lg text-zinc-400 md:text-xl">
                 Newsfeed
               </h2>
               <MasonryGrid articles={homeData?.newsfeed || []} />

@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { WidgetSize } from "./types";
+import { HoverCard } from "@/components/hover-card";
 
 interface BaseWidgetProps {
   position: { row: number; column: number };
@@ -28,14 +29,14 @@ export function BaseWidget({
   const span = getSpanSize(size);
 
   return (
-    <div
-      className={cn("frame-outer relative overflow-hidden", className)}
+    <HoverCard
+      className={cn("frame-outer", className)}
       style={{
         gridColumn: `${position.column} / span ${span}`,
         gridRow: `${position.row} / span ${span}`,
       }}
     >
-      {children}
-    </div>
+      <div className="frame-inner relative overflow-hidden">{children}</div>
+    </HoverCard>
   );
 }

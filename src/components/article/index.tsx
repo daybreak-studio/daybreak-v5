@@ -10,7 +10,7 @@ type ArticleType = NonNullable<Home["newsfeed"]>[number];
 const Article = memo(({ article }: { article: ArticleType }) => {
   return (
     <Reveal key={article._key}>
-      <HoverCard className="mb-4 w-full break-inside-avoid">
+      <HoverCard className="mb-4 flex break-inside-avoid flex-col p-1">
         {/* Media Container that respects natural aspect ratio */}
         <div>
           {article.media?.[0] && (

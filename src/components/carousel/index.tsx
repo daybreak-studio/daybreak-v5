@@ -3,8 +3,11 @@
 
 import { memo } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { MediaRenderer } from "@/components/media-renderer";
 import { MediaItem } from "@/sanity/lib/media";
+import { useRef } from "react";
+import { HoverCard } from "../hover-card";
 type CarouselWidth = "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
 
 const sizeOptions: Record<CarouselWidth, string> = {
@@ -22,7 +25,10 @@ interface CarouselProps {
 }
 
 const CarouselComponent = memo(({ media, className }: CarouselProps) => {
-  const [emblaRef] = useEmblaCarousel({ align: "start" });
+  const [emblaRef, embla] = useEmblaCarousel(
+    { align: "start", loop: false, axis: "x", skipSnaps: true },
+    [WheelGesturesPlugin({ forceWheelAxis: "x" })],
+  );
 
   return (
     <div className={`relative col-span-full ${className} xl:py-16`}>
@@ -30,19 +36,19 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
         className="hide-scrollbar cursor-ew-resize overflow-x-scroll"
         ref={emblaRef}
       >
-        <div className="flex items-start pl-8 md:pl-20 xl:pl-36">
+        <div className="mx-8 flex items-start gap-4 md:mx-16 xl:mx-36 xl:gap-8">
           {media.map((item) => {
             const widthClass =
               sizeOptions[item.width as CarouselWidth] || "md:w-full";
 
             return (
-              <div
-                className={`mr-8 h-[400px] min-w-[85%] snap-center overflow-hidden rounded-xl md:min-w-0 md:max-w-[600px] md:flex-shrink-0 lg:h-[500px] ${widthClass}`}
+              <HoverCard
+                className={`h-[400px] min-w-[85%] overflow-hidden rounded-xl md:min-w-0 md:max-w-[600px] md:flex-shrink-0 lg:h-[500px] ${widthClass}`}
                 key={item._key}
               >
                 <MediaRenderer fill media={item} autoPlay={true} />
                 {/* {item.alt && <h5>{item.alt}</h5>} */}
-              </div>
+              </HoverCard>
             );
           })}
         </div>
