@@ -1,9 +1,11 @@
+import { useEffect, useRef } from "react";
 import { useViewport } from "@/hooks/useViewport";
-import { useWidgetData } from "@/contexts/WidgetDataContext";
+import { useWidgetData } from "@/components/widgets/context/WidgetDataContext";
 import { Widget } from "./types";
 import Twitter from "../variants/twitter";
 import Media from "../variants/media";
 import Project from "../variants/project";
+import Lenis from "lenis";
 
 const WIDGETS: Record<Widget["_type"], React.ComponentType<any>> = {
   twitterWidget: Twitter,
@@ -29,9 +31,52 @@ export function WidgetGrid() {
   const { breakpoint } = useViewport();
   const widgets = useWidgetData<Widget[]>("widgets");
   const gridBreakpoint = breakpoint as GridBreakpoint;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
+
+  const centerScroll = () => {
+    if (!containerRef.current) return;
+    const container = containerRef.current;
+    const scrollWidth = container.scrollWidth;
+    const clientWidth = container.clientWidth;
+    const targetScroll = Math.max(0, (scrollWidth - clientWidth) / 2);
+    lenisRef.current?.scrollTo(targetScroll, { immediate: true });
+  };
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    // Initialize Lenis once
+    lenisRef.current = new Lenis({
+      wrapper: containerRef.current,
+      orientation: "horizontal",
+      gestureOrientation: "horizontal",
+      smoothWheel: true,
+      syncTouch: true,
+      autoRaf: true,
+    });
+
+    // Initial center
+    centerScroll();
+
+    // Watch for size changes
+    const resizeObserver = new ResizeObserver(() => {
+      requestAnimationFrame(centerScroll);
+    });
+    resizeObserver.observe(containerRef.current);
+
+    // Cleanup
+    return () => {
+      resizeObserver.disconnect();
+      lenisRef.current?.destroy();
+    };
+  }, [widgets, breakpoint]);
 
   return (
-    <div className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1">
+    <div
+      ref={containerRef}
+      className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1"
+    >
       <div
         className="grid"
         style={{

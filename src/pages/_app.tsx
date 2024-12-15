@@ -1,12 +1,12 @@
 import "@/styles/globals.css";
 import "../../public/fonts/font-face.css";
+import localFont from "next/font/local";
+import Navigation from "@/components/navigation";
+import Layout from "@/components/layout";
 import { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
-import Navigation from "@/components/navigation";
 import { VisitProvider } from "@/contexts/VisitContext";
-import Layout from "@/components/layout";
 import { useBaseRoute } from "../hooks/useBaseRoute";
-import localFont from "next/font/local";
 import { DebugProvider } from "@/contexts/DebugContext";
 
 const aspekta = localFont({
@@ -14,11 +14,11 @@ const aspekta = localFont({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  const { isBaseRoute, currentBasePath } = useBaseRoute();
+  const { currentBasePath } = useBaseRoute();
 
   return (
-    <DebugProvider>
-      <div className={`${aspekta.className}`}>
+    <div className={`${aspekta.className}`}>
+      <DebugProvider>
         <VisitProvider>
           <Navigation />
           <motion.div
@@ -33,7 +33,7 @@ export default function App({ Component, pageProps }: AppProps) {
             </Layout>
           </AnimatePresence>
         </VisitProvider>
-      </div>
-    </DebugProvider>
+      </DebugProvider>
+    </div>
   );
 }

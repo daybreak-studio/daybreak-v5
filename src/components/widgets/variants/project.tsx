@@ -2,7 +2,7 @@ import { BaseWidget } from "../grid/base-widget";
 import { ProjectWidget } from "../grid/types";
 import { MediaRenderer } from "../../media-renderer";
 import Link from "next/link";
-import { useWidgetData } from "@/contexts/WidgetDataContext";
+import { useWidgetData } from "@/components/widgets/context/WidgetDataContext";
 import { Clients } from "@/sanity/types";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
 
