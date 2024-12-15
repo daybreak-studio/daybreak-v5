@@ -48,7 +48,7 @@ export default function Home({
     block: {
       normal: ({ children, index }) => (
         <div>
-          <p className="mb-8 text-3xl text-zinc-400">{children}</p>
+          <p className="mb-8 text-2xl text-zinc-400 md:text-3xl">{children}</p>
         </div>
       ),
     },
@@ -64,7 +64,7 @@ export default function Home({
       {/* <GradientBackground /> */}
       <main className="relative">
         <motion.div className="fixed inset-0">
-          <div className="flex h-full flex-col items-center justify-center space-y-8">
+          <div className="flex h-full flex-col items-center justify-center space-y-2 lg:space-y-8">
             <h1
               ref={headingRef}
               onMouseOver={replay}

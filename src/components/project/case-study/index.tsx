@@ -214,7 +214,7 @@ export default function ProjectCaseStudy({
         {/* Credits Section */}
         {project.credits && (
           <motion.div
-            className="mx-auto my-72 grid w-full grid-cols-2 gap-y-6 text-sm"
+            className="mx-auto my-72 grid w-96 grid-cols-2 gap-y-6 text-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.6 }}

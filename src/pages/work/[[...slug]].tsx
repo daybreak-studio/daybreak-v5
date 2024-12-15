@@ -22,11 +22,11 @@ const MODAL_VARIANTS = {
     type: "selector",
   },
   preview: {
-    className: "max-h-[90vh] max-w-[1016px] overflow-y-auto",
+    className: "max-h-[90svh] max-w-[1016px] overflow-y-auto",
     type: "preview",
   },
   caseStudy: {
-    className: "h-screen w-screen max-w-none overflow-y-auto rounded-none",
+    className: "h-[100svh] w-screen max-w-none overflow-y-auto rounded-none",
     type: "caseStudy",
   },
 } as const;

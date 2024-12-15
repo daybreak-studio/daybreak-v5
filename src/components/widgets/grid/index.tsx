@@ -18,8 +18,8 @@ const GRID_CONFIG = {
   ROWS: 3,
   GAP: 10,
   CELL_SIZES: {
-    sm: 120,
-    md: 130,
+    sm: 100,
+    md: 120,
     lg: 140,
     xl: 160,
   } as const,
@@ -51,8 +51,7 @@ export function WidgetGrid() {
       wrapper: containerRef.current,
       orientation: "horizontal",
       gestureOrientation: "horizontal",
-      smoothWheel: true,
-      syncTouch: true,
+      // syncTouch: true,
       autoRaf: true,
     });
 

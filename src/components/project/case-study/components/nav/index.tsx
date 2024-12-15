@@ -52,7 +52,7 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
         ref={ref}
         layout
         layoutId="nav-root"
-        className="fixed bottom-4 left-0 right-0 z-50 px-4"
+        className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-[calc(0.5rem_+_env(safe-area-inset-bottom))] md:bottom-4 md:px-4"
         style={originStyles}
         initial={{ opacity: 0, y: 20, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -98,13 +98,13 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
                 <motion.div
                   layout
                   key="expanded"
-                  className="relative w-screen max-w-[400px]"
+                  className="relative w-screen max-w-[calc(100vw-2rem)] md:max-w-[400px]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={transition}
                 >
-                  <div className="flex w-full flex-col gap-2 px-6 py-5">
+                  <div className="flex w-full flex-col gap-3 px-6 py-6">
                     <AnimatePresence mode="popLayout" custom={direction}>
                       <motion.div
                         key={`content-${activeGroup}`}
@@ -114,14 +114,14 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
                         transition={transition}
                       >
                         {currentGroup.heading && (
-                          <div className="mb-2 flex w-full items-center justify-between text-xl">
+                          <div className="mb-2 flex w-full items-center justify-between text-lg">
                             <h4 className="opacity-70">
                               {currentGroup.heading}
                             </h4>
                           </div>
                         )}
                         {currentGroup.caption && (
-                          <p className="mb-2 text-sm opacity-50">
+                          <p className="text-sm opacity-50">
                             {currentGroup.caption}
                           </p>
                         )}
@@ -149,7 +149,7 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
                   <button
                     onClick={onToggleExpand}
                     className={`absolute right-6 ${
-                      currentGroup.heading ? "top-[1.5rem]" : "top-[2rem]"
+                      currentGroup.heading ? "top-[1.75rem]" : "top-[2.25rem]"
                     }`}
                   >
                     <XIcon className="h-4 w-4 opacity-60" />

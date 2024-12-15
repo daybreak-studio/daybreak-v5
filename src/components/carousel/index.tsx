@@ -26,8 +26,8 @@ interface CarouselProps {
 
 const CarouselComponent = memo(({ media, className }: CarouselProps) => {
   const [emblaRef, embla] = useEmblaCarousel(
-    { align: "start", loop: false, axis: "x", skipSnaps: true },
-    [WheelGesturesPlugin({ forceWheelAxis: "x" })],
+    { align: "start", loop: false, skipSnaps: true },
+    [WheelGesturesPlugin()],
   );
 
   return (

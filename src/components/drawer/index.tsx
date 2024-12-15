@@ -85,11 +85,8 @@ const Drawer: React.FC<DrawerProps> = ({
 
     const lenis = new Lenis({
       wrapper: contentRef.current,
+      // syncTouch: true,
       autoRaf: true,
-      smoothWheel: true,
-      syncTouch: true,
-      gestureOrientation: "vertical",
-      orientation: "vertical",
     });
 
     return () => {

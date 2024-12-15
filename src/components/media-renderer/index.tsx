@@ -16,6 +16,11 @@ interface MediaRendererProps {
   fill?: boolean;
   onLoad?: () => void;
   onError?: () => void;
+  transition?: {
+    duration?: number;
+    ease?: number[] | string;
+    delay?: number;
+  };
 }
 
 interface ImageProps {
@@ -109,6 +114,7 @@ export function MediaRenderer(props: MediaRendererProps) {
     fill = false,
     onLoad,
     onError,
+    transition,
   } = props;
 
   const { isLowPowerMode, error, getImageProps, getVideoProps } = useMediaProps(
@@ -130,6 +136,7 @@ export function MediaRenderer(props: MediaRendererProps) {
       layoutId={layoutId}
       className={fill ? "relative h-full w-full will-change-transform" : ""}
       role="img"
+      transition={transition}
     >
       {shouldShowVideo ? <video {...videoProps} /> : <Image {...imageProps} />}
     </motion.figure>

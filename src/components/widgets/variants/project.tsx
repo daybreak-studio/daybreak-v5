@@ -17,8 +17,6 @@ export default function Project({ data }: ProjectProps) {
     (client) => client._id === data.client?._ref,
   );
 
-  console.log(foundClient);
-
   if (!foundClient || !foundClient.slug?.current) return null;
 
   const foundProject = foundClient.projects?.find(
@@ -31,6 +29,7 @@ export default function Project({ data }: ProjectProps) {
   }
 
   const mediaAsset = getProjectFirstMedia(foundProject);
+  // const imageLayoutId = `image-${foundClient.slug.current}`;
 
   const renderContent = () => {
     switch (data.size) {
@@ -39,7 +38,11 @@ export default function Project({ data }: ProjectProps) {
           <Link
             href={`/work/${foundClient?.slug?.current}/${foundProject.category}`}
           >
-            <MediaRenderer media={mediaAsset} />
+            <MediaRenderer
+              media={mediaAsset}
+              // layoutId={imageLayoutId}
+              priority={true}
+            />
           </Link>
         );
       case "2x2":
@@ -48,7 +51,12 @@ export default function Project({ data }: ProjectProps) {
           <Link
             href={`/work/${foundClient?.slug?.current}/${foundProject.category}`}
           >
-            <MediaRenderer className="aspect-square" media={mediaAsset} />
+            <MediaRenderer
+              className="aspect-square"
+              media={mediaAsset}
+              // layoutId={imageLayoutId}
+              priority={true}
+            />
             <div className="absolute bottom-8 left-8 z-20">
               <h2
                 className={`text-white ${data.size === "2x2" ? "text-sm" : "text-base"}`}

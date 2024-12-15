@@ -30,7 +30,7 @@ export default function ProjectSelector({
         if (!project.category) return null;
 
         const isFirstProject = project === data.projects?.[0];
-        const projectLayoutId = isFirstProject ? imageLayoutId : undefined;
+        const projectLayoutId = `image-${data.slug?.current}-${project.category}`;
 
         return (
           <motion.div
