@@ -122,6 +122,18 @@
 
   .main-gradient {
     background: var(--main-gradient);
+    position: relative;
+  }
+
+  .main-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("/noise.svg");
+    opacity: 0.2;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    background-size: 200px 200px;
   }
 }
 
