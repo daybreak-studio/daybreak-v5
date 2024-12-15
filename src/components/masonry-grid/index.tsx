@@ -1,6 +1,8 @@
 import React from "react";
 import type { Home } from "@/sanity/types";
 import Article from "@/components/article";
+import Reveal from "@/components/animations/reveal";
+import { HoverCard } from "@/components/hover-card";
 
 type ArticleType = NonNullable<Home["newsfeed"]>[number];
 

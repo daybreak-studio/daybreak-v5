@@ -114,7 +114,7 @@ export default function Home({
 
             {/* Newsfeed with Masonry Layout */}
             <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
-              <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
+              <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
                 Newsfeed
               </h2>
               <MasonryGrid articles={homeData?.newsfeed || []} />
