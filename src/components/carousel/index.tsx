@@ -47,7 +47,12 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
                 className={`my-8 h-[400px] min-w-[85%] lg:h-[500px] lg:min-w-0 lg:max-w-[600px] lg:flex-shrink-0 ${widthClass}`}
               >
                 <HoverCard>
-                  <MediaRenderer fill media={item} autoPlay={true} />
+                  <MediaRenderer
+                    className="frame-inner"
+                    fill
+                    media={item}
+                    autoPlay={true}
+                  />
                 </HoverCard>
               </div>
             );

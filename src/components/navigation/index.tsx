@@ -76,7 +76,7 @@ export default function Navigation() {
       ],
       [
         ".container",
-        { backgroundColor: "rgb(250,250,250,1)" },
+        { backgroundColor: "rgb(250,250,250,0.95)" },
         { duration: 0.5, ease: [0.76, 0, 0.24, 1], at: "<" },
       ],
       [
@@ -119,7 +119,7 @@ export default function Navigation() {
       }}
     >
       <motion.div
-        className={`container relative mt-4 flex w-fit items-stretch justify-center rounded-xl p-1 md:rounded-2xl`}
+        className={`container relative mt-4 flex w-fit items-stretch justify-center rounded-xl p-1 mix-blend-multiply md:rounded-2xl`}
         initial={{
           boxShadow:
             visitStatus === "new"
@@ -131,7 +131,7 @@ export default function Navigation() {
           backgroundColor:
             visitStatus === "new"
               ? "rgb(255,255,255,0)"
-              : "rgb(250,250,250 ,1)",
+              : "rgb(250,250,250,0.85)",
         }}
       >
         {tabs.map((tab) =>
@@ -224,7 +224,7 @@ const Pill = ({ isFirstVisit }: { isFirstVisit: boolean }) => {
       layout
       // layoutRoot
       layoutId="pill"
-      className="pill absolute inset-0 z-0 rounded-md bg-white md:rounded-xl"
+      className="pill absolute inset-0 z-0 rounded-md bg-white/50 md:rounded-xl"
       style={{ originY: "top" }}
       initial={{ opacity: isFirstVisit ? 0 : 1 }}
       transition={{

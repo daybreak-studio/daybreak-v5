@@ -36,13 +36,13 @@ export const HoverCard = ({ children, className, style }: HoverCardProps) => {
 
   return (
     <motion.div
-      className={`group relative flex h-full w-full overflow-hidden rounded-xl border border-orange-300/10 shadow-lg shadow-orange-300/5 transition-all duration-500 ease-in-out hover:scale-[99%] hover:border-orange-300/20 hover:shadow-sm hover:shadow-orange-300/5 ${className}`}
+      className={`frame-outer group relative flex h-full w-full overflow-hidden border border-orange-300/10 shadow-lg shadow-orange-300/5 transition-all duration-500 ease-in-out hover:scale-[99%] hover:border-orange-300/20 hover:shadow-sm hover:shadow-orange-300/5 ${className}`}
       style={style}
       onMouseMove={handleMouseMove}
     >
       {/* Border glow effect - similar to card::after */}
       <motion.div
-        className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl opacity-0 transition-opacity duration-500 group-hover:opacity-15"
+        className="pointer-events-none absolute inset-0 overflow-hidden opacity-0 transition-opacity duration-500 group-hover:opacity-15"
         style={{
           background: useMotionTemplate`
               radial-gradient(
@@ -60,7 +60,7 @@ export const HoverCard = ({ children, className, style }: HoverCardProps) => {
 
       {/* Inner glow effect - similar to card::before */}
       <motion.div
-        className="pointer-events-none absolute inset-0 overflow-hidden rounded-xl opacity-0 transition-opacity duration-500 group-hover:opacity-15"
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-[1.25rem] opacity-0 transition-opacity duration-500 group-hover:opacity-15"
         style={{
           background: useMotionTemplate`
               radial-gradient(

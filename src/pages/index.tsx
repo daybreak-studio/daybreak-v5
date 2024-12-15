@@ -15,6 +15,7 @@ import MasonryGrid from "@/components/masonry-grid";
 import { useScramble } from "use-scramble";
 import { WidgetDataProvider } from "@/components/widgets/context/WidgetDataContext";
 import { Widget } from "@/components/widgets/grid/types";
+import { GradientBackground } from "@/components/gradient-background";
 
 export default function Home({
   homeData,
@@ -59,72 +60,77 @@ export default function Home({
   };
 
   return (
-    <main className="relative">
-      <motion.div className="fixed inset-0">
-        <div className="flex h-full flex-col items-center justify-center space-y-8">
-          <h1
-            ref={headingRef}
-            onMouseOver={replay}
-            onFocus={replay}
-            className="max-w-[16ch] text-center text-3xl font-[450] text-zinc-400 lg:text-4xl"
-          />
-          <WidgetDataProvider
-            data={{
-              widgets: homeData.widgets as Widget[],
-              clients: clientsData,
-            }}
-          >
-            <WidgetGrid />
-          </WidgetDataProvider>
-        </div>
-      </motion.div>
-      {/* Drawer Content */}
-      {windowHeight !== null && homeData && (
-        <Drawer windowHeight={windowHeight}>
-          {/* Mission Statement */}
-          <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
-            <div>
-              <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
-                {homeData.missionStatement && (
+    <>
+      {/* <GradientBackground /> */}
+      <main className="relative">
+        <motion.div className="fixed inset-0">
+          <div className="flex h-full flex-col items-center justify-center space-y-8">
+            <h1
+              ref={headingRef}
+              onMouseOver={replay}
+              onFocus={replay}
+              className="max-w-[16ch] text-center text-3xl font-[450] text-zinc-400/50 lg:text-4xl"
+            />
+            <WidgetDataProvider
+              data={{
+                widgets: homeData.widgets as Widget[],
+                clients: clientsData,
+              }}
+            >
+              <WidgetGrid />
+            </WidgetDataProvider>
+          </div>
+        </motion.div>
+        {/* Drawer Content */}
+        {windowHeight !== null && homeData && (
+          <Drawer windowHeight={windowHeight}>
+            {/* Mission Statement */}
+            <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
+              <div>
+                <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
+                  {homeData.missionStatement && (
+                    <PortableText
+                      value={homeData.missionStatement}
+                      components={components}
+                    />
+                  )}
+                </Reveal>
+
+                {/* Carousel - Lazy load when drawer is open */}
+                <Reveal>
+                  {homeData.media && (
+                    <CarouselComponent media={homeData.media} />
+                  )}
+                </Reveal>
+              </div>
+
+              {/* About Us - Simplified animation */}
+              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
+                <h2 className="mb-4 text-lg text-zinc-400 md:text-xl">
+                  About Us
+                </h2>
+                {homeData?.aboutUs && (
                   <PortableText
-                    value={homeData.missionStatement}
+                    value={homeData.aboutUs}
                     components={components}
                   />
                 )}
               </Reveal>
 
-              {/* Carousel - Lazy load when drawer is open */}
-              <Reveal>
-                {homeData.media && <CarouselComponent media={homeData.media} />}
+              {/* Newsfeed with Masonry Layout */}
+              <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
+                <h2 className="mb-4 text-lg text-zinc-400 md:text-xl">
+                  Newsfeed
+                </h2>
+                <MasonryGrid articles={homeData?.newsfeed || []} />
               </Reveal>
             </div>
 
-            {/* About Us - Simplified animation */}
-            <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
-              <h2 className="mb-4 text-lg text-zinc-400 md:text-xl">
-                About Us
-              </h2>
-              {homeData?.aboutUs && (
-                <PortableText
-                  value={homeData.aboutUs}
-                  components={components}
-                />
-              )}
-            </Reveal>
-
-            {/* Newsfeed with Masonry Layout */}
-            <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
-              <h2 className="mb-4 text-lg text-zinc-400 md:text-xl">
-                Newsfeed
-              </h2>
-              <MasonryGrid articles={homeData?.newsfeed || []} />
-            </Reveal>
-          </div>
-
-          <Footer />
-        </Drawer>
-      )}
-    </main>
+            <Footer />
+          </Drawer>
+        )}
+      </main>
+    </>
   );
 }
 
