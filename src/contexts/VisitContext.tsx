@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useBaseRoute } from "@/hooks/useBaseRoute";
+import { useDebug } from "./DebugContext";
 
 type VisitStatus = "unknown" | "new" | "returning";
 
@@ -19,22 +20,31 @@ export const VisitProvider: React.FC<{ children: React.ReactNode }> = ({
   const [visitStatus, setVisitStatus] = useState<VisitStatus>("unknown");
   const [isLoading, setIsLoading] = useState(true);
   const { isBaseRoute } = useBaseRoute();
+  const { debug } = useDebug();
 
   useEffect(() => {
+    // In debug mode, always treat as new visit
+    if (debug) {
+      Cookies.remove("hasVisitedBefore");
+      setVisitStatus(isBaseRoute ? "new" : "returning");
+      setIsLoading(false);
+      return;
+    }
+
     const hasVisitedBefore = Cookies.get("hasVisitedBefore");
 
-    // If they haven't visited before, set the cookie immediately
-    if (!hasVisitedBefore) {
+    // Only set as "new" if they haven't visited before AND they're on a base route
+    const newStatus = !hasVisitedBefore && isBaseRoute ? "new" : "returning";
+    setVisitStatus(newStatus);
+    setIsLoading(false);
+  }, [isBaseRoute, debug]);
+
+  const markVisitComplete = () => {
+    // Only set cookie if not in debug mode
+    if (!debug) {
       const thirtyMinutes = new Date(new Date().getTime() + 30 * 60 * 1000);
       Cookies.set("hasVisitedBefore", "true", { expires: thirtyMinutes });
     }
-
-    // Only set as "new" if they haven't visited before AND they're on a base route
-    setVisitStatus(!hasVisitedBefore && isBaseRoute ? "new" : "returning");
-    setIsLoading(false);
-  }, [isBaseRoute]);
-
-  const markVisitComplete = () => {
     setVisitStatus("returning");
   };
 

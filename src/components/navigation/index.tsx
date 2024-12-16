@@ -119,7 +119,7 @@ export default function Navigation() {
       }}
     >
       <motion.div
-        className={`container relative mt-4 flex w-fit items-stretch justify-center rounded-xl p-1 mix-blend-multiply md:rounded-2xl`}
+        className={`container relative mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl p-1 mix-blend-multiply md:rounded-2xl`}
         initial={{
           boxShadow:
             visitStatus === "new"

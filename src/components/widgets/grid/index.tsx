@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useViewport } from "@/hooks/useViewport";
 import { useWidgetData } from "@/components/widgets/context/WidgetDataContext";
+import { useDebug } from "@/contexts/DebugContext";
 import { Widget } from "./types";
 import Twitter from "../variants/twitter";
 import Media from "../variants/media";
@@ -27,12 +28,50 @@ const GRID_CONFIG = {
 
 type GridBreakpoint = keyof typeof GRID_CONFIG.CELL_SIZES;
 
+const DebugGridOverlay = () => {
+  const { breakpoint } = useViewport();
+  const gridBreakpoint = breakpoint as GridBreakpoint;
+
+  return (
+    <div
+      className="absolute inset-4 z-50 grid"
+      style={{
+        gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px)`,
+        gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px)`,
+        gap: `${GRID_CONFIG.GAP}px`,
+        pointerEvents: "none",
+      }}
+    >
+      {Array.from({ length: GRID_CONFIG.COLUMNS * GRID_CONFIG.ROWS }).map(
+        (_, i) => {
+          const col = (i % GRID_CONFIG.COLUMNS) + 1;
+          const row = Math.floor(i / GRID_CONFIG.COLUMNS) + 1;
+          return (
+            <>
+              <div
+                key={i}
+                className="border-1 z-10 flex items-center justify-center border border-zinc-500/25 bg-zinc-300/30 text-xs font-medium"
+              >
+                <h2 className="border-1 rounded-3xl border border-zinc-500/25 bg-zinc-50 p-2 text-xs font-medium text-zinc-500">
+                  R{row} C{col}
+                </h2>
+              </div>
+            </>
+          );
+        },
+      )}
+    </div>
+  );
+};
+
 export function WidgetGrid() {
   const { breakpoint } = useViewport();
   const widgets = useWidgetData<Widget[]>("widgets");
   const gridBreakpoint = breakpoint as GridBreakpoint;
   const containerRef = useRef<HTMLDivElement>(null);
   const lenisRef = useRef<Lenis | null>(null);
+  const { debug } = useDebug();
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const centerScroll = () => {
     if (!containerRef.current) return;
@@ -77,7 +116,8 @@ export function WidgetGrid() {
       className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1"
     >
       <div
-        className="grid"
+        ref={gridRef}
+        className="relative grid"
         style={{
           gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px)`,
           gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px)`,
@@ -85,6 +125,7 @@ export function WidgetGrid() {
           padding: "1rem",
         }}
       >
+        {debug && <DebugGridOverlay />}
         {widgets?.map((widget) => {
           const Widget = WIDGETS[widget._type];
           if (!Widget) return null;
