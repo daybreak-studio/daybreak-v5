@@ -19,9 +19,9 @@ const GRID_CONFIG = {
   GAP: 10,
   CELL_SIZES: {
     sm: 100,
-    md: 120,
-    lg: 140,
-    xl: 160,
+    md: 130,
+    lg: 160,
+    xl: 180,
   } as const,
 } as const;
 

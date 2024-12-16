@@ -47,7 +47,7 @@ const DrawerButton = ({
       >
         <motion.button
           className={clsx(
-            "flex h-8 w-8 items-center justify-center rounded-full bg-white/80 shadow-sm shadow-zinc-300 transition-all duration-300 hover:scale-110 md:shadow-md",
+            "flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm shadow-zinc-300 transition-all duration-300 hover:scale-110 md:shadow-md",
             isOpen ? "sticky" : "absolute",
           )}
           initial={{ opacity: 0 }}
@@ -79,27 +79,43 @@ const Drawer: React.FC<DrawerProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const PEEK_HEIGHT = windowHeight * 0.06;
   const HOVER_PEEK_AMOUNT = 200;
+  const lenisRef = useRef<Lenis | null>(null);
+  const [contentOpacity, setContentOpacity] = useState(1);
 
   useEffect(() => {
     if (!contentRef.current) return;
 
-    const lenis = new Lenis({
+    lenisRef.current = new Lenis({
       wrapper: contentRef.current,
-      // syncTouch: true,
       autoRaf: true,
+      smoothWheel: true,
+      syncTouch: true,
     });
 
+    // Cleanup
     return () => {
-      lenis.destroy();
+      if (lenisRef.current) {
+        lenisRef.current.destroy();
+      }
     };
   }, [contentRef]);
 
   const toggleDrawer = () => {
+    if (isOpen && lenisRef.current && contentRef.current) {
+      setContentOpacity(0);
+
+      lenisRef.current.scrollTo(0, {
+        duration: 0.3,
+        easing: (t) => 1 - Math.cos((t * Math.PI) / 2),
+        lerp: 0.1,
+        onComplete: () => {
+          setContentOpacity(1);
+        },
+      });
+    }
+
     setIsOpen(!isOpen);
     setIsHovered(false);
-    if (isOpen && contentRef.current) {
-      contentRef.current.scrollTop = 0;
-    }
   };
 
   useEffect(() => {
@@ -119,7 +135,7 @@ const Drawer: React.FC<DrawerProps> = ({
     <motion.div
       id="drawer"
       className={clsx(
-        "fixed inset-x-0 bottom-0 z-50 bg-white/90 shadow backdrop-blur-2xl",
+        "fixed inset-x-0 bottom-0 z-50 overflow-hidden rounded-2xl bg-white/90 shadow backdrop-blur-2xl",
         className,
       )}
       style={{ height: windowHeight }}
@@ -158,14 +174,17 @@ const Drawer: React.FC<DrawerProps> = ({
           isOpen ? "overflow-y-auto" : "overflow-hidden",
         )}
         animate={{
-          opacity: isOpen ? 1 : 0.95,
+          opacity: isOpen ? 1 : contentOpacity,
         }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.05 }}
       >
-        <div className="relative">
+        <div
+          className="relative"
+          // key={isOpen ? "drawer-open" : "drawer-closed"}
+        >
           <motion.div
-            className="absolute top-0 z-20 flex w-full cursor-pointer justify-center p-36"
             onClick={toggleDrawer}
+            className="absolute top-0 z-20 flex w-full cursor-pointer justify-center p-36"
             animate={isHovered && !isOpen ? { y: -4 } : { y: 0 }}
             transition={{ duration: 0.2 }}
           />

@@ -28,7 +28,7 @@ export default function Twitter({ data }: TwitterProps) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <p className="mb-2 line-clamp-[7] text-xs xl:text-base">
+            <p className="mb-2 line-clamp-[7] text-xs md:line-clamp-[8] xl:text-base">
               {data.tweet}
             </p>
             <div className="flex justify-between">
