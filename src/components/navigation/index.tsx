@@ -5,7 +5,7 @@ import Link from "next/link";
 import Logo from "/public/brand/daybreak-icon.svg";
 import Wordmark from "/public/brand/daybreak-wordmark.svg";
 import { useVisit } from "@/contexts/VisitContext";
-import { useBaseRoute } from "../../hooks/useBaseRoute";
+import { useHomeRoute } from "@/hooks/useHomeRoute";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import {
   Ellipsis,
@@ -16,6 +16,7 @@ import {
   Maximize2,
   Menu,
 } from "lucide-react";
+import { useDebug } from "@/contexts/DebugContext";
 
 const tabs = [
   { href: "/", label: "Home" },
@@ -27,15 +28,17 @@ const tabs = [
 
 export default function Navigation() {
   const { visitStatus, isLoading, markVisitComplete } = useVisit();
-  const { isBaseRoute, currentBasePath } = useBaseRoute();
+  const { isHomeRoute, currentPath } = useHomeRoute();
   const [isOpen, setIsOpen] = useState(false);
+  const { debug } = useDebug();
 
   useEffect(() => {
-    if (visitStatus === "new" && isBaseRoute) {
-      runAnimationSequence();
-      markVisitComplete();
+    if (visitStatus === "new" && isHomeRoute) {
+      runAnimationSequence().then(() => {
+        markVisitComplete();
+      });
     }
-  }, [visitStatus, isBaseRoute, markVisitComplete]);
+  }, [visitStatus, isHomeRoute, debug, markVisitComplete]);
 
   const runAnimationSequence = async () => {
     await animate([
@@ -109,7 +112,7 @@ export default function Navigation() {
     return null;
   }
 
-  const isValidPath = tabs.some((tab) => tab.href === currentBasePath);
+  const isValidPath = tabs.some((tab) => tab.href === currentPath);
 
   return (
     <motion.nav
@@ -174,7 +177,7 @@ export default function Navigation() {
                   </motion.div>
                 </motion.div>
               </motion.div>
-              {isValidPath && currentBasePath === tab.href && (
+              {isValidPath && currentPath === tab.href && (
                 <Pill isFirstVisit={visitStatus === "new"} />
               )}
             </Link>
@@ -206,7 +209,7 @@ export default function Navigation() {
                 <Link href={tab.href} className="relative z-10">
                   {tab.label}
                 </Link>
-                {isValidPath && currentBasePath === tab.href && (
+                {isValidPath && currentPath === tab.href && (
                   <Pill isFirstVisit={visitStatus === "new"} />
                 )}
               </motion.h1>

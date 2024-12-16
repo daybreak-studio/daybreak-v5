@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { useBaseRoute } from "@/hooks/useBaseRoute";
 import { useDebug } from "./DebugContext";
 
 type VisitStatus = "unknown" | "new" | "returning";
@@ -19,33 +18,43 @@ export const VisitProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [visitStatus, setVisitStatus] = useState<VisitStatus>("unknown");
   const [isLoading, setIsLoading] = useState(true);
-  const { isBaseRoute } = useBaseRoute();
+  const router = useRouter();
+  const isHomePage = router.pathname === "/";
   const { debug } = useDebug();
 
   useEffect(() => {
-    // In debug mode, always treat as new visit
+    // Clear any existing cookie in debug mode
     if (debug) {
       Cookies.remove("hasVisitedBefore");
-      setVisitStatus(isBaseRoute ? "new" : "returning");
+    }
+
+    // Always treat as new visit in debug mode on homepage
+    if (debug && isHomePage) {
+      console.log("Debug mode active on homepage - forcing new status");
+      setVisitStatus("new");
       setIsLoading(false);
       return;
     }
 
     const hasVisitedBefore = Cookies.get("hasVisitedBefore");
-
-    // Only set as "new" if they haven't visited before AND they're on a base route
-    const newStatus = !hasVisitedBefore && isBaseRoute ? "new" : "returning";
+    const newStatus = !hasVisitedBefore && isHomePage ? "new" : "returning";
+    console.log("Setting visit status:", {
+      newStatus,
+      debug,
+      isHomePage,
+      hasVisitedBefore,
+    });
     setVisitStatus(newStatus);
     setIsLoading(false);
-  }, [isBaseRoute, debug]);
+  }, [isHomePage, debug]);
 
   const markVisitComplete = () => {
-    // Only set cookie if not in debug mode
+    // Don't mark complete in debug mode
     if (!debug) {
       const thirtyMinutes = new Date(new Date().getTime() + 30 * 60 * 1000);
       Cookies.set("hasVisitedBefore", "true", { expires: thirtyMinutes });
+      setVisitStatus("returning");
     }
-    setVisitStatus("returning");
   };
 
   return (
