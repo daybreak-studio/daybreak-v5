@@ -1,7 +1,6 @@
+import { EASINGS } from "@/components/animations/easings";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
-
-import { AnimationConfig } from "@/components/animations/AnimationConfig";
 import { useRef, useEffect, useState, forwardRef } from "react";
 
 interface NavProps {
@@ -42,7 +41,7 @@ const CaseStudyNav = forwardRef<HTMLDivElement, NavProps>(
 
     const transition = {
       duration: 0.4,
-      ease: [0.32, 0.72, 0, 1],
+      ease: EASINGS.easeOutQuart,
     };
 
     const originStyles = { transformOrigin: "bottom center" };

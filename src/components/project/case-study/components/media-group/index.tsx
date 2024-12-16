@@ -1,9 +1,9 @@
 import { motion, useInView } from "framer-motion";
 import { MediaRenderer } from "@/components/media-renderer";
 import { useEffect, useRef } from "react";
-import { AnimationConfig } from "@/components/animations/AnimationConfig";
 import { cn } from "@/lib/utils";
 import { MediaItem } from "@/sanity/lib/media";
+import { EASINGS } from "@/components/animations/easings";
 
 interface MediaGroupProps {
   id: string;
@@ -56,8 +56,8 @@ export default function MediaGroup({
         opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
       }}
       transition={{
-        duration: 0.6,
-        ease: AnimationConfig.EASE_OUT,
+        duration: 0.4,
+        ease: EASINGS.easeOutQuart,
       }}
       className={cn(
         "grid origin-center cursor-pointer gap-4",

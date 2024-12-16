@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
@@ -7,7 +7,7 @@ import { getProjectFirstMedia } from "@/sanity/lib/media";
 import ProjectPreview from "@/components/project/preview";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { ChevronRight } from "lucide-react";
-import { AnimationConfig } from "@/components/animations/AnimationConfig";
+import { IMAGE_ANIMATION } from "@/components/project/animations";
 
 interface ProjectSelectorProps {
   data: Clients;
@@ -21,52 +21,52 @@ export default function ProjectSelector({
   const router = useRouter();
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+    <motion.div className="grid grid-cols-1 gap-6 md:grid-cols-2">
       <div className="flex w-full items-center justify-center p-4 text-center">
         <h2 className="text-center text-3xl text-zinc-600">{data.name}</h2>
       </div>
-      {data.projects?.map((project) => {
-        const mediaAsset = getProjectFirstMedia(project);
-        if (!project.category) return null;
+      <AnimatePresence mode="popLayout">
+        {data.projects?.map((project, index) => {
+          const mediaAsset = getProjectFirstMedia(project);
+          if (!project.category) return null;
 
-        const isFirstProject = project === data.projects?.[0];
-        const projectLayoutId = `image-${data.slug?.current}-${project.category}`;
+          const shouldUseLayoutId = index === 0;
 
-        return (
-          <motion.div
-            key={project._key}
-            onClick={() => {
-              router.push(
-                `/work/${data.slug?.current}/${project.category}`,
-                undefined,
-                { shallow: true },
-              );
-            }}
-            className="cursor-pointer"
-          >
+          return (
             <motion.div
-              layout
-              className="flex items-center justify-center space-x-4 rounded-2xl bg-zinc-100 p-3"
+              key={project._key}
+              onClick={() => {
+                router.push(
+                  `/work/${data.slug?.current}/${project.category}`,
+                  undefined,
+                  { shallow: true },
+                );
+              }}
+              className="cursor-pointer"
             >
-              <motion.div layout className="relative aspect-square w-20">
-                <MediaRenderer
-                  fill
-                  layout
-                  layoutId={projectLayoutId}
-                  media={mediaAsset}
-                  className="rounded-xl duration-300 group-hover:scale-105"
-                />
+              <motion.div className="flex items-center justify-center space-x-4 rounded-2xl bg-zinc-100 p-3">
+                <motion.div
+                  {...IMAGE_ANIMATION}
+                  layoutId={shouldUseLayoutId ? imageLayoutId : undefined}
+                  className="relative aspect-square w-20"
+                >
+                  <MediaRenderer
+                    fill
+                    media={mediaAsset}
+                    className="rounded-xl duration-300 group-hover:scale-105"
+                  />
+                </motion.div>
+                <div className="flex w-full items-center justify-between">
+                  <h3 className="text-md capitalize text-zinc-700">
+                    {project.category}
+                  </h3>
+                  <ChevronRight className="h-4 w-4" />
+                </div>
               </motion.div>
-              <div className="flex w-full items-center justify-between">
-                <h3 className="text-md capitalize text-zinc-700">
-                  {project.category}
-                </h3>
-                <ChevronRight className="h-4 w-4" />
-              </div>
             </motion.div>
-          </motion.div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </AnimatePresence>
+    </motion.div>
   );
 }

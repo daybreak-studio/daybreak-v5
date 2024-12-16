@@ -1,9 +1,8 @@
-import { motion, animate } from "framer-motion";
+import { motion, animate, easeOut } from "framer-motion";
 import { CaseStudy, Clients } from "@/sanity/types";
 import { useCallback, useEffect, useState, useRef, Fragment } from "react";
 import CaseStudyNav from "./components/nav";
 import MediaGroup from "./components/media-group";
-import { AnimationConfig } from "@/components/animations/AnimationConfig";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
 
@@ -183,14 +182,14 @@ export default function ProjectCaseStudy({
       className="hide-scrollbar h-screen overflow-y-auto px-4 py-8 pt-24 xl:px-8 xl:pt-32"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4, ease: AnimationConfig.EASE_OUT }}
+      transition={{ duration: 0.4, ease: easeOut }}
     >
       {/* Project Title */}
       <motion.h1
         className="mb-8 py-24 text-center text-4xl xl:text-5xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: AnimationConfig.EASE_OUT }}
+        transition={{ duration: 0.6, ease: easeOut }}
       >
         {project.heading}
       </motion.h1>
