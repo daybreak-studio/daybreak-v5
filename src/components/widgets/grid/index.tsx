@@ -114,6 +114,10 @@ export function WidgetGrid() {
 
   return (
     <motion.div
+      initial={{ opacity: 0, filter: "blur(10px)" }}
+      animate={{ opacity: 1, filter: "blur(0px)" }}
+      exit={{ opacity: 0, filter: "blur(10px)" }}
+      transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
       ref={containerRef}
       className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1"
     >
