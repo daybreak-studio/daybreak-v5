@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { WidgetSize } from "./types";
-import { HoverCard } from "@/components/hover-card";
+import { HoverCard } from "@/components/animations/hover";
 
 interface BaseWidgetProps {
   position: { row: number; column: number };

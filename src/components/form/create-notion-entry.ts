@@ -1,5 +1,5 @@
 import { Client } from "@notionhq/client";
-import { ContactFormValues } from "@/lib/contact/schemas/contact-form";
+import { ContactFormValues } from "./schema";
 
 const notion = new Client({
   auth: process.env.NOTION_API_KEY,

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { ContactFormValues } from "@/lib/contact/schemas/contact-form";
+import { ContactFormValues } from "./schema";
 
 const STORAGE_KEY = "contact_form_data";
 const EXPIRY_DAYS = 7;

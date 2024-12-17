@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
-import { useVisit } from "@/contexts/VisitContext";
+import { useVisit } from "@/contexts/visit";
 import { useEffect, useRef } from "react";
-import { EASINGS } from "../animations/easings";
+import { EASINGS } from "./animations/easings";
 
 interface LayoutProps {
   children: React.ReactNode;

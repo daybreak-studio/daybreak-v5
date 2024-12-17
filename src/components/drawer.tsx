@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 import clsx from "clsx";
 import Lenis from "lenis";
-import { useViewport } from "@/hooks/useViewport";
+import { useViewport } from "@/hooks/use-viewport";
 
 interface DrawerProps {
   children: ReactNode;

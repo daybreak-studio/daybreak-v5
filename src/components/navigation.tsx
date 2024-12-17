@@ -4,8 +4,8 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import Logo from "/public/brand/daybreak-icon.svg";
 import Wordmark from "/public/brand/daybreak-wordmark.svg";
-import { useVisit } from "@/contexts/VisitContext";
-import { usePathname } from "@/hooks/usePathname";
+import { useVisit } from "@/contexts/visit";
+import { usePathname } from "@/hooks/use-pathname";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import {
   Ellipsis,
@@ -16,7 +16,7 @@ import {
   Maximize2,
   Menu,
 } from "lucide-react";
-import { useDebug } from "@/contexts/DebugContext";
+import { useDebug } from "@/contexts/debug";
 
 const tabs = [
   { href: "/", label: "Home" },

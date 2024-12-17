@@ -2,7 +2,7 @@ import { useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { urlFor, getMuxThumbnailUrl } from "@/sanity/lib/image";
-import { useLowPowerMode } from "@/hooks/useLowPowerMode";
+import { useLowPowerMode } from "@/hooks/use-low-power-mode";
 import { MediaItem, VideoItem } from "@/sanity/lib/media";
 import { cn } from "@/lib/utils";
 

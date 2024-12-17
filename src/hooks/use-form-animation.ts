@@ -3,7 +3,7 @@ export const useFormAnimation = () => {
   const getScale = (index: number, currentIndex: number) => {
     if (index === currentIndex) return 1;
     if (index < currentIndex) return 0.85;
-    return 1.15;
+    return 1.2;
   };
 
   const getRotation = (index: number, currentIndex: number) => {
@@ -15,7 +15,7 @@ export const useFormAnimation = () => {
   const getY = (index: number, currentIndex: number) => {
     if (index === currentIndex) return 0;
     if (index < currentIndex) return -100;
-    return window.innerHeight * 0.75;
+    return window.innerHeight * 0.65; // Shows ~15% of the next card
   };
 
   const getCardVisibility = (index: number, currentIndex: number) => {

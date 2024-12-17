@@ -1,4 +1,4 @@
-import { HoverCard } from "@/components/hover-card";
+import { HoverCard } from "@/components/animations/hover";
 import { BaseWidget } from "../grid/base-widget";
 import { TwitterWidget } from "../grid/types";
 import TwitterLogo from "/public/icons/twitter.svg";

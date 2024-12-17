@@ -7,7 +7,7 @@ import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { MediaRenderer } from "@/components/media-renderer";
 import { MediaItem } from "@/sanity/lib/media";
 import { useRef } from "react";
-import { HoverCard } from "../hover-card";
+import { HoverCard } from "@/components/animations/hover";
 type CarouselWidth = "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
 
 const sizeOptions: Record<CarouselWidth, string> = {

@@ -1,9 +1,9 @@
 import React, { memo } from "react";
 import { MediaRenderer } from "@/components/media-renderer";
 import Reveal from "@/components/animations/reveal";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/lib/utils";
 import type { Home } from "@/sanity/types";
-import { HoverCard } from "../hover-card";
+import { HoverCard } from "@/components/animations/hover";
 
 type ArticleType = NonNullable<Home["newsfeed"]>[number];
 

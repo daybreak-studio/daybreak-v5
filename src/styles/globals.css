@@ -152,11 +152,6 @@
   .pb-safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
   }
-
-  .hover-card-gradient {
-    background-color: rgba(23, 23, 23, 0.9);
-    backdrop-filter: blur(4px);
-  }
 }
 
 @keyframes slide {

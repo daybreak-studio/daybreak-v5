@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
-import { useDebug } from "./DebugContext";
+import { useDebug } from "./debug";
 
 type VisitStatus = "unknown" | "new" | "returning";
 

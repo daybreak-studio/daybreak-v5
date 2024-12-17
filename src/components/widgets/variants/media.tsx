@@ -1,7 +1,7 @@
 import { BaseWidget } from "../grid/base-widget";
 import { MediaWidget } from "../grid/types";
 import { MediaRenderer } from "../../media-renderer";
-import { HoverCard } from "@/components/hover-card";
+import { HoverCard } from "@/components/animations/hover";
 
 interface MediaProps {
   data: MediaWidget;

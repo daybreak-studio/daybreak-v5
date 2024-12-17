@@ -34,7 +34,7 @@ const FormCardRoot = ({ children, className }: FormCardRootProps) => (
     <div
       className={cn(
         "frame-inner flex w-[90vw] flex-col p-8 sm:w-[32rem] md:p-10",
-        "bg-gradient-to-b from-[#FCFCF6] via-[#FEF6F3] to-[#F9F9FA]",
+        "bg-gradient-to-b from-[#FDFCFA] via-[#FDF9F7] to-[#FCFCFC]",
         "backdrop-blur-[2px]",
         className,
       )}

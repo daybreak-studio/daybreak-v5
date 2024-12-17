@@ -4,7 +4,6 @@ import { ProjectTypes } from "@/lib/contact/schemas/contact-form";
 import { UseFormReturn } from "react-hook-form";
 import { ContactFormValues } from "@/lib/contact/schemas/contact-form";
 import { AnimatePresence, motion } from "framer-motion";
-import { Clipboard, ClipboardCheck } from "lucide-react";
 import { EASINGS } from "@/components/animations/easings";
 import {
   FormControl,
@@ -18,7 +17,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import {
-  DocumentDuplicateIcon,
   ClipboardDocumentCheckIcon,
   ClipboardDocumentIcon,
 } from "@heroicons/react/24/solid";
@@ -69,7 +67,7 @@ export const createFormSteps = ({
               <button
                 className={cn(
                   "flex items-center justify-center gap-2 rounded-xl hover:cursor-pointer",
-                  "focus-visible:rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 focus-visible:ring-offset-8",
+                  "focus-visible: outline-white focus-visible:rounded-md focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-stone-300 focus-visible:ring-offset-8",
                 )}
                 onClick={() => {
                   navigator.clipboard.writeText("hello@daybreak.studio");
@@ -112,6 +110,61 @@ export const createFormSteps = ({
               </button>
             </div>
             <FormCTAButton onClick={nextStep}>Get Started</FormCTAButton>
+          </div>
+        </FormCard.Content>
+      </FormCard.Root>
+    ),
+  },
+  {
+    id: "personal-info",
+    content: (
+      <FormCard.Root>
+        <FormCard.Header className="space-y-6">
+          <FormCard.Navigation
+            current={2}
+            total={5}
+            onNext={nextStep}
+            onPrev={prevStep}
+          />
+          <FormCard.Title>Tell us about yourself</FormCard.Title>
+        </FormCard.Header>
+        <FormCard.Content className="mt-8">
+          <div className="flex flex-col gap-4 md:gap-6">
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Jane Smith"
+                      {...field}
+                      className="w-full rounded-2xl bg-stone-900/[0.03] p-4"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="jane@company.com"
+                      {...field}
+                      className="w-full rounded-2xl bg-stone-900/[0.03] p-4"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormCTAButton onClick={nextStep}>Continue</FormCTAButton>
           </div>
         </FormCard.Content>
       </FormCard.Root>
@@ -187,40 +240,6 @@ export const createFormSteps = ({
         </FormCard.Header>
         <FormCard.Content className="mt-8">
           <div className="flex flex-col gap-4 md:gap-6">
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Jane Smith"
-                      {...field}
-                      className="w-full rounded-2xl bg-stone-900/[0.03] p-4"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="jane@company.com"
-                      {...field}
-                      className="w-full rounded-2xl bg-stone-900/[0.03] p-4"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="message"
