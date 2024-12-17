@@ -5,7 +5,7 @@ import Link from "next/link";
 import Logo from "/public/brand/daybreak-icon.svg";
 import Wordmark from "/public/brand/daybreak-wordmark.svg";
 import { useVisit } from "@/contexts/VisitContext";
-import { useHomeRoute } from "@/hooks/useHomeRoute";
+import { usePathname } from "@/hooks/usePathname";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import {
   Ellipsis,
@@ -28,7 +28,8 @@ const tabs = [
 
 export default function Navigation() {
   const { visitStatus, isLoading, markVisitComplete } = useVisit();
-  const { isHomeRoute, currentPath } = useHomeRoute();
+  const { isHomeRoute, currentPath, basePath } = usePathname();
+  console.log(basePath);
   const [isOpen, setIsOpen] = useState(false);
   const { debug } = useDebug();
 
@@ -112,8 +113,10 @@ export default function Navigation() {
     return null;
   }
 
-  const isValidPath = tabs.some((tab) => tab.href === currentPath);
+  const isValidPath = tabs.some((tab) => tab.href === basePath);
 
+  console.log(isValidPath);
+  console.log(basePath);
   return (
     <motion.nav
       className="parent pointer-events-auto fixed z-50 mx-auto flex h-fit w-full items-center justify-center"
@@ -177,7 +180,7 @@ export default function Navigation() {
                   </motion.div>
                 </motion.div>
               </motion.div>
-              {isValidPath && currentPath === tab.href && !isLoading && (
+              {isValidPath && basePath === tab.href && !isLoading && (
                 <Pill isFirstVisit={visitStatus === "new"} />
               )}
             </Link>
@@ -209,7 +212,7 @@ export default function Navigation() {
                 <Link href={tab.href} className="relative z-10">
                   {tab.label}
                 </Link>
-                {isValidPath && currentPath === tab.href && !isLoading && (
+                {isValidPath && basePath === tab.href && !isLoading && (
                   <Pill isFirstVisit={visitStatus === "new"} />
                 )}
               </motion.h1>
@@ -227,7 +230,7 @@ const Pill = ({ isFirstVisit }: { isFirstVisit: boolean }) => {
       layout
       // layoutRoot
       layoutId="pill"
-      className="pill absolute inset-0 z-0 rounded-md bg-white/50 md:rounded-xl"
+      className="pill absolute inset-0 z-0 rounded-md border-[1px] border-zinc-50 bg-white/50 shadow-lg shadow-zinc-500/5 md:rounded-xl"
       style={{ originY: "top" }}
       initial={{ opacity: isFirstVisit ? 0 : 1 }}
       transition={{

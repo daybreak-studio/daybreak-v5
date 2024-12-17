@@ -8,7 +8,6 @@ interface TwitterProps {
 }
 
 export default function Twitter({ data }: TwitterProps) {
-  console.log(data);
   const renderContent = () => {
     switch (data.size) {
       case "1x1":

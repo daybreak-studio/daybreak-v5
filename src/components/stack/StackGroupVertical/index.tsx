@@ -14,9 +14,6 @@ const StackGroupVetical = ({ children }: Props) => {
     target: containerRef,
     offset: ["start start", "end start"],
   });
-  // useMotionValueEvent(scrollYProgress, "change", (latest) =>
-  //   console.log(latest),
-  // );
 
   return (
     <>

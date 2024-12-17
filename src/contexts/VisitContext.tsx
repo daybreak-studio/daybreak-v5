@@ -30,7 +30,6 @@ export const VisitProvider: React.FC<{ children: React.ReactNode }> = ({
 
     // Always treat as new visit in debug mode on homepage
     if (debug && isHomePage) {
-      console.log("Debug mode active on homepage - forcing new status");
       setVisitStatus("new");
       setIsLoading(false);
       return;
@@ -38,12 +37,7 @@ export const VisitProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const hasVisitedBefore = Cookies.get("hasVisitedBefore");
     const newStatus = !hasVisitedBefore && isHomePage ? "new" : "returning";
-    console.log("Setting visit status:", {
-      newStatus,
-      debug,
-      isHomePage,
-      hasVisitedBefore,
-    });
+
     setVisitStatus(newStatus);
     setIsLoading(false);
   }, [isHomePage, debug]);

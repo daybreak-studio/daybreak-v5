@@ -22,7 +22,6 @@ const DrawerButton = ({
 }) => {
   const { breakpoint } = useViewport();
   const isMobile = breakpoint === "sm";
-  console.log(isMobile);
 
   return (
     <div className={clsx("absolute flex w-full justify-center p-4 md:p-8")}>

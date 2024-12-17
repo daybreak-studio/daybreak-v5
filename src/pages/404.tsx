@@ -51,7 +51,7 @@ export default function NotFound() {
         >
           <Link
             href="/"
-            className="group relative text-zinc-400 transition-colors hover:text-zinc-500/50"
+            className="group relative text-zinc-500/50 transition-colors duration-300 hover:text-zinc-500/75"
           >
             Let&apos;s get you back home?
           </Link>
