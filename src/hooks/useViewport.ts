@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 type Breakpoint = "sm" | "md" | "lg" | "xl";
 
 export function useViewport() {
-  const [breakpoint, setBreakpoint] = useState<Breakpoint>("lg");
+  const [breakpoint, setBreakpoint] = useState<Breakpoint | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     const handleResize = () => {
