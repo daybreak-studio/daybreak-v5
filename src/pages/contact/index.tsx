@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
-import { useFormAnimation } from "@/hooks/use-form-animation";
+import { useFormAnimation } from "@/lib/hooks/use-form-animation";
 import { createFormSteps } from "@/components/form/form-steps";
 
 export default function ContactPage() {

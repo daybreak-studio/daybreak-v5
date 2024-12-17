@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import { useViewport } from "@/hooks/use-viewport";
+import { useViewport } from "@/lib/hooks/use-viewport";
 import { useWidgetData } from "@/components/widgets/grid/context";
-import { useDebug } from "@/contexts/debug";
+import { useDebug } from "@/lib/contexts/debug";
 import { Widget } from "./types";
 import Twitter from "../variants/twitter";
 import Media from "../variants/media";

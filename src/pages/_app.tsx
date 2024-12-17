@@ -5,9 +5,9 @@ import Navigation from "@/components/navigation";
 import Layout from "@/components/layout";
 import { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
-import { VisitProvider } from "@/contexts/visit";
-import { DebugProvider } from "@/contexts/debug";
-import { usePathname } from "@/hooks/use-pathname";
+import { VisitProvider } from "@/lib/contexts/visit";
+import { DebugProvider } from "@/lib/contexts/debug";
+import { usePathname } from "@/lib/hooks/use-pathname";
 
 const aspekta = localFont({
   src: "../../public/fonts/AspektaVF.woff2",

@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
-import { useVisit } from "@/contexts/visit";
+import { useVisit } from "@/lib/contexts/visit";
 import { useEffect, useRef } from "react";
 import { EASINGS } from "./animations/easings";
 
