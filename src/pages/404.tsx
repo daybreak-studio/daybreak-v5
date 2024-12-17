@@ -24,12 +24,12 @@ export default function NotFound() {
             ease: EASINGS.easeOutExpo,
           }}
         >
-          <Logo className="h-8 w-8 fill-current text-zinc-500/50" />
+          <Logo className="h-8 w-8 fill-current text-stone-500/50" />
         </motion.div>
 
         {/* Text Content */}
         <motion.h1
-          className="text-zinc-500/50"
+          className="text-stone-500/50"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
@@ -51,7 +51,7 @@ export default function NotFound() {
         >
           <Link
             href="/"
-            className="group relative text-zinc-500/50 transition-colors duration-300 hover:text-zinc-500/75"
+            className="group relative text-stone-500/50 transition-colors duration-300 hover:text-stone-500/75"
           >
             Let&apos;s get you back home?
           </Link>

@@ -48,7 +48,7 @@ export default function Home({
     block: {
       normal: ({ children, index }) => (
         <div>
-          <p className="mb-8 text-2xl text-zinc-400 md:text-3xl">{children}</p>
+          <p className="mb-8 text-2xl text-stone-400 md:text-3xl">{children}</p>
         </div>
       ),
     },
@@ -69,7 +69,7 @@ export default function Home({
               ref={headingRef}
               onMouseOver={replay}
               onFocus={replay}
-              className="max-w-[16ch] text-center text-3xl font-[450] text-zinc-400/50 lg:text-4xl"
+              className="max-w-[16ch] text-center text-3xl font-[450] text-stone-400/50 lg:text-4xl"
             />
             <WidgetDataProvider
               data={{
@@ -106,7 +106,7 @@ export default function Home({
 
               {/* About Us - Simplified animation */}
               <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
-                <h2 className="mb-4 text-lg text-zinc-400 md:text-xl">
+                <h2 className="mb-4 text-lg text-stone-400 md:text-xl">
                   About Us
                 </h2>
                 {homeData?.aboutUs && (
@@ -119,7 +119,7 @@ export default function Home({
 
               {/* Newsfeed with Masonry Layout */}
               <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
-                <h2 className="mb-4 text-lg text-zinc-400 md:text-xl">
+                <h2 className="mb-4 text-lg text-stone-400 md:text-xl">
                   Newsfeed
                 </h2>
                 <MasonryGrid articles={homeData?.newsfeed || []} />

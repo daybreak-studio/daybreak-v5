@@ -34,7 +34,7 @@ const DrawerButton = ({
       >
         <motion.button
           className={clsx(
-            "flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm shadow-zinc-300 transition-all duration-300 hover:scale-110 md:shadow-md",
+            "flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm shadow-stone-300 transition-all duration-300 hover:scale-110 md:shadow-md",
             isOpen ? "sticky" : "absolute",
           )}
           initial={{ opacity: 0 }}
@@ -48,7 +48,7 @@ const DrawerButton = ({
             animate={{ rotate: isOpen ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronUp className="h-4 w-4 text-zinc-400" />
+            <ChevronUp className="h-4 w-4 text-stone-400" />
           </motion.div>
         </motion.button>
       </div>

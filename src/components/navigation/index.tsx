@@ -162,7 +162,7 @@ export default function Navigation() {
                     className="glyph h-full w-full origin-bottom pb-1"
                     initial={{ rotate: visitStatus === "new" ? 180 : 0 }}
                   >
-                    <Logo className="h-full w-full fill-current text-zinc-500" />
+                    <Logo className="h-full w-full fill-current text-stone-500" />
                   </motion.div>
                 </motion.div>
                 <motion.div
@@ -176,7 +176,7 @@ export default function Navigation() {
                       opacity: visitStatus === "new" ? 0 : 1,
                     }}
                   >
-                    <Wordmark className="h-full w-full fill-current text-zinc-500" />
+                    <Wordmark className="h-full w-full fill-current text-stone-500" />
                   </motion.div>
                 </motion.div>
               </motion.div>
@@ -191,7 +191,7 @@ export default function Navigation() {
           onClick={() => setIsOpen(!isOpen)}
         >
           <Grip
-            className="m-3 aspect-square h-3 w-3 text-zinc-500"
+            className="m-3 aspect-square h-3 w-3 text-stone-500"
             strokeWidth={2.25}
           />
         </div>
@@ -207,7 +207,7 @@ export default function Navigation() {
               <motion.h1
                 key={tab.label}
                 initial={{ opacity: visitStatus === "new" ? 0 : 1 }}
-                className="relative px-4 py-3 text-xs font-normal text-zinc-500"
+                className="relative px-4 py-3 text-xs font-normal text-stone-500"
               >
                 <Link href={tab.href} className="relative z-10">
                   {tab.label}
@@ -230,7 +230,7 @@ const Pill = ({ isFirstVisit }: { isFirstVisit: boolean }) => {
       layout
       // layoutRoot
       layoutId="pill"
-      className="pill absolute inset-0 z-0 rounded-md border-[1px] border-zinc-50 bg-white/50 shadow-lg shadow-zinc-500/5 md:rounded-xl"
+      className="pill absolute inset-0 z-0 rounded-md border-[1px] border-stone-50 bg-white/50 shadow-lg shadow-stone-500/5 md:rounded-xl"
       style={{ originY: "top" }}
       initial={{ opacity: isFirstVisit ? 0 : 1 }}
       transition={{

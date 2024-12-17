@@ -34,12 +34,12 @@ export const Footer = () => {
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-black/20 transition-colors duration-200 hover:text-black/50"
+            className="text-xs text-stone-900/20 transition-colors duration-200 hover:text-stone-900/50"
           >
             {link.label}
           </a>
         ))}
-        <p className="text-xs text-black/20">Daybreak Studio &copy; 2025</p>
+        <p className="text-xs text-stone-900/20">Daybreak Studio &copy; 2025</p>
       </div>
     </footer>
   );

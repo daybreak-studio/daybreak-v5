@@ -50,7 +50,7 @@ export function DebugProvider({ children }: { children: React.ReactNode }) {
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 5 }}
-            className="fixed right-4 top-4 z-50 text-xs text-zinc-500"
+            className="fixed right-4 top-4 z-50 text-xs text-stone-500"
           >
             Debug Mode (Shift + D)
           </motion.h4>

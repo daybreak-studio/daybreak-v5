@@ -13,7 +13,7 @@ export default function Twitter({ data }: TwitterProps) {
       case "1x1":
         return (
           <div className="frame-inner flex h-full w-full flex-col bg-white/50 p-6">
-            <h1 className="text-xs text-zinc-500">
+            <h1 className="text-xs text-stone-500">
               Please use a supported widget size: 2x2, 3x3
             </h1>
           </div>
@@ -22,7 +22,7 @@ export default function Twitter({ data }: TwitterProps) {
       case "3x3":
         return (
           <a
-            className="flex h-full w-full flex-col justify-between p-6 text-zinc-500 transition-colors duration-200 hover:text-zinc-400"
+            className="flex h-full w-full flex-col justify-between p-6 text-stone-500 transition-colors duration-200 hover:text-stone-400"
             href={data.link}
             target="_blank"
             rel="noopener noreferrer"

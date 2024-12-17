@@ -220,7 +220,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                                 });
                               }
                             }}
-                            className="absolute right-4 top-4 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl border-[1px] border-zinc-100 bg-white text-zinc-500 hover:bg-zinc-100 focus:shadow-gray-400 focus:outline-none"
+                            className="absolute right-4 top-4 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl border-[1px] border-stone-100 bg-white text-stone-500 hover:bg-stone-100 focus:shadow-gray-400 focus:outline-none"
                           >
                             <Cross2Icon className="h-4 w-4" />
                           </Dialog.Close>

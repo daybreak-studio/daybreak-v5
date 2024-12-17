@@ -24,11 +24,11 @@ const Article = memo(({ article }: { article: ArticleType }) => {
         </div>
 
         <div className="p-4">
-          <h2 className="pb-4 text-sm text-zinc-400">
+          <h2 className="pb-4 text-sm text-stone-400">
             {formatDate(article.date || "")}
           </h2>
           <h1 className="pb-2">{article.title}</h1>
-          <h2 className="text-zinc-500">{article.description}</h2>
+          <h2 className="text-stone-500">{article.description}</h2>
         </div>
       </HoverCard>
     </Reveal>

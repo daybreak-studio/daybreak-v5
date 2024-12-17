@@ -26,7 +26,7 @@ export default function ProjectPreview({
     <div className="w-full p-4">
       <div className="pb-4">
         <h2 className="pb-4 text-3xl">{project.heading}</h2>
-        <p className="text-zinc-500">{project.caption}</p>
+        <p className="text-stone-500">{project.caption}</p>
       </div>
       <motion.div
         layout

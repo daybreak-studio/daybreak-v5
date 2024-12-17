@@ -32,7 +32,7 @@ export default function ProjectSelector({
         }}
         className="flex w-full items-center justify-center p-4 text-center"
       >
-        <h2 className="text-center text-3xl text-zinc-600">{data.name}</h2>
+        <h2 className="text-center text-3xl text-stone-600">{data.name}</h2>
       </motion.div>
       {data.projects?.map((project, index) => {
         const mediaAsset = getProjectFirstMedia(project);
@@ -59,7 +59,7 @@ export default function ProjectSelector({
             }}
             className="cursor-pointer overflow-hidden"
           >
-            <motion.div className="flex items-center justify-center space-x-4 rounded-2xl bg-zinc-100 p-3">
+            <motion.div className="flex items-center justify-center space-x-4 rounded-2xl bg-stone-100 p-3">
               <motion.div
                 {...IMAGE_ANIMATION}
                 layoutId={shouldUseLayoutId ? imageLayoutId : undefined}
@@ -72,7 +72,7 @@ export default function ProjectSelector({
                 />
               </motion.div>
               <div className="flex w-full items-center justify-between">
-                <h3 className="text-md capitalize text-zinc-700">
+                <h3 className="text-md capitalize text-stone-700">
                   {project.category}
                 </h3>
                 <ChevronRight className="h-4 w-4" />
