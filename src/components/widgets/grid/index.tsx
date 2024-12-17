@@ -7,6 +7,8 @@ import Twitter from "../variants/twitter";
 import Media from "../variants/media";
 import Project from "../variants/project";
 import Lenis from "lenis";
+import { motion } from "framer-motion";
+import { EASINGS } from "@/components/animations/easings";
 
 const WIDGETS: Record<Widget["_type"], React.ComponentType<any>> = {
   twitter: Twitter,
@@ -111,7 +113,7 @@ export function WidgetGrid() {
   }, [widgets, breakpoint]);
 
   return (
-    <div
+    <motion.div
       ref={containerRef}
       className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1"
     >
@@ -132,6 +134,6 @@ export function WidgetGrid() {
           return <Widget key={widget._key} data={widget} />;
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 import clsx from "clsx";
 import Lenis from "lenis";
+import { useViewport } from "@/hooks/useViewport";
 
 interface DrawerProps {
   children: ReactNode;
@@ -19,22 +20,9 @@ const DrawerButton = ({
   isHovered: boolean;
   onClick: () => void;
 }) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    // Check initially
-    checkMobile();
-
-    // Add resize listener
-    window.addEventListener("resize", checkMobile);
-
-    // Cleanup
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const { breakpoint } = useViewport();
+  const isMobile = breakpoint === "sm";
+  console.log(isMobile);
 
   return (
     <div className={clsx("absolute flex w-full justify-center p-4 md:p-8")}>
@@ -135,7 +123,7 @@ const Drawer: React.FC<DrawerProps> = ({
     <motion.div
       id="drawer"
       className={clsx(
-        "fixed inset-x-0 bottom-0 z-50 overflow-hidden rounded-2xl bg-white/90 shadow backdrop-blur-2xl",
+        "fixed inset-x-0 bottom-0 z-50 rounded-2xl bg-white/90 shadow backdrop-blur-2xl",
         className,
       )}
       style={{ height: windowHeight }}
@@ -178,18 +166,13 @@ const Drawer: React.FC<DrawerProps> = ({
         }}
         transition={{ duration: 0.05 }}
       >
-        <div
-          className="relative"
-          // key={isOpen ? "drawer-open" : "drawer-closed"}
-        >
-          <motion.div
-            onClick={toggleDrawer}
-            className="absolute top-0 z-20 flex w-full cursor-pointer justify-center p-36"
-            animate={isHovered && !isOpen ? { y: -4 } : { y: 0 }}
-            transition={{ duration: 0.2 }}
-          />
-          {children}
-        </div>
+        <motion.div
+          onClick={toggleDrawer}
+          className="absolute top-0 z-20 flex w-full cursor-pointer justify-center p-36"
+          animate={isHovered && !isOpen ? { y: -4 } : { y: 0 }}
+          transition={{ duration: 0.2 }}
+        />
+        {children}
       </motion.div>
     </motion.div>
   );

@@ -21,12 +21,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <DebugProvider>
         <VisitProvider>
           <Navigation />
-          <motion.div
-            className="main-gradient fixed inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          />
+          <motion.div className="main-gradient fixed inset-0" />
           <AnimatePresence mode="wait">
             <Layout key={currentBasePath}>
               <Component {...pageProps} />

@@ -177,7 +177,7 @@ export default function Navigation() {
                   </motion.div>
                 </motion.div>
               </motion.div>
-              {isValidPath && currentPath === tab.href && (
+              {isValidPath && currentPath === tab.href && !isLoading && (
                 <Pill isFirstVisit={visitStatus === "new"} />
               )}
             </Link>
@@ -209,7 +209,7 @@ export default function Navigation() {
                 <Link href={tab.href} className="relative z-10">
                   {tab.label}
                 </Link>
-                {isValidPath && currentPath === tab.href && (
+                {isValidPath && currentPath === tab.href && !isLoading && (
                   <Pill isFirstVisit={visitStatus === "new"} />
                 )}
               </motion.h1>

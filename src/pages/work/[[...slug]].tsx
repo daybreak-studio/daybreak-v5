@@ -72,18 +72,6 @@ export default function WorkPage({ data }: { data: Clients[] }) {
     (client) => client.slug?.current === clientSlug,
   );
 
-  // Check if the client has multiple projects
-  const shouldUseProjectSlug =
-    currentClient?.projects && currentClient.projects.length > 1;
-
-  // Get the current project based on the routing logic
-  // const currentProject =
-  //   shouldUseProjectSlug && projectSlug
-  //     ? currentClient.projects?.find(
-  //         (project) => project.category === projectSlug,
-  //       )
-  //     : currentClient?.projects?.[0];
-
   // Redirect if on a project route but client has only one project
   useEffect(() => {
     if (clientSlug && projectSlug && currentClient?.projects?.length === 1) {
@@ -100,10 +88,6 @@ export default function WorkPage({ data }: { data: Clients[] }) {
 
           const containerLayoutId = `container-${client.slug.current}`;
           const imageLayoutId = `image-${client.slug.current}`;
-
-          const hasMultipleProjects =
-            client.projects && client.projects.length > 1;
-
           const modalVariant = getModalVariant(client, projectSlug);
 
           return (
@@ -113,7 +97,6 @@ export default function WorkPage({ data }: { data: Clients[] }) {
               onOpenChange={(open) => {
                 setActiveThumbId(client.slug?.current || null);
                 if (!open) {
-                  // Only close completely if we're in selector view
                   if (!projectSlug) {
                     router.push("/work", undefined, { shallow: true });
                   }
@@ -159,8 +142,8 @@ export default function WorkPage({ data }: { data: Clients[] }) {
 
               <AnimatePresence>
                 {clientSlug === client.slug?.current && (
-                  <Dialog.Portal>
-                    <Dialog.Overlay asChild>
+                  <Dialog.Portal forceMount>
+                    <Dialog.Overlay asChild forceMount>
                       <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
@@ -174,9 +157,19 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                     </Dialog.Overlay>
                     <Dialog.Content
                       asChild
+                      forceMount
                       className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                     >
-                      <motion.div className="hide-scrollbar z-50 focus:outline-none">
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 0.5,
+                          ease: EASINGS.easeOutQuart,
+                        }}
+                        className="z-50 focus:outline-none"
+                      >
                         <Dialog.Title className="sr-only">
                           {client.name} Project Details
                         </Dialog.Title>
