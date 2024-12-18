@@ -2,16 +2,23 @@
 
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  ContactFormValues,
-  contactFormSchema,
-} from "@/lib/contact/schemas/contact-form";
+import { ContactFormValues, contactFormSchema } from "@/components/form/schema";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
-import { useFormAnimation } from "@/lib/hooks/use-form-animation";
-import { createFormSteps } from "@/components/form/form-steps";
+import { createFormSteps } from "@/components/form";
+import {
+  getScale,
+  getRotation,
+  getY,
+  getCardVisibility,
+} from "@/components/form/utils/animations";
+
+interface FormStep {
+  id: string;
+  content: React.ReactNode;
+}
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -32,7 +39,6 @@ export default function ContactPage() {
   const nextStep = () =>
     setCurrentStep((prev) => Math.min(prev + 1, formSteps.length - 1));
   const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
-  const { getScale, getRotation, getY, getCardVisibility } = useFormAnimation();
 
   const formSteps = createFormSteps({
     form,
@@ -56,7 +62,7 @@ export default function ContactPage() {
       if (!response.ok) throw new Error("Failed to submit form");
 
       form.reset();
-      nextStep(); // Move to success step
+      nextStep();
 
       toast({
         title: "Message sent successfully! 🎉",
@@ -81,7 +87,7 @@ export default function ContactPage() {
           className="grid h-screen w-screen place-items-center"
         >
           <AnimatePresence mode="wait" initial={false}>
-            {formSteps.map((step, index) => (
+            {formSteps.map((step: FormStep, index: number) => (
               <motion.div
                 key={step.id}
                 initial={{

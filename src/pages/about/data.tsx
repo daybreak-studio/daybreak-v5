@@ -20,10 +20,27 @@ interface Person {
 export const people: Person[] = [
   {
     id: uuidv4(),
+    name: "Khadija",
+    role: "Developer",
+    bio: "Khadija is a developer",
+    video: "/team/Khadija - V5.mp4",
+    info: [
+      {
+        question: "What is your favorite color?",
+        answer: "Brown",
+      },
+      {
+        question: "What is your favorite food?",
+        answer: "Salad",
+      },
+    ],
+  },
+  {
+    id: uuidv4(),
     name: "Ali",
     role: "Developer",
     bio: "A mini headline/ bio of this person. Just enough to capture who they are.",
-    video: "/team/ali.mp4",
+    video: "/team/Ali - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -40,7 +57,7 @@ export const people: Person[] = [
     name: "Alvin",
     role: "Developer",
     bio: "Alvin is a developer",
-    video: "/team/alvin.mp4",
+    video: "/team/Alvin - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -57,7 +74,7 @@ export const people: Person[] = [
     name: "Ben",
     role: "Designer",
     bio: "Ben is a designer",
-    video: "/team/ben.mp4",
+    video: "/team/Ben - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -74,7 +91,7 @@ export const people: Person[] = [
     name: "Chris",
     role: "Developer",
     bio: "Chris is a developer",
-    video: "/team/chris.mp4",
+    video: "/team/Chris - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -91,7 +108,7 @@ export const people: Person[] = [
     name: "Dennis",
     role: "Designer",
     bio: "Dennis is a designer",
-    video: "/team/dennis.mp4",
+    video: "/team/Dennis - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -108,7 +125,7 @@ export const people: Person[] = [
     name: "Jenny",
     role: "Developer",
     bio: "Jenny is a developer",
-    video: "/team/jenny.mp4",
+    video: "/team/Jenny - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -125,7 +142,7 @@ export const people: Person[] = [
     name: "Jessica",
     role: "Designer",
     bio: "Jessica is a designer",
-    video: "/team/jessica.mp4",
+    video: "/team/Jessica - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -139,27 +156,10 @@ export const people: Person[] = [
   },
   {
     id: uuidv4(),
-    name: "Khadija",
-    role: "Developer",
-    bio: "Khadija is a developer",
-    video: "/team/khadija.mp4",
-    info: [
-      {
-        question: "What is your favorite color?",
-        answer: "Brown",
-      },
-      {
-        question: "What is your favorite food?",
-        answer: "Salad",
-      },
-    ],
-  },
-  {
-    id: uuidv4(),
     name: "Kiran",
     role: "Designer",
     bio: "Kiran is a designer",
-    video: "/team/kiran.mp4",
+    video: "/team/Kiran - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -176,7 +176,7 @@ export const people: Person[] = [
     name: "Rafi",
     role: "Developer",
     bio: "Rafi is a developer",
-    video: "/team/rafi.mp4",
+    video: "/team/Rafi - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -193,7 +193,7 @@ export const people: Person[] = [
     name: "Ross",
     role: "Designer",
     bio: "Ross is a designer",
-    video: "/team/ross.mp4",
+    video: "/team/Ross - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -210,7 +210,7 @@ export const people: Person[] = [
     name: "Ryan",
     role: "Developer",
     bio: "Ryan is a developer",
-    video: "/team/ryan.mp4",
+    video: "/team/Ryan - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",
@@ -227,7 +227,7 @@ export const people: Person[] = [
     name: "Taha",
     role: "Designer",
     bio: "Taha is a designer",
-    video: "/team/taha.mp4",
+    video: "/team/Taha - V5.mp4",
     info: [
       {
         question: "What is your favorite color?",

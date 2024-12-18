@@ -1,8 +1,8 @@
 import { BaseWidget } from "../grid/base-widget";
 import { ProjectWidget } from "../grid/types";
 import { MediaRenderer } from "../../media-renderer";
-import Link from "next/link";
-import { useWidgetData } from "@/components/widgets/context/WidgetDataContext";
+import { useRouter } from "next/router";
+import { useWidgetData } from "@/components/widgets/grid/context";
 import { Clients } from "@/sanity/types";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
 
@@ -11,6 +11,7 @@ interface ProjectProps {
 }
 
 export default function Project({ data }: ProjectProps) {
+  const router = useRouter();
   const clients = useWidgetData<Clients[]>("clients");
 
   const foundClient = clients?.find(
@@ -29,32 +30,36 @@ export default function Project({ data }: ProjectProps) {
   }
 
   const mediaAsset = getProjectFirstMedia(foundProject);
-  // const imageLayoutId = `image-${foundClient.slug.current}`;
+
+  const handleClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    // First navigate to the work page
+    await router.push("/work");
+    // Then navigate to the specific project
+    router.push(
+      `/work/${foundClient?.slug?.current}/${foundProject.category}`,
+      undefined,
+      {
+        shallow: true,
+      },
+    );
+  };
 
   const renderContent = () => {
     switch (data.size) {
       case "1x1":
         return (
-          <Link
-            href={`/work/${foundClient?.slug?.current}/${foundProject.category}`}
-          >
-            <MediaRenderer
-              media={mediaAsset}
-              // layoutId={imageLayoutId}
-              priority={true}
-            />
-          </Link>
+          <div onClick={handleClick} className="cursor-pointer">
+            <MediaRenderer media={mediaAsset} priority={true} />
+          </div>
         );
       case "2x2":
       case "3x3":
         return (
-          <Link
-            href={`/work/${foundClient?.slug?.current}/${foundProject.category}`}
-          >
+          <div onClick={handleClick} className="cursor-pointer">
             <MediaRenderer
               className="aspect-square"
               media={mediaAsset}
-              // layoutId={imageLayoutId}
               priority={true}
             />
             <div className="absolute bottom-8 left-8 z-20">
@@ -69,7 +74,7 @@ export default function Project({ data }: ProjectProps) {
                 {foundProject._type === "caseStudy" ? "Case Study" : "Preview"}
               </h2>
             </div>
-          </Link>
+          </div>
         );
     }
   };

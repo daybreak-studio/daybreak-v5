@@ -132,7 +132,7 @@
     position: absolute;
     inset: 0;
     background: url("/noise.svg");
-    opacity: 0.1;
+    opacity: 0.2;
     mix-blend-mode: multiply;
     pointer-events: none;
     background-size: 200px 200px;

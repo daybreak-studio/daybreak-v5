@@ -13,9 +13,8 @@ import { MediaItem } from "@/sanity/lib/media";
 import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
 import { useScramble } from "use-scramble";
-import { WidgetDataProvider } from "@/components/widgets/context/WidgetDataContext";
+import { WidgetDataProvider } from "@/components/widgets/grid/context";
 import { Widget } from "@/components/widgets/grid/types";
-import { GradientBackground } from "@/components/gradient-background";
 
 export default function Home({
   homeData,

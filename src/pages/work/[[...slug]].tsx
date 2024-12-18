@@ -72,12 +72,22 @@ export default function WorkPage({ data }: { data: Clients[] }) {
     (client) => client.slug?.current === clientSlug,
   );
 
-  // Redirect if on a project route but client has only one project
+  // Force modal to be mounted when route includes client/project
+  const shouldShowModal = Boolean(clientSlug);
+
+  // Handle redirect from middleware
   useEffect(() => {
-    if (clientSlug && projectSlug && currentClient?.projects?.length === 1) {
-      router.replace(`/work/${clientSlug}`, undefined, { shallow: true });
-    }
-  }, [clientSlug, projectSlug, currentClient, router]);
+    const handleRedirect = async () => {
+      const redirectTo = document.head
+        ?.querySelector('meta[name="x-redirect-to"]')
+        ?.getAttribute("content");
+      if (redirectTo) {
+        await router.push(redirectTo, undefined, { shallow: true });
+      }
+    };
+
+    handleRedirect();
+  }, [router]);
 
   return (
     <div className="mx-auto p-8">
@@ -90,16 +100,16 @@ export default function WorkPage({ data }: { data: Clients[] }) {
           const imageLayoutId = `image-${client.slug.current}`;
           const modalVariant = getModalVariant(client, projectSlug);
 
+          const isOpen = shouldShowModal && clientSlug === client.slug.current;
+
           return (
             <Dialog.Root
               key={client._id}
-              open={clientSlug === client.slug.current}
+              open={isOpen}
               onOpenChange={(open) => {
                 setActiveThumbId(client.slug?.current || null);
                 if (!open) {
-                  if (!projectSlug) {
-                    router.push("/work", undefined, { shallow: true });
-                  }
+                  router.push("/work", undefined, { shallow: true });
                 } else {
                   router.push(`/work/${client.slug?.current}`, undefined, {
                     shallow: true,
@@ -141,7 +151,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
               </Dialog.Trigger>
 
               <AnimatePresence>
-                {clientSlug === client.slug?.current && (
+                {isOpen && (
                   <Dialog.Portal forceMount>
                     <Dialog.Overlay asChild forceMount>
                       <motion.div

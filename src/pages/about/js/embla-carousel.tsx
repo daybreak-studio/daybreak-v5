@@ -262,7 +262,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
                     autoPlay
                     muted
                     loop
-                    className="h-full w-fit object-cover mix-blend-multiply"
+                    className="h-full w-fit object-cover opacity-40"
                   >
                     <source src={person.video} type="video/mp4" />
                   </video>
