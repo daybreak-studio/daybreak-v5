@@ -114,6 +114,68 @@ export const createFormSteps = ({
     ),
   },
   {
+    id: "contact-info",
+    content: (
+      <FormCard.Root>
+        <FormCard.Header className="space-y-6">
+          <FormCard.Navigation
+            current={2}
+            total={5}
+            onNext={nextStep}
+            onPrev={prevStep}
+          />
+          <FormCard.Title>Let&apos;s get to know you</FormCard.Title>
+        </FormCard.Header>
+        <FormCard.Content className="mt-8">
+          <div className="flex flex-col gap-4 md:gap-6">
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Your name"
+                      className="rounded-2xl bg-stone-900/[0.03] p-4"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="your@email.com"
+                      className="rounded-2xl bg-stone-900/[0.03] p-4"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormCTAButton
+              onClick={nextStep}
+              type="button"
+              disabled={!form.getValues("fullName") || !form.getValues("email")}
+            >
+              Next
+            </FormCTAButton>
+          </div>
+        </FormCard.Content>
+      </FormCard.Root>
+    ),
+  },
+  {
     id: "project-type",
     content: (
       <FormCard.Root>
@@ -135,29 +197,43 @@ export const createFormSteps = ({
             render={({ field }) => (
               <FormItem>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {Object.entries(ProjectTypes).map(([value, label]) => (
-                    <div
-                      key={value}
-                      className="relative flex cursor-pointer flex-col gap-4 rounded-2xl bg-white/20 p-4 transition-colors hover:bg-white/30"
-                      onClick={() => {
-                        const currentValue = field.value || [];
-                        const newValue = currentValue.includes(
-                          value as ProjectType,
-                        )
-                          ? currentValue.filter((item) => item !== value)
-                          : [...currentValue, value as ProjectType];
-                        field.onChange(newValue);
-                      }}
-                    >
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value?.includes(value as ProjectType)}
-                          className="absolute right-4 top-4"
-                        />
-                      </FormControl>
-                      <FormLabel className="cursor-pointer">{label}</FormLabel>
-                    </div>
-                  ))}
+                  {Object.entries(ProjectTypes).map(([value, label]) => {
+                    const isSelected = field.value?.includes(
+                      value as ProjectType,
+                    );
+
+                    return (
+                      <FormField
+                        key={value}
+                        control={form.control}
+                        name="projectTypes"
+                        render={() => (
+                          <FormItem className="relative flex cursor-pointer flex-col gap-4 rounded-2xl bg-white/20 p-4 transition-colors hover:bg-white/30">
+                            <FormControl>
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={() => {
+                                  const newValue = isSelected
+                                    ? field.value?.filter(
+                                        (item) => item !== value,
+                                      )
+                                    : [
+                                        ...(field.value || []),
+                                        value as ProjectType,
+                                      ];
+                                  field.onChange(newValue);
+                                }}
+                                className="absolute right-4 top-4"
+                              />
+                            </FormControl>
+                            <FormLabel className="cursor-pointer">
+                              {label}
+                            </FormLabel>
+                          </FormItem>
+                        )}
+                      />
+                    );
+                  })}
                 </div>
                 <FormMessage />
                 <FormCTAButton onClick={nextStep} className="mt-4" />
@@ -217,15 +293,80 @@ export const createFormSteps = ({
                 </FormItem>
               )}
             />
-            <FormCTAButton
-              onClick={form.handleSubmit(onSubmit)}
-              type="submit"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting
-                ? "Sending your message..."
-                : "Let's create something amazing"}
+            <FormCTAButton onClick={nextStep} type="button">
+              Let&apos;s review your answers
             </FormCTAButton>
+          </div>
+        </FormCard.Content>
+      </FormCard.Root>
+    ),
+  },
+  {
+    id: "review",
+    content: (
+      <FormCard.Root>
+        <FormCard.Header className="space-y-6">
+          <FormCard.Navigation current={4} total={5} onPrev={prevStep} />
+          <FormCard.Title>Review Your Information</FormCard.Title>
+        </FormCard.Header>
+        <FormCard.Content className="mt-8">
+          <div className="flex flex-col gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-stone-500">
+                  Project Types
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {form.watch("projectTypes").map((type) => (
+                    <span
+                      key={type}
+                      className="rounded-full bg-stone-100 px-3 py-1 text-sm text-stone-600"
+                    >
+                      {ProjectTypes[type]}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-stone-500">Message</h3>
+                <p className="text-sm text-stone-600">
+                  {form.watch("message")}
+                </p>
+              </div>
+
+              {form.watch("link") && (
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium text-stone-500">
+                    Reference Link
+                  </h3>
+                  <a
+                    href={form.watch("link")}
+                    className="text-sm text-blue-600 hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {form.watch("link")}
+                  </a>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <FormCTAButton
+                type="submit"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? "Sending..." : "Submit"}
+              </FormCTAButton>
+              <button
+                type="button"
+                onClick={prevStep}
+                className="text-sm text-stone-500 hover:text-stone-700"
+              >
+                Edit my response
+              </button>
+            </div>
           </div>
         </FormCard.Content>
       </FormCard.Root>
@@ -236,13 +377,43 @@ export const createFormSteps = ({
     content: (
       <FormCard.Root>
         <FormCard.Header className="space-y-6">
-          <FormCard.Navigation current={4} total={5} />
+          <FormCard.Navigation current={5} total={5} />
           <FormCard.Title>Thank you!</FormCard.Title>
         </FormCard.Header>
         <FormCard.Content className="mt-8">
-          <span className="text-[16px] font-[450] text-stone-500/70">
-            Your form has been submitted. We will reach out to you shortly.
-          </span>
+          <div className="space-y-6">
+            <span className="text-[16px] font-[450] text-stone-500/70">
+              Your form has been submitted. We will reach out to you shortly.
+            </span>
+
+            <div className="rounded-xl bg-stone-50 p-4">
+              <h3 className="mb-4 text-sm font-medium text-stone-600">
+                Your submission details:
+              </h3>
+              <div className="space-y-2 text-sm text-stone-500">
+                <p>
+                  Project Types:{" "}
+                  {form
+                    .getValues("projectTypes")
+                    .map((type) => ProjectTypes[type])
+                    .join(", ")}
+                </p>
+                <p>Message: {form.getValues("message")}</p>
+                {form.getValues("link") && (
+                  <p>Reference: {form.getValues("link")}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-sm text-stone-500">What happens next?</p>
+              <ul className="list-inside list-disc space-y-1 text-sm text-stone-500">
+                <li>We&apos;ll review your project details</li>
+                <li>You&apos;ll receive a confirmation email</li>
+                <li>We&apos;ll respond within 24-48 hours</li>
+              </ul>
+            </div>
+          </div>
         </FormCard.Content>
       </FormCard.Root>
     ),

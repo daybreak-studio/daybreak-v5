@@ -49,32 +49,36 @@ export default function ContactPage() {
     setCopied,
   });
 
+  const restartForm = () => {
+    form.reset();
+    setCurrentStep(0);
+  };
+
   async function onSubmit(data: ContactFormValues) {
+    console.log("onSubmit handler executing with data:", data);
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
+      const responseData = await response.json();
+      console.log("API response:", responseData);
+
       if (!response.ok) throw new Error("Failed to submit form");
 
-      form.reset();
       nextStep();
-
       toast({
-        title: "Message sent successfully! 🎉",
-        description: "We'll get back to you within 24-48 hours.",
+        title: "Success!",
+        description: "We'll get back to you soon.",
       });
     } catch (error) {
-      console.error("Submission Error:", error);
+      console.error("API Error:", error);
       toast({
         variant: "destructive",
-        title: "Oops! Something went wrong",
-        description:
-          "Please try again or email us directly at hello@daybreak.studio",
+        title: "Error",
+        description: "Something went wrong.",
       });
     }
   }
@@ -83,10 +87,33 @@ export default function ContactPage() {
     <FormProvider {...form}>
       <div className="fixed inset-0">
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            console.log("Form submit event triggered");
+
+            try {
+              // Get the form data
+              const data = form.getValues();
+              console.log("Form data:", data);
+
+              // Validate the form
+              const isValid = await form.trigger();
+              console.log("Form validation:", isValid);
+
+              if (!isValid) {
+                console.log("Form validation failed");
+                return;
+              }
+
+              // Submit the form
+              await onSubmit(data);
+            } catch (error) {
+              console.error("Form submission error:", error);
+            }
+          }}
           className="grid h-screen w-screen place-items-center"
         >
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence initial={false}>
             {formSteps.map((step: FormStep, index: number) => (
               <motion.div
                 key={step.id}
@@ -106,6 +133,7 @@ export default function ContactPage() {
                 }}
                 exit={{
                   opacity: 0,
+                  scale: 0.95,
                   transition: { duration: 0.2 },
                 }}
                 transition={{
