@@ -389,6 +389,32 @@ export type Home = {
         _type: "project";
         _key: string;
       }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        src?: string;
+        _type: "rive";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        clients?: Array<{
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          _key: string;
+          [internalGroqTypeReferenceTo]?: "clients";
+        }>;
+        _type: "recents";
+        _key: string;
+      }
   >;
   missionStatement?: Array<{
     children?: Array<{
@@ -892,6 +918,34 @@ export type HOME_QUERYResult = {
         category?: "brand" | "motion" | "product" | "web";
         type?: "caseStudy" | "preview";
         _type: "project";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        clients?: Array<{
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          _key: string;
+          [internalGroqTypeReferenceTo]?: "clients";
+        }>;
+        _type: "recents";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        src?: string;
+        _type: "rive";
         _key: string;
         media: null;
       }

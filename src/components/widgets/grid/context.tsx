@@ -1,9 +1,11 @@
 import { createContext, useContext } from "react";
 import { Widget } from "@/components/widgets/grid/types";
+import { Clients } from "@/sanity/types";
 
 interface WidgetDataContextValue {
-  widgets: Widget[]; // Only widgets is required
-  [key: string]: any; // Allow any additional data
+  widgets: Widget[]; // Use our transformed Widget type
+  clients?: Clients[];
+  [key: string]: any;
 }
 
 const WidgetDataContext = createContext<WidgetDataContextValue | null>(null);

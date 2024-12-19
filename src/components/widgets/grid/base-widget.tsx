@@ -1,21 +1,36 @@
 import { cn } from "@/lib/utils";
-import { WidgetSize } from "./types";
 import { HoverCard } from "@/components/animations/hover";
 
+function ensurePosition(
+  position: { row?: number; column?: number } | undefined,
+) {
+  return {
+    row: position?.row ?? 1,
+    column: position?.column ?? 1,
+  };
+}
+
 interface BaseWidgetProps {
-  position: { row: number; column: number };
-  size: WidgetSize;
+  position: {
+    row: number;
+    column: number;
+  };
+  size: "1x1" | "2x2" | "3x3" | undefined;
   children: React.ReactNode;
   className?: string;
 }
 
 export function BaseWidget({
-  position,
+  position: rawPosition,
   size,
   children,
   className,
-}: BaseWidgetProps) {
-  const getSpanSize = (size: WidgetSize) => {
+}: Omit<BaseWidgetProps, "position"> & {
+  position: { row?: number; column?: number } | undefined;
+}) {
+  const position = ensurePosition(rawPosition);
+
+  const getSpanSize = (size: BaseWidgetProps["size"]) => {
     switch (size) {
       case "1x1":
         return 1;
@@ -23,6 +38,8 @@ export function BaseWidget({
         return 2;
       case "3x3":
         return 3;
+      default:
+        return 1;
     }
   };
 

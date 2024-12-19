@@ -133,7 +133,10 @@ export const createFormSteps = ({
               name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel className="flex items-center gap-1">
+                    Full Name
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Your name"
@@ -150,7 +153,10 @@ export const createFormSteps = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="flex items-center gap-1">
+                    Email
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -164,7 +170,12 @@ export const createFormSteps = ({
               )}
             />
             <FormCTAButton
-              onClick={nextStep}
+              onClick={async () => {
+                const isValid = await form.trigger(["fullName", "email"]);
+                if (isValid) {
+                  nextStep();
+                }
+              }}
               type="button"
               disabled={!form.getValues("fullName") || !form.getValues("email")}
             >
@@ -181,7 +192,7 @@ export const createFormSteps = ({
       <FormCard.Root>
         <FormCard.Header className="space-y-6">
           <FormCard.Navigation
-            current={2}
+            current={3}
             total={5}
             onNext={nextStep}
             onPrev={prevStep}
@@ -240,7 +251,17 @@ export const createFormSteps = ({
                 </FormItem>
               )}
             />
-            <FormCTAButton onClick={nextStep} type="button" className="w-full">
+            <FormCTAButton
+              onClick={async () => {
+                const isValid = await form.trigger("projectTypes");
+                if (isValid) {
+                  nextStep();
+                }
+              }}
+              type="button"
+              disabled={!form.getValues("projectTypes").length}
+              className="w-full"
+            >
               Next
             </FormCTAButton>
           </div>
@@ -254,7 +275,7 @@ export const createFormSteps = ({
       <FormCard.Root>
         <FormCard.Header className="space-y-6">
           <FormCard.Navigation
-            current={3}
+            current={4}
             total={5}
             onNext={nextStep}
             onPrev={prevStep}
@@ -268,7 +289,10 @@ export const createFormSteps = ({
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Project Details</FormLabel>
+                  <FormLabel className="flex items-center gap-1">
+                    Project Details
+                    <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Share your vision, goals, and any specific requirements..."
@@ -297,7 +321,16 @@ export const createFormSteps = ({
                 </FormItem>
               )}
             />
-            <FormCTAButton onClick={nextStep} type="button">
+            <FormCTAButton
+              onClick={async () => {
+                const isValid = await form.trigger(["message", "link"]);
+                if (isValid) {
+                  nextStep();
+                }
+              }}
+              type="button"
+              disabled={!form.getValues("message")}
+            >
               Let&apos;s review your answers
             </FormCTAButton>
           </div>
@@ -310,7 +343,7 @@ export const createFormSteps = ({
     content: (
       <FormCard.Root>
         <FormCard.Header className="space-y-6">
-          <FormCard.Navigation current={4} total={5} onPrev={prevStep} />
+          <FormCard.Navigation current={5} total={5} onPrev={prevStep} />
           <FormCard.Title>Review Your Information</FormCard.Title>
         </FormCard.Header>
         <FormCard.Content className="mt-8">
@@ -318,25 +351,55 @@ export const createFormSteps = ({
             <div className="space-y-4">
               <div className="space-y-2">
                 <h3 className="text-sm font-medium text-stone-500">
-                  Project Types
+                  Contact Details
                 </h3>
-                <div className="flex flex-wrap gap-2">
-                  {form.watch("projectTypes").map((type) => (
-                    <span
-                      key={type}
-                      className="rounded-full bg-stone-100 px-3 py-1 text-sm text-stone-600"
-                    >
-                      {ProjectTypes[type]}
-                    </span>
-                  ))}
+                <div className="space-y-1">
+                  <p className="text-sm text-stone-600">
+                    {form.watch("fullName") || "No name provided"}
+                  </p>
+                  <p className="text-sm text-stone-600">
+                    {form.watch("email") || "No email provided"}
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-sm font-medium text-stone-500">Message</h3>
-                <p className="text-sm text-stone-600">
-                  {form.watch("message")}
-                </p>
+                <h3 className="text-sm font-medium text-stone-500">
+                  Project Types
+                </h3>
+                {form.watch("projectTypes").length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    {form.watch("projectTypes").map((type) => (
+                      <span
+                        key={type}
+                        className="rounded-full bg-stone-200/50 px-3 py-1 text-sm text-stone-600"
+                      >
+                        {ProjectTypes[type]}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm italic text-stone-500">
+                    No project types selected yet. Let us know what you&apos;re
+                    interested in!
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-stone-500">
+                  Project Details
+                </h3>
+                {form.watch("message") ? (
+                  <p className="text-sm text-stone-600">
+                    {form.watch("message")}
+                  </p>
+                ) : (
+                  <p className="text-sm italic text-stone-500">
+                    Tell us about your vision! We&apos;d love to hear what you
+                    have in mind!
+                  </p>
+                )}
               </div>
 
               {form.watch("link") && (
@@ -359,7 +422,14 @@ export const createFormSteps = ({
             <div className="flex flex-col gap-4">
               <FormCTAButton
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={
+                  form.formState.isSubmitting ||
+                  !form.formState.isValid ||
+                  !form.getValues("fullName") ||
+                  !form.getValues("email") ||
+                  !form.getValues("projectTypes").length ||
+                  !form.getValues("message")
+                }
               >
                 {form.formState.isSubmitting ? "Sending..." : "Submit"}
               </FormCTAButton>
@@ -403,7 +473,7 @@ export const createFormSteps = ({
                   {form.getValues("projectTypes").map((type) => (
                     <span
                       key={type}
-                      className="rounded-full bg-stone-100 px-3 py-1 text-sm text-stone-600"
+                      className="rounded-full bg-stone-200/50 px-3 py-1 text-sm text-stone-600"
                     >
                       {ProjectTypes[type]}
                     </span>

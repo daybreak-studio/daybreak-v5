@@ -2,19 +2,10 @@ import { useEffect, useRef } from "react";
 import { useViewport } from "@/lib/hooks/use-viewport";
 import { useWidgetData } from "@/components/widgets/grid/context";
 import { useDebug } from "@/lib/contexts/debug";
-import { Widget } from "./types";
-import Twitter from "../variants/twitter";
-import Media from "../variants/media";
-import Project from "../variants/project";
+import { Widget, WidgetRegistry } from "./types";
 import Lenis from "lenis";
 import { motion } from "framer-motion";
 import { EASINGS } from "@/components/animations/easings";
-
-const WIDGETS: Record<Widget["_type"], React.ComponentType<any>> = {
-  twitter: Twitter,
-  media: Media,
-  project: Project,
-};
 
 const GRID_CONFIG = {
   COLUMNS: 7,
@@ -66,7 +57,11 @@ const DebugGridOverlay = () => {
   );
 };
 
-export function WidgetGrid() {
+interface WidgetGridProps {
+  components: WidgetRegistry;
+}
+
+export function WidgetGrid({ components }: WidgetGridProps) {
   const { breakpoint } = useViewport();
   const widgets = useWidgetData<Widget[]>("widgets");
   const gridBreakpoint = breakpoint as GridBreakpoint;
@@ -133,7 +128,7 @@ export function WidgetGrid() {
       >
         {debug && <DebugGridOverlay />}
         {widgets?.map((widget) => {
-          const Widget = WIDGETS[widget._type];
+          const Widget = components[widget._type];
           if (!Widget) return null;
           return <Widget key={widget._key} data={widget} />;
         })}

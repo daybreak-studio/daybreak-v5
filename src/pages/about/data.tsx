@@ -20,23 +20,6 @@ interface Person {
 export const people: Person[] = [
   {
     id: uuidv4(),
-    name: "Khadija",
-    role: "Developer",
-    bio: "Khadija is a developer",
-    video: "/team/Khadija - V5.mp4",
-    info: [
-      {
-        question: "What is your favorite color?",
-        answer: "Brown",
-      },
-      {
-        question: "What is your favorite food?",
-        answer: "Salad",
-      },
-    ],
-  },
-  {
-    id: uuidv4(),
     name: "Ali",
     role: "Developer",
     bio: "A mini headline/ bio of this person. Just enough to capture who they are.",
@@ -151,6 +134,23 @@ export const people: Person[] = [
       {
         question: "What is your favorite food?",
         answer: "Sushi",
+      },
+    ],
+  },
+  {
+    id: uuidv4(),
+    name: "Khadija",
+    role: "Developer",
+    bio: "Khadija is a developer",
+    video: "/team/Khadija - V5.mp4",
+    info: [
+      {
+        question: "What is your favorite color?",
+        answer: "Brown",
+      },
+      {
+        question: "What is your favorite food?",
+        answer: "Salad",
       },
     ],
   },

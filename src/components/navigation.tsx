@@ -29,7 +29,6 @@ const tabs = [
 export default function Navigation() {
   const { visitStatus, isLoading, markVisitComplete } = useVisit();
   const { isHomeRoute, currentPath, basePath } = usePathname();
-  console.log(basePath);
   const [isOpen, setIsOpen] = useState(false);
   const { debug } = useDebug();
 
@@ -115,8 +114,6 @@ export default function Navigation() {
 
   const isValidPath = tabs.some((tab) => tab.href === basePath);
 
-  console.log(isValidPath);
-  console.log(basePath);
   return (
     <motion.nav
       className="parent pointer-events-auto fixed z-50 mx-auto flex h-fit w-full items-center justify-center"

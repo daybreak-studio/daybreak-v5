@@ -42,7 +42,7 @@ const createWidgetPreview = (name: string) => ({
   select: {
     size: "size",
   },
-  prepare({ size }) {
+  prepare({ size }: { size: string }) {
     return {
       title: `${name} Widget`,
       subtitle: `Size: ${size || "1x1"}`,
@@ -119,19 +119,30 @@ export const project = {
   preview: createWidgetPreview("Project"),
 };
 
+export const rive = {
+  type: "object",
+  name: "rive",
+  title: "Rive",
+  fields: createWidgetFields([
+    defineField({ name: "src", type: "url", title: "Source" }),
+  ]),
+  preview: createWidgetPreview("Rive"),
+};
+
 export const recents = {
   type: "object",
   name: "recents",
   title: "Recents",
   fields: createWidgetFields([
     defineField({
-      name: "projects",
-      title: "Projects",
+      name: "clients",
+      title: "Clients",
       type: "array",
-      of: [{ type: "reference", to: [{ type: "projects" }] }],
+      of: [{ type: "reference", to: [{ type: "clients" }] }],
       validation: (Rule) => Rule.required().max(3),
     }),
   ]),
+  preview: createWidgetPreview("Recents"),
 };
 
-export const widgets = [twitter, media, project];
+export const widgets = [twitter, media, project, rive, recents];

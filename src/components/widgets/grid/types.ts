@@ -1,35 +1,20 @@
 import { MediaItem } from "@/sanity/lib/media";
-import { Clients } from "@/sanity/types";
+import type { Home } from "@/sanity/types";
 
-export type WidgetSize = "1x1" | "2x2" | "3x3";
+// Extract widget types from Home type
+type SanityWidgets = NonNullable<Home["widgets"]>;
+export type Widget = SanityWidgets[number];
+export type WidgetType = Widget["_type"];
 
-interface BaseWidget {
-  _key: string;
-  _type: "twitter" | "media" | "project";
-  position: { row: number; column: number };
-  size: WidgetSize;
-}
+// Individual widget types if needed for specific components
+export type TwitterWidget = Extract<Widget, { _type: "twitter" }>;
+export type MediaWidget = Extract<Widget, { _type: "media" }>;
+export type ProjectWidget = Extract<Widget, { _type: "project" }>;
+export type RecentsWidget = Extract<Widget, { _type: "recents" }>;
+export type RiveWidget = Extract<Widget, { _type: "rive" }>;
 
-export interface TwitterWidget extends BaseWidget {
-  _type: "twitter";
-  tweet?: string;
-  author?: string;
-  link?: string;
-}
-
-export interface MediaWidget extends BaseWidget {
-  _type: "media";
-  media?: MediaItem[];
-}
-
-export interface ProjectWidget extends BaseWidget {
-  _type: "project";
-  client?: {
-    _ref: string;
-    _type: string;
-  };
-  type?: "caseStudy" | "preview";
-  category?: string;
-}
-
-export type Widget = TwitterWidget | MediaWidget | ProjectWidget;
+export type WidgetRegistry = {
+  [K in WidgetType]: React.ComponentType<{
+    data: Extract<Widget, { _type: K }>;
+  }>;
+};

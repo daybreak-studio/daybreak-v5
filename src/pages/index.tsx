@@ -14,7 +14,21 @@ import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
 import { useScramble } from "use-scramble";
 import { WidgetDataProvider } from "@/components/widgets/grid/context";
-import { Widget } from "@/components/widgets/grid/types";
+import { Widget, WidgetRegistry } from "@/components/widgets/grid/types";
+import Twitter from "@/components/widgets/variants/twitter";
+import Media from "@/components/widgets/variants/media";
+import Project from "@/components/widgets/variants/project";
+import Recents from "@/components/widgets/variants/recents";
+import Rive from "@/components/widgets/variants/rive";
+
+// Register widgets specific to the home page
+const homeWidgets: WidgetRegistry = {
+  twitter: Twitter,
+  media: Media,
+  project: Project,
+  recents: Recents,
+  rive: Rive,
+};
 
 export default function Home({
   homeData,
@@ -23,6 +37,7 @@ export default function Home({
   homeData: Home;
   clientsData: Clients[];
 }) {
+  console.log(homeData);
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
 
   const { ref: headingRef, replay } = useScramble({
@@ -76,7 +91,7 @@ export default function Home({
                 clients: clientsData,
               }}
             >
-              <WidgetGrid />
+              <WidgetGrid components={homeWidgets} />
             </WidgetDataProvider>
           </div>
         </motion.div>
