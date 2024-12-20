@@ -1,31 +1,29 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ContactFormValues, contactFormSchema } from "@/components/form/schema";
+import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { createFormSteps } from "@/components/form";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  contactFormSchema,
-  ContactFormValues,
-  ProjectTypes,
-} from "@/lib/contact/schemas/contact-form";
-import { usePersistedForm } from "@/hooks/usePersistedForm";
+  getScale,
+  getRotation,
+  getY,
+  getCardVisibility,
+} from "@/components/form/utils/animations";
+
+interface FormStep {
+  id: string;
+  content: React.ReactNode;
+}
 
 export default function ContactPage() {
   const { toast } = useToast();
+  const [copied, setCopied] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
     defaultValues: {
@@ -35,185 +33,131 @@ export default function ContactPage() {
       message: "",
       link: "",
     },
+    mode: "onChange",
   });
 
-  usePersistedForm(form);
+  const nextStep = () =>
+    setCurrentStep((prev) => Math.min(prev + 1, formSteps.length - 1));
+  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
+
+  const formSteps = createFormSteps({
+    form,
+    nextStep,
+    prevStep,
+    onSubmit,
+    copied,
+    setCopied,
+  });
+
+  const restartForm = () => {
+    form.reset();
+    setCurrentStep(0);
+  };
 
   async function onSubmit(data: ContactFormValues) {
+    console.log("onSubmit handler executing with data:", data);
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit form");
-      }
+      const responseData = await response.json();
+      console.log("API response:", responseData);
 
-      // Clear form and storage
-      form.reset();
-      localStorage.removeItem("contact_form_data");
+      if (!response.ok) throw new Error("Failed to submit form");
 
+      nextStep();
       toast({
-        title: "Message sent successfully! 🎉",
-        description: "We'll get back to you within 24-48 hours.",
+        title: "Success!",
+        description: "We'll get back to you soon.",
       });
     } catch (error) {
-      console.error("Submission Error:", error);
+      console.error("API Error:", error);
       toast({
         variant: "destructive",
-        title: "Oops! Something went wrong",
-        description:
-          "Please try again or email us directly at hello@daybreak.studio",
+        title: "Error",
+        description: "Something went wrong.",
       });
     }
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold tracking-tight">Get in touch</h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            We&apos;d love to hear about your project. Let us know what
-            you&apos;re looking to create.
-          </p>
-        </div>
+    <FormProvider {...form}>
+      <div className="fixed inset-0">
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            console.log("Form submit event triggered");
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>What&apos;s your name?</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Jane Smith" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            try {
+              // Get the form data
+              const data = form.getValues();
+              console.log("Form data:", data);
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>What&apos;s your email?</FormLabel>
-                  <FormControl>
-                    <Input placeholder="jane@company.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              // Validate the form
+              const isValid = await form.trigger();
+              console.log("Form validation:", isValid);
 
-            <FormField
-              control={form.control}
-              name="projectTypes"
-              render={() => (
-                <FormItem>
-                  <FormLabel>
-                    What type of project are you interested in?
-                  </FormLabel>
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                    {Object.entries(ProjectTypes).map(([value, label]) => (
-                      <FormField
-                        key={value}
-                        control={form.control}
-                        name="projectTypes"
-                        render={({ field }) => (
-                          <FormItem
-                            key={value}
-                            className="flex flex-row items-start space-x-3 space-y-0"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(value as any)}
-                                onCheckedChange={(checked) => {
-                                  const currentValue = field.value || [];
-                                  const newValue = checked
-                                    ? [...currentValue, value]
-                                    : currentValue.filter((v) => v !== value);
-                                  field.onChange(newValue);
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              if (!isValid) {
+                console.log("Form validation failed");
+                return;
+              }
 
-            <FormField
-              control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tell us about your project</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Share your vision, goals, and any specific requirements..."
-                      className="min-h-[120px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="link"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Got a website or portfolio to share?</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="https://your-website.com"
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Optional: Share a link to your website, portfolio, or
-                    inspiration
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={form.formState.isSubmitting}
-            >
-              {form.formState.isSubmitting ? (
-                <span className="flex items-center gap-2">
-                  Sending your message...
-                </span>
-              ) : (
-                "Let's create something amazing"
-              )}
-            </Button>
-          </form>
-        </Form>
+              // Submit the form
+              await onSubmit(data);
+            } catch (error) {
+              console.error("Form submission error:", error);
+            }
+          }}
+          className="grid h-screen w-screen place-items-center"
+        >
+          <AnimatePresence initial={false}>
+            {formSteps.map((step: FormStep, index: number) => (
+              <motion.div
+                key={step.id}
+                initial={{
+                  opacity: 0,
+                  rotate: getRotation(index, currentStep),
+                  scale: getScale(index, currentStep),
+                  y: getY(index, currentStep),
+                  filter: `blur(${getCardVisibility(index, currentStep).blur}px)`,
+                }}
+                animate={{
+                  opacity: getCardVisibility(index, currentStep).opacity,
+                  rotate: getRotation(index, currentStep),
+                  scale: getScale(index, currentStep),
+                  y: getY(index, currentStep),
+                  filter: `blur(${getCardVisibility(index, currentStep).blur}px)`,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.95,
+                  transition: { duration: 0.2 },
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 100,
+                  damping: 20,
+                  mass: 1,
+                  velocity: 0.5,
+                  opacity: { duration: 0.1 },
+                  filter: { duration: 0.2 },
+                }}
+                style={{
+                  position: "absolute",
+                  pointerEvents: currentStep === index ? "auto" : "none",
+                  zIndex: index,
+                }}
+              >
+                {step.content}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </form>
+        <Toaster />
       </div>
-      <Toaster />
-    </div>
+    </FormProvider>
   );
 }

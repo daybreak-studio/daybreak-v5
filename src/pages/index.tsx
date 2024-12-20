@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { GetStaticProps } from "next";
 import { PortableText, PortableTextProps } from "@portabletext/react";
@@ -6,18 +6,29 @@ import { client } from "@/sanity/lib/client";
 import type { Home, Clients } from "@/sanity/types";
 import Drawer from "@/components/drawer";
 import Reveal from "@/components/animations/reveal";
-import { WidgetGrid } from "@/components/grid";
-import Twitter from "@/components/widgets/twitter";
-import Media from "@/components/widgets/media";
-import Article from "@/components/article";
+import { WidgetGrid } from "@/components/widgets/grid";
 import CarouselComponent from "@/components/carousel";
 import { CLIENTS_QUERY, HOME_QUERY } from "@/sanity/lib/queries";
 import { MediaItem } from "@/sanity/lib/media";
 import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
-import Project from "@/components/widgets/project";
-import { LayoutProps } from "@/components/grid/props";
 import { useScramble } from "use-scramble";
+import { WidgetDataProvider } from "@/components/widgets/grid/context";
+import { Widget, WidgetRegistry } from "@/components/widgets/grid/types";
+import TwitterWidget from "@/components/widgets/variants/twitter";
+import MediaWidget from "@/components/widgets/variants/media";
+import ProjectWidget from "@/components/widgets/variants/project";
+import RecentsWidget from "@/components/widgets/variants/recents";
+import RiveWidget from "@/components/widgets/variants/rive";
+
+// Register widgets specific to the home page
+const homeWidgets: WidgetRegistry = {
+  twitter: TwitterWidget,
+  media: MediaWidget,
+  project: ProjectWidget,
+  recents: RecentsWidget,
+  rive: RiveWidget,
+};
 
 export default function Home({
   homeData,
@@ -26,6 +37,7 @@ export default function Home({
   homeData: Home;
   clientsData: Clients[];
 }) {
+  console.log(homeData);
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
 
   const { ref: headingRef, replay } = useScramble({
@@ -50,7 +62,7 @@ export default function Home({
     block: {
       normal: ({ children, index }) => (
         <div>
-          <p className="mb-8 text-3xl text-zinc-400">{children}</p>
+          <p className="mb-8 text-2xl text-stone-400 md:text-3xl">{children}</p>
         </div>
       ),
     },
@@ -62,66 +74,77 @@ export default function Home({
   };
 
   return (
-    <main className="relative">
-      <motion.div className="fixed inset-0">
-        <div className="flex h-full flex-col items-center justify-center space-y-8">
-          <h1
-            ref={headingRef}
-            onMouseOver={replay}
-            onFocus={replay}
-            className="max-w-[16ch] text-center text-3xl font-[450] text-zinc-400 lg:text-4xl"
-          />
-          <WidgetGrid
-            widgets={homeData.widgets ?? []}
-            clientsData={clientsData}
-          />
-        </div>
-      </motion.div>
-      {/* Drawer Content */}
-      {windowHeight !== null && homeData && (
-        <Drawer windowHeight={windowHeight}>
-          {/* Mission Statement */}
-          <div className="space-y-12 pt-20 md:pt-32">
-            <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
-              {homeData.missionStatement && (
-                <PortableText
-                  value={homeData.missionStatement}
-                  components={components}
-                />
-              )}
-            </Reveal>
-
-            {/* Carousel - Lazy load when drawer is open */}
-            <Reveal>
-              {homeData.media && <CarouselComponent media={homeData.media} />}
-            </Reveal>
-
-            {/* About Us - Simplified animation */}
-            <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
-              <h2 className="mb-4 text-xl text-zinc-400 md:text-2xl">
-                About Us
-              </h2>
-              {homeData?.aboutUs && (
-                <PortableText
-                  value={homeData.aboutUs}
-                  components={components}
-                />
-              )}
-            </Reveal>
-
-            {/* Newsfeed with Masonry Layout */}
-            <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
-              <h2 className="mb-4 text-xl text-zinc-400 md:mb-8 md:text-2xl">
-                Newsfeed
-              </h2>
-              <MasonryGrid articles={homeData?.newsfeed || []} />
-            </Reveal>
+    <>
+      {/* <GradientBackground /> */}
+      <main className="relative">
+        <motion.div className="fixed inset-0">
+          <div className="flex h-full flex-col items-center justify-center space-y-2 lg:space-y-8">
+            <h1
+              ref={headingRef}
+              onMouseOver={replay}
+              onFocus={replay}
+              className="max-w-[16ch] text-center text-3xl font-[450] text-stone-400/50 lg:text-4xl"
+            />
+            <WidgetDataProvider
+              data={{
+                widgets: homeData.widgets as Widget[],
+                clients: clientsData,
+              }}
+            >
+              <WidgetGrid components={homeWidgets} />
+            </WidgetDataProvider>
           </div>
+        </motion.div>
+        {/* Drawer Content */}
+        {windowHeight !== null && homeData && (
+          <Drawer windowHeight={windowHeight}>
+            {/* Mission Statement */}
+            <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
+              <div>
+                <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
+                  {homeData.missionStatement && (
+                    <PortableText
+                      value={homeData.missionStatement}
+                      components={components}
+                    />
+                  )}
+                </Reveal>
 
-          <Footer />
-        </Drawer>
-      )}
-    </main>
+                {/* Carousel - Lazy load when drawer is open */}
+                <Reveal>
+                  {homeData.media && (
+                    <CarouselComponent media={homeData.media} />
+                  )}
+                </Reveal>
+              </div>
+
+              {/* About Us - Simplified animation */}
+              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
+                <h2 className="mb-4 text-lg text-stone-400 md:text-xl">
+                  About Us
+                </h2>
+                {homeData?.aboutUs && (
+                  <PortableText
+                    value={homeData.aboutUs}
+                    components={components}
+                  />
+                )}
+              </Reveal>
+
+              {/* Newsfeed with Masonry Layout */}
+              <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
+                <h2 className="mb-4 text-lg text-stone-400 md:text-xl">
+                  Newsfeed
+                </h2>
+                <MasonryGrid articles={homeData?.newsfeed || []} />
+              </Reveal>
+            </div>
+
+            <Footer />
+          </Drawer>
+        )}
+      </main>
+    </>
   );
 }
 

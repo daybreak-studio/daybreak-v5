@@ -26,13 +26,13 @@ export default defineConfig({
   // Add and edit the content schema in the './sanity/schema' folder
   schema,
   plugins: [
-    muxInput({
-      mp4_support: "standard",
-    }),
     structureTool({
       structure: singletonStructure(singletonTypes, schemaTypes),
     }),
     visionTool({ defaultApiVersion: apiVersion }),
     singletonPlugin({ types: singletonTypes }),
+    muxInput({
+      mp4_support: "standard",
+    }),
   ],
 });

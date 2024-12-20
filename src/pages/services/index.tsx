@@ -1,27 +1,20 @@
-import Navigation from "@/components/navigation";
-import { client } from "@/sanity/lib/client";
-import { GetStaticProps } from "next";
+import ServicesCarousel from "@/components/services-carousel";
+import { WidgetGrid } from "@/components/widgets/grid";
+import { WidgetDataProvider } from "@/components/widgets/grid/context";
+import { Widget, WidgetRegistry } from "@/components/widgets/grid/types";
+import MediaWidget from "@/components/widgets/variants/media";
 import type { Services } from "@/sanity/types";
+const servicesWidgets: WidgetRegistry = {
+  media: MediaWidget,
+};
 
-export default function Services({ data }: { data: Services }) {
+export default function Services({ servicesData }: { servicesData: Services }) {
   return (
-    <div>
-      <div className="h-[100vh] bg-red-200"></div>
-      <div className="p-96 text-center">Insert your section here.</div>
-      <div className="h-[100vh] bg-blue-200"></div>
+    <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 p-4">
+      <WidgetDataProvider data={{ widgets: servicesData.widgets as Widget[] }}>
+        <WidgetGrid components={servicesWidgets} />
+      </WidgetDataProvider>
+      {/* <ServicesCarousel /> */}
     </div>
   );
 }
-
-// Fetch data from Sanity CMS
-export const getStaticProps: GetStaticProps = async () => {
-  const query = `*[_type == "services"][!(_id in path('drafts.**'))][0]`;
-  const data = await client.fetch(query);
-
-  return {
-    props: {
-      data,
-    },
-    revalidate: 60,
-  };
-};

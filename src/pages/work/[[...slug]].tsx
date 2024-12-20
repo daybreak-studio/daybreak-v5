@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { motion } from "framer-motion";
+import { motion, MotionProps } from "framer-motion";
 import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
@@ -10,10 +10,15 @@ import ProjectCaseStudy from "@/components/project/case-study";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { client } from "@/sanity/lib/client";
 import { CLIENTS_QUERY } from "@/sanity/lib/queries";
+import { EASINGS } from "@/components/animations/easings";
+import {
+  CONTAINER_ANIMATION,
+  IMAGE_ANIMATION,
+} from "@/components/project/animations";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -22,11 +27,11 @@ const MODAL_VARIANTS = {
     type: "selector",
   },
   preview: {
-    className: "max-h-[90vh] max-w-[1016px] overflow-y-auto",
+    className: "max-h-[90svh] max-w-[1016px] overflow-y-auto",
     type: "preview",
   },
   caseStudy: {
-    className: "h-screen w-screen max-w-none overflow-y-auto rounded-none",
+    className: "h-[100svh] w-screen max-w-none overflow-y-auto rounded-none",
     type: "caseStudy",
   },
 } as const;
@@ -67,24 +72,22 @@ export default function WorkPage({ data }: { data: Clients[] }) {
     (client) => client.slug?.current === clientSlug,
   );
 
-  // Check if the client has multiple projects
-  const shouldUseProjectSlug =
-    currentClient?.projects && currentClient.projects.length > 1;
+  // Force modal to be mounted when route includes client/project
+  const shouldShowModal = Boolean(clientSlug);
 
-  // Get the current project based on the routing logic
-  // const currentProject =
-  //   shouldUseProjectSlug && projectSlug
-  //     ? currentClient.projects?.find(
-  //         (project) => project.category === projectSlug,
-  //       )
-  //     : currentClient?.projects?.[0];
-
-  // Redirect if on a project route but client has only one project
+  // Handle redirect from middleware
   useEffect(() => {
-    if (clientSlug && projectSlug && currentClient?.projects?.length === 1) {
-      router.replace(`/work/${clientSlug}`, undefined, { shallow: true });
-    }
-  }, [clientSlug, projectSlug, currentClient, router]);
+    const handleRedirect = async () => {
+      const redirectTo = document.head
+        ?.querySelector('meta[name="x-redirect-to"]')
+        ?.getAttribute("content");
+      if (redirectTo) {
+        await router.push(redirectTo, undefined, { shallow: true });
+      }
+    };
+
+    handleRedirect();
+  }, [router]);
 
   return (
     <div className="mx-auto p-8">
@@ -93,24 +96,20 @@ export default function WorkPage({ data }: { data: Clients[] }) {
           const mediaAsset = getClientFirstMedia(client);
           if (!client.slug) return null;
 
-          const layoutId = `container-${client.slug.current}`;
+          const containerLayoutId = `container-${client.slug.current}`;
           const imageLayoutId = `image-${client.slug.current}`;
-          const hasMultipleProjects =
-            client.projects && client.projects.length > 1;
-
           const modalVariant = getModalVariant(client, projectSlug);
+
+          const isOpen = shouldShowModal && clientSlug === client.slug.current;
 
           return (
             <Dialog.Root
               key={client._id}
-              open={clientSlug === client.slug.current}
+              open={isOpen}
               onOpenChange={(open) => {
                 setActiveThumbId(client.slug?.current || null);
                 if (!open) {
-                  // Only close completely if we're in selector view
-                  if (!projectSlug) {
-                    router.push("/work", undefined, { shallow: true });
-                  }
+                  router.push("/work", undefined, { shallow: true });
                 } else {
                   router.push(`/work/${client.slug?.current}`, undefined, {
                     shallow: true,
@@ -120,8 +119,8 @@ export default function WorkPage({ data }: { data: Clients[] }) {
             >
               <Dialog.Trigger asChild>
                 <motion.div
-                  layout
-                  layoutId={layoutId}
+                  {...CONTAINER_ANIMATION}
+                  layoutId={containerLayoutId}
                   className={cn(
                     "frame-outer group relative aspect-square w-full origin-center cursor-pointer overflow-hidden",
                     isAnimating &&
@@ -135,17 +134,15 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                   }}
                 >
                   <motion.div
+                    {...IMAGE_ANIMATION}
+                    layoutId={imageLayoutId}
                     className={cn(
                       "relative aspect-square h-full w-full origin-center object-cover",
-                      isAnimating &&
-                        activeThumbId === client.slug?.current &&
-                        "relative z-50",
                     )}
                   >
                     <MediaRenderer
                       className="frame-inner"
                       fill
-                      layoutId={imageLayoutId}
                       media={mediaAsset}
                       autoPlay={false}
                     />
@@ -154,16 +151,35 @@ export default function WorkPage({ data }: { data: Clients[] }) {
               </Dialog.Trigger>
 
               <AnimatePresence>
-                {clientSlug === client.slug?.current && (
-                  <Dialog.Portal>
-                    <Dialog.Overlay asChild className="fixed inset-0">
-                      <motion.div className="fixed inset-0 bg-white/50 backdrop-blur-2xl" />
+                {isOpen && (
+                  <Dialog.Portal forceMount>
+                    <Dialog.Overlay asChild forceMount>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 0.4,
+                          ease: EASINGS.easeOutQuart,
+                        }}
+                        className="fixed inset-0 bg-white/50 backdrop-blur-2xl"
+                      />
                     </Dialog.Overlay>
                     <Dialog.Content
                       asChild
+                      forceMount
                       className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
                     >
-                      <motion.div className="hide-scrollbar z-50 focus:outline-none">
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 0.5,
+                          ease: EASINGS.easeOutQuart,
+                        }}
+                        className="z-50 focus:outline-none"
+                      >
                         <Dialog.Title className="sr-only">
                           {client.name} Project Details
                         </Dialog.Title>
@@ -172,8 +188,8 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         </Dialog.Description>
 
                         <motion.div
-                          layout
-                          layoutId={layoutId}
+                          {...CONTAINER_ANIMATION}
+                          layoutId={containerLayoutId}
                           className={cn(
                             "w-[90vw] origin-center rounded-3xl bg-white",
                             "overflow-y-auto shadow-2xl",
@@ -214,7 +230,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                                 });
                               }
                             }}
-                            className="absolute right-4 top-4 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl border-[1px] border-zinc-100 bg-white text-zinc-500 hover:bg-zinc-100 focus:shadow-gray-400 focus:outline-none"
+                            className="absolute right-4 top-4 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl border-[1px] border-stone-100 bg-white text-stone-500 hover:bg-stone-100 focus:shadow-gray-400 focus:outline-none"
                           >
                             <Cross2Icon className="h-4 w-4" />
                           </Dialog.Close>

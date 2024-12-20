@@ -1,39 +1,62 @@
 import "@/styles/globals.css";
 import "../../public/fonts/font-face.css";
+import localFont from "next/font/local";
+import Navigation from "@/components/navigation";
+import Layout from "@/components/layout";
 import { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
-import Navigation from "@/components/navigation";
-import { VisitProvider } from "@/contexts/VisitContext";
-import Layout from "@/components/layout";
-import { useBaseRoute } from "../hooks/useBaseRoute";
-import localFont from "next/font/local";
-import { DebugProvider } from "@/contexts/DebugContext";
+import { VisitProvider } from "@/lib/contexts/visit";
+import { DebugProvider } from "@/lib/contexts/debug";
+import { usePathname } from "@/lib/hooks/use-pathname";
 
 const aspekta = localFont({
   src: "../../public/fonts/AspektaVF.woff2",
 });
 
 export default function App({ Component, pageProps }: AppProps) {
-  const { isBaseRoute, currentBasePath } = useBaseRoute();
+  const { basePath } = usePathname();
+
+  // console.log(`
+
+  //                                       ####
+  //                           ##          ####          ##
+  //                         #####         ####         #####
+  //                          #####        ####        ######
+  //                           #####       ####       ######
+  //                            #####      ####      #####
+  //                             #####     ####     #####
+  //                ####          #####    ####    #####          ####
+  //               ########        #####   ####   #####        ########
+  //                ##########      #####  ####  #####      ##########
+  //                    #########    ################    #########
+  //                       #########  ##############  #########
+  //                          ##############################
+  //                             ###########  ###########
+  //                                ######      ######
+  //            ########################          #########################
+  //            #######################            ########################
+
+  //                     Daybreak Studio — 2025 — daybreak.studio
+  //                        A technology first design studio.
+
+  //                          Are you a developer? Join us!
+  //                            careers@daybreak.studio
+
+  // `);
 
   return (
-    <DebugProvider>
-      <div className={`${aspekta.className}`}>
+    <div className={`${aspekta.className}`}>
+      <DebugProvider>
         <VisitProvider>
           <Navigation />
-          <motion.div
-            className="main-gradient fixed inset-0"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          />
+          <motion.div className="main-gradient fixed inset-0" />
           <AnimatePresence mode="wait">
-            <Layout key={currentBasePath}>
+            <Layout key={basePath}>
               <Component {...pageProps} />
             </Layout>
           </AnimatePresence>
         </VisitProvider>
-      </div>
-    </DebugProvider>
+      </DebugProvider>
+    </div>
   );
 }

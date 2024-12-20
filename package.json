@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.9.1",
     "@notionhq/client": "^2.2.15",
     "@portabletext/react": "^3.1.0",
@@ -19,6 +20,7 @@
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
+    "@rive-app/react-canvas": "^4.17.4",
     "@sanity/asset-utils": "^2.0.6",
     "@sanity/client": "^6.21.3",
     "@sanity/icons": "^3.4.0",
@@ -32,6 +34,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.4.0",
+    "embla-carousel-wheel-gestures": "^8.0.1",
     "framer-motion": "^11.3.19",
     "js-cookie": "^3.0.5",
     "lenis": "^1.1.18",

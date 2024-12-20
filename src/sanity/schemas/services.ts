@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { widgets } from "./widgets";
 
 const tab = defineField({
   name: "tab",
@@ -17,6 +18,12 @@ export const services = defineType({
   title: "Services",
   type: "document",
   fields: [
+    defineField({
+      name: "widgets",
+      title: "Widgets",
+      type: "array",
+      of: widgets,
+    }),
     defineField({
       name: "quotes",
       title: "Quotes",
