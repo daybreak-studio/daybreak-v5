@@ -13,11 +13,12 @@ export default function RiveWidget({ data }: RiveProps) {
         src="https://rive.app/s/nZMsa04nO062NTe40ulCzQ"
         stateMachines="bumpy"
       /> */}
+      {/* <div></div> */}
       <iframe
         // allowFullScreen
         allow="autoplay"
         src={data.src}
-        className="aspect-square h-full w-full opacity-100"
+        className="aspect-square h-full w-full"
       />
     </BaseWidget>
   );

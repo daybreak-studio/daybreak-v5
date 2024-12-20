@@ -1,5 +1,6 @@
 import { defineField } from "sanity";
 import { createMediaArray } from "./media";
+import { ArrayOfType } from "sanity";
 
 type WidgetSize = "1x1" | "2x2" | "3x3";
 const ALL_SIZES: WidgetSize[] = ["1x1", "2x2", "3x3"];
@@ -145,4 +146,10 @@ export const recents = {
   preview: createWidgetPreview("Recents"),
 };
 
-export const widgets = [twitter, media, project, rive, recents];
+export const widgets = [
+  twitter,
+  media,
+  project,
+  rive,
+  recents,
+] as ArrayOfType[];

@@ -26,7 +26,7 @@ const homeWidgets: WidgetRegistry = {
   twitter: TwitterWidget,
   media: MediaWidget,
   project: ProjectWidget,
-  // recents: RecentsWidget,
+  recents: RecentsWidget,
   rive: RiveWidget,
 };
 

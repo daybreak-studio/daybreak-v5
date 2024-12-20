@@ -74,9 +74,16 @@ export const preview = defineType({
   type: "object",
   fields: [
     defineField({
+      name: "date",
+      title: "Published Date",
+      type: "date",
+      description: "When this project was published/launched",
+    }),
+    defineField({
       name: "category",
       title: "Category",
       type: "string",
+      description: "The type of work this project represents",
       options: {
         list: [
           { title: "Brand", value: "brand" },
@@ -90,22 +97,20 @@ export const preview = defineType({
       name: "heading",
       title: "Heading",
       type: "string",
+      description: "Main title for the preview",
     }),
     defineField({
       name: "caption",
       title: "Caption",
       type: "string",
+      description: "Brief description or subtitle for the preview",
     }),
     createMediaArray(),
     defineField({
       name: "link",
       title: "External Link",
       type: "url",
-    }),
-    defineField({
-      name: "date",
-      title: "Date",
-      type: "date",
+      description: "Optional link to external content or live project",
     }),
   ],
   preview: {
@@ -132,9 +137,16 @@ export const caseStudy = defineType({
   type: "object",
   fields: [
     defineField({
+      name: "date",
+      title: "Published Date",
+      type: "date",
+      description: "When this project was published/launched",
+    }),
+    defineField({
       name: "category",
       title: "Category",
       type: "string",
+      description: "The type of work this project represents",
       options: {
         list: [
           { title: "Brand", value: "brand" },
@@ -148,11 +160,14 @@ export const caseStudy = defineType({
       name: "heading",
       title: "Heading",
       type: "string",
+      description: "Main title for the case study",
     }),
+
     defineField({
       name: "mediaGroups",
       title: "Media Groups",
       type: "array",
+      description: "Groups of media content with associated text",
       of: [
         {
           type: "object",
@@ -162,11 +177,13 @@ export const caseStudy = defineType({
               name: "heading",
               type: "string",
               title: "Heading",
+              description: "Title for this media group",
             }),
             defineField({
               name: "caption",
               type: "text",
               title: "Caption",
+              description: "Descriptive text for this media group",
             }),
             createMediaArray({
               name: "media",
@@ -237,12 +254,22 @@ export const caseStudy = defineType({
       name: "credits",
       title: "Credits",
       type: "array",
+      description: "List of people and their roles in the project",
       of: [
         {
           type: "object",
           fields: [
-            { name: "role", type: "string" },
-            { name: "names", type: "array", of: [{ type: "string" }] },
+            {
+              name: "role",
+              type: "string",
+              description: "The role or responsibility",
+            },
+            {
+              name: "names",
+              type: "array",
+              of: [{ type: "string" }],
+              description: "Names of people in this role",
+            },
           ],
         },
       ],

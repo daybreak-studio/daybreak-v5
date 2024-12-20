@@ -121,6 +121,110 @@ export type Services = {
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
+  widgets?: Array<
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        tweet?: string;
+        author?: string;
+        link?: string;
+        media?: Array<{
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          _key: string;
+        }>;
+        _type: "twitter";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        media?: Array<
+          | {
+              source?: {
+                asset?: {
+                  _ref: string;
+                  _type: "reference";
+                  _weak?: boolean;
+                  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+                };
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
+              };
+              width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+              alt?: string;
+              _type: "imageItem";
+              _key: string;
+            }
+          | {
+              source?: MuxVideo;
+              width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+              alt?: string;
+              _type: "videoItem";
+              _key: string;
+            }
+        >;
+        _type: "media";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        client?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "clients";
+        };
+        category?: "brand" | "product" | "motion" | "web";
+        type?: "caseStudy" | "preview";
+        _type: "project";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        src?: string;
+        _type: "rive";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        clients?: Array<{
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          _key: string;
+          [internalGroqTypeReferenceTo]?: "clients";
+        }>;
+        _type: "recents";
+        _key: string;
+      }
+  >;
   quotes?: Array<{
     name?: string;
     title?: string;
@@ -230,6 +334,7 @@ export type Services = {
 
 export type CaseStudy = {
   _type: "caseStudy";
+  date?: string;
   category?: "brand" | "product" | "web" | "motion";
   heading?: string;
   mediaGroups?: Array<{
@@ -273,6 +378,7 @@ export type CaseStudy = {
 
 export type Preview = {
   _type: "preview";
+  date?: string;
   category?: "brand" | "product" | "web" | "motion";
   heading?: string;
   caption?: string;
@@ -303,7 +409,6 @@ export type Preview = {
       }
   >;
   link?: string;
-  date?: string;
 };
 
 export type Home = {
@@ -722,6 +827,7 @@ export type CLIENTS_QUERYResult = Array<{
     | {
         _key: string;
         _type: "caseStudy";
+        date?: string;
         category?: "brand" | "motion" | "product" | "web";
         heading?: string;
         mediaGroups: Array<{
@@ -785,6 +891,7 @@ export type CLIENTS_QUERYResult = Array<{
     | {
         _key: string;
         _type: "preview";
+        date?: string;
         category?: "brand" | "motion" | "product" | "web";
         heading?: string;
         caption?: string;
@@ -835,7 +942,6 @@ export type CLIENTS_QUERYResult = Array<{
             }
         > | null;
         link?: string;
-        date?: string;
       }
   > | null;
 }>;

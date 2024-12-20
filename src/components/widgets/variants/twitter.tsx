@@ -1,10 +1,9 @@
-import { HoverCard } from "@/components/animations/hover";
 import { BaseWidget } from "../grid/base-widget";
-import { TwitterWidget } from "../grid/types";
+import { TwitterWidgetTypes } from "../grid/types";
 import TwitterLogo from "/public/icons/twitter.svg";
 
 interface TwitterProps {
-  data: TwitterWidget;
+  data: TwitterWidgetTypes;
 }
 
 export default function TwitterWidget({ data }: TwitterProps) {
@@ -22,7 +21,7 @@ export default function TwitterWidget({ data }: TwitterProps) {
       case "3x3":
         return (
           <a
-            className="flex h-full w-full flex-col justify-between p-6 text-stone-500 transition-colors duration-200 hover:text-stone-400"
+            className="frame-inner flex h-full w-full flex-col justify-between bg-white/40 p-6 text-stone-500 transition-colors duration-200 hover:text-stone-400"
             href={data.link}
             target="_blank"
             rel="noopener noreferrer"
