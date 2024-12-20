@@ -7,7 +7,7 @@ interface TwitterProps {
   data: TwitterWidget;
 }
 
-export default function Twitter({ data }: TwitterProps) {
+export default function TwitterWidget({ data }: TwitterProps) {
   const renderContent = () => {
     switch (data.size) {
       case "1x1":

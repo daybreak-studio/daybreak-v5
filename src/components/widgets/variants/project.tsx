@@ -1,5 +1,5 @@
 import { BaseWidget } from "../grid/base-widget";
-import { ProjectWidget } from "../grid/types";
+import { ProjectWidgetTypes } from "../grid/types";
 import { MediaRenderer } from "../../media-renderer";
 import { useRouter } from "next/router";
 import { useWidgetData } from "@/components/widgets/grid/context";
@@ -7,10 +7,10 @@ import { Clients } from "@/sanity/types";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
 
 interface ProjectProps {
-  data: ProjectWidget;
+  data: ProjectWidgetTypes;
 }
 
-export default function Project({ data }: ProjectProps) {
+export default function ProjectWidget({ data }: ProjectProps) {
   const router = useRouter();
   const clients = useWidgetData<Clients[]>("clients");
 

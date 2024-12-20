@@ -15,19 +15,19 @@ import MasonryGrid from "@/components/masonry-grid";
 import { useScramble } from "use-scramble";
 import { WidgetDataProvider } from "@/components/widgets/grid/context";
 import { Widget, WidgetRegistry } from "@/components/widgets/grid/types";
-import Twitter from "@/components/widgets/variants/twitter";
-import Media from "@/components/widgets/variants/media";
-import Project from "@/components/widgets/variants/project";
-import Recents from "@/components/widgets/variants/recents";
-import Rive from "@/components/widgets/variants/rive";
+import TwitterWidget from "@/components/widgets/variants/twitter";
+import MediaWidget from "@/components/widgets/variants/media";
+import ProjectWidget from "@/components/widgets/variants/project";
+import RecentsWidget from "@/components/widgets/variants/recents";
+import RiveWidget from "@/components/widgets/variants/rive";
 
 // Register widgets specific to the home page
 const homeWidgets: WidgetRegistry = {
-  twitter: Twitter,
-  media: Media,
-  project: Project,
-  recents: Recents,
-  rive: Rive,
+  twitter: TwitterWidget,
+  media: MediaWidget,
+  project: ProjectWidget,
+  // recents: RecentsWidget,
+  rive: RiveWidget,
 };
 
 export default function Home({

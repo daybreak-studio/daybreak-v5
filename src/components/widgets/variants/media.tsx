@@ -1,12 +1,12 @@
 import { BaseWidget } from "../grid/base-widget";
-import { MediaWidget } from "../grid/types";
+import { MediaWidgetTypes } from "../grid/types";
 import { MediaRenderer } from "../../media-renderer";
 
 interface MediaProps {
-  data: MediaWidget;
+  data: MediaWidgetTypes;
 }
 
-export default function Media({ data }: MediaProps) {
+export default function MediaWidget({ data }: MediaProps) {
   const renderContent = () => {
     const mediaItem = data.media?.[0] ?? null;
 

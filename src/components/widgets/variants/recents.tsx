@@ -1,9 +1,9 @@
-import { RecentsWidget } from "../grid/types";
+import { RecentsWidgetTypes } from "../grid/types";
 
 interface RecentsProps {
-  data: RecentsWidget;
+  data: RecentsWidgetTypes;
 }
 
-export default function Recents({ data }: RecentsProps) {
+export default function RecentsWidget({ data }: RecentsProps) {
   return <div>Recents</div>;
 }

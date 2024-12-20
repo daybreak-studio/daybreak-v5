@@ -7,14 +7,16 @@ export type Widget = SanityWidgets[number];
 export type WidgetType = Widget["_type"];
 
 // Individual widget types if needed for specific components
-export type TwitterWidget = Extract<Widget, { _type: "twitter" }>;
-export type MediaWidget = Extract<Widget, { _type: "media" }>;
-export type ProjectWidget = Extract<Widget, { _type: "project" }>;
-export type RecentsWidget = Extract<Widget, { _type: "recents" }>;
-export type RiveWidget = Extract<Widget, { _type: "rive" }>;
+export type TwitterWidgetTypes = Extract<Widget, { _type: "twitter" }>;
+export type MediaWidgetTypes = Extract<Widget, { _type: "media" }>;
+export type ProjectWidgetTypes = Extract<Widget, { _type: "project" }>;
+export type RecentsWidgetTypes = Extract<Widget, { _type: "recents" }>;
+export type RiveWidgetTypes = Extract<Widget, { _type: "rive" }>;
 
-export type WidgetRegistry = {
-  [K in WidgetType]: React.ComponentType<{
-    data: Extract<Widget, { _type: K }>;
-  }>;
-};
+// export type WidgetRegistry = {
+//   [K in WidgetType]: React.ComponentType<{
+//     data: Extract<Widget, { _type: K }>;
+//   }>;
+// };
+
+export type WidgetRegistry = Record<string, React.ComponentType<{ data: any }>>;
