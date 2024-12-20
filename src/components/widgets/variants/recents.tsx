@@ -31,9 +31,12 @@ export default function RecentsWidget({ data }: RecentsProps) {
     const dates = client.projects
       ?.map((project) => project.date)
       .filter(Boolean)
-      .map((date) => new Date(date!));
+      .map((date) => new Date(date!))
+      .sort((a, b) => b.getTime() - a.getTime());
 
-    return dates?.length ? Math.max(...dates.map((d) => d.getTime())) : null;
+    console.log(dates);
+
+    return dates?.length ? dates[0] : null;
   };
 
   return (
