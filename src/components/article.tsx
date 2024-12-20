@@ -3,7 +3,7 @@ import { MediaRenderer } from "@/components/media-renderer";
 import Reveal from "@/components/animations/reveal";
 import type { Home } from "@/sanity/types";
 import { HoverCard } from "@/components/animations/hover";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 type ArticleType = NonNullable<Home["newsfeed"]>[number];
 
@@ -25,7 +25,7 @@ const Article = memo(({ article }: { article: ArticleType }) => {
 
         <div className="p-4">
           <h2 className="pb-4 text-sm text-stone-400">
-            {format(new Date(article.date || ""), "MMMM d, yyyy")}
+            {format(parseISO(article.date || ""), "MMMM d, yyyy")}
           </h2>
           <h1 className="pb-2">{article.title}</h1>
           <h2 className="text-stone-500">{article.description}</h2>
