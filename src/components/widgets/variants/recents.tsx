@@ -5,7 +5,7 @@ import { useWidgetData } from "../grid/context";
 import { BaseWidget } from "../grid/base-widget";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
 import { MediaRenderer } from "@/components/media-renderer";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 
 interface RecentsProps {
   data: RecentsWidgetTypes;
@@ -31,10 +31,8 @@ export default function RecentsWidget({ data }: RecentsProps) {
     const dates = client.projects
       ?.map((project) => project.date)
       .filter(Boolean)
-      .map((date) => parseISO(date!))
+      .map((date) => new Date(date!))
       .sort((a, b) => b.getTime() - a.getTime());
-
-    console.log(dates);
 
     return dates?.length ? dates[0] : null;
   };

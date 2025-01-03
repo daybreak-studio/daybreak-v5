@@ -37,7 +37,6 @@ export default function Home({
   homeData: Home;
   clientsData: Clients[];
 }) {
-  console.log(homeData);
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
 
   const { ref: headingRef, replay } = useScramble({
