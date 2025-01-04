@@ -27,7 +27,7 @@ export default function ProjectPreview({
   return (
     <div className="flex flex-col p-8 md:flex-row md:space-x-8">
       <motion.div
-        className="order-2 w-2/3 pt-4 md:order-1 md:pt-0"
+        className="order-2 pt-4 md:order-1 md:w-2/3 md:pt-0"
         layout
         layoutId={imageLayoutId}
       >
@@ -37,7 +37,7 @@ export default function ProjectPreview({
           autoPlay={true}
         />
       </motion.div>
-      <div className="order-1 flex w-1/3 flex-col justify-between md:order-2">
+      <div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">
         <div className="hidden items-center space-x-2 md:flex">
           <ChevronLeft className="h-4 w-4 text-stone-500" />
           {project.media?.map((media) => {
