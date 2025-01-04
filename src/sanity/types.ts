@@ -337,6 +337,7 @@ export type CaseStudy = {
   date?: string;
   category?: "brand" | "product" | "web" | "motion";
   heading?: string;
+  caption?: string;
   mediaGroups?: Array<{
     heading?: string;
     caption?: string;
@@ -830,6 +831,7 @@ export type CLIENTS_QUERYResult = Array<{
         date?: string;
         category?: "brand" | "motion" | "product" | "web";
         heading?: string;
+        caption?: string;
         mediaGroups: Array<{
           heading: string | null;
           caption: string | null;

@@ -26,5 +26,8 @@ export function useViewport() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return { breakpoint };
+  const isMobile = breakpoint === "sm";
+  const isDesktop = breakpoint && breakpoint !== "sm";
+
+  return { breakpoint, isMobile, isDesktop };
 }

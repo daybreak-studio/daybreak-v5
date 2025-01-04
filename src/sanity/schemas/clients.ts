@@ -162,7 +162,12 @@ export const caseStudy = defineType({
       type: "string",
       description: "Main title for the case study",
     }),
-
+    defineField({
+      name: "caption",
+      title: "Caption",
+      type: "string",
+      description: "Brief description or subtitle for the case study",
+    }),
     defineField({
       name: "mediaGroups",
       title: "Media Groups",

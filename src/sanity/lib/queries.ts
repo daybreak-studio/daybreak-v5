@@ -72,3 +72,15 @@ export const HOME_QUERY = groq`
     }
   }
 `;
+
+export const SERVICES_QUERY = groq`
+  *[_type == "services"][!(_id in path('drafts.**'))][0] {
+    ...,
+    widgets[] {
+      ...,
+      media[] {
+        ${MEDIA_PROJECTION}
+      }
+    }
+  }
+`;

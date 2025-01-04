@@ -23,11 +23,12 @@ import {
 // Define modal variants
 const MODAL_VARIANTS = {
   selector: {
-    className: "max-w-[800px] p-4",
+    className: "w-[90vw] max-w-[800px] p-4",
     type: "selector",
   },
   preview: {
-    className: "max-h-[90svh] max-w-[1016px] overflow-y-auto",
+    className:
+      "w-[90vw] max-w-[600px] md:max-h-[80svh] md:max-w-[1000px] overflow-y-auto",
     type: "preview",
   },
   caseStudy: {
@@ -191,8 +192,8 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                           {...CONTAINER_ANIMATION}
                           layoutId={containerLayoutId}
                           className={cn(
-                            "w-[90vw] origin-center rounded-3xl bg-white",
-                            "overflow-y-auto shadow-2xl",
+                            "frame-outer origin-center bg-white",
+                            "overflow-y-auto",
                             modalVariant.className,
                           )}
                         >

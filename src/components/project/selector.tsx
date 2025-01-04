@@ -4,12 +4,9 @@ import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
-import ProjectPreview from "@/components/project/preview";
-import { Cross2Icon } from "@radix-ui/react-icons";
 import { ChevronRight } from "lucide-react";
 import { IMAGE_ANIMATION } from "@/components/project/animations";
 import { EASINGS } from "@/components/animations/easings";
-import { useViewport } from "@/lib/hooks/use-viewport";
 
 interface ProjectSelectorProps {
   data: Clients;
@@ -21,7 +18,6 @@ export default function ProjectSelector({
   imageLayoutId,
 }: ProjectSelectorProps) {
   const router = useRouter();
-  const { breakpoint } = useViewport();
 
   console.log(data);
 
@@ -83,11 +79,9 @@ export default function ProjectSelector({
                     </h3>
                     <ChevronRight className="h-4 w-4 text-stone-500 md:h-5 md:w-5 md:pt-[3px]" />
                   </div>
-                  {/* {breakpoint && breakpoint > "sm" && (
-                    <h4 className="text-sm text-stone-500">
-                      {project.heading}
-                    </h4>
-                  )} */}
+                  <h4 className="hidden text-sm text-stone-500 md:block">
+                    {project.caption}
+                  </h4>
                 </div>
               </motion.div>
             </motion.div>
