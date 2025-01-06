@@ -5,7 +5,6 @@ import Navigation from "@/components/navigation";
 import Layout from "@/components/layout";
 import { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
-import { VisitProvider } from "@/lib/contexts/visit";
 import { DebugProvider } from "@/lib/contexts/debug";
 import { usePathname } from "@/lib/hooks/use-pathname";
 
@@ -47,15 +46,13 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className={`${aspekta.className}`}>
       <DebugProvider>
-        <VisitProvider>
-          <Navigation />
-          <motion.div className="main-gradient fixed inset-0" />
-          <AnimatePresence mode="wait">
-            <Layout key={basePath}>
-              <Component {...pageProps} />
-            </Layout>
-          </AnimatePresence>
-        </VisitProvider>
+        <Navigation />
+        <motion.div className="main-gradient fixed inset-0" />
+        <AnimatePresence mode="wait">
+          <Layout key={basePath}>
+            <Component {...pageProps} />
+          </Layout>
+        </AnimatePresence>
       </DebugProvider>
     </div>
   );
