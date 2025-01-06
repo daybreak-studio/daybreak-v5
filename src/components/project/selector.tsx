@@ -3,23 +3,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
-import { getProjectFirstMedia } from "@/sanity/lib/media";
+import { getProjectFirstMedia, getMediaAssetId } from "@/sanity/lib/media";
 import { ChevronRight } from "lucide-react";
 import { IMAGE_ANIMATION } from "@/components/project/animations";
 import { EASINGS } from "@/components/animations/easings";
 
 interface ProjectSelectorProps {
   data: Clients;
-  imageLayoutId: string;
 }
 
-export default function ProjectSelector({
-  data,
-  imageLayoutId,
-}: ProjectSelectorProps) {
+export default function ProjectSelector({ data }: ProjectSelectorProps) {
   const router = useRouter();
-
-  console.log(data);
 
   return (
     <div className="space-y-4 md:space-y-8">
@@ -37,9 +31,9 @@ export default function ProjectSelector({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {data.projects?.map((project, index) => {
           const mediaAsset = getProjectFirstMedia(project);
+          const assetId = getMediaAssetId(mediaAsset);
           if (!project.category) return null;
-
-          const shouldUseLayoutId = index === 0;
+          console.log(assetId);
 
           return (
             <motion.div
@@ -63,7 +57,7 @@ export default function ProjectSelector({
               <motion.div className="flex items-center justify-center rounded-2xl bg-stone-100 p-2 md:flex-col md:items-start md:p-1">
                 <motion.div
                   {...IMAGE_ANIMATION}
-                  layoutId={shouldUseLayoutId ? imageLayoutId : undefined}
+                  layoutId={assetId || undefined}
                   className="relative aspect-square w-20 md:w-full"
                 >
                   <MediaRenderer

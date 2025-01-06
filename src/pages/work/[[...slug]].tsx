@@ -3,7 +3,7 @@ import { motion, MotionProps } from "framer-motion";
 import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
-import { getClientFirstMedia } from "@/sanity/lib/media";
+import { getClientFirstMedia, getMediaAssetId } from "@/sanity/lib/media";
 import ProjectSelector from "@/components/project/selector";
 import ProjectPreview from "@/components/project/preview";
 import ProjectCaseStudy from "@/components/project/case-study";
@@ -76,29 +76,26 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   // Force modal to be mounted when route includes client/project
   const shouldShowModal = Boolean(clientSlug);
 
-  // Handle redirect from middleware
-  useEffect(() => {
-    const handleRedirect = async () => {
-      const redirectTo = document.head
-        ?.querySelector('meta[name="x-redirect-to"]')
-        ?.getAttribute("content");
-      if (redirectTo) {
-        await router.push(redirectTo, undefined, { shallow: true });
-      }
-    };
-
-    handleRedirect();
-  }, [router]);
+  console.log("Route Debug:", {
+    fullSlug: slug,
+    clientSlug,
+    projectSlug,
+    currentClient,
+    availableProjects: currentClient?.projects,
+    modalVariant: currentClient
+      ? getModalVariant(currentClient, projectSlug)
+      : null,
+  });
 
   return (
     <div className="mx-auto p-8">
       <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {data.map((client) => {
           const mediaAsset = getClientFirstMedia(client);
+          const assetId = getMediaAssetId(mediaAsset);
           if (!client.slug) return null;
 
           const containerLayoutId = `container-${client.slug.current}`;
-          const imageLayoutId = `image-${client.slug.current}`;
           const modalVariant = getModalVariant(client, projectSlug);
 
           const isOpen = shouldShowModal && clientSlug === client.slug.current;
@@ -135,8 +132,11 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                   }}
                 >
                   <motion.div
+                    onLoad={() => {
+                      console.log("ON TRIGGER", assetId);
+                    }}
                     {...IMAGE_ANIMATION}
-                    layoutId={imageLayoutId}
+                    layoutId={assetId || undefined}
                     className={cn(
                       "relative aspect-square h-full w-full origin-center object-cover",
                     )}
@@ -198,22 +198,13 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                           )}
                         >
                           {modalVariant.type === "selector" && (
-                            <ProjectSelector
-                              data={client}
-                              imageLayoutId={imageLayoutId}
-                            />
+                            <ProjectSelector data={client} />
                           )}
                           {modalVariant.type === "preview" && (
-                            <ProjectPreview
-                              data={client}
-                              imageLayoutId={imageLayoutId}
-                            />
+                            <ProjectPreview data={client} />
                           )}
                           {modalVariant.type === "caseStudy" && (
-                            <ProjectCaseStudy
-                              data={client}
-                              imageLayoutId={imageLayoutId}
-                            />
+                            <ProjectCaseStudy data={client} />
                           )}
 
                           <Dialog.Close
@@ -253,26 +244,42 @@ export default function WorkPage({ data }: { data: Clients[] }) {
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
     const works: Clients[] = await client.fetch(CLIENTS_QUERY);
+    const paths = [];
 
-    // Create paths for all client/project combinations
-    const paths = works.flatMap(
-      (work) =>
-        work.projects?.map((project) => ({
-          params: {
-            slug: [work.slug?.current || "", project.category || ""],
-          },
-        })) || [],
-    );
-
-    // Add the base path for /work
+    // 1. Add base /work path
     paths.push({ params: { slug: [] } });
+
+    // 2. Add paths for each client and their projects
+    works.forEach((work) => {
+      if (!work.slug?.current) return;
+
+      // Add client-level path
+      paths.push({
+        params: { slug: [work.slug.current] },
+      });
+
+      // Add project category paths if client has multiple projects
+      if (work.projects && work.projects.length > 1) {
+        work.projects.forEach((project) => {
+          if (project.category) {
+            paths.push({
+              params: {
+                slug: [work.slug?.current, project.category],
+              },
+            });
+          }
+        });
+      }
+    });
+
+    console.log("Generated Paths:", JSON.stringify(paths, null, 2));
 
     return {
       paths,
       fallback: "blocking",
     };
   } catch (error) {
-    console.error("Error fetching works:", error);
+    console.error("Error in getStaticPaths:", error);
     return { paths: [], fallback: "blocking" };
   }
 };

@@ -11,9 +11,10 @@ export type MediaItem = {
     _type: "image" | "mux.video";
     asset?: {
       _ref: string;
+      assetId?: string;
       _type: "reference";
       metadata?: SanityImageMetadata;
-      playbackId?: string; // For mux videos
+      playbackId?: string;
     };
     hotspot?: SanityImageHotspot;
     crop?: SanityImageCrop;
@@ -21,16 +22,6 @@ export type MediaItem = {
   width?: string;
   alt?: string;
   _key: string;
-};
-
-export type VideoItem = MediaItem & {
-  _type: "videoItem";
-  source?: {
-    _type: "mux.video";
-    asset?: {
-      playbackId?: string;
-    };
-  };
 };
 
 export const getProjectFirstMedia = (
@@ -50,4 +41,23 @@ export const getClientFirstMedia = (client: Clients): MediaItem | null => {
   if (!firstProject) return null;
 
   return getProjectFirstMedia(firstProject);
+};
+
+/**
+ * Extracts a unique asset identifier from a media item
+ * @param mediaAsset The media asset (image or video)
+ * @returns The unique identifier for the asset, or null if not found
+ */
+export const getMediaAssetId = (mediaAsset: MediaItem | null) => {
+  if (!mediaAsset) return null;
+
+  if (mediaAsset._type === "videoItem") {
+    return mediaAsset.source?.asset?.assetId || null;
+  }
+
+  if (mediaAsset._type === "imageItem") {
+    return mediaAsset.source?.asset?._ref || null;
+  }
+
+  return null;
 };

@@ -1,9 +1,9 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { urlFor, getMuxThumbnailUrl } from "@/sanity/lib/image";
 import { useLowPowerMode } from "@/lib/hooks/use-low-power-mode";
-import { MediaItem, VideoItem } from "@/sanity/lib/media";
+import { MediaItem } from "@/sanity/lib/media";
 import { cn } from "@/lib/utils";
 
 interface MediaRendererProps {
@@ -34,7 +34,7 @@ interface VideoProps {
   className?: string;
 }
 
-const isMuxVideo = (media: MediaItem): media is VideoItem => {
+const isMuxVideo = (media: MediaItem): boolean => {
   return media._type === "videoItem" && media.source?._type === "mux.video";
 };
 
@@ -135,9 +135,12 @@ export function MediaRenderer(props: MediaRendererProps) {
       layout={layout}
       layoutId={layoutId}
       className={fill ? "relative h-full w-full will-change-transform" : ""}
-      role="img"
       transition={transition}
+      onLoad={onLoad}
+      onError={onError}
     >
+      {/* We are already passing alt text via imageProps. */}
+      {/* eslint-disable-next-line jsx-a11y/alt-text */}
       {shouldShowVideo ? <video {...videoProps} /> : <Image {...imageProps} />}
     </motion.figure>
   );

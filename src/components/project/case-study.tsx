@@ -15,11 +15,11 @@ import { cn } from "@/lib/utils";
 import { MediaItem } from "@/sanity/lib/media";
 import { EASINGS } from "@/components/animations/easings";
 import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
-
+import { getMediaAssetId } from "@/sanity/lib/media";
+import { IMAGE_ANIMATION } from "./animations";
 // Types
 interface ProjectCaseStudyProps {
   data: Clients;
-  imageLayoutId: string;
 }
 
 interface MediaGroupProps {
@@ -34,7 +34,6 @@ interface MediaGroupProps {
   isZoomed: boolean;
   onScroll: (index: number) => void;
   onActivate: () => void;
-  layoutId?: string;
 }
 
 interface NavigationProps {
@@ -57,7 +56,6 @@ function MediaGroup({
   isZoomed,
   onScroll,
   onActivate,
-  layoutId,
 }: MediaGroupProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, {
@@ -96,14 +94,23 @@ function MediaGroup({
       )}
       onClick={onActivate}
     >
-      {group.media?.map((media, mediaIndex) => (
-        <MediaRenderer
-          className="max-h-[95vh] rounded-xl"
-          key={`${index}-${mediaIndex}`}
-          media={media}
-          autoPlay={true}
-        />
-      ))}
+      {group.media?.map((media, mediaIndex) => {
+        const assetId = getMediaAssetId(media);
+        return (
+          <motion.div
+            {...IMAGE_ANIMATION}
+            layoutId={assetId || undefined}
+            key={`${index}-${mediaIndex}`}
+          >
+            <MediaRenderer
+              className="max-h-[95vh] rounded-xl"
+              key={`${index}-${mediaIndex}`}
+              media={media}
+              autoPlay={true}
+            />
+          </motion.div>
+        );
+      })}
     </motion.div>
   );
 }
@@ -260,10 +267,7 @@ const Navigation = forwardRef<HTMLDivElement, NavigationProps>(
 Navigation.displayName = "Navigation";
 
 // Main Component - Orchestrates the entire case study experience
-export default function ProjectCaseStudy({
-  data,
-  imageLayoutId,
-}: ProjectCaseStudyProps) {
+export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   const router = useRouter();
   const project = data.projects?.[0] as CaseStudy & { _key: string };
 
@@ -437,7 +441,6 @@ export default function ProjectCaseStudy({
             isZoomed={isZoomed}
             onScroll={handleGroupScroll}
             onActivate={() => handleGroupActivate(index)}
-            layoutId={index === 0 ? imageLayoutId : undefined}
           />
         ))}
 
