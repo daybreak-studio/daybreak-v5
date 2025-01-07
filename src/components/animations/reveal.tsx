@@ -2,6 +2,7 @@ import React, { ReactNode } from "react";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
+import { EASINGS } from "./easings";
 
 interface RevealProps {
   children: ReactNode;
@@ -30,7 +31,7 @@ const Reveal: React.FC<RevealProps> = ({
         }}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        transition={{ duration: 1, ease: "easeOut", delay }}
+        transition={{ duration: 1, ease: EASINGS.easeOutQuart, delay }}
       >
         {children}
       </motion.div>

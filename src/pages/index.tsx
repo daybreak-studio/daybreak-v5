@@ -12,7 +12,6 @@ import { CLIENTS_QUERY, HOME_QUERY } from "@/sanity/lib/queries";
 import { MediaItem } from "@/sanity/lib/media";
 import Footer from "@/components/footer";
 import MasonryGrid from "@/components/masonry-grid";
-import { useScramble } from "use-scramble";
 import { WidgetDataProvider } from "@/components/widgets/grid/context";
 import { Widget, WidgetRegistry } from "@/components/widgets/grid/types";
 import TwitterWidget from "@/components/widgets/variants/twitter";
@@ -20,6 +19,7 @@ import MediaWidget from "@/components/widgets/variants/media";
 import ProjectWidget from "@/components/widgets/variants/project";
 import RecentsWidget from "@/components/widgets/variants/recents";
 import RiveWidget from "@/components/widgets/variants/rive";
+import { EASINGS } from "@/components/animations/easings";
 
 // Register widgets specific to the home page
 const homeWidgets: WidgetRegistry = {
@@ -38,12 +38,6 @@ export default function Home({
   clientsData: Clients[];
 }) {
   const [windowHeight, setWindowHeight] = useState<number | null>(null);
-
-  const { ref: headingRef, replay } = useScramble({
-    text: "A technology first design studio",
-    speed: 1,
-    playOnMount: false,
-  });
 
   // Handles updates for window height.
   useEffect(() => {
@@ -78,12 +72,18 @@ export default function Home({
       <main className="relative">
         <motion.div className="fixed inset-0">
           <div className="flex h-full flex-col items-center justify-center space-y-2 lg:space-y-8">
-            <h1
-              ref={headingRef}
-              onMouseOver={replay}
-              onFocus={replay}
+            <motion.h1
+              initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{
+                delay: 0.3,
+                duration: 1,
+                ease: EASINGS.easeOutQuart,
+              }}
               className="max-w-[16ch] text-center text-3xl font-[450] text-stone-400/50 lg:text-4xl"
-            />
+            >
+              A technology first design studio.
+            </motion.h1>
             <WidgetDataProvider
               data={{
                 widgets: homeData.widgets as Widget[],

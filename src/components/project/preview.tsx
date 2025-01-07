@@ -97,7 +97,10 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           >
             {project.caption}
           </motion.p>
-          <motion.div
+          <motion.a
+            href={project.link}
+            target="_blank"
+            rel="noopener noreferrer"
             variants={{
               hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
               visible: {
@@ -107,11 +110,18 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 transition: { duration: 1, ease: EASINGS.easeOutQuart },
               },
             }}
-            className="flex items-center justify-between rounded-2xl bg-stone-100 p-4"
+            whileHover={{ scale: 1.02 }}
+            transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
+            className="group relative flex items-center justify-between overflow-hidden rounded-2xl border-[1px] border-stone-100 bg-stone-50 p-4 text-stone-500 transition-colors duration-500 hover:bg-stone-100"
           >
-            <p className="text-xs text-stone-600">{project.link}</p>
-            <ArrowUpRight className="h-4 w-4 text-stone-500" />
-          </motion.div>
+            <div className="relative h-[16px] overflow-hidden">
+              <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-[16px]">
+                <span className="text-xs leading-4">{project.link}</span>
+                <span className="text-xs leading-4">Visit site</span>
+              </div>
+            </div>
+            <ArrowUpRight className="h-4 w-4 text-stone-400 transition-all duration-200 group-hover:rotate-45" />
+          </motion.a>
         </motion.div>
       </motion.div>
     </div>

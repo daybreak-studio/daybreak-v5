@@ -120,7 +120,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                   {...CONTAINER_ANIMATION}
                   layoutId={containerLayoutId}
                   className={cn(
-                    "frame-outer group relative aspect-square w-full origin-center cursor-pointer overflow-hidden",
+                    "frame-outer group relative aspect-square w-full origin-center cursor-pointer overflow-hidden transition-transform duration-500 ease-in-out hover:scale-[101%]",
                     isAnimating &&
                       activeThumbId === client.slug?.current &&
                       "z-50",
@@ -138,7 +138,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                     {...IMAGE_ANIMATION}
                     layoutId={assetId || undefined}
                     className={cn(
-                      "relative aspect-square h-full w-full origin-center object-cover",
+                      "relative aspect-square h-full w-full origin-center object-cover transition-transform duration-500 ease-in-out group-hover:scale-[98%]",
                     )}
                   >
                     <MediaRenderer
