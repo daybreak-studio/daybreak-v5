@@ -19,6 +19,7 @@ import {
   CONTAINER_ANIMATION,
   IMAGE_ANIMATION,
 } from "@/components/project/animations";
+import { HoverCard } from "@/components/animations/hover";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -120,7 +121,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                   {...CONTAINER_ANIMATION}
                   layoutId={containerLayoutId}
                   className={cn(
-                    "frame-outer group relative aspect-square w-full origin-center cursor-pointer overflow-hidden transition-transform duration-500 ease-in-out hover:scale-[101%]",
+                    "relative aspect-square w-full origin-center cursor-pointer overflow-hidden",
                     isAnimating &&
                       activeThumbId === client.slug?.current &&
                       "z-50",
@@ -131,23 +132,22 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                     setActiveThumbId(null);
                   }}
                 >
-                  <motion.div
-                    onLoad={() => {
-                      console.log("ON TRIGGER", assetId);
-                    }}
-                    {...IMAGE_ANIMATION}
-                    layoutId={assetId || undefined}
-                    className={cn(
-                      "relative aspect-square h-full w-full origin-center object-cover transition-transform duration-500 ease-in-out group-hover:scale-[98%]",
-                    )}
-                  >
-                    <MediaRenderer
-                      className="frame-inner"
-                      fill
-                      media={mediaAsset}
-                      autoPlay={false}
-                    />
-                  </motion.div>
+                  <HoverCard>
+                    <motion.div
+                      {...IMAGE_ANIMATION}
+                      layoutId={assetId || undefined}
+                      className={cn(
+                        "relative aspect-square h-full w-full origin-center object-cover",
+                      )}
+                    >
+                      <MediaRenderer
+                        className="frame-inner"
+                        fill
+                        media={mediaAsset}
+                        autoPlay={false}
+                      />
+                    </motion.div>
+                  </HoverCard>
                 </motion.div>
               </Dialog.Trigger>
 
@@ -271,8 +271,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
         });
       }
     });
-
-    console.log("Generated Paths:", JSON.stringify(paths, null, 2));
 
     return {
       paths,

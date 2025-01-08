@@ -33,7 +33,6 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
           const mediaAsset = getProjectFirstMedia(project);
           const assetId = getMediaAssetId(mediaAsset);
           if (!project.category) return null;
-          console.log(assetId);
 
           return (
             <motion.div

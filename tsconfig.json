@@ -27,8 +27,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts",
-    "src/sanity/components/carousel.ksx"
+    ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
