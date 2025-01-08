@@ -2,8 +2,6 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContactFormValues, contactFormSchema } from "@/components/form/schema";
 import { motion, AnimatePresence } from "framer-motion";
-import { useToast } from "@/components/ui/use-toast";
-import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
 import { createFormSteps } from "@/components/form";
 import {
@@ -12,6 +10,7 @@ import {
   getY,
   getCardVisibility,
 } from "@/components/form/utils/animations";
+import dynamic from "next/dynamic";
 
 interface FormStep {
   id: string;
@@ -19,7 +18,6 @@ interface FormStep {
 }
 
 export default function ContactPage() {
-  const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const form = useForm<ContactFormValues>({
@@ -47,11 +45,6 @@ export default function ContactPage() {
     setCopied,
   });
 
-  const restartForm = () => {
-    form.reset();
-    setCurrentStep(0);
-  };
-
   async function onSubmit(data: ContactFormValues) {
     console.log("onSubmit handler executing with data:", data);
     try {
@@ -63,21 +56,10 @@ export default function ContactPage() {
 
       const responseData = await response.json();
       console.log("API response:", responseData);
-
       if (!response.ok) throw new Error("Failed to submit form");
-
       nextStep();
-      toast({
-        title: "Success!",
-        description: "We'll get back to you soon.",
-      });
     } catch (error) {
       console.error("API Error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Something went wrong.",
-      });
     }
   }
 
@@ -154,7 +136,6 @@ export default function ContactPage() {
             ))}
           </AnimatePresence>
         </form>
-        <Toaster />
       </div>
     </FormProvider>
   );

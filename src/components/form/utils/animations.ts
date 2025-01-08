@@ -16,8 +16,12 @@ export const getScale = (index: number, currentIndex: number) =>
 export const getRotation = (index: number, currentIndex: number) =>
   getResult(index, currentIndex, -2, 0, 2);
 
-export const getY = (index: number, currentIndex: number) =>
-  getResult(index, currentIndex, -100, 0, window.innerHeight * 0.85);
+export const getY = (index: number, currentIndex: number) => {
+  // Default height for SSR, will be updated on client
+  const height =
+    typeof window !== "undefined" ? window.innerHeight * 0.85 : 500;
+  return getResult(index, currentIndex, -100, 0, height);
+};
 
 export const getCardVisibility = (index: number, currentIndex: number) => {
   if (index === currentIndex) return { blur: 0, opacity: 1 };
