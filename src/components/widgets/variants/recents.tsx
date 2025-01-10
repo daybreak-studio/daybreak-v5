@@ -39,7 +39,7 @@ export default function RecentsWidget({ data }: RecentsProps) {
 
   return (
     <BaseWidget
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-1"
       position={data.position}
       size={data.size}
     >
@@ -56,19 +56,21 @@ export default function RecentsWidget({ data }: RecentsProps) {
         return (
           <div
             key={client._id}
-            className="flex items-center gap-4 bg-white/30 p-4 md:p-6"
+            className="frame-inner flex h-full w-full cursor-pointer items-center gap-4 bg-white/30 p-4 shadow-sm transition-all duration-300 ease-in-out hover:bg-white/90"
             onClick={() => handleClick(client?.slug?.current!)}
           >
             {mediaAsset && (
-              <div className="aspect-square h-full w-1/3 overflow-hidden rounded-2xl">
+              <div className="aspect-square h-full w-1/3 overflow-hidden rounded-xl md:rounded-2xl">
                 <MediaRenderer media={mediaAsset} fill priority={true} />
               </div>
             )}
 
             <div className="flex-grow-2 flex w-full flex-col">
-              <h3 className="text-base font-medium">{client.name}</h3>
+              <h3 className="text-xs font-medium md:text-base">
+                {client.name}
+              </h3>
               {latestDate && (
-                <p className="text-sm text-gray-500">
+                <p className="text-xs text-gray-500 md:text-sm">
                   {format(latestDate, "MMMM d, yyyy")}
                 </p>
               )}

@@ -104,7 +104,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
               </motion.div>
             </AnimatePresence>
 
-            <div className="absolute bottom-4 right-4 flex hidden flex-col gap-2 md:block">
+            <div className="absolute bottom-4 right-4 hidden flex-col gap-2 md:flex">
               <motion.button
                 className="rounded-full bg-stone-200 p-2"
                 onClick={handleNext}
