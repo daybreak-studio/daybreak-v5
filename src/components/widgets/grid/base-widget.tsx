@@ -77,7 +77,9 @@ export function BaseWidget({
       }}
     >
       <HoverCard className={cn("frame-outer", className)}>
-        <div className="frame-inner relative overflow-hidden">{children}</div>
+        <div className="frame-inner relative h-full w-full overflow-hidden">
+          {children}
+        </div>
       </HoverCard>
     </motion.div>
   );

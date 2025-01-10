@@ -224,31 +224,45 @@ export type Services = {
         _type: "recents";
         _key: string;
       }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        testimonials?: Array<{
+          author?: string;
+          title?: string;
+          quote?: string;
+          _type: "testimonial";
+          _key: string;
+        }>;
+        _type: "quotes";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        earlyStage?: {
+          description?: string;
+        };
+        growthStage?: {
+          description?: string;
+        };
+        scalingBusinesses?: {
+          description?: string;
+        };
+        enduringBrands?: {
+          description?: string;
+        };
+        _type: "stages";
+        _key: string;
+      }
   >;
-  quotes?: Array<{
-    name?: string;
-    title?: string;
-    quote?: string;
-    _key: string;
-  }>;
-  logos?: Array<{
-    image?: {
-      asset?: {
-        _ref: string;
-        _type: "reference";
-        _weak?: boolean;
-        [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-      };
-      hotspot?: SanityImageHotspot;
-      crop?: SanityImageCrop;
-      _type: "image";
-    };
-    alt?: string;
-    companyName?: string;
-    url?: string;
-    _key: string;
-  }>;
-  serviceCategories?: {
+  categories?: {
     brand?: {
       tabs?: Array<{
         heading?: string;
@@ -519,6 +533,43 @@ export type Home = {
           [internalGroqTypeReferenceTo]?: "clients";
         }>;
         _type: "recents";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        testimonials?: Array<{
+          author?: string;
+          title?: string;
+          quote?: string;
+          _type: "testimonial";
+          _key: string;
+        }>;
+        _type: "quotes";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        earlyStage?: {
+          description?: string;
+        };
+        growthStage?: {
+          description?: string;
+        };
+        scalingBusinesses?: {
+          description?: string;
+        };
+        enduringBrands?: {
+          description?: string;
+        };
+        _type: "stages";
         _key: string;
       }
   >;
@@ -1035,6 +1086,23 @@ export type HOME_QUERYResult = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
+        testimonials?: Array<{
+          author?: string;
+          title?: string;
+          quote?: string;
+          _type: "testimonial";
+          _key: string;
+        }>;
+        _type: "quotes";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
         clients?: Array<{
           _ref: string;
           _type: "reference";
@@ -1054,6 +1122,28 @@ export type HOME_QUERYResult = {
         size?: "1x1" | "2x2" | "3x3";
         src?: string;
         _type: "rive";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        earlyStage?: {
+          description?: string;
+        };
+        growthStage?: {
+          description?: string;
+        };
+        scalingBusinesses?: {
+          description?: string;
+        };
+        enduringBrands?: {
+          description?: string;
+        };
+        _type: "stages";
         _key: string;
         media: null;
       }
@@ -1220,6 +1310,264 @@ export type HOME_QUERYResult = {
     _key: string;
   }> | null;
 } | null;
+// Variable: SERVICES_QUERY
+// Query: *[_type == "services"][!(_id in path('drafts.**'))][0] {    ...,    widgets[] {      ...,      media[] {          ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }      }    }  }
+export type SERVICES_QUERYResult = {
+  _id: string;
+  _type: "services";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  widgets: Array<
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        media: Array<
+          | {
+              source: {
+                asset:
+                  | {
+                      _ref: string | null;
+                      _type: "reference" | null;
+                      playbackId: null;
+                      assetId: string | null;
+                      status: null;
+                      metadata: {
+                        dimensions: SanityImageDimensions | null;
+                        lqip: string | null;
+                        palette: SanityImagePalette | null;
+                        hasAlpha: boolean | null;
+                        isOpaque: boolean | null;
+                        blurHash: string | null;
+                      } | null;
+                    }
+                  | {
+                      _ref: string | null;
+                      _type: "reference" | null;
+                    };
+                hotspot?: SanityImageHotspot;
+                crop?: SanityImageCrop;
+                _type: "image";
+              } | null;
+              width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+              alt?: string;
+              _type: "imageItem";
+              _key: string;
+            }
+          | {
+              source: {
+                _type: "mux.video";
+                asset: {
+                  _ref: string | null;
+                  _type: "reference" | null;
+                };
+              } | null;
+              width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+              alt?: string;
+              _type: "videoItem";
+              _key: string;
+            }
+        > | null;
+        _type: "media";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        client?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          [internalGroqTypeReferenceTo]?: "clients";
+        };
+        category?: "brand" | "motion" | "product" | "web";
+        type?: "caseStudy" | "preview";
+        _type: "project";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        testimonials?: Array<{
+          author?: string;
+          title?: string;
+          quote?: string;
+          _type: "testimonial";
+          _key: string;
+        }>;
+        _type: "quotes";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        clients?: Array<{
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          _key: string;
+          [internalGroqTypeReferenceTo]?: "clients";
+        }>;
+        _type: "recents";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        src?: string;
+        _type: "rive";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        earlyStage?: {
+          description?: string;
+        };
+        growthStage?: {
+          description?: string;
+        };
+        scalingBusinesses?: {
+          description?: string;
+        };
+        enduringBrands?: {
+          description?: string;
+        };
+        _type: "stages";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        tweet?: string;
+        author?: string;
+        link?: string;
+        media: Array<{
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+          _key: string;
+          source: null;
+        }> | null;
+        _type: "twitter";
+        _key: string;
+      }
+  > | null;
+  categories?: {
+    brand?: {
+      tabs?: Array<{
+        heading?: string;
+        title?: string;
+        caption?: string;
+        image?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        _type: "tab";
+        _key: string;
+      }>;
+    };
+    product?: {
+      tabs?: Array<{
+        heading?: string;
+        title?: string;
+        caption?: string;
+        image?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        _type: "tab";
+        _key: string;
+      }>;
+    };
+    motion?: {
+      tabs?: Array<{
+        heading?: string;
+        title?: string;
+        caption?: string;
+        image?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        _type: "tab";
+        _key: string;
+      }>;
+    };
+    development?: {
+      tabs?: Array<{
+        heading?: string;
+        title?: string;
+        caption?: string;
+        image?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        _type: "tab";
+        _key: string;
+      }>;
+    };
+  };
+} | null;
 
 // Query TypeMap
 import "@sanity/client";
@@ -1227,5 +1575,6 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "clients"][!(_id in path(\'drafts.**\'))] {\n    ...,\n    projects[] {\n      ...,\n      _type == "preview" => {\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      _type == "caseStudy" => {\n        mediaGroups[] {\n          ...,\n          heading,\n          caption,\n          media[] {\n            \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n          }\n        }\n      }\n    }\n  }\n': CLIENTS_QUERYResult;
     '\n  *[_type == "home"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    media[] {\n      \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n    },\n    widgets[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    },\n    newsfeed[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': HOME_QUERYResult;
+    '\n  *[_type == "services"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    widgets[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': SERVICES_QUERYResult;
   }
 }

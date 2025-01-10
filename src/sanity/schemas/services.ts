@@ -25,48 +25,8 @@ export const services = defineType({
       of: widgets,
     }),
     defineField({
-      name: "quotes",
-      title: "Quotes",
-      type: "array",
-      of: [
-        {
-          type: "object",
-          fields: [
-            defineField({ name: "name", title: "Name", type: "string" }),
-            defineField({ name: "title", title: "Title", type: "string" }),
-            defineField({ name: "quote", title: "Quote", type: "text" }),
-          ],
-        },
-      ],
-    }),
-    defineField({
-      name: "logos",
-      title: "Logos",
-      type: "array",
-      of: [
-        {
-          type: "object",
-          fields: [
-            defineField({
-              name: "image",
-              title: "Logo Image",
-              type: "image",
-              options: { hotspot: true },
-            }),
-            defineField({ name: "alt", title: "Alt Text", type: "string" }),
-            defineField({
-              name: "companyName",
-              title: "Company Name",
-              type: "string",
-            }),
-            defineField({ name: "url", title: "Company URL", type: "url" }),
-          ],
-        },
-      ],
-    }),
-    defineField({
-      name: "serviceCategories",
-      title: "Service Categories",
+      name: "categories",
+      title: "Categories",
       type: "object",
       groups: [
         { name: "brand", title: "Brand" },

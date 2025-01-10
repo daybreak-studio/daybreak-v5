@@ -3,7 +3,11 @@ import { motion, MotionProps } from "framer-motion";
 import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
-import { getClientFirstMedia, getMediaAssetId } from "@/sanity/lib/media";
+import {
+  getClientFirstMedia,
+  getMediaAssetId,
+  getProjectFirstMedia,
+} from "@/sanity/lib/media";
 import ProjectSelector from "@/components/project/selector";
 import ProjectPreview from "@/components/project/preview";
 import ProjectCaseStudy from "@/components/project/case-study";
@@ -20,6 +24,8 @@ import {
   IMAGE_ANIMATION,
 } from "@/components/project/animations";
 import { HoverCard } from "@/components/animations/hover";
+import { Metadata } from "next";
+import { urlFor } from "@/sanity/lib/image";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -295,3 +301,132 @@ export const getStaticProps: GetStaticProps = async () => {
     return { props: { data: [] }, revalidate: 60 };
   }
 };
+
+// Update generateMetadata function
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug?: string[] };
+}): Promise<Metadata> {
+  try {
+    const data: Clients[] = await client.fetch(CLIENTS_QUERY);
+    const [clientSlug, projectSlug] = params.slug || [];
+
+    // Base metadata for /work index
+    if (!clientSlug) {
+      const firstClient = data[0];
+      const firstProject = firstClient?.projects?.[0];
+      const mediaAsset = firstProject
+        ? getProjectFirstMedia(firstProject)
+        : null;
+      const ogImage = mediaAsset ? urlFor(mediaAsset.source) : "/og-work.jpg";
+
+      return {
+        title: "Our Work | Daybreak Studio",
+        description:
+          "Explore our portfolio of creative projects and collaborations.",
+        openGraph: {
+          title: "Our Work | Daybreak Studio",
+          description:
+            "Explore our portfolio of creative projects and collaborations.",
+          type: "website",
+          images: [
+            {
+              url: ogImage,
+              width: 1200,
+              height: 630,
+              alt: "Daybreak Studio Work",
+            },
+          ],
+        },
+      };
+    }
+
+    // Find current client
+    const currentClient = data.find(
+      (client) => client.slug?.current === clientSlug,
+    );
+
+    if (!currentClient) {
+      return generateMetadata({ params: {} }); // Fallback to base metadata
+    }
+
+    // Get first project and its media
+    const firstProject = currentClient.projects?.[0];
+    const mediaAsset = firstProject ? getProjectFirstMedia(firstProject) : null;
+    const ogImage = mediaAsset ? urlFor(mediaAsset.source) : undefined;
+
+    // If we have a client but no specific project
+    if (!projectSlug) {
+      const projectCount = currentClient.projects?.length || 0;
+      const description =
+        projectCount > 1
+          ? `Explore our ${projectCount} projects with ${currentClient.name}`
+          : `Discover our work with ${currentClient.name}`;
+
+      return {
+        title: `${currentClient.name} | Daybreak Studio`,
+        description,
+        openGraph: {
+          title: `${currentClient.name} | Daybreak Studio`,
+          description,
+          type: "website",
+          images: ogImage
+            ? [
+                {
+                  url: ogImage,
+                  width: 1200,
+                  height: 630,
+                  alt: `${currentClient.name} project by Daybreak Studio`,
+                },
+              ]
+            : undefined,
+        },
+      };
+    }
+
+    // For specific project
+    const project = currentClient.projects?.find(
+      (p) => p.category === projectSlug,
+    );
+    if (!project) {
+      return generateMetadata({ params: { slug: [clientSlug] } }); // Fallback to client-level metadata
+    }
+
+    const projectMedia = getProjectFirstMedia(project);
+    const projectOgImage = projectMedia ? urlFor(projectMedia.source) : ogImage;
+
+    const projectTitle =
+      project.heading || `${currentClient.name} - ${project.category}`;
+    const projectDescription =
+      project.caption ||
+      `Explore our ${project.category} work with ${currentClient.name}`;
+
+    return {
+      title: `${projectTitle} | Daybreak Studio`,
+      description: projectDescription,
+      openGraph: {
+        title: `${projectTitle} | Daybreak Studio`,
+        description: projectDescription,
+        type: "article",
+        images: projectOgImage
+          ? [
+              {
+                url: projectOgImage,
+                width: 1200,
+                height: 630,
+                alt: `${projectTitle} by Daybreak Studio`,
+              },
+            ]
+          : undefined,
+      },
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Our Work | Daybreak Studio",
+      description:
+        "Explore our portfolio of creative projects and collaborations.",
+    };
+  }
+}

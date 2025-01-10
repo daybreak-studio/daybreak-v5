@@ -130,6 +130,108 @@ export const rive = {
   preview: createWidgetPreview("Rive"),
 };
 
+export const quotes = {
+  type: "object",
+  name: "quotes",
+  title: "Quotes",
+  fields: createWidgetFields([
+    defineField({
+      name: "testimonials",
+      type: "array",
+      title: "Testimonials",
+      of: [
+        {
+          type: "object",
+          name: "testimonial",
+          fields: [
+            {
+              name: "author",
+              type: "string",
+              title: "Author Name",
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "title",
+              type: "string",
+              title: "Author Title",
+              description: "e.g. 'CEO at Company' or 'Creative Director'",
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "quote",
+              type: "text",
+              title: "Quote",
+              validation: (Rule) => Rule.required(),
+            },
+          ],
+        },
+      ],
+    }),
+  ]),
+  preview: createWidgetPreview("Quotes"),
+};
+
+export const stages = {
+  type: "object",
+  name: "stages",
+  title: "Stages",
+  fields: createWidgetFields([
+    defineField({
+      name: "earlyStage",
+      type: "object",
+      title: "Early Stage",
+      fields: [
+        {
+          name: "description",
+          type: "text",
+          title: "Description",
+          validation: (Rule) => Rule.required(),
+        },
+      ],
+    }),
+    defineField({
+      name: "growthStage",
+      type: "object",
+      title: "Growth Stage",
+      fields: [
+        {
+          name: "description",
+          type: "text",
+          title: "Description",
+          validation: (Rule) => Rule.required(),
+        },
+      ],
+    }),
+    defineField({
+      name: "scalingBusinesses",
+      type: "object",
+      title: "Scaling Businesses",
+      fields: [
+        {
+          name: "description",
+          type: "text",
+          title: "Description",
+          validation: (Rule) => Rule.required(),
+        },
+      ],
+    }),
+    defineField({
+      name: "enduringBrands",
+      type: "object",
+      title: "Enduring Brands",
+      fields: [
+        {
+          name: "description",
+          type: "text",
+          title: "Description",
+          validation: (Rule) => Rule.required(),
+        },
+      ],
+    }),
+  ]),
+  preview: createWidgetPreview("Growth Stages"),
+};
+
 export const recents = {
   type: "object",
   name: "recents",
@@ -152,4 +254,6 @@ export const widgets = [
   project,
   rive,
   recents,
+  quotes,
+  stages,
 ] as ArrayOfType[];

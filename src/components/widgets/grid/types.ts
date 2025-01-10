@@ -12,6 +12,8 @@ export type MediaWidgetTypes = Extract<Widget, { _type: "media" }>;
 export type ProjectWidgetTypes = Extract<Widget, { _type: "project" }>;
 export type RecentsWidgetTypes = Extract<Widget, { _type: "recents" }>;
 export type RiveWidgetTypes = Extract<Widget, { _type: "rive" }>;
+export type QuotesWidgetTypes = Extract<Widget, { _type: "quotes" }>;
+export type StagesWidgetTypes = Extract<Widget, { _type: "stages" }>;
 
 // export type WidgetRegistry = {
 //   [K in WidgetType]: React.ComponentType<{
