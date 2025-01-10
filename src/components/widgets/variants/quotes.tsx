@@ -71,9 +71,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
                   ease: EASINGS.easeInOutQuart,
                 }}
               >
-                <h1 className="text-sm text-stone-600">
-                  {testimonials[index]?.quote}
-                </h1>
+                <h1 className="text-stone-600">{testimonials[index]?.quote}</h1>
               </motion.div>
             </AnimatePresence>
 
