@@ -57,7 +57,10 @@ export default function QuotesWidget({ data }: QuotesProps) {
         );
       case "2x2":
         return (
-          <div className="frame-inner flex h-full w-full flex-col justify-between bg-white/50 p-6">
+          <div
+            onClick={() => handleNext()}
+            className="frame-inner flex h-full w-full flex-col justify-between bg-white/25 p-6"
+          >
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={index}
@@ -71,7 +74,9 @@ export default function QuotesWidget({ data }: QuotesProps) {
                   ease: EASINGS.easeInOutQuart,
                 }}
               >
-                <h1 className="text-stone-600">{testimonials[index]?.quote}</h1>
+                <h1 className="text-xs text-stone-600 md:text-base">
+                  {testimonials[index]?.quote}
+                </h1>
               </motion.div>
             </AnimatePresence>
 
@@ -90,7 +95,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
                 }}
                 className="flex flex-col"
               >
-                <h1 className="text-sm font-medium text-stone-600">
+                <h1 className="text-xs font-medium text-stone-600 md:text-sm">
                   {testimonials[index]?.author}
                 </h1>
                 <h1 className="text-xs text-stone-500">
@@ -99,7 +104,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
               </motion.div>
             </AnimatePresence>
 
-            <div className="absolute bottom-4 right-4 flex flex-col gap-2">
+            <div className="absolute bottom-4 right-4 flex hidden flex-col gap-2 md:block">
               <motion.button
                 className="rounded-full bg-stone-200 p-2"
                 onClick={handleNext}
