@@ -56,11 +56,11 @@ export default function RecentsWidget({ data }: RecentsProps) {
         return (
           <div
             key={client._id}
-            className="frame-inner flex h-full w-full cursor-pointer items-center gap-4 bg-white/30 p-4 shadow-sm transition-all duration-300 ease-in-out hover:bg-white/90"
+            className="frame-inner flex h-full w-full cursor-pointer items-center gap-5 bg-white/30 p-2 shadow-sm transition-all duration-300 ease-in-out hover:bg-white/90 md:p-4"
             onClick={() => handleClick(client?.slug?.current!)}
           >
             {mediaAsset && (
-              <div className="aspect-square h-full w-1/3 overflow-hidden rounded-xl md:rounded-2xl">
+              <div className="aspect-square h-fit w-1/3 overflow-hidden rounded-full shadow-md md:rounded-3xl">
                 <MediaRenderer media={mediaAsset} fill priority={true} />
               </div>
             )}
