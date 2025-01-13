@@ -16,7 +16,7 @@ import {
 } from "@/sanity/plugins/singleton";
 import { muxInput } from "sanity-plugin-mux-input";
 
-const singletonTypes = ["settings", "home", "team", "services"];
+const singletonTypes = ["home", "services", "about", "settings"];
 const schemaTypes = schema.types;
 
 export default defineConfig({

@@ -4,7 +4,7 @@ import { MuxThumbnail } from "../components/mux-thumbnail";
 
 export const clients = defineType({
   name: "clients",
-  title: "Client",
+  title: "Work",
   type: "document",
   fields: [
     defineField({

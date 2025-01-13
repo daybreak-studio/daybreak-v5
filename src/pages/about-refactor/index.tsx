@@ -4,85 +4,32 @@ import useEmblaCarousel from "embla-carousel-react";
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { ExpandIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { GetStaticProps } from "next";
+import { client } from "@/sanity/lib/client";
+import { ABOUT_QUERY } from "@/sanity/lib/queries";
+import { About } from "@/sanity/types";
+import { MediaItem } from "@/sanity/lib/media";
+import { MediaRenderer } from "@/components/media-renderer";
 
-// Team data from original data.tsx
-const people = [
-  {
-    id: "1",
-    name: "Khadija",
-    role: "Developer",
-    bio: "Khadija is a developer",
-    video: "/team/Khadija - V5.mp4",
-    info: [
-      {
-        question: "What is your favorite color?",
-        answer: "Brown",
-      },
-      {
-        question: "What is your favorite food?",
-        answer: "Salad",
-      },
-    ],
-  },
-  {
-    id: "2",
-    name: "Kiran",
-    role: "Designer",
-    bio: "Kiran is a designer",
-    video: "/team/Kiran - V5.mp4",
-    info: [
-      {
-        question: "What is your favorite color?",
-        answer: "White",
-      },
-      {
-        question: "What is your favorite food?",
-        answer: "Soup",
-      },
-    ],
-  },
-  {
-    id: "3",
-    name: "Rafi",
-    role: "Developer",
-    bio: "Rafi is a developer",
-    video: "/team/Rafi - V5.mp4",
-    info: [
-      {
-        question: "What is your favorite color?",
-        answer: "Black",
-      },
-      {
-        question: "What is your favorite food?",
-        answer: "Rice",
-      },
-    ],
-  },
-  {
-    id: "4",
-    name: "Ross",
-    role: "Designer",
-    bio: "Ross is a designer",
-    video: "/team/Ross - V5.mp4",
-    info: [
-      {
-        question: "What is your favorite color?",
-        answer: "Gray",
-      },
-      {
-        question: "What is your favorite food?",
-        answer: "Steak",
-      },
-    ],
-  },
-];
+interface TeamMember {
+  _key: string;
+  name: string;
+  role: string;
+  bio: string;
+  media: MediaItem[];
+  qaPairs: {
+    _key: string;
+    question: string;
+    answer: string;
+  }[];
+}
 
 function PersonInfo({
   person,
   isExpanded,
   onToggle,
 }: {
-  person: (typeof people)[0];
+  person: TeamMember;
   isExpanded: boolean;
   onToggle: () => void;
 }) {
@@ -91,42 +38,42 @@ function PersonInfo({
       layout
       layoutId="person-container"
       onClick={onToggle}
-      className="mx-auto flex w-[344px] cursor-pointer flex-col items-center justify-between gap-2 overflow-hidden border border-black/5 bg-white/50 p-4 backdrop-blur-xl"
+      className="flex w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden border bg-white/60 p-6 backdrop-blur-xl md:w-96"
       style={{ borderRadius: 16 }}
     >
       <AnimatePresence mode="popLayout">
         {isExpanded ? (
           <motion.div
+            layout
             layoutId={person.name}
-            className="flex gap-2 text-stone-500"
+            className="flex flex-col text-center"
           >
-            <div className="flex gap-1">
-              <motion.div
-                key={person.name}
-                initial={{ filter: "blur(2px)" }}
-                animate={{ filter: "blur(0px)" }}
-                exit={{ filter: "blur(2px)" }}
-                layout="position"
-                className="whitespace-nowrap text-stone-500"
-              >
-                {person.name}
-              </motion.div>
-              <motion.div
-                key={person.role}
-                initial={{ filter: "blur(2px)" }}
-                animate={{ filter: "blur(0px)" }}
-                exit={{ filter: "blur(2px)" }}
-                layout="position"
-                className="whitespace-nowrap text-stone-500"
-              >
-                {person.role}
-              </motion.div>
-            </div>
+            <motion.h2
+              key={person.name}
+              initial={{ filter: "blur(2px)" }}
+              animate={{ filter: "blur(0px)" }}
+              exit={{ filter: "blur(2px)" }}
+              layout="position"
+              className="whitespace-nowrap font-medium text-stone-500"
+            >
+              {person.name}
+            </motion.h2>
+            <motion.h2
+              key={person.role}
+              initial={{ filter: "blur(2px)" }}
+              animate={{ filter: "blur(0px)" }}
+              exit={{ filter: "blur(2px)" }}
+              layout="position"
+              className="whitespace-nowrap text-stone-400"
+            >
+              {person.role}
+            </motion.h2>
           </motion.div>
         ) : (
           <motion.div
+            layout
             layoutId={person.name}
-            className="flex w-full items-center justify-between text-[14px] font-[450] leading-[24px] text-black"
+            className="flex w-full items-center justify-between"
           >
             <div className="flex flex-col">
               <motion.div
@@ -135,7 +82,7 @@ function PersonInfo({
                 animate={{ filter: "blur(0px)" }}
                 exit={{ filter: "blur(2px)" }}
                 layout="position"
-                className="whitespace-nowrap text-black/60"
+                className="whitespace-nowrap text-stone-500"
               >
                 {person.name}
               </motion.div>
@@ -145,7 +92,7 @@ function PersonInfo({
                 animate={{ filter: "blur(0px)" }}
                 exit={{ filter: "blur(2px)" }}
                 layout="position"
-                className="whitespace-nowrap text-black/40"
+                className="whitespace-nowrap text-stone-400"
               >
                 {person.role}
               </motion.div>
@@ -157,7 +104,7 @@ function PersonInfo({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4, delay: 0.4 }}
             >
-              <ExpandIcon className="h-4 w-4 opacity-40" />
+              <ExpandIcon className="h-4 w-4 text-stone-500" />
             </motion.div>
           </motion.div>
         )}
@@ -166,29 +113,25 @@ function PersonInfo({
       <AnimatePresence mode="popLayout">
         {isExpanded && (
           <motion.div
-            key={person.id}
+            key={person._key}
             initial={{ opacity: 0, filter: "blur(2px)" }}
             animate={{ opacity: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, filter: "blur(2px)" }}
             transition={{ duration: 0.2 }}
-            className="flex flex-col gap-4"
+            className="flex flex-col space-y-6"
             layout="position"
           >
-            <p className="px-8 text-center text-base font-[450] leading-[28px] text-black/50">
-              {person.bio}
-            </p>
+            <p className="px-8 text-center text-stone-500">{person.bio}</p>
             <div className="flex items-start gap-1 self-stretch">
-              {person.info.map((info, index) => (
+              {person.qaPairs.map((qaPair, index) => (
                 <div
                   key={index}
-                  className="flex h-[150px] w-[150px] flex-1 flex-col items-center justify-center rounded-2xl bg-black/[0.03] px-5 py-10"
+                  className="flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-stone-200/50 bg-stone-200/25 p-4 text-center"
                 >
-                  <div className="text-center text-[14px] font-[350] leading-[24px] text-black/40">
-                    {info.question}
+                  <div className="pb-1 text-sm text-stone-500">
+                    {qaPair.question}
                   </div>
-                  <div className="text-[20px] font-[450] leading-[32px] text-black/60">
-                    {info.answer}
-                  </div>
+                  <div className="text-md text-stone-700">{qaPair.answer}</div>
                 </div>
               ))}
             </div>
@@ -199,7 +142,8 @@ function PersonInfo({
   );
 }
 
-export default function AboutPage() {
+export default function AboutPage({ aboutData }: { aboutData: About }) {
+  console.log(aboutData);
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       align: "center",
@@ -234,49 +178,49 @@ export default function AboutPage() {
             className="flex h-full items-center mix-blend-multiply"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.3, delay: 0.1 }}
+            transition={{ duration: 0.4 }}
           >
-            {people.map((person, i) => (
-              <motion.div
-                key={person.id}
-                className="relative flex h-full w-full flex-none items-center justify-center mix-blend-multiply"
-                style={{ flex: "0 0 33%" }}
-                initial={{
-                  scale: 0.8,
-                  filter: "blur(8px)",
-                  opacity: 0,
-                }}
-                animate={{
-                  scale: selectedIndex === i ? 1 : 0.8,
-                  filter: selectedIndex === i ? "blur(0px)" : "blur(8px)",
-                  opacity: isLoaded ? (selectedIndex === i ? 1 : 0.5) : 0,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30,
-                  delay: isLoaded ? 0 : 0.2,
-                }}
-              >
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="h-[70vh] object-contain mix-blend-multiply"
+            {aboutData.team?.map((person, i) => {
+              console.log("Person:", person);
+              console.log("Person video:", person.media);
+              return (
+                <motion.div
+                  key={person._key}
+                  className="relative flex h-full w-full flex-[0_0_100%] items-center justify-center mix-blend-multiply md:flex-[0_0_25%]"
+                  initial={{
+                    scale: 0.8,
+                    filter: "blur(12px)",
+                    opacity: 0,
+                  }}
+                  animate={{
+                    scale: selectedIndex === i ? 1 : 0.9,
+                    filter: selectedIndex === i ? "blur(0px)" : "blur(8px)",
+                    opacity: isLoaded ? (selectedIndex === i ? 1 : 0.65) : 0,
+                  }}
+                  transition={{
+                    type: "tween",
+                    duration: 0.6,
+                    ease: [0.32, 0.72, 0, 1],
+                  }}
                 >
-                  <source src={person.video} type="video/mp4" />
-                </video>
-              </motion.div>
-            ))}
+                  {person.media?.[0] && (
+                    <MediaRenderer
+                      className="object-contain mix-blend-multiply"
+                      media={person.media[0]}
+                      autoPlay={true}
+                    />
+                  )}
+                </motion.div>
+              );
+            })}
           </motion.div>
         </div>
       </div>
 
       {/* Navigation/Bio Card */}
-      <div className="absolute bottom-8 z-10 flex w-full justify-center">
+      <div className="absolute bottom-4 z-10 flex w-full justify-center md:left-4">
         <PersonInfo
-          person={people[selectedIndex]}
+          person={aboutData.team?.[selectedIndex] as TeamMember}
           isExpanded={isExpanded}
           onToggle={() => setIsExpanded(!isExpanded)}
         />
@@ -286,11 +230,11 @@ export default function AboutPage() {
       {!isExpanded && (
         <div className="absolute bottom-32 left-1/2 z-10 -translate-x-1/2">
           <div className="flex gap-2">
-            {people.map((_, index) => (
+            {aboutData.team?.map((_, index) => (
               <motion.button
                 key={index}
                 onClick={() => emblaApi?.scrollTo(index)}
-                className="h-2 w-2 rounded-full bg-stone-900/20"
+                className="h-2 w-2 rounded-full bg-stone-500"
                 animate={{
                   scale: index === selectedIndex ? 1.5 : 1,
                   opacity: index === selectedIndex ? 1 : 0.5,
@@ -309,3 +253,14 @@ export default function AboutPage() {
     </motion.div>
   );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  const aboutData = await client.fetch(ABOUT_QUERY);
+
+  return {
+    props: {
+      aboutData,
+    },
+    revalidate: 60,
+  };
+};

@@ -84,3 +84,15 @@ export const SERVICES_QUERY = groq`
     }
   }
 `;
+
+export const ABOUT_QUERY = groq`
+  *[_type == "about"][!(_id in path('drafts.**'))][0] {
+    ...,
+    team[] {
+      ...,
+      media[] {
+        ${MEDIA_PROJECTION}
+      }
+    }
+  }
+`;
