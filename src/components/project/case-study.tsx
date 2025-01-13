@@ -151,7 +151,7 @@ const Navigation = forwardRef<HTMLDivElement, NavigationProps>(
         ref={ref}
         layout
         layoutId="nav-root"
-        className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-[calc(0.5rem_+_env(safe-area-inset-bottom))] md:bottom-4 md:px-4"
+        className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
         style={originStyles}
         initial={{ opacity: 0, y: 20, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
