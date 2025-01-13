@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { ExpandIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { EASINGS } from "@/components/animations/easings";
 
 // Team data from original data.tsx
 const people = [
@@ -200,18 +200,24 @@ function PersonInfo({
 }
 
 export default function AboutPage() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "center",
-    containScroll: false,
-    dragFree: true,
-    loop: true,
-    startIndex: 0,
-  });
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    {
+      align: "center",
+      containScroll: false,
+      axis: "x",
+      direction: "ltr",
+      startIndex: 0,
+    },
+    [WheelGesturesPlugin()],
+  );
+
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     if (emblaApi) {
+      setTimeout(() => setIsLoaded(true), 100);
       emblaApi.on("select", () => {
         setSelectedIndex(emblaApi.selectedScrollSnap());
       });
@@ -219,30 +225,51 @@ export default function AboutPage() {
   }, [emblaApi]);
 
   return (
-    <div className="fixed inset-0">
-      {/* Carousel container with center alignment */}
-      <div ref={emblaRef} className="h-full overflow-hidden">
-        <div
-          className="flex h-full items-center"
-          style={{ backfaceVisibility: "hidden" }}
-        >
-          {people.map((person) => (
-            <div
-              key={person.id}
-              className="main-gradient relative flex h-full w-full flex-none items-center justify-center"
-              style={{ flex: "0 0 33%" }}
-            >
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="h-[70vh] object-contain opacity-75 mix-blend-multiply"
+    <motion.div className="fixed inset-0">
+      {/* Full page gradient container */}
+      <div className="main-gradient absolute inset-0">
+        {/* Carousel container */}
+        <div ref={emblaRef} className="h-full overflow-hidden">
+          <motion.div
+            className="flex h-full items-center mix-blend-multiply"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            {people.map((person, i) => (
+              <motion.div
+                key={person.id}
+                className="relative flex h-full w-full flex-none items-center justify-center mix-blend-multiply"
+                style={{ flex: "0 0 33%" }}
+                initial={{
+                  scale: 0.8,
+                  filter: "blur(8px)",
+                  opacity: 0,
+                }}
+                animate={{
+                  scale: selectedIndex === i ? 1 : 0.8,
+                  filter: selectedIndex === i ? "blur(0px)" : "blur(8px)",
+                  opacity: isLoaded ? (selectedIndex === i ? 1 : 0.5) : 0,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                  delay: isLoaded ? 0 : 0.2,
+                }}
               >
-                <source src={person.video} type="video/mp4" />
-              </video>
-            </div>
-          ))}
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="h-[70vh] object-contain mix-blend-multiply"
+                >
+                  <source src={person.video} type="video/mp4" />
+                </video>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </div>
 
@@ -260,18 +287,25 @@ export default function AboutPage() {
         <div className="absolute bottom-32 left-1/2 z-10 -translate-x-1/2">
           <div className="flex gap-2">
             {people.map((_, index) => (
-              <button
+              <motion.button
                 key={index}
                 onClick={() => emblaApi?.scrollTo(index)}
-                className={cn(
-                  "h-2 w-2 rounded-full bg-stone-900/20 transition-all",
-                  index === selectedIndex && "scale-150 opacity-100",
-                )}
+                className="h-2 w-2 rounded-full bg-stone-900/20"
+                animate={{
+                  scale: index === selectedIndex ? 1.5 : 1,
+                  opacity: index === selectedIndex ? 1 : 0.5,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 30,
+                }}
+                whileTap={{ scale: 0.95 }}
               />
             ))}
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

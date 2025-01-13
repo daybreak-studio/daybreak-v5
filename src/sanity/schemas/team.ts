@@ -30,17 +30,32 @@ export const team = defineType({
               type: "string",
             }),
             defineField({
-              name: "image",
-              title: "Image",
-              type: "image",
-              options: {
-                hotspot: true,
-              },
+              name: "video",
+              title: "Video",
+              type: "mux.video",
             }),
             defineField({
               name: "bio",
               title: "Bio",
               type: "text",
+            }),
+            defineField({
+              name: "info",
+              title: "Info",
+              type: "array",
+              of: [
+                defineField({
+                  name: "question",
+                  title: "Question",
+                  type: "text",
+                }),
+                defineField({
+                  name: "answer",
+                  title: "Answer",
+                  type: "text",
+                }),
+              ],
+              validation: (Rule) => Rule.length(2),
             }),
           ],
         },
