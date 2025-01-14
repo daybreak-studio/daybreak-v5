@@ -150,7 +150,7 @@ function PersonInfo({
                 animate={{ opacity: 1, filter: "blur(0px)" }}
                 exit={{ opacity: 0, filter: "blur(2px)" }}
                 transition={{ duration: 0.2 }}
-                className="flex flex-col space-y-6"
+                className="flex w-full flex-col space-y-6"
                 layout="position"
               >
                 <p className="px-8 text-center text-stone-500">{person.bio}</p>
@@ -201,11 +201,8 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
 
       event.preventDefault();
 
-      // Check if it's a trackpad gesture
       const isTrackpad =
         Math.abs(event.deltaX) !== 0 || Math.abs(event.deltaY) < 50;
-
-      // Accumulate deltas for smoother scrolling
       const deltaX = event.deltaX;
       const deltaY = event.deltaY;
       const delta = isTrackpad
@@ -218,41 +215,45 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
       if (delta > threshold) {
         setIsScrolling(true);
 
-        const direction = isTrackpad
-          ? Math.abs(deltaX) > Math.abs(deltaY)
-            ? deltaX
-            : deltaY
-          : deltaY;
+        requestAnimationFrame(() => {
+          const direction = isTrackpad
+            ? Math.abs(deltaX) > Math.abs(deltaY)
+              ? deltaX
+              : deltaY
+            : deltaY;
 
-        const currentIndex = emblaApi.selectedScrollSnap();
-        const targetIndex =
-          direction > 0
-            ? Math.min(currentIndex + 1, emblaApi.scrollSnapList().length - 1)
-            : Math.max(currentIndex - 1, 0);
+          const currentIndex = emblaApi.selectedScrollSnap();
+          const targetIndex =
+            direction > 0
+              ? Math.min(currentIndex + 1, emblaApi.scrollSnapList().length - 1)
+              : Math.max(currentIndex - 1, 0);
 
-        emblaApi.scrollTo(targetIndex);
+          emblaApi.scrollTo(targetIndex);
 
-        // Debounce scrolling
-        setTimeout(
-          () => {
-            setIsScrolling(false);
-          },
-          isTrackpad ? 100 : 300,
-        );
+          setTimeout(
+            () => {
+              setIsScrolling(false);
+            },
+            isTrackpad ? 100 : 300,
+          );
+        });
       }
     },
     [emblaApi, isScrolling],
   );
 
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     if (emblaApi) {
-      setTimeout(() => setIsLoaded(true), 100);
+      timeoutId = setTimeout(() => setIsLoaded(true), 100);
 
       const onSelect = () => {
-        setSelectedIndex(emblaApi.selectedScrollSnap());
+        requestAnimationFrame(() => {
+          setSelectedIndex(emblaApi.selectedScrollSnap());
+        });
       };
 
-      // Simplified event listeners
       emblaApi.on("select", onSelect);
 
       // Add wheel event listener
@@ -260,6 +261,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
       rootNode.addEventListener("wheel", handleScroll, { passive: false });
 
       return () => {
+        clearTimeout(timeoutId);
         rootNode.removeEventListener("wheel", handleScroll);
         emblaApi.off("select", onSelect);
       };
@@ -324,7 +326,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
 
       {/* Dots Navigation */}
       {!isExpanded && (
-        <div className="absolute bottom-32 left-1/2 z-10 -translate-x-1/2">
+        <div className="absolute bottom-36 left-1/2 z-10 -translate-x-1/2 md:bottom-40">
           <div className="flex gap-2">
             {aboutData.team?.map((_, index) => (
               <motion.button
