@@ -40,6 +40,7 @@ function PersonInfo({
     <motion.div
       layout
       layoutId="person-info-root"
+      role="dialog"
       className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
       style={{ transformOrigin: "bottom center" }}
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -189,17 +190,26 @@ function PersonInfo({
 
 export default function AboutPage({ aboutData }: { aboutData: About }) {
   console.log(aboutData);
+
+  // Add utility to calculate middle index
+  const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
+
+  // Update emblaRef with startIndex set to middle
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "center",
     containScroll: false,
     axis: "x",
     direction: "ltr",
-    startIndex: 0,
+    // Set startIndex to middle of team array
+    startIndex: aboutData.team ? getMiddleIndex(aboutData.team.length) : 0,
     dragFree: false,
     inViewThreshold: 0.7,
   });
 
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  // Update initial selectedIndex state to match middle
+  const [selectedIndex, setSelectedIndex] = useState(
+    aboutData.team ? getMiddleIndex(aboutData.team.length) : 0,
+  );
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -277,6 +287,56 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
       };
     }
   }, [emblaApi, handleScroll]);
+
+  // Add keyboard navigation effect
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!document.querySelector('[role="dialog"]')) return;
+
+      switch (e.code) {
+        case "Escape":
+          e.preventDefault();
+          e.stopPropagation();
+          if (isExpanded) {
+            setIsExpanded(false);
+          }
+          break;
+        case "Enter":
+        case "Space":
+        case "Tab":
+          e.preventDefault();
+          e.stopPropagation();
+          setIsExpanded(!isExpanded);
+          break;
+        case "ArrowLeft":
+        case "ArrowUp":
+          e.preventDefault();
+          e.stopPropagation();
+          if (emblaApi) {
+            const currentIndex = emblaApi.selectedScrollSnap();
+            const prevIndex = Math.max(currentIndex - 1, 0);
+            emblaApi.scrollTo(prevIndex);
+          }
+          break;
+        case "ArrowRight":
+        case "ArrowDown":
+          e.preventDefault();
+          e.stopPropagation();
+          if (emblaApi) {
+            const currentIndex = emblaApi.selectedScrollSnap();
+            const nextIndex = Math.min(
+              currentIndex + 1,
+              emblaApi.scrollSnapList().length - 1,
+            );
+            emblaApi.scrollTo(nextIndex);
+          }
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, true);
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
+  }, [isExpanded, emblaApi]);
 
   return (
     <motion.div className="fixed inset-0">
