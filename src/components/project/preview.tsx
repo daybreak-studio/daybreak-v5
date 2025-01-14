@@ -110,7 +110,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
               }}
             >
               <MediaRenderer
-                className="frame-inner"
+                className="frame-inner max-h-[700px]"
                 media={mediaAsset}
                 autoPlay={true}
               />

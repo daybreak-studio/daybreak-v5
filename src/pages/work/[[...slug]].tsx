@@ -35,7 +35,7 @@ const MODAL_VARIANTS = {
   },
   preview: {
     className:
-      "w-[90vw] max-w-[600px] md:max-h-[80svh] md:max-w-[1000px] overflow-y-auto",
+      "w-[90vw] max-w-[600px] md:max-h-[80svh] md:max-w-[1000px] overflow-hidden",
     type: "preview",
   },
   caseStudy: {
@@ -227,7 +227,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                                 });
                               }
                             }}
-                            className="absolute right-4 top-4 z-30 inline-flex size-12 appearance-none items-center justify-center rounded-xl border-[1px] border-stone-100 bg-white text-stone-500 hover:bg-stone-100 focus:shadow-gray-400 focus:outline-none"
+                            className="frame-inner absolute right-6 top-6 z-30 inline-flex size-12 appearance-none items-center justify-center border-2 border-stone-600/5 bg-white/25 text-stone-500 hover:bg-stone-400/10 focus:shadow-gray-400 focus:outline-none"
                           >
                             <Cross2Icon className="h-4 w-4" />
                           </Dialog.Close>
