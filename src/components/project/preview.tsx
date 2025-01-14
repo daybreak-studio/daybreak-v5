@@ -6,7 +6,7 @@ import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { IMAGE_ANIMATION } from "./animations";
 import { EASINGS } from "../animations/easings";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
 interface ProjectPreviewProps {
@@ -30,7 +30,20 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
-  // Sync Embla with currentIndex
+  const project = data.projects?.find((p) => {
+    return p._type === "preview";
+  }) as Preview;
+
+  const mediaArray = project?.media || [];
+
+  const handlePrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? mediaArray.length - 1 : prev - 1));
+  }, [mediaArray.length]);
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev === mediaArray.length - 1 ? 0 : prev + 1));
+  }, [mediaArray.length]);
+
   useEffect(() => {
     if (emblaApi) {
       emblaApi.scrollTo(currentIndex);
@@ -41,28 +54,6 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     }
   }, [emblaApi, currentIndex]);
 
-  const project = data.projects?.find((p) => {
-    return p._type === "preview";
-  }) as Preview;
-
-  if (!project) {
-    return null;
-  }
-
-  const mediaArray = project.media || [];
-
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? mediaArray.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === mediaArray.length - 1 ? 0 : prev + 1));
-  };
-
-  const mediaAsset = mediaArray[currentIndex];
-  const assetId = getMediaAssetId(mediaAsset);
-
-  // Add keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Prevent default space scroll behavior
@@ -86,6 +77,13 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleNext, handlePrevious]);
+
+  if (!project) {
+    return null;
+  }
+
+  const mediaAsset = mediaArray[currentIndex];
+  const assetId = getMediaAssetId(mediaAsset);
 
   return (
     <div className="flex flex-col p-8 md:flex-row md:space-x-8">
