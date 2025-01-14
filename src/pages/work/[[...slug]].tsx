@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { motion, MotionProps } from "framer-motion";
+import { motion, MotionProps, useAnimation } from "framer-motion";
 import { Clients } from "@/sanity/types";
 import { useRouter } from "next/router";
 import { MediaRenderer } from "@/components/media-renderer";
@@ -39,7 +39,8 @@ const MODAL_VARIANTS = {
     type: "preview",
   },
   caseStudy: {
-    className: "h-[100svh] w-screen max-w-none overflow-y-auto rounded-none",
+    className:
+      "h-[100svh] w-screen max-w-none overflow-y-auto rounded-none bg-white",
     type: "caseStudy",
   },
 } as const;
@@ -74,6 +75,10 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   // Add state to track the active thumbnail during animation
   const [activeThumbId, setActiveThumbId] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
+  const [isInitialMount, setIsInitialMount] = useState(true);
+
+  // First, let's add a state for controlling grid animation
+  const [shouldShowGrid, setShouldShowGrid] = useState(false);
 
   // Find the current client based on the slug
   const currentClient = data.find(
@@ -94,6 +99,26 @@ export default function WorkPage({ data }: { data: Clients[] }) {
       : null,
   });
 
+  // Update the useEffect to handle both cases
+  useEffect(() => {
+    if (isInitialMount) {
+      if (clientSlug) {
+        // If we have a clientSlug, delay the modal opening
+        const timer = setTimeout(() => {
+          setIsInitialMount(false);
+        }, 600);
+        return () => clearTimeout(timer);
+      } else {
+        // If we're on the index page, animate in the grid
+        const timer = setTimeout(() => {
+          setShouldShowGrid(true);
+          setIsInitialMount(false);
+        }, 100);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [clientSlug, isInitialMount]);
+
   return (
     <div className="mx-auto p-8">
       <div className="relative grid grid-cols-1 gap-8 pt-24 md:grid-cols-2 lg:grid-cols-3">
@@ -110,7 +135,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
           return (
             <Dialog.Root
               key={client._id}
-              open={isOpen}
+              open={isOpen && !isInitialMount}
               onOpenChange={(open) => {
                 setActiveThumbId(client.slug?.current || null);
                 if (!open) {
@@ -126,6 +151,15 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                 <motion.div
                   {...CONTAINER_ANIMATION}
                   layoutId={containerLayoutId}
+                  initial={{ opacity: 0 }}
+                  animate={{
+                    opacity: shouldShowGrid || !isInitialMount ? 1 : 0,
+                  }}
+                  transition={{
+                    duration: 0.5,
+                    ease: EASINGS.easeOutQuart,
+                    delay: isInitialMount ? 0.2 : 0,
+                  }}
                   className={cn(
                     "relative aspect-square w-full origin-center cursor-pointer overflow-hidden",
                     isAnimating &&
@@ -168,6 +202,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         transition={{
                           duration: 0.4,
                           ease: EASINGS.easeOutQuart,
+                          delay: isInitialMount ? 0.3 : 0,
                         }}
                         className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
                       />
@@ -184,6 +219,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         transition={{
                           duration: 0.5,
                           ease: EASINGS.easeOutQuart,
+                          delay: isInitialMount ? 0.4 : 0,
                         }}
                         className="z-50 focus:outline-none"
                       >
@@ -212,24 +248,35 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                             <ProjectCaseStudy data={client} />
                           )}
 
-                          <Dialog.Close
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (projectSlug) {
-                                // If we're in a project view, go back to selector
-                                router.push(`/work/${clientSlug}`, undefined, {
-                                  shallow: true,
-                                });
-                              } else {
-                                // If we're in selector view, close the modal
-                                router.push("/work", undefined, {
-                                  shallow: true,
-                                });
-                              }
-                            }}
-                            className="frame-inner absolute right-6 top-6 z-30 inline-flex size-12 appearance-none items-center justify-center border-2 border-stone-600/5 bg-white/25 text-stone-500 hover:bg-stone-400/10 focus:shadow-gray-400 focus:outline-none"
-                          >
-                            <Cross2Icon className="h-4 w-4" />
+                          <Dialog.Close asChild>
+                            <motion.button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (projectSlug) {
+                                  router.push(
+                                    `/work/${clientSlug}`,
+                                    undefined,
+                                    {
+                                      shallow: true,
+                                    },
+                                  );
+                                } else {
+                                  router.push("/work", undefined, {
+                                    shallow: true,
+                                  });
+                                }
+                              }}
+                              initial={{ scale: 1 }}
+                              whileHover={{ scale: 0.95 }}
+                              whileTap={{ scale: 0.9 }}
+                              transition={{
+                                duration: 0.2,
+                                ease: EASINGS.easeOutQuart,
+                              }}
+                              className="frame-inner absolute right-6 top-6 z-30 inline-flex size-12 appearance-none items-center justify-center border-2 border-stone-600/5 bg-white text-stone-500 transition-colors duration-300 hover:bg-stone-50 focus:outline-none"
+                            >
+                              <Cross2Icon className="h-4 w-4" />
+                            </motion.button>
                           </Dialog.Close>
                         </motion.div>
                       </motion.div>
