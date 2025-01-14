@@ -72,13 +72,16 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
       >
         {/* Desktop View */}
         <div className="hidden md:block">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={currentIndex}
-              initial={{ opacity: 0, filter: "blur(10px)" }}
+              initial={{ opacity: 0, filter: "blur(16px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, filter: "blur(10px)" }}
-              transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
+              exit={{ opacity: 0, filter: "blur(16px)" }}
+              transition={{
+                duration: 0.8,
+                ease: EASINGS.easeOutQuart,
+              }}
             >
               <MediaRenderer
                 className="frame-inner"
@@ -109,20 +112,22 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
               ))}
             </div>
           </div>
-          <div className="flex justify-center space-x-2 pt-6">
-            {mediaArray.map((_, index) => (
-              <button
-                key={index}
-                className={cn(
-                  "h-2 w-2 rounded-full transition-colors",
-                  currentIndex === index ? "bg-stone-500" : "bg-stone-300",
-                )}
-                onClick={() => {
-                  emblaApi?.scrollTo(index);
-                }}
-              />
-            ))}
-          </div>
+          {mediaArray.length > 1 && (
+            <div className="flex justify-center space-x-2 pt-6">
+              {mediaArray.map((_, index) => (
+                <button
+                  key={index}
+                  className={cn(
+                    "h-2 w-2 rounded-full transition-colors",
+                    currentIndex === index ? "bg-stone-500" : "bg-stone-300",
+                  )}
+                  onClick={() => {
+                    emblaApi?.scrollTo(index);
+                  }}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </motion.div>
       <motion.div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">
@@ -149,10 +154,11 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             <motion.button
               key={media._key}
               onClick={() => setCurrentIndex(index)}
-              whileHover={{ scale: 1.2 }}
+              animate={{ scale: currentIndex === index ? 1.2 : 1 }}
+              transition={{ duration: 0.1, ease: EASINGS.easeOutQuart }}
               className={cn(
                 "relative rounded-md transition-all duration-200",
-                currentIndex === index && "ring-2 ring-stone-500",
+                currentIndex === index && "ring-2 ring-stone-400",
               )}
             >
               <MediaRenderer media={media} className="h-5 w-5 rounded-md" />
@@ -229,7 +235,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
               }}
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
-              className="group relative flex items-center justify-between overflow-hidden rounded-2xl border-[1px] border-stone-100 bg-stone-600/5 p-4 text-stone-500 transition-colors duration-500 hover:bg-stone-100"
+              className="group relative flex items-center justify-between overflow-hidden rounded-2xl border-[1px] border-stone-100 bg-stone-600/5 p-4 text-stone-500 transition-colors duration-500 hover:border-[1px] hover:border-stone-600/10"
             >
               <div className="relative h-[16px] overflow-hidden">
                 <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-[16px]">

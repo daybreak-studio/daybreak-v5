@@ -22,7 +22,7 @@ export default function Navigation() {
 
   return (
     <motion.nav className="parent pointer-events-auto fixed z-50 mx-auto flex h-fit w-full items-center justify-center">
-      <motion.div className="container relative mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl bg-[rgb(250,250,250,0.85)] p-1 mix-blend-multiply shadow-lg md:rounded-2xl">
+      <motion.div className="container relative mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl border-[1px] border-stone-300/25 bg-stone-50/95 p-1 mix-blend-multiply shadow-lg backdrop-blur-3xl md:rounded-2xl">
         {tabs.map((tab) =>
           tab.href === "/" ? (
             <Link
@@ -80,7 +80,7 @@ const Pill = () => {
     <motion.span
       layout
       layoutId="pill"
-      className="pill absolute inset-0 z-0 rounded-md border-[1px] border-stone-50 bg-white/50 shadow-lg shadow-stone-500/5 md:rounded-xl"
+      className="pill absolute inset-0 z-0 rounded-md border-[1px] border-stone-600/5 bg-white shadow-lg shadow-stone-500/15 md:rounded-xl"
       style={{ originY: "top" }}
       transition={{
         type: "spring",
