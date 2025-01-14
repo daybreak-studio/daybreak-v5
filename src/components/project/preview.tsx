@@ -231,7 +231,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 transition: { duration: 1, ease: EASINGS.easeOutQuart },
               },
             }}
-            className="text-2xl font-medium text-stone-500"
+            className="text-2xl font-medium text-stone-500 md:text-xl lg:text-2xl"
           >
             {project.heading}
           </motion.h2>
@@ -245,7 +245,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 transition: { duration: 1, ease: EASINGS.easeOutQuart },
               },
             }}
-            className="pb-2 text-xs text-stone-400 md:text-base"
+            className="pb-2 text-xs text-stone-400 md:text-xs xl:text-base"
           >
             {project.caption}
           </motion.p>
