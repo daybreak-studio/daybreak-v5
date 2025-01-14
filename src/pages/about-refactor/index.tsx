@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
-import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
+import type { EmblaCarouselType, EmblaEventType } from "embla-carousel";
 import { ExpandIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GetStaticProps } from "next";
@@ -35,7 +35,7 @@ function PersonInfo({
 }) {
   return (
     <motion.div
-      layout
+      layout="position"
       layoutId="person-container"
       onClick={onToggle}
       className="flex w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden border bg-white/60 p-6 backdrop-blur-xl md:w-96"
@@ -44,7 +44,7 @@ function PersonInfo({
       <AnimatePresence mode="popLayout">
         {isExpanded ? (
           <motion.div
-            layout
+            layout="position"
             layoutId={person.name}
             className="flex flex-col text-center"
           >
@@ -144,29 +144,91 @@ function PersonInfo({
 
 export default function AboutPage({ aboutData }: { aboutData: About }) {
   console.log(aboutData);
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      align: "center",
-      containScroll: false,
-      axis: "x",
-      direction: "ltr",
-      startIndex: 0,
-    },
-    [WheelGesturesPlugin()],
-  );
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "center",
+    containScroll: false,
+    axis: "x",
+    direction: "ltr",
+    startIndex: 0,
+    dragFree: false,
+    inViewThreshold: 0.7,
+  });
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const handleScroll = useCallback(
+    (event: WheelEvent) => {
+      if (!emblaApi || isScrolling) return;
+
+      event.preventDefault();
+
+      // Check if it's a trackpad gesture
+      const isTrackpad =
+        Math.abs(event.deltaX) !== 0 || Math.abs(event.deltaY) < 50;
+
+      // Accumulate deltas for smoother scrolling
+      const deltaX = event.deltaX;
+      const deltaY = event.deltaY;
+      const delta = isTrackpad
+        ? Math.max(Math.abs(deltaX), Math.abs(deltaY))
+        : Math.abs(deltaY);
+
+      // Lower thresholds for more responsiveness
+      const threshold = isTrackpad ? 15 : 35;
+
+      if (delta > threshold) {
+        setIsScrolling(true);
+
+        const direction = isTrackpad
+          ? Math.abs(deltaX) > Math.abs(deltaY)
+            ? deltaX
+            : deltaY
+          : deltaY;
+
+        const currentIndex = emblaApi.selectedScrollSnap();
+        const targetIndex =
+          direction > 0
+            ? Math.min(currentIndex + 1, emblaApi.scrollSnapList().length - 1)
+            : Math.max(currentIndex - 1, 0);
+
+        emblaApi.scrollTo(targetIndex);
+
+        // Debounce scrolling
+        setTimeout(
+          () => {
+            setIsScrolling(false);
+          },
+          isTrackpad ? 100 : 300,
+        );
+      }
+    },
+    [emblaApi, isScrolling],
+  );
 
   useEffect(() => {
     if (emblaApi) {
       setTimeout(() => setIsLoaded(true), 100);
-      emblaApi.on("select", () => {
+
+      const onSelect = () => {
         setSelectedIndex(emblaApi.selectedScrollSnap());
-      });
+      };
+
+      // Simplified event listeners
+      emblaApi.on("select", onSelect);
+
+      // Add wheel event listener
+      const rootNode = emblaApi.rootNode();
+      rootNode.addEventListener("wheel", handleScroll, { passive: false });
+
+      return () => {
+        rootNode.removeEventListener("wheel", handleScroll);
+        emblaApi.off("select", onSelect);
+      };
     }
-  }, [emblaApi]);
+  }, [emblaApi, handleScroll]);
 
   return (
     <motion.div className="fixed inset-0">

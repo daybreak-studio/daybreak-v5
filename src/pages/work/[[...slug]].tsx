@@ -96,7 +96,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
 
   return (
     <div className="mx-auto p-8">
-      <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="relative grid grid-cols-1 gap-8 pt-24 md:grid-cols-2 lg:grid-cols-3">
         {data.map((client) => {
           const mediaAsset = getClientFirstMedia(client);
           const assetId = getMediaAssetId(mediaAsset);
