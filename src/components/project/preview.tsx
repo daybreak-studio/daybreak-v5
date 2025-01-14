@@ -36,23 +36,40 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
 
   const mediaArray = project?.media || [];
 
+  const scrollTo = useCallback(
+    (index: number) => {
+      if (emblaApi) {
+        emblaApi.scrollTo(index);
+      }
+      setCurrentIndex(index);
+    },
+    [emblaApi],
+  );
+
   const handlePrevious = useCallback(() => {
-    setCurrentIndex((prev) => (prev === 0 ? mediaArray.length - 1 : prev - 1));
-  }, [mediaArray.length]);
+    const newIndex =
+      currentIndex === 0 ? mediaArray.length - 1 : currentIndex - 1;
+    scrollTo(newIndex);
+  }, [currentIndex, mediaArray.length, scrollTo]);
 
   const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev === mediaArray.length - 1 ? 0 : prev + 1));
-  }, [mediaArray.length]);
+    const newIndex =
+      currentIndex === mediaArray.length - 1 ? 0 : currentIndex + 1;
+    scrollTo(newIndex);
+  }, [currentIndex, mediaArray.length, scrollTo]);
 
   useEffect(() => {
     if (emblaApi) {
-      emblaApi.scrollTo(currentIndex);
-
       emblaApi.on("select", () => {
         setCurrentIndex(emblaApi.selectedScrollSnap());
       });
+
+      // Cleanup
+      return () => {
+        emblaApi.off("select");
+      };
     }
-  }, [emblaApi, currentIndex]);
+  }, [emblaApi]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -178,7 +195,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           {mediaArray.map((media, index) => (
             <motion.button
               key={media._key}
-              onClick={() => setCurrentIndex(index)}
+              onClick={() => scrollTo(index)}
               animate={{ scale: currentIndex === index ? 1.2 : 1 }}
               transition={{ duration: 0.1, ease: EASINGS.easeOutQuart }}
               className={cn(
