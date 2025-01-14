@@ -78,7 +78,6 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           handleNext();
           break;
         case "Space":
-        case "Enter":
           handleNext();
           break;
       }
