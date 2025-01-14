@@ -28,9 +28,9 @@ export default function Navigation() {
             <Link
               key={tab.href}
               href="/"
-              className="relative flex items-stretch"
+              className="relative flex items-stretch rounded-xl"
             >
-              <div className="logo_container align-center relative m-2 flex w-20 rounded-none p-1 md:m-0 md:mx-4 md:rounded-xl md:p-0">
+              <div className="logo_container align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:rounded-xl md:p-0 md:pt-[2px]">
                 <div className="glyph_container z-10 flex w-1/4 items-center overflow-hidden">
                   <div className="glyph h-full w-full origin-bottom pb-1">
                     <Logo className="h-full w-full fill-current text-stone-500" />
@@ -55,18 +55,15 @@ export default function Navigation() {
             strokeWidth={2.25}
           />
         </div>
-        <div className="items relative hidden md:flex">
+        <div className="items relative hidden space-x-1 md:flex">
           {tabs.map((tab) =>
             tab.href !== "/" ? (
-              <motion.h1
-                key={tab.label}
-                className="relative px-4 py-3 text-xs font-normal text-stone-500"
-              >
-                <Link href={tab.href} className="relative z-10">
-                  {tab.label}
-                </Link>
-                {isValidPath && basePath === tab.href && <Pill />}
-              </motion.h1>
+              <Link href={tab.href} className="rounded-xl" key={tab.label}>
+                <motion.h1 className="relative px-3 py-3 text-xs font-normal text-stone-500">
+                  <span className="relative z-10">{tab.label}</span>
+                  {isValidPath && basePath === tab.href && <Pill />}
+                </motion.h1>
+              </Link>
             ) : null,
           )}
         </div>

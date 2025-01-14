@@ -62,6 +62,32 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
   const mediaAsset = mediaArray[currentIndex];
   const assetId = getMediaAssetId(mediaAsset);
 
+  // Add keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevent default space scroll behavior
+      if (e.code === "Space") {
+        e.preventDefault();
+      }
+
+      switch (e.code) {
+        case "ArrowLeft":
+          handlePrevious();
+          break;
+        case "ArrowRight":
+          handleNext();
+          break;
+        case "Space":
+        case "Enter":
+          handleNext();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleNext, handlePrevious]);
+
   return (
     <div className="flex flex-col p-8 md:flex-row md:space-x-8">
       <motion.div
@@ -147,6 +173,8 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             whileHover="hover"
             whileTap="tap"
             className="rounded-full p-1"
+            tabIndex={-1}
+            aria-label="Previous image"
           >
             <ChevronLeft className="h-4 w-4 text-stone-500" />
           </motion.button>
@@ -171,6 +199,8 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             whileHover="hover"
             whileTap="tap"
             className="rounded-full p-1"
+            tabIndex={-1}
+            aria-label="Next image"
           >
             <ChevronRight className="h-4 w-4 text-stone-500" />
           </motion.button>
