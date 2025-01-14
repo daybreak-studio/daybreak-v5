@@ -107,7 +107,10 @@ export default function QuotesWidget({ data }: QuotesProps) {
             <div className="absolute bottom-4 right-4 hidden flex-col gap-2 md:flex">
               <motion.button
                 className="rounded-full bg-stone-200 p-2"
-                onClick={handleNext}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNext();
+                }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -115,7 +118,10 @@ export default function QuotesWidget({ data }: QuotesProps) {
               </motion.button>
               <motion.button
                 className="rounded-full bg-stone-200 p-2"
-                onClick={handlePrev}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrev();
+                }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
