@@ -10,6 +10,7 @@ import { ABOUT_QUERY } from "@/sanity/lib/queries";
 import { About } from "@/sanity/types";
 import { MediaItem } from "@/sanity/lib/media";
 import { MediaRenderer } from "@/components/media-renderer";
+import { EASINGS } from "@/components/animations/easings";
 
 interface TeamMember {
   _key: string;
@@ -28,10 +29,12 @@ function PersonInfo({
   person,
   isExpanded,
   onToggle,
+  isPreview,
 }: {
   person: TeamMember;
   isExpanded: boolean;
   onToggle: () => void;
+  isPreview: boolean;
 }) {
   return (
     <motion.div
@@ -40,22 +43,28 @@ function PersonInfo({
       className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
       style={{ transformOrigin: "bottom center" }}
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        scale: isPreview ? 1.03 : 1,
+      }}
       transition={{
-        duration: 0.4,
-        ease: [0.32, 0.72, 0, 1],
+        duration: 0.6,
+        ease: EASINGS.easeOutQuart,
       }}
     >
       <motion.div
         layout
         layoutId="person-info-container"
-        className="mx-auto h-min w-min overflow-hidden bg-white/40 p-1 drop-shadow-2xl backdrop-blur-md"
+        className={cn(
+          "mx-auto h-min w-min overflow-hidden bg-white/40 p-1 drop-shadow-2xl backdrop-blur-md",
+        )}
         animate={{
           borderRadius: isExpanded ? 32 : 16,
         }}
         transition={{
-          duration: 0.4,
-          ease: [0.32, 0.72, 0, 1],
+          duration: 0.6,
+          ease: EASINGS.easeOutQuart,
         }}
         style={{ transformOrigin: "bottom center" }}
       >
@@ -68,8 +77,8 @@ function PersonInfo({
             borderRadius: isExpanded ? 28 : 12,
           }}
           transition={{
-            duration: 0.4,
-            ease: [0.32, 0.72, 0, 1],
+            duration: 0.6,
+            ease: EASINGS.easeOutQuart,
           }}
           style={{ transformOrigin: "bottom center" }}
         >
@@ -134,7 +143,7 @@ function PersonInfo({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, delay: 0.4 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
                 >
                   <ExpandIcon className="h-4 w-4 text-stone-500" />
                 </motion.div>
@@ -194,6 +203,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
   const handleScroll = useCallback(
     (event: WheelEvent) => {
@@ -298,9 +308,8 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
                     opacity: isLoaded ? (selectedIndex === i ? 1 : 0.65) : 0,
                   }}
                   transition={{
-                    type: "tween",
                     duration: 0.6,
-                    ease: [0.32, 0.72, 0, 1],
+                    ease: EASINGS.easeOutQuart,
                   }}
                 >
                   {person.media?.[0] && (
@@ -319,9 +328,10 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
 
       {/* Navigation/Bio Card */}
       <PersonInfo
-        person={aboutData.team?.[selectedIndex] as TeamMember}
+        person={aboutData.team?.[previewIndex ?? selectedIndex] as TeamMember}
         isExpanded={isExpanded}
         onToggle={() => setIsExpanded(!isExpanded)}
+        isPreview={previewIndex !== null}
       />
 
       {/* Dots Navigation */}
@@ -331,18 +341,36 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
             {aboutData.team?.map((_, index) => (
               <motion.button
                 key={index}
-                onClick={() => emblaApi?.scrollTo(index)}
+                onClick={() => {
+                  setPreviewIndex(null);
+                  emblaApi?.scrollTo(index);
+                }}
+                onHoverStart={() => setPreviewIndex(index)}
+                onHoverEnd={() => setPreviewIndex(null)}
                 className="h-2 w-2 rounded-full bg-stone-500"
                 animate={{
                   scale: index === selectedIndex ? 1.5 : 1,
                   opacity: index === selectedIndex ? 1 : 0.5,
                 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 30,
+                whileHover={{
+                  scale: 1.5,
+                  opacity: 1,
+                  transition: {
+                    duration: 0.4,
+                    ease: EASINGS.easeOutQuart,
+                  },
                 }}
-                whileTap={{ scale: 0.95 }}
+                transition={{
+                  duration: 0.4,
+                  ease: EASINGS.easeOutQuart,
+                }}
+                whileTap={{
+                  scale: 0.95,
+                  transition: {
+                    duration: 0.4,
+                    ease: EASINGS.easeOutQuart,
+                  },
+                }}
               />
             ))}
           </div>
