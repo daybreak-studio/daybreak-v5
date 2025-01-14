@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
-import type { EmblaCarouselType, EmblaEventType } from "embla-carousel";
 import { ExpandIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GetStaticProps } from "next";
@@ -189,72 +188,80 @@ function PersonInfo({
 }
 
 export default function AboutPage({ aboutData }: { aboutData: About }) {
-  console.log(aboutData);
-
-  // Add utility to calculate middle index
+  // --- Utilities ---
   const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
+  const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
 
-  // Update emblaRef with startIndex set to middle
+  // --- Carousel Configuration ---
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "center",
     containScroll: false,
     axis: "x",
     direction: "ltr",
-    // Set startIndex to middle of team array
-    startIndex: aboutData.team ? getMiddleIndex(aboutData.team.length) : 0,
+    startIndex,
     dragFree: false,
     inViewThreshold: 0.7,
   });
 
-  // Update initial selectedIndex state to match middle
-  const [selectedIndex, setSelectedIndex] = useState(
-    aboutData.team ? getMiddleIndex(aboutData.team.length) : 0,
-  );
+  // --- State Management ---
+  const [selectedIndex, setSelectedIndex] = useState(startIndex);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
+  // --- Event Handlers ---
   const handleScroll = useCallback(
     (event: WheelEvent) => {
+      // 1. Early return if carousel isn't ready or is already scrolling
       if (!emblaApi || isScrolling) return;
-
       event.preventDefault();
 
+      // 2. Detect if user is using a trackpad
       const isTrackpad =
-        Math.abs(event.deltaX) !== 0 || Math.abs(event.deltaY) < 50;
-      const deltaX = event.deltaX;
-      const deltaY = event.deltaY;
+        Math.abs(event.deltaX) !== 0 || // Trackpads often have horizontal scroll
+        Math.abs(event.deltaY) < 50; // Trackpads have smaller delta values
+
+      // 3. Get scroll values
+      const deltaX = event.deltaX; // Horizontal scroll amount
+      const deltaY = event.deltaY; // Vertical scroll amount
+
+      // 4. Calculate the strongest scroll direction
       const delta = isTrackpad
-        ? Math.max(Math.abs(deltaX), Math.abs(deltaY))
-        : Math.abs(deltaY);
+        ? Math.max(Math.abs(deltaX), Math.abs(deltaY)) // For trackpad, use strongest direction
+        : Math.abs(deltaY); // For mouse wheel, only care about vertical
 
-      // Lower thresholds for more responsiveness
-      const threshold = isTrackpad ? 15 : 35;
+      // 5. Set different sensitivity thresholds
+      const threshold = isTrackpad ? 15 : 35; // Trackpad needs lower threshold
 
+      // 6. Only proceed if scroll is strong enough
       if (delta > threshold) {
         setIsScrolling(true);
 
         requestAnimationFrame(() => {
+          // 7. Determine scroll direction
           const direction = isTrackpad
-            ? Math.abs(deltaX) > Math.abs(deltaY)
-              ? deltaX
-              : deltaY
-            : deltaY;
+            ? Math.abs(deltaX) > Math.abs(deltaY) // If trackpad, check which direction is stronger
+              ? deltaX // Use horizontal if stronger
+              : deltaY // Use vertical if stronger
+            : deltaY; // For mouse wheel, always use vertical
 
+          // 8. Calculate target slide
           const currentIndex = emblaApi.selectedScrollSnap();
           const targetIndex =
             direction > 0
-              ? Math.min(currentIndex + 1, emblaApi.scrollSnapList().length - 1)
-              : Math.max(currentIndex - 1, 0);
+              ? Math.min(currentIndex + 1, emblaApi.scrollSnapList().length - 1) // Next slide
+              : Math.max(currentIndex - 1, 0); // Previous slide
 
+          // 9. Perform the scroll
           emblaApi.scrollTo(targetIndex);
 
+          // 10. Reset scrolling state after a delay
           setTimeout(
             () => {
               setIsScrolling(false);
             },
-            isTrackpad ? 100 : 300,
+            isTrackpad ? 100 : 300, // Shorter delay for trackpad
           );
         });
       }
@@ -262,33 +269,30 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     [emblaApi, isScrolling],
   );
 
+  // --- Effects ---
+  // Carousel initialization and cleanup
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    if (!emblaApi) return;
 
-    if (emblaApi) {
-      timeoutId = setTimeout(() => setIsLoaded(true), 100);
+    const timeoutId = setTimeout(() => setIsLoaded(true), 100);
+    const onSelect = () => {
+      requestAnimationFrame(() => {
+        setSelectedIndex(emblaApi.selectedScrollSnap());
+      });
+    };
 
-      const onSelect = () => {
-        requestAnimationFrame(() => {
-          setSelectedIndex(emblaApi.selectedScrollSnap());
-        });
-      };
+    emblaApi.on("select", onSelect);
+    const rootNode = emblaApi.rootNode();
+    rootNode.addEventListener("wheel", handleScroll, { passive: false });
 
-      emblaApi.on("select", onSelect);
-
-      // Add wheel event listener
-      const rootNode = emblaApi.rootNode();
-      rootNode.addEventListener("wheel", handleScroll, { passive: false });
-
-      return () => {
-        clearTimeout(timeoutId);
-        rootNode.removeEventListener("wheel", handleScroll);
-        emblaApi.off("select", onSelect);
-      };
-    }
+    return () => {
+      clearTimeout(timeoutId);
+      rootNode.removeEventListener("wheel", handleScroll);
+      emblaApi.off("select", onSelect);
+    };
   }, [emblaApi, handleScroll]);
 
-  // Add keyboard navigation effect
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!document.querySelector('[role="dialog"]')) return;
@@ -338,6 +342,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     return () => window.removeEventListener("keydown", handleKeyDown, true);
   }, [isExpanded, emblaApi]);
 
+  // --- Render ---
   return (
     <motion.div className="fixed inset-0">
       {/* Full page gradient container */}

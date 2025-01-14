@@ -1,16 +1,46 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Preview, Clients } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getProjectFirstMedia, getMediaAssetId } from "@/sanity/lib/media";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { IMAGE_ANIMATION } from "./animations";
 import { EASINGS } from "../animations/easings";
+import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 
 interface ProjectPreviewProps {
   data: Clients;
 }
 
+const chevronButtonVariants = {
+  initial: { scale: 1 },
+  hover: { scale: 1.1 },
+  tap: {
+    scale: 0.9,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 10,
+    },
+  },
+};
+
 export default function ProjectPreview({ data }: ProjectPreviewProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+
+  // Sync Embla with currentIndex
+  useEffect(() => {
+    if (emblaApi) {
+      emblaApi.scrollTo(currentIndex);
+
+      emblaApi.on("select", () => {
+        setCurrentIndex(emblaApi.selectedScrollSnap());
+      });
+    }
+  }, [emblaApi, currentIndex]);
+
   const project = data.projects?.find((p) => {
     return p._type === "preview";
   }) as Preview;
@@ -19,7 +49,17 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     return null;
   }
 
-  const mediaAsset = getProjectFirstMedia(project);
+  const mediaArray = project.media || [];
+
+  const handlePrevious = () => {
+    setCurrentIndex((prev) => (prev === 0 ? mediaArray.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === mediaArray.length - 1 ? 0 : prev + 1));
+  };
+
+  const mediaAsset = mediaArray[currentIndex];
   const assetId = getMediaAssetId(mediaAsset);
 
   return (
@@ -30,28 +70,104 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
         layout
         layoutId={assetId || undefined}
       >
-        <MediaRenderer
-          className="frame-inner"
-          media={mediaAsset}
-          autoPlay={true}
-        />
+        {/* Desktop View */}
+        <div className="hidden md:block">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, filter: "blur(10px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(10px)" }}
+              transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
+            >
+              <MediaRenderer
+                className="frame-inner"
+                media={mediaAsset}
+                autoPlay={true}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Mobile Carousel */}
+        <div className="md:hidden">
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex touch-pan-y">
+              {mediaArray.map((media, index) => (
+                <div
+                  key={media._key}
+                  className="relative min-w-0 flex-[0_0_100%] px-1"
+                >
+                  <div className="overflow-hidden rounded-2xl">
+                    <MediaRenderer
+                      className="frame-inner"
+                      media={media}
+                      autoPlay={index === currentIndex}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-center space-x-2 pt-6">
+            {mediaArray.map((_, index) => (
+              <button
+                key={index}
+                className={cn(
+                  "h-2 w-2 rounded-full transition-colors",
+                  currentIndex === index ? "bg-stone-500" : "bg-stone-300",
+                )}
+                onClick={() => {
+                  emblaApi?.scrollTo(index);
+                }}
+              />
+            ))}
+          </div>
+        </div>
       </motion.div>
       <motion.div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">
         <motion.div
           initial={{ filter: "blur(10px)" }}
           animate={{ filter: "blur(0px)" }}
           transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
-          className="hidden items-center space-x-2 md:flex"
+          className={cn(
+            "hidden items-center space-x-2 md:flex",
+            mediaArray.length === 1 && "invisible",
+          )}
         >
-          <ChevronLeft className="h-4 w-4 text-stone-500" />
-          {project.media?.map((media) => {
-            return (
-              <div key={media._key}>
-                <MediaRenderer media={media} className="h-5 w-5 rounded-md" />
-              </div>
-            );
-          })}
-          <ChevronRight className="h-4 w-4 text-stone-300" />
+          <motion.button
+            onClick={handlePrevious}
+            variants={chevronButtonVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            className="rounded-full p-1"
+          >
+            <ChevronLeft className="h-4 w-4 text-stone-500" />
+          </motion.button>
+          {mediaArray.map((media, index) => (
+            <motion.button
+              key={media._key}
+              onClick={() => setCurrentIndex(index)}
+              whileHover={{ scale: 1.2 }}
+              className={cn(
+                "relative rounded-md transition-all duration-200",
+                currentIndex === index && "ring-2 ring-stone-500",
+              )}
+            >
+              <MediaRenderer media={media} className="h-5 w-5 rounded-md" />
+            </motion.button>
+          ))}
+          <motion.button
+            onClick={handleNext}
+            variants={chevronButtonVariants}
+            initial="initial"
+            whileHover="hover"
+            whileTap="tap"
+            className="rounded-full p-1"
+          >
+            <ChevronRight className="h-4 w-4 text-stone-500" />
+          </motion.button>
         </motion.div>
         <motion.div
           initial="hidden"
@@ -79,7 +195,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 transition: { duration: 1, ease: EASINGS.easeOutQuart },
               },
             }}
-            className="text-2xl"
+            className="text-2xl font-medium text-stone-500"
           >
             {project.heading}
           </motion.h2>
@@ -93,35 +209,37 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 transition: { duration: 1, ease: EASINGS.easeOutQuart },
               },
             }}
-            className="pb-2 text-xs text-stone-500 md:text-base"
+            className="pb-2 text-xs text-stone-400 md:text-base"
           >
             {project.caption}
           </motion.p>
-          <motion.a
-            href={project.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            variants={{
-              hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
-              visible: {
-                opacity: 1,
-                filter: "blur(0px)",
-                y: 0,
-                transition: { duration: 1, ease: EASINGS.easeOutQuart },
-              },
-            }}
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
-            className="group relative flex items-center justify-between overflow-hidden rounded-2xl border-[1px] border-stone-100 bg-stone-50 p-4 text-stone-500 transition-colors duration-500 hover:bg-stone-100"
-          >
-            <div className="relative h-[16px] overflow-hidden">
-              <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-[16px]">
-                <span className="text-xs leading-4">{project.link}</span>
-                <span className="text-xs leading-4">Visit site</span>
+          {project.link && (
+            <motion.a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              variants={{
+                hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
+                visible: {
+                  opacity: 1,
+                  filter: "blur(0px)",
+                  y: 0,
+                  transition: { duration: 1, ease: EASINGS.easeOutQuart },
+                },
+              }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
+              className="group relative flex items-center justify-between overflow-hidden rounded-2xl border-[1px] border-stone-100 bg-stone-600/5 p-4 text-stone-500 transition-colors duration-500 hover:bg-stone-100"
+            >
+              <div className="relative h-[16px] overflow-hidden">
+                <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-[16px]">
+                  <span className="text-xs leading-4">{project.link}</span>
+                  <span className="text-xs leading-4">Visit site</span>
+                </div>
               </div>
-            </div>
-            <ArrowUpRight className="h-4 w-4 text-stone-400 transition-all duration-200 group-hover:rotate-45" />
-          </motion.a>
+              <ArrowUpRight className="h-4 w-4 text-stone-400 transition-all duration-200 group-hover:rotate-45" />
+            </motion.a>
+          )}
         </motion.div>
       </motion.div>
     </div>

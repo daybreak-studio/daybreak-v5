@@ -102,7 +102,7 @@ export const preview = defineType({
     defineField({
       name: "caption",
       title: "Caption",
-      type: "string",
+      type: "text",
       description: "Brief description or subtitle for the preview",
     }),
     createMediaArray(),
@@ -165,7 +165,7 @@ export const caseStudy = defineType({
     defineField({
       name: "caption",
       title: "Caption",
-      type: "string",
+      type: "text",
       description: "Brief description or subtitle for the case study",
     }),
     defineField({

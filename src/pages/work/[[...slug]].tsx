@@ -169,7 +169,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                           duration: 0.4,
                           ease: EASINGS.easeOutQuart,
                         }}
-                        className="fixed inset-0 bg-white/50 backdrop-blur-2xl"
+                        className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
                       />
                     </Dialog.Overlay>
                     <Dialog.Content
@@ -198,8 +198,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                           {...CONTAINER_ANIMATION}
                           layoutId={containerLayoutId}
                           className={cn(
-                            "frame-outer origin-center bg-white",
-                            "overflow-y-auto",
+                            "frame-outer origin-center overflow-y-auto border-[1px] border-stone-200/50 bg-white/80 drop-shadow-xl",
                             modalVariant.className,
                           )}
                         >
