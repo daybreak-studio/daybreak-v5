@@ -60,13 +60,15 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
 
   useEffect(() => {
     if (emblaApi) {
-      emblaApi.on("select", () => {
+      const onSelect = () => {
         setCurrentIndex(emblaApi.selectedScrollSnap());
-      });
+      };
+
+      emblaApi.on("select", onSelect);
 
       // Cleanup
       return () => {
-        emblaApi.off("select");
+        emblaApi.off("select", onSelect);
       };
     }
   }, [emblaApi]);
