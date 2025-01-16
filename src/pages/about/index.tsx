@@ -454,7 +454,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
       {!isExpanded && (
         <div className="absolute bottom-36 left-1/2 z-10 -translate-x-1/2 md:bottom-40">
           <motion.div
-            className="dots-container -mx-4 -my-2 flex gap-2 px-4 py-2"
+            className="dots-container flex px-4 py-2"
             onPointerDown={(e) => {
               const target = e.currentTarget;
               target.setPointerCapture(e.pointerId);
@@ -476,43 +476,32 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
                 }}
                 onHoverStart={() => !isDragging && setPreviewIndex(index)}
                 onHoverEnd={() => !isDragging && setPreviewIndex(null)}
-                className="h-2 w-2 rounded-full bg-stone-500"
-                animate={{
-                  scale: isDragging
-                    ? index === previewIndex
-                      ? 1.5
-                      : 1
-                    : index === previewIndex || index === selectedIndex
-                      ? 1.5
-                      : 1,
-                  opacity: isDragging
-                    ? index === previewIndex
-                      ? 1
-                      : 0.5
-                    : index === previewIndex || index === selectedIndex
-                      ? 1
-                      : 0.5,
-                }}
-                whileHover={{
-                  scale: isDragging ? undefined : 1.5,
-                  opacity: isDragging ? undefined : 1,
-                  transition: {
+                className="relative px-2 py-3"
+              >
+                <motion.div
+                  className="h-2 w-2 rounded-full bg-stone-500"
+                  animate={{
+                    scale: isDragging
+                      ? index === previewIndex
+                        ? 1.5
+                        : 1
+                      : index === previewIndex || index === selectedIndex
+                        ? 1.5
+                        : 1,
+                    opacity: isDragging
+                      ? index === previewIndex
+                        ? 1
+                        : 0.5
+                      : index === previewIndex || index === selectedIndex
+                        ? 1
+                        : 0.5,
+                  }}
+                  transition={{
                     duration: 0.4,
                     ease: EASINGS.easeOutQuart,
-                  },
-                }}
-                transition={{
-                  duration: 0.4,
-                  ease: EASINGS.easeOutQuart,
-                }}
-                whileTap={{
-                  scale: isDragging ? 1.5 : 0.95,
-                  transition: {
-                    duration: 0.4,
-                    ease: EASINGS.easeOutQuart,
-                  },
-                }}
-              />
+                  }}
+                />
+              </motion.button>
             ))}
           </motion.div>
         </div>
