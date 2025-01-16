@@ -28,7 +28,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
       >
         <h2 className="text-center text-3xl text-stone-600">{data.name}</h2>
       </motion.div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {data.projects?.map((project, index) => {
           const mediaAsset = getProjectFirstMedia(project);
           const assetId = getMediaAssetId(mediaAsset);
@@ -62,6 +62,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                   <MediaRenderer
                     fill
                     media={mediaAsset}
+                    autoPlay={true}
                     className="rounded-xl duration-300 group-hover:scale-105"
                   />
                 </motion.div>

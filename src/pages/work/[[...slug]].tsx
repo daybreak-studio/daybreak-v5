@@ -30,7 +30,7 @@ import { urlFor } from "@/sanity/lib/image";
 // Define modal variants
 const MODAL_VARIANTS = {
   selector: {
-    className: "w-[90vw] max-w-[800px] p-4",
+    className: "w-[90vw] max-w-[1200px] p-4",
     type: "selector",
   },
   preview: {
@@ -57,6 +57,7 @@ const getModalVariant = (client: Clients, projectSlug: string | undefined) => {
     ? client.projects?.find((project) => project.category === projectSlug)
     : client.projects?.[0];
 
+  // Determine variant based on project type
   const variant =
     currentProject?._type === "preview"
       ? MODAL_VARIANTS.preview
@@ -184,7 +185,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         className="frame-inner"
                         fill
                         media={mediaAsset}
-                        autoPlay={false}
+                        autoPlay={true}
                       />
                     </motion.div>
                   </HoverCard>

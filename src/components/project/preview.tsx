@@ -8,6 +8,7 @@ import { EASINGS } from "../animations/easings";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
+import { useRouter } from "next/router";
 
 interface ProjectPreviewProps {
   data: Clients;
@@ -27,10 +28,19 @@ const chevronButtonVariants = {
 };
 
 export default function ProjectPreview({ data }: ProjectPreviewProps) {
+  const router = useRouter();
+  const { slug } = router.query;
+  const [clientSlug, projectSlug] = Array.isArray(slug)
+    ? slug
+    : [slug, undefined];
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
 
   const project = data.projects?.find((p) => {
+    if (projectSlug) {
+      return p._type === "preview" && p.category === projectSlug;
+    }
     return p._type === "preview";
   }) as Preview;
 

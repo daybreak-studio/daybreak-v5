@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import { ExpandIcon } from "lucide-react";
@@ -10,6 +11,7 @@ import { About } from "@/sanity/types";
 import { MediaItem } from "@/sanity/lib/media";
 import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
+import { useMotionValue, useTransform } from "framer-motion";
 
 interface TeamMember {
   _key: string;
@@ -210,6 +212,55 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   const [isScrolling, setIsScrolling] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
+  // Add new state for drag handling
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Function to handle dot scrubbing
+  const handleDotDrag = useCallback(
+    (clientX: number) => {
+      if (!emblaApi) return;
+
+      // Get the dots container element
+      const dotsContainer = document.querySelector(".dots-container");
+      if (!dotsContainer) return;
+
+      // Get container bounds
+      const rect = dotsContainer.getBoundingClientRect();
+
+      // Calculate relative position (0 to 1), clamped to container bounds
+      const relativeX = Math.max(
+        0,
+        Math.min(1, (clientX - rect.left) / rect.width),
+      );
+
+      // Calculate target index based on position
+      const totalSlides = emblaApi.scrollSnapList().length;
+      const targetIndex = Math.min(
+        totalSlides - 1,
+        Math.floor(relativeX * totalSlides),
+      );
+
+      emblaApi.scrollTo(targetIndex);
+      setPreviewIndex(targetIndex);
+    },
+    [emblaApi],
+  );
+
+  // Update pointer event handlers
+  const handlePointerMove = useCallback(
+    (e: ReactPointerEvent) => {
+      if (isDragging) {
+        handleDotDrag(e.clientX);
+      }
+    },
+    [isDragging, handleDotDrag],
+  );
+
+  const handlePointerUp = useCallback(() => {
+    setIsDragging(false);
+    setPreviewIndex(null);
+  }, []);
+
   // --- Event Handlers ---
   const handleScroll = useCallback(
     (event: WheelEvent) => {
@@ -399,27 +450,52 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
         isPreview={previewIndex !== null}
       />
 
-      {/* Dots Navigation */}
+      {/* Updated Dots Navigation */}
       {!isExpanded && (
         <div className="absolute bottom-36 left-1/2 z-10 -translate-x-1/2 md:bottom-40">
-          <div className="flex gap-2">
+          <motion.div
+            className="dots-container -mx-4 -my-2 flex gap-2 px-4 py-2"
+            onPointerDown={(e) => {
+              const target = e.currentTarget;
+              target.setPointerCapture(e.pointerId);
+              setIsDragging(true);
+              handleDotDrag(e.clientX);
+            }}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
+          >
             {aboutData.team?.map((_, index) => (
               <motion.button
                 key={index}
                 onClick={() => {
-                  setPreviewIndex(null);
-                  emblaApi?.scrollTo(index);
+                  if (!isDragging) {
+                    setPreviewIndex(null);
+                    emblaApi?.scrollTo(index);
+                  }
                 }}
-                onHoverStart={() => setPreviewIndex(index)}
-                onHoverEnd={() => setPreviewIndex(null)}
+                onHoverStart={() => !isDragging && setPreviewIndex(index)}
+                onHoverEnd={() => !isDragging && setPreviewIndex(null)}
                 className="h-2 w-2 rounded-full bg-stone-500"
                 animate={{
-                  scale: index === selectedIndex ? 1.5 : 1,
-                  opacity: index === selectedIndex ? 1 : 0.5,
+                  scale: isDragging
+                    ? index === previewIndex
+                      ? 1.5
+                      : 1
+                    : index === previewIndex || index === selectedIndex
+                      ? 1.5
+                      : 1,
+                  opacity: isDragging
+                    ? index === previewIndex
+                      ? 1
+                      : 0.5
+                    : index === previewIndex || index === selectedIndex
+                      ? 1
+                      : 0.5,
                 }}
                 whileHover={{
-                  scale: 1.5,
-                  opacity: 1,
+                  scale: isDragging ? undefined : 1.5,
+                  opacity: isDragging ? undefined : 1,
                   transition: {
                     duration: 0.4,
                     ease: EASINGS.easeOutQuart,
@@ -430,7 +506,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
                   ease: EASINGS.easeOutQuart,
                 }}
                 whileTap={{
-                  scale: 0.95,
+                  scale: isDragging ? 1.5 : 0.95,
                   transition: {
                     duration: 0.4,
                     ease: EASINGS.easeOutQuart,
@@ -438,7 +514,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
                 }}
               />
             ))}
-          </div>
+          </motion.div>
         </div>
       )}
     </motion.div>

@@ -190,8 +190,10 @@ const Navigation = forwardRef<HTMLDivElement, NavigationProps>(
                   exit={{ opacity: 0 }}
                   transition={transition}
                 >
-                  <span className="opacity-50">{currentGroup.heading}</span>
-                  <XIcon className="h-4 w-4 rotate-45 opacity-60" />
+                  <span className="whitespace-nowrap opacity-50">
+                    {currentGroup.heading}
+                  </span>
+                  <XIcon className="h-4 w-4 shrink-0 rotate-45 opacity-60" />
                 </motion.button>
               ) : (
                 <motion.div
@@ -430,7 +432,7 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
         {project.heading}
       </motion.h1>
 
-      <div className="flex flex-col gap-4 xl:gap-8">
+      <div className="flex flex-col gap-4 xl:gap-4">
         {project.mediaGroups?.map((group, index) => (
           <MediaGroup
             key={index}
