@@ -14,6 +14,7 @@ interface MediaRendererProps {
   autoPlay?: boolean;
   priority?: boolean;
   fill?: boolean;
+  thumbnailTime?: number;
   onLoad?: () => void;
   onError?: () => void;
   transition?: {
@@ -27,29 +28,41 @@ interface ImageProps {
   priority: boolean;
   fill: boolean;
   className?: string;
+  onError?: () => void;
+  onLoad?: () => void;
 }
 
 interface VideoProps {
   autoPlay: boolean;
   className?: string;
+  onError?: () => void;
+  onLoad?: () => void;
 }
 
 const isMuxVideo = (media: MediaItem): boolean => {
   return media._type === "videoItem" && media.source?._type === "mux.video";
 };
 
-const useMediaProps = (media: MediaItem | null, props: MediaRendererProps) => {
+const useMediaProps = (media: MediaItem | null, thumbnailTime?: number) => {
   const isLowPowerMode = useLowPowerMode();
   const [error, setError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const getImageProps = ({ priority, fill, className = "" }: ImageProps) => {
+  const getImageProps = ({
+    priority,
+    fill,
+    className = "",
+    onError,
+    onLoad,
+  }: ImageProps) => {
     if (!media) return null;
     const dimensions = media.source?.asset?.metadata?.dimensions;
     const lqip = media.source?.asset?.metadata?.lqip;
 
     return {
-      src: isMuxVideo(media) ? getMuxThumbnailUrl(media) : urlFor(media.source),
+      src: isMuxVideo(media)
+        ? getMuxThumbnailUrl(media, thumbnailTime)
+        : urlFor(media.source),
       alt: media.alt || "",
       className: cn("object-cover", className),
       ...(fill
@@ -68,13 +81,18 @@ const useMediaProps = (media: MediaItem | null, props: MediaRendererProps) => {
       }),
       onError: () => {
         setError(true);
-        props.onError?.();
+        onError?.();
       },
-      onLoad: () => props.onLoad?.(),
+      onLoad,
     };
   };
 
-  const getVideoProps = ({ autoPlay, className = "" }: VideoProps) => {
+  const getVideoProps = ({
+    autoPlay,
+    className = "",
+    onError,
+    onLoad,
+  }: VideoProps) => {
     if (!media) return null;
 
     return {
@@ -86,12 +104,12 @@ const useMediaProps = (media: MediaItem | null, props: MediaRendererProps) => {
       muted: true,
       playsInline: true,
       loop: true,
-      poster: getMuxThumbnailUrl(media),
+      poster: getMuxThumbnailUrl(media, thumbnailTime),
       onError: () => {
         setError(true);
-        props.onError?.();
+        onError?.();
       },
-      onLoadedMetadata: () => props.onLoad?.(),
+      onLoadedMetadata: onLoad,
     };
   };
 
@@ -112,6 +130,7 @@ export function MediaRenderer(props: MediaRendererProps) {
     autoPlay = false,
     priority = false,
     fill = false,
+    thumbnailTime,
     onLoad,
     onError,
     transition,
@@ -119,14 +138,20 @@ export function MediaRenderer(props: MediaRendererProps) {
 
   const { isLowPowerMode, error, getImageProps, getVideoProps } = useMediaProps(
     media,
-    props,
+    thumbnailTime,
   );
 
   if (!media?.source?.asset) return null;
 
   const shouldShowVideo = isMuxVideo(media) && !isLowPowerMode && !error;
-  const imageProps = getImageProps({ priority, fill, className });
-  const videoProps = getVideoProps({ autoPlay, className });
+  const imageProps = getImageProps({
+    priority,
+    fill,
+    className,
+    onError,
+    onLoad,
+  });
+  const videoProps = getVideoProps({ autoPlay, className, onError, onLoad });
 
   if (!imageProps || !videoProps) return null;
 

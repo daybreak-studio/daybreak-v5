@@ -27,7 +27,7 @@ const DrawerButton = ({
       <div
         onClick={onClick}
         className={clsx(
-          "relative z-30 flex cursor-pointer items-center justify-center p-8",
+          "relative z-20 flex cursor-pointer items-center justify-center p-8",
           isMobile && !isOpen ? "bottom-20" : "bottom-6",
         )}
       >
@@ -121,7 +121,7 @@ const Drawer: React.FC<DrawerProps> = ({
     <motion.div
       id="drawer"
       className={clsx(
-        "fixed inset-x-0 bottom-0 z-50 rounded-2xl bg-white/90 shadow backdrop-blur-2xl",
+        "fixed inset-x-0 bottom-0 z-30 rounded-2xl bg-white/90 shadow backdrop-blur-2xl",
         className,
       )}
       style={{ height: windowHeight }}

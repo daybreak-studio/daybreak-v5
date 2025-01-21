@@ -76,7 +76,7 @@ export function BaseWidget({
         willChange: "transform",
       }}
     >
-      <HoverCard className="frame-outer">
+      <HoverCard>
         <div
           className={cn(
             "frame-inner relative h-full w-full overflow-hidden",

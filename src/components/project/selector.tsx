@@ -62,7 +62,8 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                   <MediaRenderer
                     fill
                     media={mediaAsset}
-                    autoPlay={true}
+                    autoPlay={false}
+                    thumbnailTime={1}
                     className="rounded-xl duration-300 group-hover:scale-105"
                   />
                 </motion.div>

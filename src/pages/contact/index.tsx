@@ -2,7 +2,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ContactFormValues, contactFormSchema } from "@/components/form/schema";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFormSteps } from "@/components/form";
 import {
   getScale,
@@ -10,7 +10,7 @@ import {
   getY,
   getCardVisibility,
 } from "@/components/form/utils/animations";
-import dynamic from "next/dynamic";
+import { usePersistedForm } from "@/components/form/utils/storage";
 
 interface FormStep {
   id: string;
@@ -18,7 +18,6 @@ interface FormStep {
 }
 
 export default function ContactPage() {
-  const [copied, setCopied] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactFormSchema),
@@ -30,23 +29,23 @@ export default function ContactPage() {
       link: "",
     },
     mode: "onChange",
+    reValidateMode: "onChange",
   });
 
-  const nextStep = () =>
-    setCurrentStep((prev) => Math.min(prev + 1, formSteps.length - 1));
-  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 0));
+  usePersistedForm(form);
+
+  const nextStep = () => setCurrentStep((prev) => prev + 1);
+  const prevStep = () => setCurrentStep((prev) => prev - 1);
 
   const formSteps = createFormSteps({
     form,
     nextStep,
     prevStep,
     onSubmit,
-    copied,
-    setCopied,
+    setCurrentStep,
   });
 
   async function onSubmit(data: ContactFormValues) {
-    console.log("onSubmit handler executing with data:", data);
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -54,12 +53,12 @@ export default function ContactPage() {
         body: JSON.stringify(data),
       });
 
-      const responseData = await response.json();
-      console.log("API response:", responseData);
       if (!response.ok) throw new Error("Failed to submit form");
+
       nextStep();
+      localStorage.removeItem("contact_form");
     } catch (error) {
-      console.error("API Error:", error);
+      form.setError("root", { message: "Failed to submit form" });
     }
   }
 
@@ -67,30 +66,7 @@ export default function ContactPage() {
     <FormProvider {...form}>
       <div className="fixed inset-0">
         <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            console.log("Form submit event triggered");
-
-            try {
-              // Get the form data
-              const data = form.getValues();
-              console.log("Form data:", data);
-
-              // Validate the form
-              const isValid = await form.trigger();
-              console.log("Form validation:", isValid);
-
-              if (!isValid) {
-                console.log("Form validation failed");
-                return;
-              }
-
-              // Submit the form
-              await onSubmit(data);
-            } catch (error) {
-              console.error("Form submission error:", error);
-            }
-          }}
+          onSubmit={form.handleSubmit(onSubmit)}
           className="grid h-screen w-screen place-items-center"
         >
           <AnimatePresence initial={false}>

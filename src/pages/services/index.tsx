@@ -19,7 +19,7 @@ const servicesWidgets: WidgetRegistry = {
 export default function Services({ servicesData }: { servicesData: Services }) {
   console.log(servicesData);
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-gray-50 p-4">
+    <div className="flex min-h-screen w-full items-center justify-center">
       <WidgetDataProvider data={{ widgets: servicesData.widgets as Widget[] }}>
         <WidgetGrid components={servicesWidgets} />
       </WidgetDataProvider>

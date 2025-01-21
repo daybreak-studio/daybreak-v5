@@ -18,14 +18,18 @@ export const urlFor = (source: SanityImageSource | undefined): string => {
     .url();
 };
 
-export const getMuxThumbnailUrl = (media: {
-  source?: {
-    asset?: {
-      playbackId?: string;
+export const getMuxThumbnailUrl = (
+  media: {
+    source?: {
+      asset?: {
+        playbackId?: string;
+      };
     };
-  };
-}) => {
+  },
+  time?: number,
+) => {
   const playbackId = media.source?.asset?.playbackId;
   if (!playbackId) return "";
-  return `https://image.mux.com/${playbackId}/thumbnail.jpg?time=0`;
+  const baseUrl = `https://image.mux.com/${playbackId}/thumbnail.jpg`;
+  return time !== undefined ? `${baseUrl}?time=${time}` : baseUrl;
 };

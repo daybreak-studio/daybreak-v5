@@ -126,6 +126,8 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
         <div className="hidden md:block">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
+              onClick={handleNext}
+              className="cursor-pointer transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99]"
               key={currentIndex}
               initial={{ opacity: 0, filter: "blur(16px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
@@ -136,7 +138,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
               }}
             >
               <MediaRenderer
-                className="frame-inner max-h-[700px]"
+                className="frame-inner max-h-[700px] cursor-e-resize transition-shadow duration-300 hover:shadow-xl hover:shadow-neutral-100"
                 media={mediaAsset}
                 autoPlay={true}
               />
@@ -209,9 +211,13 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
               key={media._key}
               onClick={() => scrollTo(index)}
               animate={{ scale: currentIndex === index ? 1.2 : 1 }}
-              transition={{ duration: 0.1, ease: EASINGS.easeOutQuart }}
+              whileTap={{ scale: 0.95 }}
+              transition={{
+                duration: 0.1,
+                ease: EASINGS.easeOutQuart,
+              }}
               className={cn(
-                "relative rounded-md transition-all duration-200",
+                "relative rounded-md transition-all duration-200 hover:ring-2 hover:ring-stone-300",
                 currentIndex === index && "ring-2 ring-stone-400",
               )}
             >
@@ -295,8 +301,8 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             >
               <div className="relative h-[16px] overflow-hidden">
                 <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-[16px]">
-                  <span className="text-xs leading-4">{project.link}</span>
                   <span className="text-xs leading-4">Visit site</span>
+                  <span className="text-xs leading-4">{project.link}</span>
                 </div>
               </div>
               <ArrowUpRight className="h-4 w-4 text-stone-400 transition-all duration-200 group-hover:rotate-45" />
