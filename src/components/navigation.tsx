@@ -48,12 +48,65 @@ const tabs: Tab[] = [
 
 interface CardProps {
   href: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.ComponentType<{ className?: string }>;
   label?: string;
   size?: "large" | "small";
   className?: string;
   onClick?: () => void;
+  isActive?: boolean;
 }
+
+const HomeIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    className={className}
+  >
+    <path
+      fillRule="evenodd"
+      d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
+
+const FolderIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M3.75 3A1.75 1.75 0 0 0 2 4.75v3.26a3.235 3.235 0 0 1 1.75-.51h12.5c.644 0 1.245.188 1.75.51V6.75A1.75 1.75 0 0 0 16.25 5h-4.836a.25.25 0 0 1-.177-.073L9.823 3.513A1.75 1.75 0 0 0 8.586 3H3.75ZM3.75 9A1.75 1.75 0 0 0 2 10.75v4.5c0 .966.784 1.75 1.75 1.75h12.5A1.75 1.75 0 0 0 18 15.25v-4.5A1.75 1.75 0 0 0 16.25 9H3.75Z" />
+  </svg>
+);
+
+const UserGroupIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    className={className}
+  >
+    <path d="M10 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM1.49 15.326a.78.78 0 0 1-.358-.442 3 3 0 0 1 4.308-3.516 6.484 6.484 0 0 0-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 0 1-2.07-.655ZM16.44 15.98a4.97 4.97 0 0 0 2.07-.654.78.78 0 0 0 .357-.442 3 3 0 0 0-4.308-3.517 6.484 6.484 0 0 1 1.907 3.96 2.32 2.32 0 0 1-.026.654ZM18 8a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM5.304 16.19a.844.844 0 0 1-.277-.71 5 5 0 0 1 9.947 0 .843.843 0 0 1-.277.71A6.975 6.975 0 0 1 10 18a6.974 6.974 0 0 1-4.696-1.81Z" />
+  </svg>
+);
+
+const ShoppingBagIcon = ({ className }: { className?: string }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    className={className}
+  >
+    <path
+      fillRule="evenodd"
+      d="M6 5v1H4.667a1.75 1.75 0 0 0-1.743 1.598l-.826 9.5A1.75 1.75 0 0 0 3.84 19H16.16a1.75 1.75 0 0 0 1.743-1.902l-.826-9.5A1.75 1.75 0 0 0 15.333 6H14V5a4 4 0 0 0-8 0Zm4-2.5A2.5 2.5 0 0 0 7.5 5v1h5V5A2.5 2.5 0 0 0 10 2.5ZM7.5 10a2.5 2.5 0 0 0 5 0V8.75a.75.75 0 0 1 1.5 0V10a4 4 0 0 1-8 0V8.75a.75.75 0 0 1 1.5 0V10Z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
 
 const Card = ({
   href,
@@ -62,10 +115,9 @@ const Card = ({
   size = "small",
   className,
   onClick,
+  isActive = false,
 }: CardProps) => {
   const isLarge = size === "large";
-
-  // Random delay between 0.2 and 0.5 seconds
   const MIN_DELAY = 0.2;
   const MAX_DELAY = 0.5;
   const randomDelay = MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY);
@@ -90,18 +142,41 @@ const Card = ({
         ease: EASINGS.easeOutQuart,
       }}
       className={clsx(
-        "frame-outer aspect-square",
+        "frame-outer relative aspect-square overflow-hidden",
         isLarge && "col-span-2 row-span-2",
         className,
       )}
     >
-      <Link href={href} onClick={onClick} className="block h-full w-full">
-        <div className="frame-inner flex h-full w-full flex-col items-center justify-center space-y-2 bg-white/20">
+      <Link
+        href={href}
+        onClick={onClick}
+        className="relative block h-full w-full"
+      >
+        {isActive && (
+          <video
+            src="/videos/gradient-green.mp4"
+            autoPlay
+            muted
+            playsInline
+            loop
+            className="frame-inner absolute inset-0 h-full w-full object-cover"
+          />
+        )}
+        <div
+          className={clsx(
+            "frame-inner relative z-20 flex h-full w-full flex-col items-center justify-center space-y-2 bg-white/25 shadow-inner shadow-white/75",
+          )}
+        >
           <Icon
-            className={clsx("text-stone-500", isLarge ? "h-8 w-8" : "h-6 w-6")}
+            className={clsx(
+              "text-stone-600/75",
+              isLarge ? "h-10 w-10" : "h-6 w-6",
+            )}
           />
           {label && (
-            <span className="text-xs font-medium text-stone-600">{label}</span>
+            <span className="text-md font-medium text-stone-600/75">
+              {label}
+            </span>
           )}
         </div>
       </Link>
@@ -203,9 +278,11 @@ const Bar = ({
 const Cards = ({
   isOpen,
   onClose,
+  currentPath,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  currentPath: string;
 }) => (
   <motion.div
     initial={{ opacity: 0, filter: "blur(12px)" }}
@@ -219,20 +296,28 @@ const Cards = ({
         {/* Home - Top Left 2x2 */}
         <Card
           href="/"
-          icon={Home}
+          icon={HomeIcon}
           label="Home"
           size="large"
           onClick={onClose}
+          isActive={currentPath === "/"}
         />
 
         {/* About & Services - Right Stack */}
         <div className="col-span-1 col-start-3 row-span-2 flex flex-col gap-4">
-          <Card href="/about" icon={Users} label="About" onClick={onClose} />
+          <Card
+            href="/about"
+            icon={UserGroupIcon}
+            label="About"
+            onClick={onClose}
+            isActive={currentPath === "/about"}
+          />
           <Card
             href="/services"
-            icon={ShoppingBag}
+            icon={ShoppingBagIcon}
             label="Services"
             onClick={onClose}
+            isActive={currentPath === "/services"}
           />
         </div>
 
@@ -241,13 +326,13 @@ const Cards = ({
           <Card
             href="https://instagram.com"
             icon={Instagram}
-            label="Instagram"
+            label=""
             onClick={onClose}
           />
           <Card
             href="https://x.com"
             icon={Twitter}
-            label="Twitter"
+            label=""
             onClick={onClose}
           />
         </div>
@@ -255,10 +340,11 @@ const Cards = ({
         {/* Work - Bottom Right 2x2 */}
         <Card
           href="/work"
-          icon={Folder}
+          icon={FolderIcon}
           label="Work"
           size="large"
           onClick={onClose}
+          isActive={currentPath === "/work"}
           className="col-start-2 row-start-3"
         />
       </div>
@@ -285,7 +371,13 @@ export default function Navigation() {
 
       {/* Mobile Cards Menu */}
       <AnimatePresence>
-        {isOpen && <Cards isOpen={isOpen} onClose={() => setIsOpen(false)} />}
+        {isOpen && (
+          <Cards
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            currentPath={basePath}
+          />
+        )}
       </AnimatePresence>
     </>
   );
