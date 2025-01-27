@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { urlFor, getMuxThumbnailUrl } from "@/sanity/lib/image";
@@ -15,6 +15,11 @@ interface MediaRendererProps {
   priority?: boolean;
   fill?: boolean;
   thumbnailTime?: number;
+  disableThumbnail?: boolean;
+  forcedVideoPlayback?: boolean;
+  playsInline?: boolean;
+  muted?: boolean;
+  loop?: boolean;
   onLoad?: () => void;
   onError?: () => void;
   transition?: {
@@ -37,6 +42,11 @@ interface VideoProps {
   className?: string;
   onError?: () => void;
   onLoad?: () => void;
+  disableThumbnail: boolean;
+  forcedVideoPlayback: boolean;
+  playsInline?: boolean;
+  muted?: boolean;
+  loop?: boolean;
 }
 
 const isMuxVideo = (media: MediaItem): boolean => {
@@ -92,6 +102,11 @@ const useMediaProps = (media: MediaItem | null, thumbnailTime?: number) => {
     className = "",
     onError,
     onLoad,
+    disableThumbnail,
+    forcedVideoPlayback,
+    playsInline = true,
+    muted = true,
+    loop = true,
   }: VideoProps) => {
     if (!media) return null;
 
@@ -100,11 +115,13 @@ const useMediaProps = (media: MediaItem | null, thumbnailTime?: number) => {
       className: cn("h-full w-full object-cover", className),
       src: `https://stream.mux.com/${media.source?.asset?.playbackId}/high.mp4`,
       type: "video/mp4",
-      autoPlay: autoPlay && !isLowPowerMode,
-      muted: true,
-      playsInline: true,
-      loop: true,
-      poster: getMuxThumbnailUrl(media, thumbnailTime),
+      autoPlay: forcedVideoPlayback ? true : autoPlay && !isLowPowerMode,
+      muted,
+      playsInline,
+      loop,
+      ...(disableThumbnail
+        ? {}
+        : { poster: getMuxThumbnailUrl(media, thumbnailTime) }),
       onError: () => {
         setError(true);
         onError?.();
@@ -121,29 +138,54 @@ const useMediaProps = (media: MediaItem | null, thumbnailTime?: number) => {
   } as const;
 };
 
-export function MediaRenderer(props: MediaRendererProps) {
-  const {
-    media,
-    layout,
-    layoutId,
-    className = "",
-    autoPlay = false,
-    priority = false,
-    fill = false,
-    thumbnailTime,
-    onLoad,
-    onError,
-    transition,
-  } = props;
-
+export function MediaRenderer({
+  media,
+  layout,
+  layoutId,
+  className = "",
+  autoPlay = false,
+  priority = false,
+  fill = false,
+  thumbnailTime,
+  disableThumbnail = false,
+  forcedVideoPlayback = false,
+  playsInline = true,
+  muted = true,
+  loop = true,
+  onLoad,
+  onError,
+  transition,
+}: MediaRendererProps) {
   const { isLowPowerMode, error, getImageProps, getVideoProps } = useMediaProps(
     media,
     thumbnailTime,
   );
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        video.play().catch(() => {
+          console.log("Playback prevented");
+        });
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, []);
+
   if (!media?.source?.asset) return null;
 
-  const shouldShowVideo = isMuxVideo(media) && !isLowPowerMode && !error;
+  const shouldShowVideo =
+    isMuxVideo(media) && (forcedVideoPlayback || !isLowPowerMode) && !error;
   const imageProps = getImageProps({
     priority,
     fill,
@@ -151,7 +193,17 @@ export function MediaRenderer(props: MediaRendererProps) {
     onError,
     onLoad,
   });
-  const videoProps = getVideoProps({ autoPlay, className, onError, onLoad });
+  const videoProps = getVideoProps({
+    autoPlay,
+    className,
+    onError,
+    onLoad,
+    disableThumbnail,
+    forcedVideoPlayback,
+    playsInline,
+    muted,
+    loop,
+  });
 
   if (!imageProps || !videoProps) return null;
 

@@ -433,6 +433,8 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
                       className="object-contain mix-blend-multiply"
                       media={person.media[0]}
                       autoPlay={true}
+                      disableThumbnail={true}
+                      forcedVideoPlayback={true}
                     />
                   )}
                 </motion.div>
