@@ -170,7 +170,7 @@ const Card = ({
           <Icon
             className={clsx(
               "text-stone-600/75",
-              isLarge ? "h-10 w-10" : "h-6 w-6",
+              isLarge ? "h-10 w-10" : "h-7 w-7",
             )}
           />
           {label && (
