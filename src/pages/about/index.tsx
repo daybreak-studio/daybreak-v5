@@ -97,7 +97,7 @@ function PersonInfo({
                   animate={{ filter: "blur(0px)" }}
                   exit={{ filter: "blur(2px)" }}
                   layout="position"
-                  className="whitespace-nowrap font-medium text-stone-500"
+                  className="whitespace-nowrap font-medium text-neutral-500"
                 >
                   {person.name}
                 </motion.h2>
@@ -107,7 +107,7 @@ function PersonInfo({
                   animate={{ filter: "blur(0px)" }}
                   exit={{ filter: "blur(2px)" }}
                   layout="position"
-                  className="whitespace-nowrap text-stone-400"
+                  className="whitespace-nowrap text-neutral-400"
                 >
                   {person.role}
                 </motion.h2>
@@ -125,7 +125,7 @@ function PersonInfo({
                     animate={{ filter: "blur(0px)" }}
                     exit={{ filter: "blur(2px)" }}
                     layout="position"
-                    className="whitespace-nowrap text-stone-500"
+                    className="whitespace-nowrap text-neutral-500"
                   >
                     {person.name}
                   </motion.div>
@@ -135,7 +135,7 @@ function PersonInfo({
                     animate={{ filter: "blur(0px)" }}
                     exit={{ filter: "blur(2px)" }}
                     layout="position"
-                    className="whitespace-nowrap text-stone-400"
+                    className="whitespace-nowrap text-neutral-400"
                   >
                     {person.role}
                   </motion.div>
@@ -147,7 +147,7 @@ function PersonInfo({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.6, delay: 0.4 }}
                 >
-                  <ExpandIcon className="h-4 w-4 text-stone-500" />
+                  <ExpandIcon className="h-4 w-4 text-neutral-500" />
                 </motion.div>
               </motion.div>
             )}
@@ -164,17 +164,19 @@ function PersonInfo({
                 className="flex w-full flex-col space-y-6"
                 layout="position"
               >
-                <p className="px-8 text-center text-stone-500">{person.bio}</p>
+                <p className="px-8 text-center text-neutral-500">
+                  {person.bio}
+                </p>
                 <div className="flex items-start gap-1 self-stretch">
                   {person.qaPairs.map((qaPair, index) => (
                     <div
                       key={index}
                       className="flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-stone-200 bg-stone-400/5 p-4 text-center"
                     >
-                      <div className="pb-1 text-sm text-stone-500">
+                      <div className="pb-1 text-sm text-neutral-500">
                         {qaPair.question}
                       </div>
-                      <div className="text-md text-stone-700">
+                      <div className="text-md text-neutral-400">
                         {qaPair.answer}
                       </div>
                     </div>

@@ -204,7 +204,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             tabIndex={-1}
             aria-label="Previous image"
           >
-            <ChevronLeft className="h-4 w-4 text-stone-500" />
+            <ChevronLeft className="h-4 w-4 text-neutral-500" />
           </motion.button>
           {mediaArray.map((media, index) => (
             <motion.button
@@ -234,7 +234,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             tabIndex={-1}
             aria-label="Next image"
           >
-            <ChevronRight className="h-4 w-4 text-stone-500" />
+            <ChevronRight className="h-4 w-4 text-neutral-500" />
           </motion.button>
         </motion.div>
         <motion.div
@@ -263,7 +263,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 transition: { duration: 1, ease: EASINGS.easeOutQuart },
               },
             }}
-            className="text-2xl font-medium text-stone-500 md:text-xl lg:text-2xl"
+            className="text-2xl font-medium text-neutral-500 md:text-xl lg:text-2xl"
           >
             {project.heading}
           </motion.h2>
@@ -277,7 +277,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 transition: { duration: 1, ease: EASINGS.easeOutQuart },
               },
             }}
-            className="pb-2 text-xs text-stone-400 md:text-xs xl:text-base"
+            className="pb-2 text-xs text-neutral-400 md:text-xs xl:text-base"
           >
             {project.caption}
           </motion.p>
@@ -297,7 +297,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
               }}
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
-              className="group relative flex items-center justify-between overflow-hidden rounded-2xl border-[1px] border-stone-100 bg-stone-600/5 p-4 text-stone-500 transition-colors duration-500 hover:border-[1px] hover:border-stone-600/10"
+              className="group relative flex items-center justify-between overflow-hidden rounded-2xl border-[1px] border-neutral-100 bg-neutral-600/5 p-4 transition-colors duration-500 hover:border-[1px] hover:border-neutral-600/10"
             >
               <div className="relative h-[16px] overflow-hidden">
                 <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-[16px]">
@@ -305,7 +305,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                   <span className="text-xs leading-4">{project.link}</span>
                 </div>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-stone-400 transition-all duration-200 group-hover:rotate-45" />
+              <ArrowUpRight className="h-4 w-4 text-neutral-400 transition-all duration-200 group-hover:rotate-45" />
             </motion.a>
           )}
         </motion.div>

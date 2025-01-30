@@ -8,14 +8,16 @@ interface MasonryGridProps {
 }
 
 const MasonryGrid: React.FC<MasonryGridProps> = ({ articles }) => {
+  // Sort articles by date if needed (assuming there's a date field)
+  const sortedArticles = [...articles].sort((a, b) => {
+    const dateA = new Date(a.date || "").getTime();
+    const dateB = new Date(b.date || "").getTime();
+    return dateB - dateA; // Sort in descending order (newest first)
+  });
+
   return (
-    <div
-      className="columns-1 gap-4 space-y-4 sm:columns-2 sm:gap-4 sm:space-y-4 lg:columns-3 xl:columns-4"
-      style={{
-        columnFill: "balance",
-      }}
-    >
-      {articles?.map((article) => (
+    <div className="columns-1 gap-4 sm:columns-2 md:columns-2 xl:columns-3 2xl:columns-4 [&>*]:mb-4 [&>*]:break-inside-avoid">
+      {sortedArticles.map((article) => (
         <Article key={article._key} article={article} />
       ))}
     </div>

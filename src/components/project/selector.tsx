@@ -26,7 +26,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
         }}
         className="flex w-full items-center justify-center p-4 text-center"
       >
-        <h2 className="text-center text-3xl text-stone-600">{data.name}</h2>
+        <h2 className="text-center text-3xl text-neutral-600">{data.name}</h2>
       </motion.div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {data.projects?.map((project, index) => {
@@ -69,12 +69,12 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                 </motion.div>
                 <div className="flex w-full p-2 pl-4 md:flex-col md:p-4">
                   <div className="flex w-full items-center justify-between md:justify-start md:space-x-1 md:pb-2">
-                    <h3 className="text-md capitalize text-stone-700 md:text-xl md:font-medium">
+                    <h3 className="text-md capitalize text-neutral-700 md:text-xl md:font-medium">
                       {project.category}
                     </h3>
-                    <ChevronRight className="h-4 w-4 text-stone-500 md:h-5 md:w-5 md:pt-[3px]" />
+                    <ChevronRight className="h-4 w-4 text-neutral-500 md:h-5 md:w-5 md:pt-[3px]" />
                   </div>
-                  <h4 className="hidden text-sm text-stone-500 md:block">
+                  <h4 className="hidden text-sm text-neutral-500 md:block">
                     {project.caption}
                   </h4>
                 </div>

@@ -21,8 +21,8 @@ export const FormCTAButton = ({
     type={type}
     disabled={disabled}
     className={cn(
-      "relative h-auto rounded-xl bg-stone-800 px-8 py-4 text-xs text-stone-100 hover:scale-[101%] hover:bg-stone-900 md:text-sm",
-      "shadow-md shadow-stone-900/25 hover:shadow-lg",
+      "relative h-auto rounded-xl bg-neutral-800 px-8 py-4 text-xs text-neutral-100 hover:scale-[101%] hover:bg-neutral-900 md:text-sm",
+      "shadow-md shadow-neutral-900/25 hover:shadow-lg",
       "transition-all duration-500",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 focus-visible:ring-offset-2",
       "disabled:opacity-25",
@@ -86,7 +86,7 @@ const FormCardNavigation = ({
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
-      <span className="text-sm text-stone-500/50 md:text-base">
+      <span className="text-sm text-neutral-500/50 md:text-base">
         {current} of {total}
       </span>
       <button
@@ -109,7 +109,7 @@ const FormCardTitle = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <h2 className={cn("text-stone-600 md:text-2xl", className)}>{children}</h2>
+  <h2 className={cn("text-neutral-600 md:text-2xl", className)}>{children}</h2>
 );
 
 const FormCardContent = ({

@@ -274,7 +274,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                                 duration: 0.2,
                                 ease: EASINGS.easeOutQuart,
                               }}
-                              className="frame-inner absolute right-6 top-6 z-30 inline-flex size-12 appearance-none items-center justify-center border-2 border-stone-600/5 bg-white text-stone-500 transition-colors duration-300 hover:bg-stone-50 focus:outline-none"
+                              className="frame-inner absolute right-6 top-6 z-30 inline-flex size-12 appearance-none items-center justify-center border-2 border-stone-600/5 bg-white text-neutral-500 transition-colors duration-300 hover:bg-stone-50 focus:outline-none"
                             >
                               <Cross2Icon className="h-4 w-4" />
                             </motion.button>

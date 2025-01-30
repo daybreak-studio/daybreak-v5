@@ -45,7 +45,7 @@ const DebugGridOverlay = () => {
                 key={i}
                 className="border-1 z-10 flex items-center justify-center border border-stone-500/25 bg-stone-300/30 text-xs font-medium"
               >
-                <h2 className="border-1 rounded-3xl border border-stone-500/25 bg-stone-50 p-2 text-xs font-medium text-stone-500">
+                <h2 className="rounded-3xl border border-neutral-500/25 bg-neutral-50 p-2 text-xs font-medium">
                   R{row} C{col}
                 </h2>
               </div>

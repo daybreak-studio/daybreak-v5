@@ -69,10 +69,12 @@ export default function StagesWidget({ data }: StagesProps) {
           }}
           className="flex h-full flex-col justify-between"
         >
-          <h1 className="text-md font-medium text-stone-600">
+          <h1 className="font-medium text-neutral-500">
             {stages[index]?.title}
           </h1>
-          <p className="text-sm text-stone-600">{stages[index]?.description}</p>
+          <p className="text-sm text-neutral-400">
+            {stages[index]?.description}
+          </p>
         </motion.div>
       </AnimatePresence>
     </div>
@@ -108,9 +110,9 @@ export default function StagesWidget({ data }: StagesProps) {
             onHoverEnd={() => setIndex(stages.length - 1)}
           >
             <div className="flex h-full flex-col justify-between p-5">
-              <h1 className="font-medium text-stone-600">{stage.title}</h1>
+              <h1 className="font-medium text-neutral-500">{stage.title}</h1>
               {isActive && (
-                <p className="text-sm text-stone-500">{stage.description}</p>
+                <p className="text-sm text-neutral-400">{stage.description}</p>
               )}
             </div>
           </motion.div>
@@ -125,7 +127,7 @@ export default function StagesWidget({ data }: StagesProps) {
       case "3x3":
         return (
           <div className="frame-inner flex h-full w-full flex-col p-6">
-            <h1 className="text-xs text-stone-500">
+            <h1 className="text-xs text-neutral-500">
               Please use a supported widget size: 2x2
             </h1>
           </div>

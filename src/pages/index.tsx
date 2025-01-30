@@ -55,7 +55,9 @@ export default function Home({
     block: {
       normal: ({ children, index }) => (
         <div>
-          <p className="mb-8 text-2xl text-stone-400 md:text-3xl">{children}</p>
+          <p className="mb-8 text-2xl text-neutral-400 md:text-3xl xl:text-4xl">
+            {children}
+          </p>
         </div>
       ),
     },
@@ -80,7 +82,7 @@ export default function Home({
                 duration: 1,
                 ease: EASINGS.easeOutQuart,
               }}
-              className="max-w-[16ch] text-center text-3xl font-[450] text-stone-400/50 lg:text-4xl"
+              className="max-w-[16ch] text-center text-3xl font-[450] text-neutral-400/50 lg:text-4xl"
             >
               A technology first design studio.
             </motion.h1>
@@ -100,7 +102,7 @@ export default function Home({
             {/* Mission Statement */}
             <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
               <div>
-                <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
+                <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-6/12">
                   {homeData.missionStatement && (
                     <PortableText
                       value={homeData.missionStatement}
@@ -118,8 +120,8 @@ export default function Home({
               </div>
 
               {/* About Us - Simplified animation */}
-              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
-                <h2 className="mb-4 text-lg text-stone-400 md:text-xl">
+              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-5/12">
+                <h2 className="mb-4 text-lg text-neutral-400 md:text-lg lg:text-2xl">
                   About Us
                 </h2>
                 {homeData?.aboutUs && (
@@ -132,7 +134,7 @@ export default function Home({
 
               {/* Newsfeed with Masonry Layout */}
               <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
-                <h2 className="mb-4 text-lg text-stone-400 md:text-xl">
+                <h2 className="mb-4 text-lg text-neutral-400 md:text-lg lg:text-2xl">
                   Newsfeed
                 </h2>
                 <MasonryGrid articles={homeData?.newsfeed || []} />

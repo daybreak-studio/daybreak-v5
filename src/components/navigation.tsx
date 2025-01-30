@@ -169,12 +169,12 @@ const Card = ({
         >
           <Icon
             className={clsx(
-              "text-stone-600/75",
+              "text-neutral-600/75",
               isLarge ? "h-10 w-10" : "h-7 w-7",
             )}
           />
           {label && (
-            <span className="text-md font-medium text-stone-600/75">
+            <span className="text-md font-medium text-neutral-600/75">
               {label}
             </span>
           )}
@@ -205,7 +205,7 @@ const MenuToggle = ({
           transition={{ duration: 0.2, ease: EASINGS.easeOutQuart }}
         >
           <X
-            className="m-3 aspect-square h-3 w-3 text-stone-500"
+            className="m-3 aspect-square h-3 w-3 text-neutral-500"
             strokeWidth={2.25}
           />
         </motion.div>
@@ -218,7 +218,7 @@ const MenuToggle = ({
           transition={{ duration: 0.2, ease: EASINGS.easeOutQuart }}
         >
           <Grip
-            className="m-3 aspect-square h-3 w-3 text-stone-500"
+            className="m-3 aspect-square h-3 w-3 text-neutral-500"
             strokeWidth={2.25}
           />
         </motion.div>
@@ -244,12 +244,12 @@ const Bar = ({
       <div className="logo_container align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:rounded-xl md:p-0 md:pt-[2px]">
         <div className="glyph_container z-10 flex w-1/4 items-center overflow-hidden">
           <div className="glyph h-full w-full origin-bottom pb-1">
-            <Logo className="h-full w-full fill-current text-stone-500" />
+            <Logo className="h-full w-full fill-current text-neutral-500" />
           </div>
         </div>
         <div className="wordmark_container z-10 flex w-3/4 items-center overflow-hidden pl-[6%]">
           <div className="wordmark h-full w-full">
-            <Wordmark className="h-full w-full fill-current text-stone-500" />
+            <Wordmark className="h-full w-full fill-current text-neutral-500" />
           </div>
         </div>
       </div>
@@ -265,7 +265,7 @@ const Bar = ({
         .filter((tab) => tab.href !== "/")
         .map((tab) => (
           <Link href={tab.href} className="rounded-xl" key={tab.label}>
-            <motion.h1 className="relative px-3 py-3 text-xs font-normal text-stone-500">
+            <motion.h1 className="relative px-3 py-3 text-xs font-normal text-neutral-500">
               <span className="relative z-10">{tab.label}</span>
               {isValidPath && basePath === tab.href && <Pill />}
             </motion.h1>
