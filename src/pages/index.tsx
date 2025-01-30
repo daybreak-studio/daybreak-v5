@@ -55,7 +55,7 @@ export default function Home({
     block: {
       normal: ({ children, index }) => (
         <div>
-          <p className="mb-8 text-2xl text-neutral-400 md:text-3xl xl:text-4xl">
+          <p className="mb-8 text-2xl text-neutral-400 md:text-3xl xl:text-4xl xl:leading-tight">
             {children}
           </p>
         </div>
@@ -102,7 +102,7 @@ export default function Home({
             {/* Mission Statement */}
             <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
               <div>
-                <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-6/12">
+                <Reveal className="3xl:w-6/12 px-8 pb-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-8/12">
                   {homeData.missionStatement && (
                     <PortableText
                       value={homeData.missionStatement}
@@ -120,7 +120,7 @@ export default function Home({
               </div>
 
               {/* About Us - Simplified animation */}
-              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-5/12">
+              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
                 <h2 className="mb-4 text-lg text-neutral-400 md:text-lg lg:text-2xl">
                   About Us
                 </h2>
