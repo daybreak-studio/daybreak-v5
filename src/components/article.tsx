@@ -17,7 +17,7 @@ const Article = memo(({ article }: { article: ArticleType }) => {
             <MediaRenderer
               fill={false}
               media={article.media[0]}
-              className="frame-inner max-h-64"
+              className="frame-inner max-h-96"
               priority={false}
             />
           )}
