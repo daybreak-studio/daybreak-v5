@@ -16,9 +16,22 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ articles }) => {
   });
 
   return (
-    <div className="columns-1 gap-4 sm:columns-2 md:columns-2 xl:columns-3 2xl:columns-4 [&>*]:mb-4 [&>*]:break-inside-avoid">
+    <div className="columns-1 gap-4 sm:columns-2 md:columns-2 xl:columns-3 2xl:columns-4">
+      {/* <div className="columns-1 gap-4 sm:columns-2 md:columns-2 xl:columns-3 2xl:columns-4 [&>*]:mb-4 [&>*]:break-inside-avoid"> */}
       {sortedArticles.map((article) => (
-        <Article key={article._key} article={article} />
+        <div
+          key={article._key}
+          className="inline-block w-full break-inside-avoid-column"
+          style={
+            {
+              WebkitColumnBreakInside: "avoid",
+              pageBreakInside: "avoid",
+              breakInside: "avoid-column",
+            } as React.CSSProperties
+          }
+        >
+          <Article article={article} />
+        </div>
       ))}
     </div>
   );

@@ -28,15 +28,15 @@ function extractBaseDomain(url: string): string {
 const Article = memo(({ article }: { article: ArticleType }) => {
   return (
     <Link href={article.link || ""} target="_blank">
-      <Reveal key={article._key}>
-        <HoverCard className="mb-4 flex break-inside-avoid flex-col p-1">
-          {/* Media Container that respects natural aspect ratio */}
-          <div>
+      <div className="transform-gpu">
+        <HoverCard className="mb-4 flex origin-center flex-col p-1">
+          {/* Media Container */}
+          <div className="w-full">
             {article.media?.[0] && (
               <MediaRenderer
                 thumbnailTime={1}
                 media={article.media[0]}
-                className="frame-inner max-h-96"
+                className="frame-inner w-full"
                 priority={false}
               />
             )}
@@ -58,7 +58,7 @@ const Article = memo(({ article }: { article: ArticleType }) => {
             </div>
           </div>
         </HoverCard>
-      </Reveal>
+      </div>
     </Link>
   );
 });
