@@ -120,7 +120,7 @@ export default function Home({
               </div>
 
               {/* About Us - Simplified animation */}
-              <Reveal className="px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
+              <Reveal className="3xl:w-6/12 px-8 md:w-10/12 md:px-20 xl:px-36 2xl:w-7/12">
                 <h2 className="mb-4 text-lg text-neutral-400 md:text-lg lg:text-2xl">
                   About Us
                 </h2>
