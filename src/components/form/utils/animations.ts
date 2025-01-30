@@ -27,5 +27,6 @@ export const getCardVisibility = (index: number, currentIndex: number) => {
   if (index === currentIndex) return { blur: 0, opacity: 1 };
   if (index === currentIndex - 1) return { blur: 4, opacity: 0.6 };
   if (index === currentIndex + 1) return { blur: 0, opacity: 1 };
+  if (index === currentIndex - 2) return { blur: 4, opacity: 0 };
   return { blur: 0, opacity: 0 };
 };

@@ -154,7 +154,7 @@ const Card = ({
       >
         {isActive && (
           <video
-            src="/videos/gradient-green.mp4"
+            src="/videos/gradient-orange.mp4"
             autoPlay
             muted
             playsInline
@@ -289,7 +289,7 @@ const Cards = ({
     animate={{ opacity: 1, filter: "blur(0px)" }}
     exit={{ opacity: 0, filter: "blur(12px)" }}
     transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-    className="fixed inset-0 z-[90] flex flex-col bg-white/50 pt-24 backdrop-blur-3xl"
+    className="fixed inset-0 z-50 flex flex-col bg-white/50 pt-24 backdrop-blur-3xl"
   >
     <div className="container h-full w-full max-w-lg px-8 pt-20">
       <div className="grid w-full auto-rows-fr grid-cols-3 gap-4">
@@ -360,7 +360,7 @@ export default function Navigation() {
 
   return (
     <>
-      <motion.nav className="parent pointer-events-auto fixed z-[100] mx-auto flex h-fit w-full items-center justify-center">
+      <motion.nav className="parent pointer-events-auto fixed z-[70] mx-auto flex h-fit w-full items-center justify-center">
         <Bar
           isValidPath={isValidPath}
           basePath={basePath}

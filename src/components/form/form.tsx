@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, Dot } from "lucide-react";
-import { useFormContext } from "react-hook-form";
 
 // Form Button Component
 export const FormCTAButton = ({
@@ -42,10 +41,13 @@ const FormCardRoot = ({
   children: React.ReactNode;
   className?: string;
 }) => (
-  <div className="frame-outer">
+  <div className="frame-outer p-1">
     <div
       className={cn(
-        "frame-inner flex w-[90vw] flex-col bg-white/90 p-8 backdrop-blur-3xl sm:w-[32rem] md:p-10",
+        "frame-inner flex w-[90vw] flex-col bg-neutral-50 backdrop-blur-3xl",
+        "shadow-[0_0_15px_rgba(0,0,0,0.05)]",
+        "border border-white/50",
+        "p-8 sm:w-[32rem] md:p-10",
         className,
       )}
     >

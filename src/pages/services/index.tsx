@@ -8,11 +8,11 @@ import { SERVICES_QUERY } from "@/sanity/lib/queries";
 import type { Services } from "@/sanity/types";
 import MediaWidget from "@/components/widgets/variants/media";
 import QuotesWidget from "@/components/widgets/variants/quotes";
-// import StagesWidget from "@/components/widgets/variants/stages";
+import StagesWidget from "@/components/widgets/variants/stages";
 
 const servicesWidgets: WidgetRegistry = {
   quotes: QuotesWidget,
-  // stages: StagesWidget,
+  stages: StagesWidget,
   media: MediaWidget,
 };
 

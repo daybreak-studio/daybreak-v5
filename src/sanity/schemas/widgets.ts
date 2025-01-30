@@ -177,56 +177,30 @@ export const stages = {
   title: "Stages",
   fields: createWidgetFields([
     defineField({
-      name: "earlyStage",
-      type: "object",
-      title: "Early Stage",
-      fields: [
+      name: "stages",
+      type: "array",
+      title: "Stages",
+      of: [
         {
-          name: "description",
-          type: "text",
-          title: "Description",
-          validation: (Rule) => Rule.required(),
+          type: "object",
+          name: "stage",
+          fields: [
+            {
+              name: "title",
+              type: "string",
+              title: "Title",
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "description",
+              type: "text",
+              title: "Description",
+              validation: (Rule) => Rule.required(),
+            },
+          ],
         },
       ],
-    }),
-    defineField({
-      name: "growthStage",
-      type: "object",
-      title: "Growth Stage",
-      fields: [
-        {
-          name: "description",
-          type: "text",
-          title: "Description",
-          validation: (Rule) => Rule.required(),
-        },
-      ],
-    }),
-    defineField({
-      name: "scalingBusinesses",
-      type: "object",
-      title: "Scaling Businesses",
-      fields: [
-        {
-          name: "description",
-          type: "text",
-          title: "Description",
-          validation: (Rule) => Rule.required(),
-        },
-      ],
-    }),
-    defineField({
-      name: "enduringBrands",
-      type: "object",
-      title: "Enduring Brands",
-      fields: [
-        {
-          name: "description",
-          type: "text",
-          title: "Description",
-          validation: (Rule) => Rule.required(),
-        },
-      ],
+      validation: (Rule) => Rule.required().length(4),
     }),
   ]),
   preview: createWidgetPreview("Growth Stages"),

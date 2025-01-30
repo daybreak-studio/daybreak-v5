@@ -1741,65 +1741,45 @@
                     },
                     "optional": true
                   },
-                  "earlyStage": {
+                  "stages": {
                     "type": "objectAttribute",
                     "value": {
-                      "type": "object",
-                      "attributes": {
-                        "description": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
+                      "type": "array",
+                      "of": {
+                        "type": "object",
+                        "attributes": {
+                          "title": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
                           },
-                          "optional": true
-                        }
-                      }
-                    },
-                    "optional": true
-                  },
-                  "growthStage": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "object",
-                      "attributes": {
-                        "description": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
+                          "description": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
                           },
-                          "optional": true
-                        }
-                      }
-                    },
-                    "optional": true
-                  },
-                  "scalingBusinesses": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "object",
-                      "attributes": {
-                        "description": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
-                          },
-                          "optional": true
-                        }
-                      }
-                    },
-                    "optional": true
-                  },
-                  "enduringBrands": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "object",
-                      "attributes": {
-                        "description": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
-                          },
-                          "optional": true
+                          "_type": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string",
+                              "value": "stage"
+                            }
+                          }
+                        },
+                        "rest": {
+                          "type": "object",
+                          "attributes": {
+                            "_key": {
+                              "type": "objectAttribute",
+                              "value": {
+                                "type": "string"
+                              }
+                            }
+                          }
                         }
                       }
                     },
@@ -3930,65 +3910,45 @@
                     },
                     "optional": true
                   },
-                  "earlyStage": {
+                  "stages": {
                     "type": "objectAttribute",
                     "value": {
-                      "type": "object",
-                      "attributes": {
-                        "description": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
+                      "type": "array",
+                      "of": {
+                        "type": "object",
+                        "attributes": {
+                          "title": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
                           },
-                          "optional": true
-                        }
-                      }
-                    },
-                    "optional": true
-                  },
-                  "growthStage": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "object",
-                      "attributes": {
-                        "description": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
+                          "description": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string"
+                            },
+                            "optional": true
                           },
-                          "optional": true
-                        }
-                      }
-                    },
-                    "optional": true
-                  },
-                  "scalingBusinesses": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "object",
-                      "attributes": {
-                        "description": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
-                          },
-                          "optional": true
-                        }
-                      }
-                    },
-                    "optional": true
-                  },
-                  "enduringBrands": {
-                    "type": "objectAttribute",
-                    "value": {
-                      "type": "object",
-                      "attributes": {
-                        "description": {
-                          "type": "objectAttribute",
-                          "value": {
-                            "type": "string"
-                          },
-                          "optional": true
+                          "_type": {
+                            "type": "objectAttribute",
+                            "value": {
+                              "type": "string",
+                              "value": "stage"
+                            }
+                          }
+                        },
+                        "rest": {
+                          "type": "object",
+                          "attributes": {
+                            "_key": {
+                              "type": "objectAttribute",
+                              "value": {
+                                "type": "string"
+                              }
+                            }
+                          }
                         }
                       }
                     },

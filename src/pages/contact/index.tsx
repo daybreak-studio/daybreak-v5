@@ -55,7 +55,7 @@ export default function ContactPage() {
 
       if (!response.ok) throw new Error("Failed to submit form");
 
-      nextStep();
+      // Just handle form cleanup, no navigation
       localStorage.removeItem("contact_form");
     } catch (error) {
       form.setError("root", { message: "Failed to submit form" });
@@ -98,7 +98,7 @@ export default function ContactPage() {
                   damping: 20,
                   mass: 1,
                   velocity: 0.5,
-                  opacity: { duration: 0.1 },
+                  opacity: { duration: 0.4 },
                   filter: { duration: 0.2 },
                 }}
                 style={{

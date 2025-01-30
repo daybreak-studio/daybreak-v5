@@ -20,6 +20,8 @@ import {
 } from "@heroicons/react/24/solid";
 import { Dot } from "lucide-react";
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 type ProjectType = keyof typeof ProjectTypes;
 
@@ -77,19 +79,19 @@ export const createFormSteps = ({
         </FormCard.Header>
         <FormCard.Content className="mt-2">
           <div className="flex flex-col gap-4 md:gap-6">
-            <span className="text-sm text-stone-400 md:text-lg">
+            <span className="text-sm text-neutral-400 md:text-lg">
               We&apos;re looking for people excited by the possibilities of
               technology, constantly exploring new means of expression and
               highly detailed in their practice.
             </span>
-            <div className="flex items-center justify-between rounded-2xl border border-stone-500/10 p-4">
-              <span className="text-xs text-stone-500/75 md:text-base">
+            <div className="flex items-center justify-between rounded-2xl border border-neutral-500/10 p-4">
+              <span className="text-xs text-neutral-500/75 md:text-base">
                 Email us:
               </span>
               <button
                 className={cn(
                   "flex items-center justify-center gap-2 rounded-xl hover:cursor-pointer",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 focus-visible:ring-offset-4",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 focus-visible:ring-offset-4",
                 )}
                 onClick={() => {
                   navigator.clipboard.writeText("hello@daybreak.studio");
@@ -111,10 +113,10 @@ export const createFormSteps = ({
                         ease: EASINGS.easeOutQuart,
                       }}
                     >
-                      <span className="text-xs text-stone-500/75 md:text-base">
+                      <span className="text-xs text-neutral-500/75 md:text-base">
                         Copied to clipboard!
                       </span>
-                      <ClipboardDocumentCheckIcon className="h-4 w-4 text-stone-500/75" />
+                      <ClipboardDocumentCheckIcon className="h-4 w-4 text-neutral-500/75" />
                     </motion.div>
                   ) : (
                     <motion.div
@@ -128,10 +130,10 @@ export const createFormSteps = ({
                         ease: EASINGS.easeInQuart,
                       }}
                     >
-                      <span className="text-xs text-stone-500/75 md:text-base">
+                      <span className="text-xs text-neutral-500/75 md:text-base">
                         hello@daybreak.studio
                       </span>
-                      <ClipboardDocumentIcon className="h-4 w-4 text-stone-500/75" />
+                      <ClipboardDocumentIcon className="h-4 w-4 text-neutral-500/75" />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -169,14 +171,14 @@ export const createFormSteps = ({
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-1 text-stone-500">
+                    <FormLabel className="flex items-center gap-1 text-neutral-500">
                       Full Name
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
+                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-black"
                         placeholder="Your name"
-                        className="rounded-2xl border-stone-100 text-stone-600"
                         {...field}
                       />
                     </FormControl>
@@ -189,7 +191,7 @@ export const createFormSteps = ({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-1 text-stone-500">
+                    <FormLabel className="flex items-center gap-1 text-neutral-500">
                       Email
                       <span className="text-red-500">*</span>
                     </FormLabel>
@@ -197,7 +199,6 @@ export const createFormSteps = ({
                       <Input
                         type="email"
                         placeholder="your@email.com"
-                        className="rounded-2xl border-stone-100 text-stone-600"
                         {...field}
                       />
                     </FormControl>
@@ -331,7 +332,7 @@ export const createFormSteps = ({
                     <FormControl>
                       <Textarea
                         placeholder="Share your vision, goals, and any specific requirements..."
-                        className="h-32 w-full resize-none rounded-2xl bg-stone-50 p-4"
+                        className="h-32 w-full resize-none rounded-2xl bg-neutral-50 p-4"
                         {...field}
                       />
                     </FormControl>
@@ -346,11 +347,7 @@ export const createFormSteps = ({
                   <FormItem>
                     <FormLabel>Reference Link (Optional)</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="https://..."
-                        {...field}
-                        className="w-full rounded-2xl p-4"
-                      />
+                      <Input placeholder="https://..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -383,7 +380,7 @@ export const createFormSteps = ({
               <div className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-center">
-                    <h3 className="text-sm font-medium text-stone-500">
+                    <h3 className="text-sm font-medium text-neutral-500">
                       Contact Details
                     </h3>
                     <Dot
@@ -399,7 +396,9 @@ export const createFormSteps = ({
                     <p
                       className={cn(
                         "text-sm",
-                        values.fullName ? "text-stone-600" : "text-stone-400",
+                        values.fullName
+                          ? "text-neutral-600"
+                          : "text-neutral-400",
                       )}
                     >
                       {values.fullName || "No name provided"}
@@ -407,7 +406,7 @@ export const createFormSteps = ({
                     <p
                       className={cn(
                         "text-sm",
-                        values.email ? "text-stone-600" : "text-stone-400",
+                        values.email ? "text-neutral-600" : "text-neutral-400",
                       )}
                     >
                       {values.email || "No email provided"}
@@ -417,7 +416,7 @@ export const createFormSteps = ({
 
                 <div className="space-y-2">
                   <div className="flex items-center">
-                    <h3 className="text-sm font-medium text-stone-500">
+                    <h3 className="text-sm font-medium text-neutral-500">
                       Project Types
                     </h3>
                     <Dot
@@ -433,8 +432,8 @@ export const createFormSteps = ({
                     className={cn(
                       "text-sm",
                       values.projectTypes?.length > 0
-                        ? "text-stone-600"
-                        : "text-stone-400",
+                        ? "text-neutral-600"
+                        : "text-neutral-400",
                     )}
                   >
                     {values.projectTypes?.length > 0 ? (
@@ -442,7 +441,7 @@ export const createFormSteps = ({
                         {values.projectTypes?.map((type) => (
                           <span
                             key={type}
-                            className="rounded-full bg-stone-200/50 px-3 py-1 text-sm text-stone-600"
+                            className="rounded-full bg-neutral-200/50 px-3 py-1 text-sm text-neutral-600"
                           >
                             {ProjectTypes[type]}
                           </span>
@@ -456,7 +455,7 @@ export const createFormSteps = ({
 
                 <div className="space-y-2">
                   <div className="flex items-center">
-                    <h3 className="text-sm font-medium text-stone-500">
+                    <h3 className="text-sm font-medium text-neutral-500">
                       Project Details
                     </h3>
                     <Dot
@@ -469,7 +468,7 @@ export const createFormSteps = ({
                   <p
                     className={cn(
                       "text-sm",
-                      values.message ? "text-stone-600" : "text-stone-400",
+                      values.message ? "text-neutral-600" : "text-neutral-400",
                     )}
                   >
                     {values.message || "Tell us about your vision!"}
@@ -478,7 +477,7 @@ export const createFormSteps = ({
 
                 {values.link && (
                   <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-stone-500">
+                    <h3 className="text-sm font-medium text-neutral-500">
                       Reference Link
                     </h3>
                     <a
@@ -496,7 +495,13 @@ export const createFormSteps = ({
               <div className="flex flex-col gap-4">
                 <FormCTAButton
                   type="submit"
-                  onClick={() => handleSubmit(values)}
+                  onClick={async () => {
+                    const isValid = await form.trigger();
+                    if (isValid) {
+                      await handleSubmit(values);
+                      nextStep(); // Navigate after successful submission
+                    }
+                  }}
                   disabled={
                     form.formState.isSubmitting ||
                     !form.formState.isValid ||
@@ -515,7 +520,7 @@ export const createFormSteps = ({
                     // Set current step to the earliest invalid step (adding 1 because steps are 1-based)
                     setCurrentStep(earliestInvalidStep);
                   }}
-                  className="text-sm text-stone-500 hover:text-stone-700"
+                  className="text-sm text-neutral-500 hover:text-neutral-700"
                 >
                   Edit my response
                 </button>
@@ -528,68 +533,84 @@ export const createFormSteps = ({
     {
       id: "success",
       content: (
-        <FormCard.Root>
-          <FormCard.Header className="space-y-6">
-            <FormCard.Title>
-              Thank you{" "}
-              {(() => {
-                const fullName = values.fullName;
-                if (!fullName) return "";
-                const firstName = fullName.split(" ")[0];
-                return firstName.charAt(0).toUpperCase() + firstName.slice(1);
-              })()}
-              !
-            </FormCard.Title>
-          </FormCard.Header>
-          <FormCard.Content className="mt-8">
-            <div className="space-y-6">
-              <span className="text-[16px] font-[450] text-stone-500/70">
-                We&apos;ll review your details and reach out within 24-48 hours.
-              </span>
+        <>
+          <FormCard.Root>
+            <FormCard.Header className="space-y-6">
+              <FormCard.Title>
+                Thank you{" "}
+                {(() => {
+                  const fullName = values.fullName;
+                  if (!fullName) return "";
+                  const firstName = fullName.split(" ")[0];
+                  return firstName.charAt(0).toUpperCase() + firstName.slice(1);
+                })()}
+                !
+              </FormCard.Title>
+            </FormCard.Header>
+            <FormCard.Content className="mt-8">
+              <div className="space-y-6">
+                <span className="text-[16px] font-[450] text-neutral-500/70">
+                  We&apos;ll review your details and reach out within 24-48
+                  hours.
+                </span>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-stone-500">
-                    Project Types
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {values.projectTypes?.map((type) => (
-                      <span
-                        key={type}
-                        className="rounded-full bg-stone-200/50 px-3 py-1 text-sm text-stone-600"
-                      >
-                        {ProjectTypes[type]}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-sm font-medium text-stone-500">
-                    Message
-                  </h3>
-                  <p className="text-sm text-stone-600">{values.message}</p>
-                </div>
-
-                {values.link && (
+                <div className="space-y-4">
                   <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-stone-500">
-                      Reference Link
+                    <h3 className="text-sm font-medium text-neutral-500">
+                      Project Types
                     </h3>
-                    <a
-                      href={values.link}
-                      className="text-sm text-blue-600 hover:underline"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {values.link}
-                    </a>
+                    <div className="flex flex-wrap gap-2">
+                      {values.projectTypes?.map((type) => (
+                        <span
+                          key={type}
+                          className="rounded-full bg-neutral-200/50 px-3 py-1 text-sm text-neutral-600"
+                        >
+                          {ProjectTypes[type]}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                )}
+
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-neutral-500">
+                      Message
+                    </h3>
+                    <p className="text-sm text-neutral-600">{values.message}</p>
+                  </div>
+
+                  {values.link && (
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-medium text-neutral-500">
+                        Reference Link
+                      </h3>
+                      <a
+                        href={values.link}
+                        className="text-sm text-blue-600 hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {values.link}
+                      </a>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </FormCard.Content>
-        </FormCard.Root>
+            </FormCard.Content>
+          </FormCard.Root>
+
+          <Link
+            href="/"
+            className={cn(
+              "mt-8 text-sm text-neutral-500 hover:text-neutral-700",
+              "flex items-center justify-center gap-2",
+              "transition-colors duration-200",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 focus-visible:ring-offset-2",
+            )}
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Link>
+        </>
       ),
     },
   ];

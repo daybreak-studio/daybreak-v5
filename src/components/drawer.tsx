@@ -121,7 +121,8 @@ const Drawer: React.FC<DrawerProps> = ({
     <motion.div
       id="drawer"
       className={clsx(
-        "fixed inset-x-0 bottom-0 z-30 rounded-2xl bg-white/90 shadow backdrop-blur-2xl",
+        "fixed inset-x-0 bottom-0 rounded-2xl bg-white/90 shadow backdrop-blur-2xl",
+        isOpen ? "z-[100]" : "z-40",
         className,
       )}
       style={{ height: windowHeight }}
