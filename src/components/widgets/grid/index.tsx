@@ -12,12 +12,12 @@ const GRID_CONFIG = {
   ROWS: 3,
   GAP: 10,
   CELL_SIZES: {
-    sm: 100,
-    md: 130,
-    lg: 140,
-    xl: "min(140px, 11vw)",
-    "2xl": "min(160px, 12vw)",
-    "3xl": "min(180px, 13vw)",
+    sm: "clamp(100px, 15vw, 100px)",
+    md: "clamp(110px, 16vw, 120px)",
+    lg: "clamp(120px, 17vw, 130px)",
+    xl: "clamp(130px, 18vw, 140px)",
+    "2xl": "clamp(140px, 19vw, 160px)",
+    "3xl": "clamp(150px, 20vw, 180px)",
   } as const,
 } as const;
 
@@ -116,24 +116,16 @@ export function WidgetGrid({ components }: WidgetGridProps) {
       exit={{ opacity: 0, filter: "blur(10px)" }}
       transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
       ref={containerRef}
-      className="hide-scrollbar relative flex w-full overflow-x-auto before:flex-1 after:flex-1"
+      className="hide-scrollbar relative flex w-full justify-center overflow-x-auto before:flex-1 after:flex-1"
     >
       <div
         ref={gridRef}
         className="relative grid"
         style={{
-          gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${
-            typeof GRID_CONFIG.CELL_SIZES[gridBreakpoint] === "number"
-              ? `${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px`
-              : GRID_CONFIG.CELL_SIZES[gridBreakpoint]
-          })`,
-          gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${
-            typeof GRID_CONFIG.CELL_SIZES[gridBreakpoint] === "number"
-              ? `${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px`
-              : GRID_CONFIG.CELL_SIZES[gridBreakpoint]
-          })`,
-          gap: `${GRID_CONFIG.GAP}px`,
-          padding: "1rem",
+          gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]})`,
+          gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]})`,
+          gap: `clamp(6px, 1vw, ${GRID_CONFIG.GAP}px)`,
+          padding: "clamp(0.5rem, 2vw, 1rem)",
         }}
       >
         {debug && <DebugGridOverlay />}
