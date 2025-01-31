@@ -44,14 +44,16 @@ const Article = memo(({ article }: { article: ArticleType }) => {
 
           <div className="space-y-4 p-4">
             <div className="flex flex-col gap-2">
-              <h1 className="text-neutral-500">{article.title}</h1>
-              <h2 className="text-neutral-400">{article.description}</h2>
+              <h1 className="text-sm text-neutral-500">{article.title}</h1>
+              <h2 className="text-sm text-neutral-400">
+                {article.description}
+              </h2>
             </div>
             <div className="flex space-x-2">
-              <h2 className="flex w-fit items-center gap-2 rounded-full bg-neutral-300/15 px-4 py-2 text-sm text-neutral-400">
+              <h2 className="flex w-fit items-center gap-2 rounded-full bg-neutral-300/15 px-4 py-2 text-xs text-neutral-400">
                 {format(new Date(article.date || ""), "MMMM d, yyyy")}
               </h2>
-              <h2 className="flex w-fit items-center gap-2 rounded-full bg-neutral-300/15 px-4 py-2 text-sm text-neutral-400">
+              <h2 className="flex w-fit items-center gap-2 rounded-full bg-neutral-300/15 px-4 py-2 text-xs text-neutral-400">
                 {extractBaseDomain(article.link || "")}{" "}
                 <ExternalLink size={16} />
               </h2>
