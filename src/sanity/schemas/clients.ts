@@ -23,6 +23,11 @@ export const clients = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: "description",
+      title: "Description",
+      type: "text",
+    }),
+    defineField({
       name: "projects",
       title: "Projects",
       type: "array",

@@ -197,6 +197,7 @@ export const createFormSteps = ({
                     </FormLabel>
                     <FormControl>
                       <Input
+                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-black"
                         type="email"
                         placeholder="your@email.com"
                         {...field}
@@ -258,28 +259,30 @@ export const createFormSteps = ({
                             key={value}
                             control={form.control}
                             name="projectTypes"
-                            render={() => (
-                              <FormItem className="relative flex cursor-pointer flex-col gap-4 rounded-2xl bg-white/20 p-4 transition-colors hover:bg-white/30">
-                                <FormControl>
-                                  <Checkbox
-                                    checked={isSelected}
-                                    onCheckedChange={() => {
-                                      const newValue = isSelected
-                                        ? field.value?.filter(
-                                            (item) => item !== value,
-                                          )
-                                        : [
-                                            ...(field.value || []),
-                                            value as ProjectType,
-                                          ];
-                                      field.onChange(newValue);
-                                    }}
-                                    className="absolute right-4 top-4"
-                                  />
-                                </FormControl>
-                                <FormLabel className="cursor-pointer">
-                                  {label}
-                                </FormLabel>
+                            render={({ field }) => (
+                              <FormItem>
+                                <label className="relative flex cursor-pointer flex-row items-center justify-between rounded-2xl border border-neutral-200 bg-white/20 p-4 text-sm transition-colors hover:bg-white/30">
+                                  <span className="cursor-pointer text-neutral-500">
+                                    {label}
+                                  </span>
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={isSelected}
+                                      onCheckedChange={() => {
+                                        const newValue = isSelected
+                                          ? field.value?.filter(
+                                              (item) => item !== value,
+                                            )
+                                          : [
+                                              ...(field.value || []),
+                                              value as ProjectType,
+                                            ];
+                                        field.onChange(newValue);
+                                      }}
+                                      className="border-neutral-500/20 data-[state=checked]:bg-neutral-600 data-[state=checked]:text-white"
+                                    />
+                                  </FormControl>
+                                </label>
                               </FormItem>
                             )}
                           />
@@ -347,7 +350,11 @@ export const createFormSteps = ({
                   <FormItem>
                     <FormLabel>Reference Link (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://..." {...field} />
+                      <Input
+                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-black"
+                        placeholder="https://..."
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

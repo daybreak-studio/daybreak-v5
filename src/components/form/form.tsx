@@ -24,7 +24,7 @@ export const FormCTAButton = ({
       "relative h-auto rounded-xl bg-neutral-800 px-8 py-4 text-xs text-neutral-100 hover:scale-[101%] hover:bg-neutral-900 md:text-sm",
       "shadow-md shadow-neutral-900/25 hover:shadow-lg",
       "transition-all duration-500",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-stone-300 focus-visible:ring-offset-2",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-300 focus-visible:ring-offset-2",
       "disabled:opacity-25",
       className,
     )}

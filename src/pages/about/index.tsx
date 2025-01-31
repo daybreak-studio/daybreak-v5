@@ -171,7 +171,7 @@ function PersonInfo({
                   {person.qaPairs.map((qaPair, index) => (
                     <div
                       key={index}
-                      className="flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-stone-200 bg-stone-400/5 p-4 text-center"
+                      className="flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-neutral-200 bg-neutral-400/5 p-4 text-center"
                     >
                       <div className="pb-1 text-sm text-neutral-500">
                         {qaPair.question}
@@ -483,7 +483,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
                 className="relative px-2 py-3"
               >
                 <motion.div
-                  className="h-2 w-2 rounded-full bg-stone-500"
+                  className="h-2 w-2 rounded-full bg-neutral-500"
                   animate={{
                     scale: isDragging
                       ? index === previewIndex

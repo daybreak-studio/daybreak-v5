@@ -687,6 +687,7 @@ export type Clients = {
   _rev: string;
   name?: string;
   slug?: Slug;
+  description?: string;
   projects?: Array<
     | ({
         _key: string;
@@ -883,6 +884,7 @@ export type CLIENTS_QUERYResult = Array<{
   _rev: string;
   name?: string;
   slug?: Slug;
+  description?: string;
   projects: Array<
     | {
         _key: string;

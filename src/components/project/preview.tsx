@@ -173,7 +173,9 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                   key={index}
                   className={cn(
                     "h-2 w-2 rounded-full transition-colors",
-                    currentIndex === index ? "bg-stone-500" : "bg-stone-300",
+                    currentIndex === index
+                      ? "bg-neutral-500"
+                      : "bg-neutral-300",
                   )}
                   onClick={() => {
                     emblaApi?.scrollTo(index);
@@ -217,8 +219,8 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 ease: EASINGS.easeOutQuart,
               }}
               className={cn(
-                "relative rounded-md transition-all duration-200 hover:ring-2 hover:ring-stone-300",
-                currentIndex === index && "ring-2 ring-stone-400",
+                "relative rounded-md transition-all duration-200 hover:ring-2 hover:ring-neutral-300",
+                currentIndex === index && "ring-2 ring-neutral-400",
               )}
             >
               <MediaRenderer media={media} className="h-5 w-5 rounded-md" />

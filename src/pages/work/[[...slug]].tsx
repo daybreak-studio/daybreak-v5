@@ -235,7 +235,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                           {...CONTAINER_ANIMATION}
                           layoutId={containerLayoutId}
                           className={cn(
-                            "frame-outer origin-center overflow-y-auto border-[1px] border-stone-200/50 bg-white/80 drop-shadow-xl",
+                            "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white/70 drop-shadow-xl",
                             modalVariant.className,
                           )}
                         >
@@ -274,7 +274,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                                 duration: 0.2,
                                 ease: EASINGS.easeOutQuart,
                               }}
-                              className="frame-inner absolute right-6 top-6 z-30 inline-flex size-12 appearance-none items-center justify-center border-2 border-stone-600/5 bg-white text-neutral-500 transition-colors duration-300 hover:bg-stone-50 focus:outline-none"
+                              className="frame-inner absolute right-6 top-6 z-30 inline-flex size-12 appearance-none items-center justify-center border-2 border-neutral-600/5 bg-white text-neutral-500 transition-colors duration-300 hover:bg-neutral-50 focus:outline-none"
                             >
                               <Cross2Icon className="h-4 w-4" />
                             </motion.button>

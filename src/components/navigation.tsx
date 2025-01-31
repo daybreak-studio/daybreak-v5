@@ -238,7 +238,7 @@ const Bar = ({
   onToggle: () => void;
   isOpen: boolean;
 }) => (
-  <motion.div className="container relative mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl border-[1px] border-stone-300/25 bg-stone-50/95 p-1 mix-blend-multiply shadow-lg backdrop-blur-3xl md:rounded-2xl">
+  <motion.div className="container relative mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl border-[1px] border-neutral-300/25 bg-neutral-50 p-1 mix-blend-multiply shadow-lg backdrop-blur-3xl md:rounded-2xl">
     {/* Logo */}
     <Link href="/" className="relative flex items-stretch rounded-xl">
       <div className="logo_container align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:rounded-xl md:p-0 md:pt-[2px]">
@@ -388,7 +388,7 @@ const Pill = () => {
     <motion.span
       layout
       layoutId="pill"
-      className="pill absolute inset-0 z-0 rounded-md md:rounded-xl md:border-[1px] md:border-stone-600/5 md:bg-white md:shadow-lg md:shadow-stone-500/15"
+      className="pill absolute inset-0 z-0 rounded-md md:rounded-xl md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
       style={{ originY: "top" }}
       transition={{
         type: "spring",
