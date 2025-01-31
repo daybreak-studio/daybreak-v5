@@ -14,8 +14,10 @@ const GRID_CONFIG = {
   CELL_SIZES: {
     sm: 100,
     md: 130,
-    lg: 160,
-    xl: 180,
+    lg: 140,
+    xl: "min(140px, 11vw)",
+    "2xl": "min(160px, 12vw)",
+    "3xl": "min(180px, 13vw)",
   } as const,
 } as const;
 
@@ -43,7 +45,7 @@ const DebugGridOverlay = () => {
             <>
               <div
                 key={i}
-                className="border-1 z-10 flex items-center justify-center border border-neutral-500/25 bg-neutral-300/30 text-xs font-medium"
+                className="border-1 z-10 flex items-center justify-center border border-stone-500/25 bg-stone-300/30 text-xs font-medium"
               >
                 <h2 className="rounded-3xl border border-neutral-500/25 bg-neutral-50 p-2 text-xs font-medium">
                   R{row} C{col}
@@ -120,8 +122,16 @@ export function WidgetGrid({ components }: WidgetGridProps) {
         ref={gridRef}
         className="relative grid"
         style={{
-          gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px)`,
-          gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px)`,
+          gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${
+            typeof GRID_CONFIG.CELL_SIZES[gridBreakpoint] === "number"
+              ? `${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px`
+              : GRID_CONFIG.CELL_SIZES[gridBreakpoint]
+          })`,
+          gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${
+            typeof GRID_CONFIG.CELL_SIZES[gridBreakpoint] === "number"
+              ? `${GRID_CONFIG.CELL_SIZES[gridBreakpoint]}px`
+              : GRID_CONFIG.CELL_SIZES[gridBreakpoint]
+          })`,
           gap: `${GRID_CONFIG.GAP}px`,
           padding: "1rem",
         }}
