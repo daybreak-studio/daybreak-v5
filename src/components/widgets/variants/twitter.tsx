@@ -26,13 +26,15 @@ export default function TwitterWidget({ data }: TwitterProps) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <p className="mb-2 line-clamp-[7] text-xs text-neutral-500 md:line-clamp-[8] xl:text-base">
+            <p className="mb-2 line-clamp-[7] text-xs text-neutral-500 md:line-clamp-[8] xl:text-sm 2xl:text-base">
               {data.tweet}
             </p>
             <div className="flex justify-between">
-              <p className="text-xs xl:text-base">{data.author}</p>
+              <p className="text-xs text-neutral-500/80 xl:text-sm 2xl:text-base">
+                {data.author}
+              </p>
               <div className="h-auto w-4">
-                <TwitterLogo className="h-full w-full fill-current" />
+                <TwitterLogo className="h-full w-full fill-current text-neutral-500/80" />
               </div>
             </div>
           </a>
