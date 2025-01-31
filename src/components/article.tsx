@@ -44,8 +44,10 @@ const Article = memo(({ article }: { article: ArticleType }) => {
 
           <div className="space-y-4 p-4">
             <div className="flex flex-col gap-2">
-              <h1 className="text-sm text-neutral-500">{article.title}</h1>
-              <h2 className="text-sm text-neutral-400">
+              <h1 className="text-sm text-neutral-500 2xl:text-base">
+                {article.title}
+              </h1>
+              <h2 className="text-sm text-neutral-400 2xl:text-base">
                 {article.description}
               </h2>
             </div>

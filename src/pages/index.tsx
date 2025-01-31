@@ -55,7 +55,7 @@ export default function Home({
     block: {
       normal: ({ children, index }) => (
         <div>
-          <p className="mb-8 text-2xl text-neutral-400 md:text-3xl xl:text-4xl xl:leading-tight 2xl:text-5xl 2xl:leading-[3.25rem]">
+          <p className="3xl:text-5xl 3xl:leading-[3.25rem] mb-8 text-2xl text-neutral-400 md:text-3xl xl:text-4xl xl:leading-tight">
             {children}
           </p>
         </div>
