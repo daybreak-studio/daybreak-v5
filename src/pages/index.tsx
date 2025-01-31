@@ -82,7 +82,7 @@ export default function Home({
                 duration: 1,
                 ease: EASINGS.easeOutQuart,
               }}
-              className="max-w-[16ch] text-center text-3xl font-[450] text-neutral-400/75 lg:text-3xl 2xl:text-4xl"
+              className="max-w-[16ch] text-center text-3xl font-[450] text-neutral-700/25 lg:text-3xl 2xl:text-4xl"
             >
               A technology first design studio.
             </motion.h1>
