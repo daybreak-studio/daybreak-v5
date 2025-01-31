@@ -28,7 +28,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
 
   const variants = {
     enter: (direction: "up" | "down") => ({
-      y: direction === "up" ? 20 : -20,
+      y: direction === "up" ? -20 : 20,
       filter: "blur(10px)",
       opacity: 0,
     }),
@@ -38,7 +38,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
       opacity: 1,
     },
     exit: (direction: "up" | "down") => ({
-      y: direction === "up" ? -20 : 20,
+      y: direction === "up" ? 20 : -20,
       filter: "blur(10px)",
       opacity: 0,
     }),
