@@ -28,7 +28,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
 
   const variants = {
     enter: (direction: "up" | "down") => ({
-      y: direction === "up" ? 20 : -20,
+      y: direction === "up" ? -20 : 20,
       filter: "blur(10px)",
       opacity: 0,
     }),
@@ -38,18 +38,20 @@ export default function QuotesWidget({ data }: QuotesProps) {
       opacity: 1,
     },
     exit: (direction: "up" | "down") => ({
-      y: direction === "up" ? -20 : 20,
+      y: direction === "up" ? 20 : -20,
       filter: "blur(10px)",
       opacity: 0,
     }),
   };
 
   console.log(data);
+
   const renderContent = () => {
     switch (data.size) {
       case "1x1":
+      case "3x3":
         return (
-          <div className="frame-inner flex h-full w-full flex-col bg-white/50 p-6">
+          <div className="frame-inner flex h-full w-full flex-col p-6">
             <h1 className="text-xs text-neutral-500">
               Please use a supported widget size: 2x2
             </h1>
@@ -59,7 +61,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
         return (
           <div
             onClick={() => handleNext()}
-            className="frame-inner flex h-full w-full flex-col justify-between bg-white/25 p-6"
+            className="frame-inner flex h-full w-full flex-col justify-between bg-white/60 p-6"
           >
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
@@ -74,7 +76,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
                   ease: EASINGS.easeInOutQuart,
                 }}
               >
-                <h1 className="text-xs text-neutral-600 md:text-lg">
+                <h1 className="text-xs text-neutral-500 md:text-lg">
                   {testimonials[index]?.quote}
                 </h1>
               </motion.div>
@@ -95,7 +97,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
                 }}
                 className="flex flex-col"
               >
-                <h1 className="text-sm font-medium text-neutral-600 md:text-sm">
+                <h1 className="text-sm font-medium text-neutral-500">
                   {testimonials[index]?.author}
                 </h1>
                 <h1 className="text-xs text-neutral-500">
@@ -128,14 +130,6 @@ export default function QuotesWidget({ data }: QuotesProps) {
                 <ChevronDown className="h-3 w-3 text-neutral-500" />
               </motion.button>
             </div>
-          </div>
-        );
-      case "3x3":
-        return (
-          <div className="frame-inner flex h-full w-full flex-col bg-white/50 p-6">
-            <h1 className="text-xs text-neutral-500">
-              Please use a supported widget size: 2x2
-            </h1>
           </div>
         );
     }
