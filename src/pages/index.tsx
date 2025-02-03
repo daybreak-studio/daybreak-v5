@@ -73,7 +73,7 @@ export default function Home({
       {/* <GradientBackground /> */}
       <main className="relative">
         <motion.div className="fixed inset-0">
-          <div className="flex h-full flex-col items-center justify-center space-y-2 lg:space-y-8">
+          <div className="flex h-full flex-col items-center justify-center space-y-6 lg:space-y-8">
             <motion.h1
               initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}

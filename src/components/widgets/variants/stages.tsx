@@ -9,16 +9,16 @@ import { clsx } from "clsx";
 // Tier configuration
 const TIER_CONFIG = {
   padding: {
-    mobile: [4, 5, 6, 7],
-    desktop: [6, 7, 8, 10],
+    mobile: ["p-4", "p-5", "p-6", "p-7"],
+    desktop: ["md:p-6", "md:p-7", "md:p-8", "md:p-10"],
   },
   titleText: {
     mobile: ["text-base", "text-lg", "text-xl", "text-2xl"],
-    desktop: ["text-xl", "text-2xl", "text-3xl", "text-4xl"],
+    desktop: ["md:text-xl", "md:text-2xl", "md:text-3xl", "md:text-4xl"],
   },
   descriptionText: {
     mobile: ["text-sm", "text-base", "text-lg", "text-xl"],
-    desktop: ["text-xl", "text-2xl", "text-3xl", "text-4xl"],
+    desktop: ["md:text-xl", "md:text-2xl", "md:text-3xl", "md:text-4xl"],
   },
   blur: {
     factor: 0.5, // blur multiplier per tier
@@ -41,9 +41,9 @@ const TIER_CONFIG = {
 };
 
 const getTierStyles = (tierLevel: number, isActive: boolean) => {
-  const padding = `p-${TIER_CONFIG.padding.mobile[tierLevel]} lg:p-${TIER_CONFIG.padding.desktop[tierLevel]}`;
-  const titleSize = `${TIER_CONFIG.titleText.mobile[tierLevel]} lg:${TIER_CONFIG.titleText.desktop[tierLevel]}`;
-  const descriptionSize = `${TIER_CONFIG.descriptionText.mobile[tierLevel]} lg:${TIER_CONFIG.descriptionText.desktop[tierLevel]}`;
+  const padding = `${TIER_CONFIG.padding.mobile[tierLevel]} ${TIER_CONFIG.padding.desktop[tierLevel]}`;
+  const titleSize = `${TIER_CONFIG.titleText.mobile[tierLevel]} ${TIER_CONFIG.titleText.desktop[tierLevel]}`;
+  const descriptionSize = `${TIER_CONFIG.descriptionText.mobile[tierLevel]} ${TIER_CONFIG.descriptionText.desktop[tierLevel]}`;
   const blurAmount = tierLevel * TIER_CONFIG.blur.factor;
   const textOpacity =
     TIER_CONFIG.opacity.text.base -

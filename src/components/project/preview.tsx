@@ -151,17 +151,13 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           <div className="overflow-hidden" ref={emblaRef}>
             <div className="flex touch-pan-y">
               {mediaArray.map((media, index) => (
-                <div
-                  key={media._key}
-                  className="relative min-w-0 flex-[0_0_100%] px-1"
-                >
-                  <div className="overflow-hidden rounded-2xl">
-                    <MediaRenderer
-                      className="frame-inner"
-                      media={media}
-                      autoPlay={index === currentIndex}
-                    />
-                  </div>
+                <div className="h-full w-full" key={media._key}>
+                  <MediaRenderer
+                    fill
+                    className="frame-inner"
+                    media={media}
+                    autoPlay={index === currentIndex}
+                  />
                 </div>
               ))}
             </div>
