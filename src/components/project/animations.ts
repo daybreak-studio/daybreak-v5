@@ -4,9 +4,9 @@ import { EASINGS } from "@/components/animations/easings";
 // Only keep the shared animations
 export const CONTAINER_ANIMATION: MotionProps = {
   layout: true,
-  initial: { filter: "blur(10px)" },
+  initial: { filter: "blur(8px)" },
   animate: { filter: "blur(0px)" },
-  exit: { filter: "blur(10px)" },
+  exit: { filter: "blur(8px)" },
   transition: {
     layout: { duration: 0.6, ease: EASINGS.easeOutExpo },
     default: { duration: 0.6, ease: EASINGS.easeOutCubic },
@@ -15,9 +15,9 @@ export const CONTAINER_ANIMATION: MotionProps = {
 
 export const IMAGE_ANIMATION: MotionProps = {
   layout: true,
-  initial: { filter: "blur(10px)" },
+  initial: { filter: "blur(8px)" },
   animate: { filter: "blur(0px)" },
-  exit: { filter: "blur(10px)" },
+  exit: { filter: "blur(8px)" },
   transition: {
     layout: { duration: 0.6, ease: EASINGS.easeOutExpo },
     default: { duration: 0.6, ease: EASINGS.easeOutCubic },

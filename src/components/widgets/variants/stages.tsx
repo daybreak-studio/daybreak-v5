@@ -21,7 +21,7 @@ const TIER_CONFIG = {
     desktop: ["md:text-xl", "md:text-2xl", "md:text-3xl", "md:text-4xl"],
   },
   blur: {
-    factor: 0.5, // blur multiplier per tier
+    factor: 0.5,
     description: {
       initial: 8,
       exit: 8,

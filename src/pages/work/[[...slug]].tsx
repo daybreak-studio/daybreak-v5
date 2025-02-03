@@ -14,7 +14,7 @@ import ProjectCaseStudy from "@/components/project/case-study";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { AnimatePresence } from "framer-motion";
 import { client } from "@/sanity/lib/client";
 import { CLIENTS_QUERY } from "@/sanity/lib/queries";
@@ -218,24 +218,17 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{
-                          duration: 0.5,
+                          duration: 0.3,
                           ease: EASINGS.easeOutQuart,
-                          delay: isInitialMount ? 0.4 : 0,
                         }}
                         className="z-50 focus:outline-none"
                       >
-                        <Dialog.Title className="sr-only">
-                          {client.name} Project Details
-                        </Dialog.Title>
-                        <Dialog.Description className="sr-only">
-                          View details about the {client.name} project.
-                        </Dialog.Description>
-
                         <motion.div
                           {...CONTAINER_ANIMATION}
                           layoutId={containerLayoutId}
                           className={cn(
-                            "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white/70 drop-shadow-xl",
+                            "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white/70 backdrop-blur-lg",
+                            isAnimating && "will-change-transform",
                             modalVariant.className,
                           )}
                         >

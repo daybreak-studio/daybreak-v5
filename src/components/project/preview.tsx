@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, PanInfo, useAnimation } from "framer-motion";
 import { Preview, Clients } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getProjectFirstMedia, getMediaAssetId } from "@/sanity/lib/media";
@@ -7,8 +7,11 @@ import { IMAGE_ANIMATION } from "./animations";
 import { EASINGS } from "../animations/easings";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useCallback } from "react";
-import useEmblaCarousel from "embla-carousel-react";
 import { useRouter } from "next/router";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Pagination } from "swiper/modules";
 
 interface ProjectPreviewProps {
   data: Clients;
@@ -35,7 +38,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     : [slug, undefined];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const controls = useAnimation();
 
   const project = data.projects?.find((p) => {
     if (projectSlug) {
@@ -46,42 +49,28 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
 
   const mediaArray = project?.media || [];
 
-  const scrollTo = useCallback(
-    (index: number) => {
-      if (emblaApi) {
-        emblaApi.scrollTo(index);
-      }
-      setCurrentIndex(index);
+  const paginate = useCallback(
+    (direction: number) => {
+      const newIndex =
+        (currentIndex + direction + mediaArray.length) % mediaArray.length;
+      setCurrentIndex(newIndex);
     },
-    [emblaApi],
+    [currentIndex, mediaArray.length],
   );
 
-  const handlePrevious = useCallback(() => {
-    const newIndex =
-      currentIndex === 0 ? mediaArray.length - 1 : currentIndex - 1;
-    scrollTo(newIndex);
-  }, [currentIndex, mediaArray.length, scrollTo]);
+  const handleDragEnd = useCallback(
+    (event: any, info: PanInfo) => {
+      const swipeThreshold = 50;
+      const swipe = info.offset.x;
 
-  const handleNext = useCallback(() => {
-    const newIndex =
-      currentIndex === mediaArray.length - 1 ? 0 : currentIndex + 1;
-    scrollTo(newIndex);
-  }, [currentIndex, mediaArray.length, scrollTo]);
-
-  useEffect(() => {
-    if (emblaApi) {
-      const onSelect = () => {
-        setCurrentIndex(emblaApi.selectedScrollSnap());
-      };
-
-      emblaApi.on("select", onSelect);
-
-      // Cleanup
-      return () => {
-        emblaApi.off("select", onSelect);
-      };
-    }
-  }, [emblaApi]);
+      if (Math.abs(swipe) > swipeThreshold) {
+        paginate(swipe < 0 ? 1 : -1);
+      } else {
+        controls.start({ x: 0 });
+      }
+    },
+    [controls, paginate],
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -92,20 +81,20 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
 
       switch (e.code) {
         case "ArrowLeft":
-          handlePrevious();
+          paginate(-1);
           break;
         case "ArrowRight":
-          handleNext();
+          paginate(1);
           break;
         case "Space":
-          handleNext();
+          paginate(1);
           break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleNext, handlePrevious]);
+  }, [paginate]);
 
   if (!project) {
     return null;
@@ -119,14 +108,14 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
       <motion.div
         className="order-2 pt-4 md:order-1 md:w-2/3 md:pt-0"
         {...IMAGE_ANIMATION}
-        layout
+        layout="position"
         layoutId={assetId || undefined}
       >
         {/* Desktop View */}
         <div className="hidden md:block">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
-              onClick={handleNext}
+              onClick={() => paginate(1)}
               className="cursor-pointer transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99]"
               key={currentIndex}
               initial={{ opacity: 0, filter: "blur(16px)" }}
@@ -137,49 +126,55 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 ease: EASINGS.easeOutQuart,
               }}
             >
-              <MediaRenderer
-                className="frame-inner max-h-[700px] cursor-e-resize transition-shadow duration-300 hover:shadow-xl hover:shadow-neutral-100"
-                media={mediaAsset}
-                autoPlay={true}
-              />
+              <div className="relative aspect-square w-full">
+                <MediaRenderer
+                  className="frame-inner max-h-[700px] cursor-e-resize transition-shadow duration-300 hover:shadow-xl hover:shadow-neutral-100"
+                  media={mediaAsset}
+                  autoPlay={true}
+                  fill
+                />
+              </div>
             </motion.div>
           </AnimatePresence>
         </div>
 
         {/* Mobile Carousel */}
-        <div className="md:hidden">
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex touch-pan-y">
+        <div className="relative md:hidden">
+          <AnimatePresence mode="popLayout" initial={false}>
+            <Swiper
+              modules={[Pagination]}
+              spaceBetween={16}
+              slidesPerView={1}
+              pagination={{
+                clickable: true,
+                bulletActiveClass: "bg-neutral-100",
+                bulletClass:
+                  "inline-block h-2 w-2 rounded-full bg-neutral-500 mx-1",
+              }}
+              onSlideChange={(swiper) => setCurrentIndex(swiper.activeIndex)}
+              className="frame-inner w-full"
+            >
               {mediaArray.map((media, index) => (
-                <div className="h-full w-full" key={media._key}>
-                  <MediaRenderer
-                    fill
-                    className="frame-inner"
-                    media={media}
-                    autoPlay={index === currentIndex}
-                  />
-                </div>
+                <SwiperSlide key={media._key}>
+                  <div className="w-full">
+                    <MediaRenderer
+                      className="frame-inner h-full w-full"
+                      media={media}
+                      autoPlay={index === currentIndex}
+                      priority={
+                        index === currentIndex ||
+                        index === (currentIndex + 1) % mediaArray.length ||
+                        index ===
+                          (currentIndex - 1 + mediaArray.length) %
+                            mediaArray.length
+                      }
+                      disableThumbnail={true}
+                    />
+                  </div>
+                </SwiperSlide>
               ))}
-            </div>
-          </div>
-          {mediaArray.length > 1 && (
-            <div className="flex justify-center space-x-2 pt-6">
-              {mediaArray.map((_, index) => (
-                <button
-                  key={index}
-                  className={cn(
-                    "h-2 w-2 rounded-full transition-colors",
-                    currentIndex === index
-                      ? "bg-neutral-500"
-                      : "bg-neutral-300",
-                  )}
-                  onClick={() => {
-                    emblaApi?.scrollTo(index);
-                  }}
-                />
-              ))}
-            </div>
-          )}
+            </Swiper>
+          </AnimatePresence>
         </div>
       </motion.div>
       <motion.div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">
@@ -193,7 +188,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           )}
         >
           <motion.button
-            onClick={handlePrevious}
+            onClick={() => paginate(-1)}
             variants={chevronButtonVariants}
             initial="initial"
             whileHover="hover"
@@ -207,7 +202,9 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           {mediaArray.map((media, index) => (
             <motion.button
               key={media._key}
-              onClick={() => scrollTo(index)}
+              onClick={() => {
+                setCurrentIndex(index);
+              }}
               animate={{ scale: currentIndex === index ? 1.2 : 1 }}
               whileTap={{ scale: 0.95 }}
               transition={{
@@ -223,7 +220,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             </motion.button>
           ))}
           <motion.button
-            onClick={handleNext}
+            onClick={() => paginate(1)}
             variants={chevronButtonVariants}
             initial="initial"
             whileHover="hover"

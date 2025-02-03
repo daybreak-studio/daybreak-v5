@@ -7,6 +7,8 @@ import {
   useRef,
   Fragment,
   forwardRef,
+  memo,
+  useMemo,
 } from "react";
 import { AnimatePresence } from "framer-motion";
 import { useRouter } from "next/router";
@@ -32,6 +34,7 @@ interface MediaGroupProps {
   index: number;
   isActive: boolean;
   isZoomed: boolean;
+  activeGroupIndex: number;
   onScroll: (index: number) => void;
   onActivate: () => void;
 }
@@ -47,8 +50,8 @@ interface NavigationProps {
   canGoPrev: boolean;
 }
 
-// MediaGroup Component - Handles individual media sections with animations and interactions
-function MediaGroup({
+// MediaGroup Component - Optimized with memo and simplified scroll handling
+const MediaGroup = memo(function MediaGroup({
   id,
   group,
   index,
@@ -63,10 +66,15 @@ function MediaGroup({
     margin: "-45% 0px -45% 0px",
   });
 
+  // Simple throttled scroll handler
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
     if (isInView) {
-      onScroll(index);
+      timeoutId = setTimeout(() => {
+        onScroll(index);
+      }, 100);
     }
+    return () => clearTimeout(timeoutId);
   }, [isInView, index, onScroll]);
 
   return (
@@ -82,10 +90,7 @@ function MediaGroup({
         scale: isZoomed ? (isActive ? 0.95 : 0.88) : 0.99,
         opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
       }}
-      transition={{
-        duration: 0.4,
-        ease: EASINGS.easeOutQuart,
-      }}
+      transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
       className={cn(
         "grid origin-center cursor-pointer gap-4",
         group.media?.length === 1
@@ -94,275 +99,222 @@ function MediaGroup({
       )}
       onClick={onActivate}
     >
-      {group.media?.map((media, mediaIndex) => {
-        const assetId = getMediaAssetId(media);
-        return (
-          <motion.div
-            {...IMAGE_ANIMATION}
-            layoutId={assetId || undefined}
-            key={`${index}-${mediaIndex}`}
-          >
-            <MediaRenderer
-              className="max-h-[95vh] rounded-xl"
-              key={`${index}-${mediaIndex}`}
-              media={media}
-              autoPlay={true}
-            />
-          </motion.div>
-        );
-      })}
+      {group.media?.map((media, mediaIndex) => (
+        <motion.div
+          {...IMAGE_ANIMATION}
+          layoutId={getMediaAssetId(media) || undefined}
+          key={`${index}-${mediaIndex}`}
+        >
+          <MediaRenderer
+            className="max-h-[95vh] rounded-xl"
+            media={media}
+            autoPlay={isActive}
+            priority={true}
+          />
+        </motion.div>
+      ))}
     </motion.div>
   );
-}
+});
 
-// Navigation Component - Provides UI for navigating between media groups
-// Handles expanded/collapsed states and animations
-const Navigation = forwardRef<HTMLDivElement, NavigationProps>(
-  (
-    {
-      activeGroup,
-      groups,
-      isExpanded,
-      onToggleExpand,
-      onNext,
-      onPrev,
-      canGoNext,
-      canGoPrev,
-    },
-    ref,
-  ) => {
-    const [prevIndex, setPrevIndex] = useState(activeGroup);
-    const direction = activeGroup > prevIndex ? 1 : -1;
-    const currentGroup = groups[activeGroup];
+// Navigation Component - Simplified and optimized
+const Navigation = memo(function Navigation({
+  activeGroup,
+  groups,
+  isExpanded,
+  onToggleExpand,
+  onNext,
+  onPrev,
+  canGoNext,
+  canGoPrev,
+}: NavigationProps) {
+  const currentGroup = groups[activeGroup];
+  const [prevIndex, setPrevIndex] = useState(activeGroup);
+  const direction = activeGroup > prevIndex ? 1 : -1;
 
-    useEffect(() => {
-      setPrevIndex(activeGroup);
-    }, [activeGroup]);
+  useEffect(() => {
+    setPrevIndex(activeGroup);
+  }, [activeGroup]);
 
-    const transition = {
-      duration: 0.4,
-      ease: EASINGS.easeOutQuart,
-    };
+  const transition = { duration: 0.4, ease: EASINGS.easeOutQuart };
 
-    const originStyles = { transformOrigin: "bottom center" };
-
-    return (
+  return (
+    <motion.div
+      layout
+      layoutId="nav-root"
+      className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 20, scale: 0.9 }}
+      transition={transition}
+    >
       <motion.div
-        ref={ref}
         layout
-        layoutId="nav-root"
-        className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
-        style={originStyles}
-        initial={{ opacity: 0, y: 20, scale: 0.9 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 20, scale: 0.9 }}
-        transition={transition}
+        layoutId="nav-container"
+        className="mx-auto h-min w-min overflow-hidden bg-white/60 p-1 drop-shadow-2xl backdrop-blur-2xl"
+        animate={{
+          borderRadius: isExpanded ? 32 : 16,
+        }}
+        transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
       >
         <motion.div
           layout
-          layoutId="nav-container"
-          className="mx-auto h-min w-min overflow-hidden bg-white/60 p-1 drop-shadow-2xl backdrop-blur-2xl"
+          layoutId="nav-background"
+          className="relative overflow-hidden bg-white"
           animate={{
-            borderRadius: isExpanded ? 32 : 16,
+            borderRadius: isExpanded ? 28 : 12,
           }}
-          transition={transition}
-          style={originStyles}
+          transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
         >
-          <motion.div
-            layout
-            layoutId="nav-background"
-            className="relative overflow-hidden bg-white"
-            animate={{
-              borderRadius: isExpanded ? 28 : 12,
-            }}
-            transition={transition}
-            style={originStyles}
-          >
-            <AnimatePresence mode="popLayout" initial={false}>
-              {!isExpanded ? (
-                <motion.button
-                  layout
-                  key="collapsed"
-                  className="flex w-full items-center justify-between gap-2 px-4 py-2 focus:outline-none"
-                  onClick={onToggleExpand}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={transition}
-                >
-                  <span className="whitespace-nowrap opacity-50">
-                    {currentGroup.heading}
-                  </span>
-                  <XIcon className="h-4 w-4 shrink-0 rotate-45 opacity-60" />
-                </motion.button>
-              ) : (
-                <motion.div
-                  layout
-                  key="expanded"
-                  className="relative w-screen max-w-[calc(100vw-2rem)] md:max-w-[400px]"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={transition}
-                >
-                  <div className="flex w-full flex-col gap-3 px-6 py-6">
-                    <AnimatePresence mode="popLayout" custom={direction}>
-                      <motion.div
-                        key={`content-${activeGroup}`}
-                        initial={{ opacity: 0, y: direction * 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: direction * -20 }}
-                        transition={transition}
-                      >
-                        {currentGroup.heading && (
-                          <div className="mb-2 flex w-full items-center justify-between text-lg">
-                            <h4 className="opacity-70">
-                              {currentGroup.heading}
-                            </h4>
-                          </div>
-                        )}
-                        {currentGroup.caption && (
-                          <p className="text-sm opacity-50">
-                            {currentGroup.caption}
-                          </p>
-                        )}
-                      </motion.div>
-                    </AnimatePresence>
+          <AnimatePresence mode="popLayout" initial={false}>
+            {!isExpanded ? (
+              <motion.button
+                layout
+                key="collapsed"
+                className="flex w-full items-center justify-between gap-2 px-4 py-2 focus:outline-none"
+                onClick={onToggleExpand}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
+              >
+                <span className="whitespace-nowrap opacity-50">
+                  {currentGroup.heading}
+                </span>
+                <XIcon className="h-4 w-4 shrink-0 rotate-45 opacity-60" />
+              </motion.button>
+            ) : (
+              <motion.div
+                layout
+                key="expanded"
+                className="relative w-screen max-w-[calc(100vw-2rem)] md:max-w-[400px]"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
+              >
+                <div className="flex w-full flex-col gap-3 px-6 py-6">
+                  <AnimatePresence mode="popLayout" custom={direction}>
+                    <motion.div
+                      key={`content-${activeGroup}`}
+                      initial={{ opacity: 0, y: direction * 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: direction * -20 }}
+                      transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
+                    >
+                      {currentGroup.heading && (
+                        <div className="mb-2 flex w-full items-center justify-between text-lg">
+                          <h4 className="opacity-70">{currentGroup.heading}</h4>
+                        </div>
+                      )}
+                      {currentGroup.caption && (
+                        <p className="text-sm opacity-50">
+                          {currentGroup.caption}
+                        </p>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
 
-                    <div className="flex gap-1">
-                      <button
-                        onClick={onPrev}
-                        disabled={!canGoPrev}
-                        className="rounded-full bg-white/80 p-2 transition-opacity hover:bg-white/90 disabled:opacity-30"
-                      >
-                        <ChevronUpIcon className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={onNext}
-                        disabled={!canGoNext}
-                        className="rounded-full bg-white/80 p-2 transition-opacity hover:bg-white/90 disabled:opacity-30"
-                      >
-                        <ChevronDownIcon className="h-4 w-4" />
-                      </button>
-                    </div>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={canGoPrev ? onPrev : undefined}
+                      disabled={!canGoPrev}
+                      className="rounded-full bg-white/80 p-2 transition-opacity hover:bg-white/90 disabled:opacity-30"
+                    >
+                      <ChevronUpIcon className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={canGoNext ? onNext : undefined}
+                      disabled={!canGoNext}
+                      className="rounded-full bg-white/80 p-2 transition-opacity hover:bg-white/90 disabled:opacity-30"
+                    >
+                      <ChevronDownIcon className="h-4 w-4" />
+                    </button>
                   </div>
+                </div>
 
-                  <button
-                    onClick={onToggleExpand}
-                    className={`absolute right-6 ${
-                      currentGroup.heading ? "top-[1.75rem]" : "top-[2.25rem]"
-                    }`}
-                  >
-                    <XIcon className="h-4 w-4 opacity-60" />
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+                <button
+                  onClick={onToggleExpand}
+                  className={`absolute right-6 ${
+                    currentGroup.heading ? "top-[1.75rem]" : "top-[2.25rem]"
+                  }`}
+                >
+                  <XIcon className="h-4 w-4 opacity-60" />
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </motion.div>
-    );
-  },
-);
+    </motion.div>
+  );
+});
 
-// Add display name for better debugging
 Navigation.displayName = "Navigation";
 
-// Main Component - Orchestrates the entire case study experience
+// Main Component - Optimized with proper hooks and memoization
 export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   const router = useRouter();
   const project = data.projects?.[0] as CaseStudy & { _key: string };
-
-  // Refs for managing scroll animations and container
   const containerRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<{ stop: () => void }>();
 
-  // Track the currently visible/active media group
   const [activeGroupIndex, setActiveGroupIndex] = useState(0);
-  // Track whether we're in zoomed/focused mode for media viewing
   const [isZoomed, setIsZoomed] = useState(false);
 
-  // Smoothly scroll to a media group by its index
-  // Uses spring animation for natural movement
+  // Smooth scroll helper
   const scrollToGroup = useCallback((index: number) => {
     const element = document.getElementById(`media-group-${index}`);
-    if (!element || !containerRef.current) return;
+    if (!element) return;
 
-    if (animationRef.current) {
-      animationRef.current.stop();
-    }
-
-    const container = containerRef.current;
-    const elementTop = element.offsetTop;
-    const containerHeight = container.clientHeight;
-    const elementHeight = element.clientHeight;
-    const targetScroll = elementTop - (containerHeight - elementHeight) / 2;
-
-    animationRef.current = animate(container.scrollTop, targetScroll, {
-      type: "spring",
-      stiffness: 100,
-      damping: 20,
-      onUpdate: (value) => container.scrollTo(0, value),
-      onComplete: () => {
-        animationRef.current = undefined;
-      },
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
     });
   }, []);
 
-  // Clean up any ongoing animations when component unmounts
-  useEffect(() => {
-    return () => {
-      if (animationRef.current) {
-        animationRef.current.stop();
-      }
-    };
-  }, []);
-
-  // Handle clicking on a media group
-  // Activates the group, zooms in, and smoothly scrolls to it
-  const handleGroupActivate = useCallback(
-    (index: number) => {
-      setActiveGroupIndex(index);
-      setIsZoomed(true);
-      requestAnimationFrame(() => {
-        scrollToGroup(index);
-      });
-    },
-    [scrollToGroup],
-  );
-
-  // Update active group index when a group comes into view during scrolling
-  const handleGroupScroll = useCallback((index: number) => {
-    setActiveGroupIndex(index);
-  }, []);
-
-  // Find the next valid group in either direction
-  // Used for both keyboard and button navigation
-  // Can optionally filter to only groups with captions when in zoomed mode
+  // Group navigation helper
   const findNextGroup = useCallback(
-    (
-      currentIndex: number,
-      direction: 1 | -1, // 1 for next, -1 for previous
-      onlyWithCaption: boolean = false,
-    ) => {
+    (currentIndex: number, direction: 1 | -1, onlyWithCaption = false) => {
       if (!project.mediaGroups) return null;
       let index = currentIndex + direction;
 
-      // Keep looking in the specified direction until we find a valid group
       while (index >= 0 && index < project.mediaGroups.length) {
         const group = project.mediaGroups[index];
-        // In normal mode, accept any group
-        // In zoom mode, only accept groups with both heading and caption
         if (!onlyWithCaption || (group.heading && group.caption)) {
           return index;
         }
         index += direction;
       }
-      return null; // No valid group found
+      return null;
     },
     [project.mediaGroups],
   );
 
+  // Event handlers
+  const handleGroupActivate = useCallback(
+    (index: number) => {
+      setActiveGroupIndex(index);
+      setIsZoomed(true);
+      requestAnimationFrame(() => scrollToGroup(index));
+    },
+    [scrollToGroup],
+  );
+
+  const handleGroupScroll = useCallback((index: number) => {
+    setActiveGroupIndex(index);
+  }, []);
+
+  const handleNext = useCallback(() => {
+    const nextIndex = findNextGroup(activeGroupIndex, 1, isZoomed);
+    if (nextIndex !== null) handleGroupActivate(nextIndex);
+  }, [activeGroupIndex, isZoomed, findNextGroup, handleGroupActivate]);
+
+  const handlePrev = useCallback(() => {
+    const prevIndex = findNextGroup(activeGroupIndex, -1, isZoomed);
+    if (prevIndex !== null) handleGroupActivate(prevIndex);
+  }, [activeGroupIndex, isZoomed, findNextGroup, handleGroupActivate]);
+
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!document.querySelector('[role="dialog"]')) return;
@@ -370,50 +322,39 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
       switch (e.code) {
         case "Escape":
           e.preventDefault();
-          e.stopPropagation();
-          if (isZoomed) {
-            setIsZoomed(false);
-          } else {
-            const clientSlug = data.slug?.current;
-            if (clientSlug) {
-              router.push(`/work/${clientSlug}`, undefined, { shallow: true });
-            }
+          if (isZoomed) setIsZoomed(false);
+          else if (data.slug?.current) {
+            router.push(`/work/${data.slug.current}`, undefined, {
+              shallow: true,
+            });
           }
           break;
-        case "Enter":
-        case "Space":
-        case "Tab":
-          e.preventDefault();
-          e.stopPropagation();
-          setIsZoomed(!isZoomed);
-          break;
         case "ArrowUp":
-          e.preventDefault();
-          e.stopPropagation();
-          // In zoomed mode, only navigate between groups with captions
-          const prevIndex = findNextGroup(activeGroupIndex, -1, isZoomed);
-          if (prevIndex !== null) scrollToGroup(prevIndex);
+          handlePrev();
           break;
         case "ArrowDown":
-          e.preventDefault();
-          e.stopPropagation();
-          // In zoomed mode, only navigate between groups with captions
-          const nextIndex = findNextGroup(activeGroupIndex, 1, isZoomed);
-          if (nextIndex !== null) scrollToGroup(nextIndex);
+          handleNext();
+          break;
+        case "Space":
+          setIsZoomed((prev) => !prev);
           break;
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown, true);
-    return () => window.removeEventListener("keydown", handleKeyDown, true);
-  }, [
-    isZoomed,
-    activeGroupIndex,
-    findNextGroup,
-    scrollToGroup,
-    router,
-    data.slug,
-  ]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isZoomed, handleNext, handlePrev, router, data.slug]);
+
+  // Memoize mediaGroups to prevent unnecessary re-renders
+  const mediaGroups = useMemo(
+    () =>
+      project.mediaGroups?.map((group, index) => ({
+        key: `${group.heading}-${index}`,
+        group,
+        index,
+      })),
+    [project.mediaGroups],
+  );
 
   return (
     <motion.div
@@ -433,14 +374,15 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
       </motion.h1>
 
       <div className="flex flex-col gap-4 xl:gap-4">
-        {project.mediaGroups?.map((group, index) => (
+        {mediaGroups?.map(({ key, group, index }) => (
           <MediaGroup
-            key={index}
+            key={key}
             id={`media-group-${index}`}
             group={group}
             index={index}
             isActive={activeGroupIndex === index}
             isZoomed={isZoomed}
+            activeGroupIndex={activeGroupIndex}
             onScroll={handleGroupScroll}
             onActivate={() => handleGroupActivate(index)}
           />
@@ -460,8 +402,8 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
                   <div className="mx-4 h-0 flex-grow translate-y-2 border-b border-gray-200" />
                 </div>
                 <div className="opacity-50">
-                  {credit.names?.map((name, index) => (
-                    <div key={index}>{name}</div>
+                  {credit.names?.map((name, idx) => (
+                    <div key={idx}>{name}</div>
                   ))}
                 </div>
               </Fragment>
@@ -476,15 +418,9 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
             activeGroup={activeGroupIndex}
             groups={project.mediaGroups ?? []}
             isExpanded={isZoomed}
-            onToggleExpand={() => setIsZoomed(!isZoomed)}
-            onNext={() => {
-              const nextIndex = findNextGroup(activeGroupIndex, 1, isZoomed);
-              if (nextIndex !== null) scrollToGroup(nextIndex);
-            }}
-            onPrev={() => {
-              const nextIndex = findNextGroup(activeGroupIndex, -1, isZoomed);
-              if (nextIndex !== null) scrollToGroup(nextIndex);
-            }}
+            onToggleExpand={() => setIsZoomed((prev) => !prev)}
+            onNext={handleNext}
+            onPrev={handlePrev}
             canGoNext={findNextGroup(activeGroupIndex, 1, isZoomed) !== null}
             canGoPrev={findNextGroup(activeGroupIndex, -1, isZoomed) !== null}
           />
