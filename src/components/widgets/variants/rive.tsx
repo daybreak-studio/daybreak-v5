@@ -17,8 +17,10 @@ export default function RiveWidget({ data }: RiveProps) {
       <iframe
         // allowFullScreen
         allow="autoplay"
+        width="100%"
+        height="100%"
         src={data.src}
-        className="aspect-square h-full w-full"
+        className="overflow aspect-square h-full w-full"
       />
     </BaseWidget>
   );

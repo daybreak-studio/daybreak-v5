@@ -12,11 +12,11 @@ export default function MediaWidget({ data }: MediaProps) {
 
     switch (data.size) {
       case "1x1":
-        return <MediaRenderer media={mediaItem} priority />;
+        return <MediaRenderer media={mediaItem} priority autoPlay fill />;
       case "2x2":
-        return <MediaRenderer media={mediaItem} priority autoPlay />;
+        return <MediaRenderer media={mediaItem} priority autoPlay fill />;
       case "3x3":
-        return <MediaRenderer media={mediaItem} priority autoPlay />;
+        return <MediaRenderer media={mediaItem} priority autoPlay fill />;
     }
   };
 
