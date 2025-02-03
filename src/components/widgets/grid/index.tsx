@@ -3,7 +3,6 @@ import { useViewport } from "@/lib/hooks/use-viewport";
 import { useWidgetData } from "@/components/widgets/grid/context";
 import { useDebug } from "@/lib/contexts/debug";
 import { Widget, WidgetRegistry } from "./types";
-import Lenis from "lenis";
 import { motion } from "framer-motion";
 import { EASINGS } from "@/components/animations/easings";
 
@@ -66,9 +65,8 @@ export function WidgetGrid({ components }: WidgetGridProps) {
   const widgets = useWidgetData<Widget[]>("widgets");
   const gridBreakpoint = breakpoint as GridBreakpoint;
   const containerRef = useRef<HTMLDivElement>(null);
-  const lenisRef = useRef<Lenis | null>(null);
-  const { debug } = useDebug();
   const gridRef = useRef<HTMLDivElement>(null);
+  const { debug } = useDebug();
 
   const centerScroll = () => {
     if (!containerRef.current || !gridRef.current) return;
@@ -91,20 +89,10 @@ export function WidgetGrid({ components }: WidgetGridProps) {
 
     // Initial scroll position to center
     const scrollTarget = (totalWidth + leftPadding * 2 - viewportWidth) / 2;
-    lenisRef.current?.scrollTo(scrollTarget, { immediate: true });
+    container.scrollTo({ left: scrollTarget, behavior: "instant" });
   };
 
   useEffect(() => {
-    if (!containerRef.current) return;
-
-    // Initialize Lenis once
-    lenisRef.current = new Lenis({
-      wrapper: containerRef.current,
-      orientation: "horizontal",
-      gestureOrientation: "horizontal",
-      autoRaf: true,
-    });
-
     // Initial center
     centerScroll();
 
@@ -112,11 +100,13 @@ export function WidgetGrid({ components }: WidgetGridProps) {
     const resizeObserver = new ResizeObserver(() => {
       requestAnimationFrame(centerScroll);
     });
-    resizeObserver.observe(containerRef.current);
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
 
     return () => {
       resizeObserver.disconnect();
-      lenisRef.current?.destroy();
     };
   }, [widgets, breakpoint]);
 
@@ -127,7 +117,7 @@ export function WidgetGrid({ components }: WidgetGridProps) {
       exit={{ opacity: 0, filter: "blur(10px)" }}
       transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
       ref={containerRef}
-      className="hide-scrollbar relative w-full overflow-x-auto"
+      className="hide-scrollbar relative w-full overflow-x-auto scroll-smooth"
     >
       <div className="grid-wrapper flex w-full items-center">
         <div

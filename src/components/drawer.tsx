@@ -2,7 +2,6 @@ import { ReactNode, useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 import clsx from "clsx";
-import Lenis from "lenis";
 import { useMediaQuery } from "usehooks-ts";
 
 interface DrawerProps {
@@ -65,39 +64,21 @@ const Drawer: React.FC<DrawerProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const PEEK_HEIGHT = windowHeight * 0.06;
   const HOVER_PEEK_AMOUNT = 200;
-  const lenisRef = useRef<Lenis | null>(null);
   const [contentOpacity, setContentOpacity] = useState(1);
 
-  useEffect(() => {
-    if (!contentRef.current) return;
-
-    lenisRef.current = new Lenis({
-      wrapper: contentRef.current,
-      autoRaf: true,
-      smoothWheel: true,
-      syncTouch: true,
-    });
-
-    // Cleanup
-    return () => {
-      if (lenisRef.current) {
-        lenisRef.current.destroy();
-      }
-    };
-  }, [contentRef]);
-
   const toggleDrawer = () => {
-    if (isOpen && lenisRef.current && contentRef.current) {
+    if (isOpen && contentRef.current) {
       setContentOpacity(0);
 
-      lenisRef.current.scrollTo(0, {
-        duration: 0.3,
-        easing: (t) => 1 - Math.cos((t * Math.PI) / 2),
-        lerp: 0.1,
-        onComplete: () => {
-          setContentOpacity(1);
-        },
+      contentRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
       });
+
+      // Reset opacity after scroll
+      setTimeout(() => {
+        setContentOpacity(1);
+      }, 300);
     }
 
     setIsOpen(!isOpen);
@@ -157,7 +138,7 @@ const Drawer: React.FC<DrawerProps> = ({
       <motion.div
         ref={contentRef}
         className={clsx(
-          "hide-scrollbar pb-safe-bottom h-full overscroll-contain",
+          "hide-scrollbar pb-safe-bottom h-full overscroll-contain scroll-smooth",
           isOpen ? "overflow-y-auto" : "overflow-hidden",
         )}
         animate={{
