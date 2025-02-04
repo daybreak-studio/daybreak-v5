@@ -67,6 +67,11 @@ const getModalVariant = (client: Clients, projectSlug: string | undefined) => {
   return variant;
 };
 
+// Add this helper function at the top of the file
+const capitalizeFirstLetter = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
 export default function WorkPage({ data }: { data: Clients[] }) {
   const router = useRouter();
   const { slug } = router.query;
@@ -179,12 +184,38 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                   }}
                 >
                   <HoverCard>
-                    <MediaRenderer
-                      className="frame-inner"
-                      fill
-                      media={mediaAsset}
-                      autoPlay={true}
-                    />
+                    <div className="frame-inner relative aspect-square overflow-hidden">
+                      <div className="relative h-full w-full">
+                        <MediaRenderer
+                          fill
+                          media={mediaAsset}
+                          autoPlay={true}
+                        />
+                      </div>
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                    </div>
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: 0.2 }}
+                      className="absolute bottom-6 left-6 flex items-center gap-3"
+                    >
+                      <div className="size-10 rounded-lg bg-neutral-100" />
+                      <div className="flex flex-col">
+                        <h2 className="text-shadow text-base font-medium text-neutral-50/90 [text-shadow:_0_1px_0_rgb(0_0_0_/30%)]">
+                          {client.name}
+                        </h2>
+                        {client.projects && (
+                          <h2 className="text-sm font-medium text-neutral-50/75 [text-shadow:_0_1px_0_rgb(0_0_0_/20%)]">
+                            {client.projects
+                              .map((project) =>
+                                capitalizeFirstLetter(project.category || ""),
+                              )
+                              .join(", ")}
+                          </h2>
+                        )}
+                      </div>
+                    </motion.div>
                   </HoverCard>
                 </motion.div>
               </Dialog.Trigger>

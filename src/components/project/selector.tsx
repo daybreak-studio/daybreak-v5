@@ -24,10 +24,56 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
         }}
         className="flex w-full items-center justify-center p-4 text-center"
       >
-        <div className="flex flex-col items-center justify-center space-y-2">
-          <h2 className="text-center text-3xl text-neutral-600">{data.name}</h2>
-          <h2 className="text-center text-neutral-400">{data.description}</h2>
-        </div>
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.15,
+                delayChildren: 0.3,
+              },
+            },
+          }}
+          className="flex flex-col items-center justify-center space-y-2"
+        >
+          <motion.h2
+            variants={{
+              hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
+              visible: {
+                opacity: 1,
+                filter: "blur(0px)",
+                y: 0,
+                transition: {
+                  duration: 0.6,
+                  ease: EASINGS.easeOutQuart,
+                },
+              },
+            }}
+            className="text-center text-3xl text-neutral-600"
+          >
+            {data.name}
+          </motion.h2>
+          <motion.h2
+            variants={{
+              hidden: { opacity: 0, filter: "blur(10px)", y: 20 },
+              visible: {
+                opacity: 1,
+                filter: "blur(0px)",
+                y: 0,
+                transition: {
+                  duration: 0.6,
+                  ease: EASINGS.easeOutQuart,
+                },
+              },
+            }}
+            className="text-center text-neutral-400"
+          >
+            {data.description}
+          </motion.h2>
+        </motion.div>
       </motion.div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {data.projects?.map((project, index) => {
@@ -40,12 +86,12 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                 scale: 0.99,
               }}
               key={project._key}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, filter: "blur(10px)", y: 50 }}
+              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
               transition={{
-                duration: 0.6,
+                duration: 2,
                 ease: EASINGS.easeOutQuart,
-                delay: 0.1 + index * 0.1,
+                delay: 0.4 + index * 0.15,
               }}
               onClick={() => {
                 router.push(
