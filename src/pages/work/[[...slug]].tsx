@@ -129,8 +129,8 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   }, [clientSlug, isInitialMount]);
 
   return (
-    <div className="mx-auto p-8">
-      <div className="relative grid grid-cols-1 gap-8 pt-24 md:grid-cols-2 lg:grid-cols-3">
+    <div className="mx-auto p-8 lg:px-48 lg:py-16">
+      <div className="relative grid grid-cols-1 gap-6 pt-24 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         {data.map((client) => {
           const mediaAsset = getClientFirstMedia(client);
           const assetId = getMediaAssetId(mediaAsset);
@@ -167,7 +167,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                     delay: isInitialMount ? 0.2 : 0,
                   }}
                   className={cn(
-                    "relative aspect-square w-full origin-center cursor-pointer overflow-hidden",
+                    "relative aspect-square w-full origin-center cursor-pointer",
                     isAnimating &&
                       activeThumbId === client.slug?.current &&
                       "z-50",
@@ -179,20 +179,12 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                   }}
                 >
                   <HoverCard>
-                    <motion.div
-                      {...IMAGE_ANIMATION}
-                      layoutId={assetId || undefined}
-                      className={cn(
-                        "relative aspect-square h-full w-full origin-center object-cover",
-                      )}
-                    >
-                      <MediaRenderer
-                        className="frame-inner"
-                        fill
-                        media={mediaAsset}
-                        autoPlay={true}
-                      />
-                    </motion.div>
+                    <MediaRenderer
+                      className="frame-inner"
+                      fill
+                      media={mediaAsset}
+                      autoPlay={true}
+                    />
                   </HoverCard>
                 </motion.div>
               </Dialog.Trigger>
