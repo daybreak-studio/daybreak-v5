@@ -58,6 +58,12 @@ const isMuxVideo = (media: MediaItem): boolean => {
   return media._type === "videoItem" && media.source?._type === "mux.video";
 };
 
+// Add a simple event system to handle video pausing
+export const VIDEO_EVENTS = {
+  PAUSE_ALL: "PAUSE_ALL_VIDEOS",
+  RESUME_ALL: "RESUME_ALL_VIDEOS",
+};
+
 export const MediaRenderer = memo(
   function MediaRenderer({
     media,
@@ -103,6 +109,28 @@ export const MediaRenderer = memo(
           handleVisibilityChange,
         );
     }, []);
+
+    useEffect(() => {
+      const handlePauseAll = () => {
+        if (videoRef.current) {
+          videoRef.current.pause();
+        }
+      };
+
+      const handleResumeAll = () => {
+        if (videoRef.current && autoPlay) {
+          videoRef.current.play();
+        }
+      };
+
+      window.addEventListener(VIDEO_EVENTS.PAUSE_ALL, handlePauseAll);
+      window.addEventListener(VIDEO_EVENTS.RESUME_ALL, handleResumeAll);
+
+      return () => {
+        window.removeEventListener(VIDEO_EVENTS.PAUSE_ALL, handlePauseAll);
+        window.removeEventListener(VIDEO_EVENTS.RESUME_ALL, handleResumeAll);
+      };
+    }, [autoPlay]);
 
     if (!media?.source?.asset) return null;
 

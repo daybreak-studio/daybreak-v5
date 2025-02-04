@@ -138,29 +138,23 @@ const Navigation = memo(function Navigation({
 
   return (
     <motion.div
-      layout
-      layoutId="nav-root"
       className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
-      initial={{ y: 100 }}
-      animate={{ y: 0 }}
-      exit={{ y: 100 }}
+      initial={{ y: 100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      exit={{ y: 100, opacity: 0 }}
       transition={{
         duration: 0.6,
         ease: EASINGS.easeOutExpo,
-        delay: 0.4,
+        delay: 0.8,
       }}
     >
       <motion.div
         layout
-        layoutId="nav-container"
         className="mx-auto h-min w-min overflow-hidden bg-white/60 p-1 drop-shadow-2xl backdrop-blur-2xl"
         animate={{
           borderRadius: isExpanded ? 32 : 16,
         }}
-        transition={{
-          duration: 0.4,
-          ease: EASINGS.easeOutQuart,
-        }}
+        transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
       >
         <motion.div
           layout
@@ -367,7 +361,7 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   return (
     <div
       ref={containerRef}
-      className="hide-scrollbar min-h-screen px-4 py-8 pt-24 xl:px-8 xl:pt-32"
+      className="hide-scrollbar h-screen overflow-y-auto px-4 py-8 pt-24 xl:px-8 xl:pt-32"
     >
       <motion.h1
         className="mb-8 py-24 text-center text-4xl xl:text-5xl"
