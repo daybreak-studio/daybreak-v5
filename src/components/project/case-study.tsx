@@ -83,12 +83,12 @@ const MediaGroup = memo(function MediaGroup({
       id={id}
       initial={false}
       animate={{
-        opacity: isZoomed ? (isActive ? 1 : 0.2) : 1,
+        // opacity: isZoomed ? (isActive ? 1 : 0.2) : 1,
         scale: isZoomed ? (isActive ? 0.95 : 0.85) : 1,
       }}
       whileHover={{
         scale: isZoomed ? (isActive ? 0.95 : 0.88) : 0.99,
-        opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
+        // opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
       }}
       transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
       className={cn(
@@ -101,8 +101,8 @@ const MediaGroup = memo(function MediaGroup({
     >
       {group.media?.map((media, mediaIndex) => (
         <motion.div
-          {...IMAGE_ANIMATION}
-          layoutId={getMediaAssetId(media) || undefined}
+          // {...IMAGE_ANIMATION}
+          // layoutId={getMediaAssetId(media) || undefined}
           key={`${index}-${mediaIndex}`}
         >
           <MediaRenderer
@@ -136,17 +136,19 @@ const Navigation = memo(function Navigation({
     setPrevIndex(activeGroup);
   }, [activeGroup]);
 
-  const transition = { duration: 0.4, ease: EASINGS.easeOutQuart };
-
   return (
     <motion.div
       layout
       layoutId="nav-root"
       className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
-      initial={{ opacity: 0, y: 20, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 20, scale: 0.9 }}
-      transition={transition}
+      initial={{ y: 100 }}
+      animate={{ y: 0 }}
+      exit={{ y: 100 }}
+      transition={{
+        duration: 0.6,
+        ease: EASINGS.easeOutExpo,
+        delay: 0.4,
+      }}
     >
       <motion.div
         layout
@@ -155,7 +157,10 @@ const Navigation = memo(function Navigation({
         animate={{
           borderRadius: isExpanded ? 32 : 16,
         }}
-        transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
+        transition={{
+          duration: 0.4,
+          ease: EASINGS.easeOutQuart,
+        }}
       >
         <motion.div
           layout
@@ -200,7 +205,10 @@ const Navigation = memo(function Navigation({
                       initial={{ opacity: 0, y: direction * 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: direction * -20 }}
-                      transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
+                      transition={{
+                        duration: 0.4,
+                        ease: EASINGS.easeOutQuart,
+                      }}
                     >
                       {currentGroup.heading && (
                         <div className="mb-2 flex w-full items-center justify-between text-lg">
@@ -357,12 +365,9 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   );
 
   return (
-    <motion.div
+    <div
       ref={containerRef}
-      className="hide-scrollbar h-screen overflow-y-auto px-4 py-8 pt-24 xl:px-8 xl:pt-32"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.4, ease: easeOut }}
+      className="hide-scrollbar min-h-screen px-4 py-8 pt-24 xl:px-8 xl:pt-32"
     >
       <motion.h1
         className="mb-8 py-24 text-center text-4xl xl:text-5xl"
@@ -426,6 +431,6 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
           />
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }

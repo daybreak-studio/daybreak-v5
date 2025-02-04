@@ -18,8 +18,6 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
   return (
     <div className="space-y-4">
       <motion.div
-        initial={{ opacity: 0, filter: "blur(10px)" }}
-        animate={{ opacity: 1, filter: "blur(0px)" }}
         transition={{
           duration: 1.2,
           ease: EASINGS.easeOutExpo,
@@ -34,7 +32,6 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {data.projects?.map((project, index) => {
           const mediaAsset = getProjectFirstMedia(project);
-          const assetId = getMediaAssetId(mediaAsset);
           if (!project.category) return null;
 
           return (
@@ -43,10 +40,10 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                 scale: 0.99,
               }}
               key={project._key}
-              initial={{ opacity: 0, filter: "blur(10px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{
-                duration: 1,
+                duration: 0.6,
                 ease: EASINGS.easeOutQuart,
                 delay: 0.1 + index * 0.1,
               }}
@@ -57,20 +54,20 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                   { shallow: true },
                 );
               }}
-              className="cursor-pointer overflow-hidden"
+              className="cursor-pointer"
             >
-              <motion.div className="flex items-center justify-center rounded-2xl border border-neutral-400/10 bg-neutral-400/5 p-2 md:flex-col md:items-start md:p-1">
+              <div className="frame-inner flex items-center justify-center border border-neutral-400/10 bg-neutral-400/5 p-2 md:flex-col md:items-start md:p-1">
                 <motion.div
                   {...IMAGE_ANIMATION}
-                  layoutId={assetId || undefined}
-                  className="relative aspect-square w-20 md:w-full"
+                  layoutId={getMediaAssetId(mediaAsset) || undefined}
+                  className="frame-inner relative aspect-square w-20 overflow-hidden md:w-full"
                 >
                   <MediaRenderer
                     fill
                     media={mediaAsset}
                     autoPlay={false}
                     thumbnailTime={1}
-                    className="rounded-xl duration-300 group-hover:scale-105"
+                    className="h-full w-full object-cover"
                   />
                 </motion.div>
                 <div className="flex w-full p-2 pl-4 md:flex-col md:p-4">
@@ -84,7 +81,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                     {project.caption}
                   </h4>
                 </div>
-              </motion.div>
+              </div>
             </motion.div>
           );
         })}

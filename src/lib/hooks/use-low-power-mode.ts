@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
+import { useDebug } from "@/lib/contexts/debug";
 
-export const useLowPowerMode = () => {
+export function useLowPowerMode() {
   const [isLowPowerMode, setIsLowPowerMode] = useState(false);
+  const { debug } = useDebug();
 
   useEffect(() => {
+    // Skip battery/media checks if debug mode is on
+    if (debug) return;
+
     const checkBattery = async () => {
       try {
         if ("getBattery" in navigator) {
@@ -38,11 +43,13 @@ export const useLowPowerMode = () => {
 
     const handleChange = (e: MediaQueryListEvent) =>
       setIsLowPowerMode(e.matches);
+
     setIsLowPowerMode(mediaQuery.matches);
     mediaQuery.addEventListener("change", handleChange);
 
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+  }, [debug]); // Add debug to dependencies
 
-  return isLowPowerMode;
-};
+  // Return true if debug mode is on, otherwise return the low power mode state
+  return debug || isLowPowerMode;
+}

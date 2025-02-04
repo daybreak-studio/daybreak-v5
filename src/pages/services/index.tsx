@@ -19,7 +19,6 @@ const servicesWidgets: WidgetRegistry = {
 };
 
 export default function Services({ servicesData }: { servicesData: Services }) {
-  console.log(servicesData);
   return (
     <div className="flex h-full min-h-screen flex-col items-center justify-center space-y-6 lg:space-y-8">
       <motion.h1

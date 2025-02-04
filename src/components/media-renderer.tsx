@@ -16,6 +16,7 @@ interface MediaRendererProps {
   fill?: boolean;
   thumbnailTime?: number;
   disableThumbnail?: boolean;
+  loading?: "lazy" | "eager";
   forcedVideoPlayback?: boolean;
   playsInline?: boolean;
   muted?: boolean;
@@ -27,6 +28,10 @@ interface MediaRendererProps {
     ease?: number[] | string;
     delay?: number;
   };
+  quality?: number;
+  width?: number;
+  height?: number;
+  sizes?: string;
 }
 
 interface ImageProps {
@@ -64,6 +69,7 @@ export const MediaRenderer = memo(
     fill = false,
     thumbnailTime,
     disableThumbnail = false,
+    loading,
     forcedVideoPlayback = false,
     playsInline = true,
     muted = true,
@@ -71,6 +77,10 @@ export const MediaRenderer = memo(
     onLoad,
     onError,
     transition,
+    quality = 95,
+    width,
+    height,
+    sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px",
   }: MediaRendererProps) {
     const isLowPowerMode = useLowPowerMode();
     const [error, setError] = useState(false);
@@ -104,6 +114,36 @@ export const MediaRenderer = memo(
       onError?.();
     };
 
+    // For thumbnails of videos, use Mux thumbnail URL
+    if (isMuxVideo(media) && !shouldShowVideo) {
+      return (
+        <motion.figure
+          layout={layout}
+          layoutId={layoutId}
+          className={fill ? "relative h-full w-full will-change-transform" : ""}
+          transition={transition}
+        >
+          <Image
+            src={getMuxThumbnailUrl(media)}
+            alt={media.alt || ""}
+            className={cn("object-cover", className)}
+            {...(fill
+              ? { fill: true }
+              : {
+                  width: width || 40,
+                  height: height || 40,
+                })}
+            priority={priority}
+            loading={loading}
+            quality={quality}
+            sizes={sizes}
+            onError={handleError}
+            onLoad={onLoad}
+          />
+        </motion.figure>
+      );
+    }
+
     if (shouldShowVideo) {
       return (
         <motion.figure
@@ -132,6 +172,12 @@ export const MediaRenderer = memo(
       );
     }
 
+    // For images, ensure we have a valid Sanity image reference
+    if (!media.source?.asset?._ref?.startsWith("image-")) {
+      console.warn("Invalid image asset reference:", media);
+      return null;
+    }
+
     return (
       <motion.figure
         layout={layout}
@@ -146,13 +192,19 @@ export const MediaRenderer = memo(
           {...(fill
             ? { fill: true }
             : {
-                width: media.source?.asset?.metadata?.dimensions?.width || 2000,
+                width:
+                  width ||
+                  media.source?.asset?.metadata?.dimensions?.width ||
+                  2000,
                 height:
-                  media.source?.asset?.metadata?.dimensions?.height || 2000,
+                  height ||
+                  media.source?.asset?.metadata?.dimensions?.height ||
+                  2000,
               })}
           priority={priority}
-          quality={95}
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px"
+          loading={loading}
+          quality={quality}
+          sizes={sizes}
           placeholder={media.source?.asset?.metadata?.lqip ? "blur" : undefined}
           blurDataURL={media.source?.asset?.metadata?.lqip}
           onError={handleError}

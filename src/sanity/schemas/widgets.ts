@@ -222,6 +222,18 @@ export const recents = {
   preview: createWidgetPreview("Recents"),
 };
 
+export const cta = {
+  type: "object",
+  name: "cta",
+  title: "CTA",
+  fields: createWidgetFields([
+    defineField({ name: "title", type: "string", title: "Title" }),
+    defineField({ name: "description", type: "text", title: "Description" }),
+    defineField({ name: "link", type: "url", title: "Link" }),
+  ]),
+  preview: createWidgetPreview("CTA"),
+};
+
 export const widgets = [
   twitter,
   media,

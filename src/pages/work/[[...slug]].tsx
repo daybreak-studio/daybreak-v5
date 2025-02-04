@@ -14,7 +14,7 @@ import ProjectCaseStudy from "@/components/project/case-study";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import { client } from "@/sanity/lib/client";
 import { CLIENTS_QUERY } from "@/sanity/lib/queries";
@@ -39,8 +39,7 @@ const MODAL_VARIANTS = {
     type: "preview",
   },
   caseStudy: {
-    className:
-      "h-[100svh] w-screen max-w-none overflow-y-auto rounded-none bg-white",
+    className: "fixed inset-0 max-h-screen w-screen overflow-y-auto bg-white",
     type: "caseStudy",
   },
 } as const;
@@ -72,10 +71,27 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   const [clientSlug, projectSlug] = Array.isArray(slug)
     ? slug
     : [slug, undefined];
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Add a handler for modal state changes
+  const handleOpenChange = useCallback(
+    (open: boolean, client: Clients) => {
+      // Immediately update route without waiting for animations
+      if (!open) {
+        router.push("/work", undefined, { shallow: true });
+      } else {
+        // Allow opening even if previous animation hasn't finished
+        setIsAnimating(false); // Force clear animation state
+        router.push(`/work/${client.slug?.current}`, undefined, {
+          shallow: true,
+        });
+      }
+    },
+    [router],
+  );
 
   // Add state to track the active thumbnail during animation
   const [activeThumbId, setActiveThumbId] = useState<string | null>(null);
-  const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [isInitialMount, setIsInitialMount] = useState(true);
 
   // First, let's add a state for controlling grid animation
@@ -88,17 +104,6 @@ export default function WorkPage({ data }: { data: Clients[] }) {
 
   // Force modal to be mounted when route includes client/project
   const shouldShowModal = Boolean(clientSlug);
-
-  console.log("Route Debug:", {
-    fullSlug: slug,
-    clientSlug,
-    projectSlug,
-    currentClient,
-    availableProjects: currentClient?.projects,
-    modalVariant: currentClient
-      ? getModalVariant(currentClient, projectSlug)
-      : null,
-  });
 
   // Update the useEffect to handle both cases
   useEffect(() => {
@@ -136,18 +141,15 @@ export default function WorkPage({ data }: { data: Clients[] }) {
           return (
             <Dialog.Root
               key={client._id}
-              open={isOpen && !isInitialMount}
-              onOpenChange={(open) => {
-                setActiveThumbId(client.slug?.current || null);
-                if (!open) {
-                  router.push("/work", undefined, { shallow: true });
-                } else {
-                  router.push(`/work/${client.slug?.current}`, undefined, {
-                    shallow: true,
-                  });
-                }
-              }}
+              open={isOpen}
+              onOpenChange={(open) => handleOpenChange(open, client)}
             >
+              <Dialog.Title className="DialogTitle hidden">
+                Edit profile
+              </Dialog.Title>
+              <Dialog.Description className="DialogDescription hidden">
+                Make changes to your profile here. Click save when ur done.
+              </Dialog.Description>
               <Dialog.Trigger asChild>
                 <motion.div
                   {...CONTAINER_ANIMATION}
@@ -167,8 +169,8 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                       activeThumbId === client.slug?.current &&
                       "z-50",
                   )}
-                  onLayoutAnimationStart={() => setIsAnimating(true)}
-                  onLayoutAnimationComplete={() => {
+                  onAnimationStart={() => setIsAnimating(true)}
+                  onAnimationComplete={() => {
                     setIsAnimating(false);
                     setActiveThumbId(null);
                   }}
@@ -192,7 +194,12 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                 </motion.div>
               </Dialog.Trigger>
 
-              <AnimatePresence>
+              <AnimatePresence
+                mode="popLayout"
+                onExitComplete={() => {
+                  console.log("Exit animation complete");
+                }}
+              >
                 {isOpen && (
                   <Dialog.Portal forceMount>
                     <Dialog.Overlay asChild forceMount>
@@ -203,7 +210,6 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         transition={{
                           duration: 0.4,
                           ease: EASINGS.easeOutQuart,
-                          delay: isInitialMount ? 0.3 : 0,
                         }}
                         className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
                       />
@@ -211,24 +217,17 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                     <Dialog.Content
                       asChild
                       forceMount
-                      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                      className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2"
                     >
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                          duration: 0.3,
-                          ease: EASINGS.easeOutQuart,
-                        }}
-                        className="z-50 focus:outline-none"
-                      >
+                      <motion.div className="focus:outline-none">
                         <motion.div
                           {...CONTAINER_ANIMATION}
                           layoutId={containerLayoutId}
+                          onAnimationStart={() => setIsAnimating(true)}
+                          onAnimationComplete={() => setIsAnimating(false)}
                           className={cn(
                             "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white/70 backdrop-blur-lg",
-                            isAnimating && "will-change-transform",
+                            "will-change-transform",
                             modalVariant.className,
                           )}
                         >

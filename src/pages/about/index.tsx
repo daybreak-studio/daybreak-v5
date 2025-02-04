@@ -409,8 +409,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
             transition={{ duration: 0.4 }}
           >
             {aboutData.team?.map((person, i) => {
-              console.log("Person:", person);
-              console.log("Person video:", person.media);
               return (
                 <motion.div
                   key={person._key}

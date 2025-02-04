@@ -44,8 +44,6 @@ export default function QuotesWidget({ data }: QuotesProps) {
     }),
   };
 
-  console.log(data);
-
   const renderContent = () => {
     switch (data.size) {
       case "1x1":
