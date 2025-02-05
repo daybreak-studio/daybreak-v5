@@ -328,9 +328,9 @@ function PersonInfo({
   onToggle: () => void;
   isPreview: boolean;
 }) {
-  if (!person) return null;
+  // Move hooks to the top level, before any conditional returns
+  const isAnimating = useRef(false);
 
-  // Add keyboard handler for modal
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const modalElement = document.getElementById("person-info");
@@ -368,7 +368,8 @@ function PersonInfo({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isExpanded, isPreview, onToggle]);
 
-  const isAnimating = useRef(false);
+  // Early return after hooks
+  if (!person) return null;
 
   return (
     <motion.div
