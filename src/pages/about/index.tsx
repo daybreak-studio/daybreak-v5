@@ -134,7 +134,7 @@ const CarouselSlide = ({
 }) => (
   <motion.div
     key={person._key}
-    className="relative flex h-full w-full flex-[0_0_100%] items-center justify-center mix-blend-multiply md:flex-[0_0_25%]"
+    className="relative flex h-full w-full flex-[0_0_75%] items-center justify-center mix-blend-multiply xl:flex-[0_0_25%]"
     initial={{ scale: 0.8, filter: "blur(12px)", opacity: 0 }}
     animate={{
       scale: selectedIndex === index ? 1 : 0.9,
@@ -173,7 +173,7 @@ const NavigationDots = ({
   onHoverStart: (index: number) => void;
   onHoverEnd: () => void;
 }) => (
-  <div className="absolute bottom-36 left-1/2 z-10 -translate-x-1/2 md:bottom-40">
+  <div className="absolute bottom-36 left-1/2 z-10 hidden -translate-x-1/2 md:bottom-40 md:block">
     <motion.div className="dots-container flex px-4 py-2">
       {team?.map((_, index) => (
         <motion.button
