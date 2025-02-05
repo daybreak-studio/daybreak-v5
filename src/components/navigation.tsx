@@ -155,7 +155,7 @@ const MobileMenu = ({
     animate={{ opacity: 1, filter: "blur(0px)" }}
     exit={{ opacity: 0, filter: "blur(12px)" }}
     transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-    className="fixed inset-0 z-50 flex flex-col items-center bg-white/50 backdrop-blur-3xl"
+    className="fixed inset-0 z-50 flex h-[100svh] flex-col items-center bg-white/50 backdrop-blur-3xl"
   >
     <div className="container relative flex h-full w-full max-w-lg flex-col items-center justify-center px-8">
       <motion.div
@@ -245,10 +245,60 @@ const MobileMenu = ({
   </motion.div>
 );
 
-export default function Navigation() {
+interface NavigationProps {
+  forceHide?: boolean;
+}
+
+function useScrollDirection() {
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
+  const [prevScroll, setPrevScroll] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const threshold = 10;
+    let ticking = false;
+
+    const updateScrollDir = () => {
+      const currentScroll = window.scrollY;
+
+      if (Math.abs(currentScroll - prevScroll) < threshold) {
+        ticking = false;
+        return;
+      }
+
+      // Don't hide nav when at the top of the page
+      if (currentScroll < threshold) {
+        setVisible(true);
+        setPrevScroll(currentScroll);
+        ticking = false;
+        return;
+      }
+
+      setVisible(currentScroll < prevScroll);
+      setScrollDirection(currentScroll > prevScroll ? "down" : "up");
+      setPrevScroll(currentScroll);
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateScrollDir);
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [prevScroll]);
+
+  return visible;
+}
+
+export default function Navigation({ forceHide }: NavigationProps) {
   const { basePath } = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const isValidPath = tabs.some((tab) => tab.href === basePath);
+  const showNav = useScrollDirection();
 
   // Close mobile menu if window is resized to desktop
   useEffect(() => {
@@ -264,7 +314,12 @@ export default function Navigation() {
 
   return (
     <>
-      <motion.nav className="pointer-events-auto fixed left-0 right-0 top-0 z-[70] mx-auto flex w-full justify-center">
+      <motion.nav
+        className="pointer-events-auto fixed left-0 right-0 top-0 z-[40] mx-auto flex w-full justify-center"
+        initial={{ y: 0 }}
+        animate={{ y: !showNav || forceHide ? -100 : 0 }}
+        transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
+      >
         <div className="mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl border-[1px] border-neutral-300/25 bg-neutral-50 p-1 mix-blend-multiply shadow-lg backdrop-blur-3xl md:rounded-2xl">
           <Link
             href="/"

@@ -12,6 +12,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import { useViewport } from "@/lib/hooks/use-viewport";
 
 interface ProjectPreviewProps {
   data: Clients;
@@ -103,7 +104,7 @@ const ProjectInfo = memo(function ProjectInfo({
           opacity: 1,
           transition: {
             staggerChildren: 0.2,
-            delayChildren: 0.6,
+            delayChildren: 0.1,
           },
         },
       }}
@@ -177,6 +178,27 @@ const ProjectInfo = memo(function ProjectInfo({
   );
 });
 
+// Add this helper component for the dots
+const PreviewDots = ({
+  total,
+  current,
+}: {
+  total: number;
+  current: number;
+}) => (
+  <div className="flex justify-center space-x-2 pt-4">
+    {Array.from({ length: total }).map((_, i) => (
+      <div
+        key={i}
+        className={cn(
+          "h-2 w-2 rounded-full transition-colors duration-200",
+          i === current ? "bg-neutral-400" : "bg-neutral-500/20",
+        )}
+      />
+    ))}
+  </div>
+);
+
 // Main Preview Component
 export default function ProjectPreview({ data }: ProjectPreviewProps) {
   const router = useRouter();
@@ -187,6 +209,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const controls = useAnimation();
+  const { isMobile } = useViewport();
 
   // Move project finding inside a useMemo to avoid recalculations
   const project = useMemo(
@@ -211,6 +234,10 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     },
     [mediaArray.length],
   );
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev + 1) % mediaArray.length);
+  }, [mediaArray.length]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -248,58 +275,54 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
         layoutId={assetId || undefined}
       >
         <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            onClick={() => handleNavigate(currentIndex + 1)}
-            className="hidden aspect-square h-full w-full cursor-pointer overflow-hidden focus:outline-none md:block"
-            key={currentIndex}
-            initial={{ opacity: 0, filter: "blur(8px)" }}
-            animate={{ opacity: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, filter: "blur(8px)" }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            transition={EASINGS.easeOutQuart}
-          >
-            <MediaRenderer
-              className="frame-inner max-h-[700px] cursor-e-resize"
-              media={mediaAsset}
-              autoPlay={true}
-              priority={true}
-              fill
-              loading="eager"
-            />
-          </motion.div>
-        </AnimatePresence>
+          {/* Desktop view */}
+          {!isMobile && (
+            <motion.div
+              onClick={handleNext}
+              className="hidden aspect-square h-full w-full cursor-pointer overflow-hidden focus:outline-none md:block"
+              key={currentIndex}
+              initial={{ opacity: 0, filter: "blur(8px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
+              exit={{ opacity: 0, filter: "blur(8px)" }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
+            >
+              <MediaRenderer
+                className="frame-inner max-h-[700px] cursor-e-resize"
+                media={mediaArray[currentIndex]}
+                autoPlay={true}
+                priority={true}
+                fill
+                loading="eager"
+              />
+            </motion.div>
+          )}
 
-        <div className="relative overflow-hidden md:hidden">
-          <Swiper
-            modules={[Pagination]}
-            spaceBetween={16}
-            slidesPerView={1}
-            pagination={{
-              clickable: true,
-              bulletActiveClass: "bg-neutral-100",
-              bulletClass:
-                "inline-block h-2 w-2 rounded-full bg-neutral-500 mx-1",
-            }}
-            onSlideChange={(swiper) => handleNavigate(swiper.activeIndex)}
-            className="frame-inner w-full overflow-hidden"
-          >
-            {mediaArray.map((media, index) => (
-              <SwiperSlide key={media._key} className="overflow-hidden">
-                <div className="w-full overflow-hidden">
-                  <MediaRenderer
-                    className="frame-inner h-full w-full overflow-hidden"
-                    media={media}
-                    autoPlay={index === currentIndex}
-                    priority={index === currentIndex}
-                    loading={index === currentIndex ? "eager" : "lazy"}
-                    disableThumbnail={index !== currentIndex}
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+          {/* Mobile view */}
+          {isMobile && (
+            <div className="relative flex flex-col">
+              <motion.div
+                onClick={handleNext}
+                className="frame-inner w-full overflow-hidden"
+                key={currentIndex}
+                initial={{ filter: "blur(8px)" }}
+                animate={{ filter: "blur(0px)" }}
+                exit={{ filter: "blur(8px)" }}
+                transition={{ duration: 1, ease: EASINGS.easeOutQuart }}
+              >
+                <MediaRenderer
+                  className="frame-inner h-full w-full overflow-hidden"
+                  media={mediaArray[currentIndex]}
+                  autoPlay={true}
+                  priority={true}
+                  loading="eager"
+                />
+              </motion.div>
+              <PreviewDots total={mediaArray.length} current={currentIndex} />
+            </div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       <motion.div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">

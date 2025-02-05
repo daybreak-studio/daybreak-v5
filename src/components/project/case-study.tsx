@@ -19,6 +19,7 @@ import { EASINGS } from "@/components/animations/easings";
 import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
 import { getMediaAssetId } from "@/sanity/lib/media";
 import { IMAGE_ANIMATION } from "./animations";
+import { useViewport } from "@/lib/hooks/use-viewport";
 // Types
 interface ProjectCaseStudyProps {
   data: Clients;
@@ -61,6 +62,7 @@ const MediaGroup = memo(function MediaGroup({
   onActivate,
 }: MediaGroupProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const { isDesktop } = useViewport();
   const isInView = useInView(ref, {
     amount: "some",
     margin: "-45% 0px -45% 0px",
@@ -83,21 +85,23 @@ const MediaGroup = memo(function MediaGroup({
       id={id}
       initial={false}
       animate={{
-        // opacity: isZoomed ? (isActive ? 1 : 0.2) : 1,
         scale: isZoomed ? (isActive ? 0.95 : 0.85) : 1,
       }}
       whileHover={{
         scale: isZoomed ? (isActive ? 0.95 : 0.88) : 0.99,
-        // opacity: isZoomed ? (isActive ? 1 : 0.3) : 1,
       }}
       transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
       className={cn(
-        "grid origin-center cursor-pointer gap-4",
+        "grid origin-center gap-4 md:cursor-pointer",
         group.media?.length === 1
           ? "grid-cols-1"
           : "grid-cols-1 md:grid-cols-2",
       )}
-      onClick={onActivate}
+      onClick={() => {
+        if (isDesktop) {
+          onActivate();
+        }
+      }}
     >
       {group.media?.map((media, mediaIndex) => (
         <motion.div
@@ -138,7 +142,7 @@ const Navigation = memo(function Navigation({
 
   return (
     <motion.div
-      className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
+      className="fixed bottom-0 left-0 right-0 hidden px-3 pb-4 md:bottom-4 md:block md:px-4"
       initial={{ y: 25, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 25, opacity: 0 }}
@@ -359,72 +363,71 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   );
 
   return (
-    <div
-      ref={containerRef}
-      className="hide-scrollbar h-screen overflow-y-auto px-4 py-8 pt-24 xl:px-8 xl:pt-32"
-    >
-      <motion.h1
-        className="mb-8 py-24 text-center text-4xl xl:text-5xl"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: easeOut }}
-      >
-        {project.heading}
-      </motion.h1>
+    <div ref={containerRef} className="h-full overflow-y-auto overscroll-none">
+      <div className="hide-scrollbar px-4 py-8 pt-24 xl:px-8 xl:pt-32">
+        <motion.h1
+          className="mb-8 py-24 text-center text-4xl xl:text-5xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: easeOut }}
+        >
+          {project.heading}
+        </motion.h1>
 
-      <div className="flex flex-col gap-4 xl:gap-4">
-        {mediaGroups?.map(({ key, group, index }) => (
-          <MediaGroup
-            key={key}
-            id={`media-group-${index}`}
-            group={group}
-            index={index}
-            isActive={activeGroupIndex === index}
-            isZoomed={isZoomed}
-            activeGroupIndex={activeGroupIndex}
-            onScroll={handleGroupScroll}
-            onActivate={() => handleGroupActivate(index)}
-          />
-        ))}
+        <div className="flex flex-col gap-4 xl:gap-4">
+          {mediaGroups?.map(({ key, group, index }) => (
+            <MediaGroup
+              key={key}
+              id={`media-group-${index}`}
+              group={group}
+              index={index}
+              isActive={activeGroupIndex === index}
+              isZoomed={isZoomed}
+              activeGroupIndex={activeGroupIndex}
+              onScroll={handleGroupScroll}
+              onActivate={() => handleGroupActivate(index)}
+            />
+          ))}
 
-        {project.credits && (
-          <motion.div
-            className="mx-auto my-72 grid w-96 grid-cols-2 gap-y-6 text-sm"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-          >
-            {project.credits.map((credit, index) => (
-              <Fragment key={index}>
-                <div className="flex flex-row">
-                  {credit.role}
-                  <div className="mx-4 h-0 flex-grow translate-y-2 border-b border-gray-200" />
-                </div>
-                <div className="opacity-50">
-                  {credit.names?.map((name, idx) => (
-                    <div key={idx}>{name}</div>
-                  ))}
-                </div>
-              </Fragment>
-            ))}
-          </motion.div>
-        )}
+          {project.credits && (
+            <motion.div
+              className="mx-auto my-72 grid w-96 grid-cols-2 gap-y-6 text-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+            >
+              {project.credits.map((credit, index) => (
+                <Fragment key={index}>
+                  <div className="flex flex-row">
+                    {credit.role}
+                    <div className="mx-4 h-0 flex-grow translate-y-2 border-b border-gray-200" />
+                  </div>
+                  <div className="opacity-50">
+                    {credit.names?.map((name, idx) => (
+                      <div key={idx}>{name}</div>
+                    ))}
+                  </div>
+                </Fragment>
+              ))}
+            </motion.div>
+          )}
+        </div>
+
+        <AnimatePresence mode="popLayout">
+          {project.mediaGroups?.[activeGroupIndex]?.heading && (
+            <Navigation
+              activeGroup={activeGroupIndex}
+              groups={project.mediaGroups ?? []}
+              isExpanded={isZoomed}
+              onToggleExpand={() => setIsZoomed((prev) => !prev)}
+              onNext={handleNext}
+              onPrev={handlePrev}
+              canGoNext={findNextGroup(activeGroupIndex, 1, isZoomed) !== null}
+              canGoPrev={findNextGroup(activeGroupIndex, -1, isZoomed) !== null}
+            />
+          )}
+        </AnimatePresence>
       </div>
-
-      <AnimatePresence mode="popLayout">
-        {project.mediaGroups?.[activeGroupIndex]?.heading && (
-          <Navigation
-            activeGroup={activeGroupIndex}
-            groups={project.mediaGroups ?? []}
-            isExpanded={isZoomed}
-            onToggleExpand={() => setIsZoomed((prev) => !prev)}
-            onNext={handleNext}
-            onPrev={handlePrev}
-            canGoNext={findNextGroup(activeGroupIndex, 1, isZoomed) !== null}
-            canGoPrev={findNextGroup(activeGroupIndex, -1, isZoomed) !== null}
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

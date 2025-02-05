@@ -16,7 +16,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
   const router = useRouter();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-4">
       <motion.div
         transition={{
           duration: 1.2,
@@ -52,7 +52,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                 },
               },
             }}
-            className="text-center text-3xl text-neutral-600"
+            className="text-center text-2xl text-neutral-600 md:text-3xl"
           >
             {data.name}
           </motion.h2>
@@ -86,10 +86,10 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                 scale: 0.99,
               }}
               key={project._key}
-              initial={{ opacity: 0, filter: "blur(10px)", y: 50 }}
-              animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+              initial={{ opacity: 0, filter: "blur(10px)" }}
+              animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{
-                duration: 2,
+                duration: 1,
                 ease: EASINGS.easeOutQuart,
                 delay: 0.4 + index * 0.15,
               }}
@@ -102,7 +102,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
               }}
               className="cursor-pointer overflow-hidden"
             >
-              <div className="frame-inner flex items-center justify-center overflow-hidden border border-neutral-400/10 bg-neutral-400/5 p-2 md:flex-col md:items-start md:p-1">
+              <div className="frame-inner flex items-center justify-center overflow-hidden border border-neutral-400/10 bg-neutral-300/10 p-2 md:flex-col md:items-start md:p-1">
                 <motion.div
                   {...IMAGE_ANIMATION}
                   layoutId={getMediaAssetId(mediaAsset) || undefined}

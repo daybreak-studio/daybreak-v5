@@ -41,7 +41,7 @@ const MODAL_VARIANTS = {
   },
   caseStudy: {
     className:
-      "h-[100svh] w-screen max-w-none overflow-y-auto rounded-none bg-white",
+      "h-[100dvh] w-screen max-w-none overflow-y-auto rounded-none bg-white",
     type: "caseStudy",
   },
 } as const;
@@ -70,6 +70,14 @@ const getModalVariant = (client: Clients, projectSlug: string | undefined) => {
 // Add this helper function at the top of the file
 const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+// Add this helper function to determine if we should show the close button
+const shouldShowCloseButton = (modalType: string) => {
+  if (modalType === "caseStudy") {
+    return "hidden md:inline-flex"; // Only show on desktop for case studies
+  }
+  return "inline-flex"; // Show for all other modal types
 };
 
 export default function WorkPage({ data }: { data: Clients[] }) {
@@ -230,78 +238,84 @@ export default function WorkPage({ data }: { data: Clients[] }) {
               >
                 {isOpen && (
                   <Dialog.Portal forceMount>
-                    <Dialog.Overlay asChild forceMount>
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                          duration: 0.4,
-                          ease: EASINGS.easeOutQuart,
-                        }}
-                        className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
-                      />
-                    </Dialog.Overlay>
-                    <Dialog.Content
-                      asChild
-                      forceMount
-                      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                    >
-                      <motion.div className="z-50 focus:outline-none">
+                    <div className="fixed inset-0 z-[100]">
+                      <Dialog.Overlay asChild forceMount>
                         <motion.div
-                          {...CONTAINER_ANIMATION}
-                          layoutId={containerLayoutId}
-                          onAnimationStart={() => setIsAnimating(true)}
-                          onAnimationComplete={() => setIsAnimating(false)}
-                          className={cn(
-                            "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white/70 backdrop-blur-lg",
-                            "will-change-transform",
-                            modalVariant.className,
-                          )}
-                        >
-                          {modalVariant.type === "selector" && (
-                            <ProjectSelector data={client} />
-                          )}
-                          {modalVariant.type === "preview" && (
-                            <ProjectPreview data={client} />
-                          )}
-                          {modalVariant.type === "caseStudy" && (
-                            <ProjectCaseStudy data={client} />
-                          )}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{
+                            duration: 0.4,
+                            ease: EASINGS.easeOutQuart,
+                          }}
+                          className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
+                        />
+                      </Dialog.Overlay>
+                      <Dialog.Content
+                        asChild
+                        forceMount
+                        className="h-full w-full"
+                      >
+                        <motion.div className="flex items-center justify-center focus:outline-none">
+                          <motion.div
+                            {...CONTAINER_ANIMATION}
+                            layoutId={containerLayoutId}
+                            onAnimationStart={() => setIsAnimating(true)}
+                            onAnimationComplete={() => setIsAnimating(false)}
+                            className={cn(
+                              "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white/70 p-0 backdrop-blur-lg",
+                              "will-change-transform",
+                              modalVariant.className,
+                            )}
+                          >
+                            {modalVariant.type === "selector" && (
+                              <ProjectSelector data={client} />
+                            )}
+                            {modalVariant.type === "preview" && (
+                              <ProjectPreview data={client} />
+                            )}
+                            {modalVariant.type === "caseStudy" && (
+                              <ProjectCaseStudy data={client} />
+                            )}
 
-                          <Dialog.Close asChild>
-                            <motion.button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                if (projectSlug) {
-                                  router.push(
-                                    `/work/${clientSlug}`,
-                                    undefined,
-                                    {
+                            {/* Single Dialog.Close component for all modal types */}
+                            <Dialog.Close asChild>
+                              <motion.button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  if (projectSlug) {
+                                    router.push(
+                                      `/work/${clientSlug}`,
+                                      undefined,
+                                      {
+                                        shallow: true,
+                                      },
+                                    );
+                                  } else {
+                                    router.push("/work", undefined, {
                                       shallow: true,
-                                    },
-                                  );
-                                } else {
-                                  router.push("/work", undefined, {
-                                    shallow: true,
-                                  });
-                                }
-                              }}
-                              initial={{ scale: 1 }}
-                              whileHover={{ scale: 0.95 }}
-                              whileTap={{ scale: 0.9 }}
-                              transition={{
-                                duration: 0.2,
-                                ease: EASINGS.easeOutQuart,
-                              }}
-                              className="frame-inner absolute right-6 top-6 inline-flex size-12 cursor-pointer appearance-none items-center justify-center border-2 border-neutral-600/5 bg-white/50 text-neutral-500 backdrop-blur-lg transition-colors duration-300 focus:outline-none"
-                            >
-                              <Cross2Icon className="h-4 w-4" />
-                            </motion.button>
-                          </Dialog.Close>
+                                    });
+                                  }
+                                }}
+                                initial={{ scale: 1 }}
+                                whileHover={{ scale: 0.95 }}
+                                whileTap={{ scale: 0.9 }}
+                                transition={{
+                                  duration: 0.2,
+                                  ease: EASINGS.easeOutQuart,
+                                }}
+                                className={cn(
+                                  "frame-inner absolute right-6 top-6 size-10 cursor-pointer appearance-none items-center justify-center border-2 border-neutral-600/5 bg-white/50 text-neutral-500 backdrop-blur-lg transition-colors duration-300 focus:outline-none",
+                                  shouldShowCloseButton(modalVariant.type),
+                                )}
+                              >
+                                <Cross2Icon className="h-4 w-4" />
+                              </motion.button>
+                            </Dialog.Close>
+                          </motion.div>
                         </motion.div>
-                      </motion.div>
-                    </Dialog.Content>
+                      </Dialog.Content>
+                    </div>
                   </Dialog.Portal>
                 )}
               </AnimatePresence>
