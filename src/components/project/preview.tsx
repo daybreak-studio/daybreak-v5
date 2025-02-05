@@ -239,28 +239,28 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
 
   return (
     <motion.div
-      className="flex flex-col p-8 md:flex-row md:space-x-8"
+      className="flex flex-col overflow-hidden p-8 md:flex-row md:space-x-8"
       {...CONTAINER_ANIMATION}
     >
       <motion.div
-        className="order-2 pt-4 md:order-1 md:w-2/3 md:pt-0"
+        className="order-2 overflow-hidden pt-4 md:order-1 md:w-2/3 md:pt-0"
         {...IMAGE_ANIMATION}
         layoutId={assetId || undefined}
       >
-        <div className="hidden md:block">
+        <div className="hidden overflow-hidden md:block">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               onClick={() => handleNavigate(currentIndex + 1)}
-              className="cursor-pointer transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99]"
+              className="cursor-pointer overflow-hidden transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99]"
               key={currentIndex}
               initial={{ opacity: 0, filter: "blur(10px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               exit={{ opacity: 0, filter: "blur(10px)" }}
               transition={EASINGS.easeOutQuart}
             >
-              <div className="relative aspect-square w-full">
+              <div className="relative aspect-square w-full overflow-hidden">
                 <MediaRenderer
-                  className="frame-inner max-h-[700px] cursor-e-resize"
+                  className="frame-inner max-h-[700px] cursor-e-resize overflow-hidden"
                   media={mediaAsset}
                   autoPlay={true}
                   priority={true}
@@ -272,7 +272,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           </AnimatePresence>
         </div>
 
-        <div className="relative md:hidden">
+        <div className="relative overflow-hidden md:hidden">
           <Swiper
             modules={[Pagination]}
             spaceBetween={16}
@@ -284,13 +284,13 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                 "inline-block h-2 w-2 rounded-full bg-neutral-500 mx-1",
             }}
             onSlideChange={(swiper) => handleNavigate(swiper.activeIndex)}
-            className="frame-inner w-full"
+            className="frame-inner w-full overflow-hidden"
           >
             {mediaArray.map((media, index) => (
-              <SwiperSlide key={media._key}>
-                <div className="w-full">
+              <SwiperSlide key={media._key} className="overflow-hidden">
+                <div className="w-full overflow-hidden">
                   <MediaRenderer
-                    className="frame-inner h-full w-full"
+                    className="frame-inner h-full w-full overflow-hidden"
                     media={media}
                     autoPlay={index === currentIndex}
                     priority={index === currentIndex}
@@ -304,7 +304,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
         </div>
       </motion.div>
 
-      <motion.div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">
+      <motion.div className="order-1 flex flex-col justify-between overflow-hidden md:order-2 md:w-1/3">
         <Navigation
           total={mediaArray.length}
           current={currentIndex}

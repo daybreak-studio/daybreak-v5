@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
@@ -368,6 +368,8 @@ function PersonInfo({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isExpanded, isPreview, onToggle]);
 
+  const isAnimating = useRef(false);
+
   return (
     <motion.div
       layout
@@ -383,6 +385,12 @@ function PersonInfo({
       transition={{
         duration: 0.6,
         ease: EASINGS.easeOutQuart,
+      }}
+      onAnimationStart={() => {
+        isAnimating.current = true;
+      }}
+      onAnimationComplete={() => {
+        isAnimating.current = false;
       }}
     >
       <motion.div
@@ -406,7 +414,11 @@ function PersonInfo({
           aria-haspopup="dialog"
           aria-label={`${person.name}'s information. Press Enter to ${isExpanded ? "close" : "open"}`}
           tabIndex={0}
-          onClick={onToggle}
+          onClick={() => {
+            if (!isAnimating.current) {
+              onToggle();
+            }
+          }}
           className={cn(
             "relative flex w-screen max-w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden bg-white/30 p-6 backdrop-blur-2xl md:max-w-[400px]",
             !isExpanded &&

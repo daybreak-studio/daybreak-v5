@@ -18,10 +18,6 @@ const socialLinks: SocialLink[] = [
     href: "https://ca.linkedin.com/company/daybreakstudio",
     label: "LinkedIn",
   },
-  {
-    href: "https://read.cv/teams/daybreakstudio",
-    label: "Read.cv",
-  },
 ];
 
 export const Footer = () => {

@@ -75,7 +75,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
           </motion.h2>
         </motion.div>
       </motion.div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 overflow-hidden md:grid-cols-3">
         {data.projects?.map((project, index) => {
           const mediaAsset = getProjectFirstMedia(project);
           if (!project.category) return null;
@@ -100,9 +100,9 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                   { shallow: true },
                 );
               }}
-              className="cursor-pointer"
+              className="cursor-pointer overflow-hidden"
             >
-              <div className="frame-inner flex items-center justify-center border border-neutral-400/10 bg-neutral-400/5 p-2 md:flex-col md:items-start md:p-1">
+              <div className="frame-inner flex items-center justify-center overflow-hidden border border-neutral-400/10 bg-neutral-400/5 p-2 md:flex-col md:items-start md:p-1">
                 <motion.div
                   {...IMAGE_ANIMATION}
                   layoutId={getMediaAssetId(mediaAsset) || undefined}
