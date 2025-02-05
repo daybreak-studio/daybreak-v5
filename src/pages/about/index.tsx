@@ -13,18 +13,309 @@ import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
 import { useMotionValue, useTransform } from "framer-motion";
 
-interface TeamMember {
-  _key: string;
-  name: string;
-  role: string;
-  bio: string;
-  media: MediaItem[];
-  qaPairs: {
-    _key: string;
-    question: string;
-    answer: string;
-  }[];
+// Constants
+const SCROLL_CONFIG = {
+  TRACKPAD: {
+    THRESHOLD: 15,
+    DELAY: 100,
+  },
+  MOUSE: {
+    THRESHOLD: 35,
+    DELAY: 300,
+  },
+} as const;
+
+// Utility functions
+const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
+
+// Custom hooks
+const useCarouselNavigation = (
+  emblaApi: any,
+  setSelectedIndex: (i: number) => void,
+) => {
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const handleScroll = useCallback(
+    (event: WheelEvent) => {
+      if (!emblaApi || isScrolling) return;
+      event.preventDefault();
+
+      const isTrackpad =
+        Math.abs(event.deltaX) !== 0 || Math.abs(event.deltaY) < 50;
+      const delta = isTrackpad
+        ? Math.max(Math.abs(event.deltaX), Math.abs(event.deltaY))
+        : Math.abs(event.deltaY);
+      const threshold = isTrackpad
+        ? SCROLL_CONFIG.TRACKPAD.THRESHOLD
+        : SCROLL_CONFIG.MOUSE.THRESHOLD;
+
+      if (delta <= threshold) return;
+
+      setIsScrolling(true);
+      requestAnimationFrame(() => {
+        const direction = isTrackpad
+          ? Math.abs(event.deltaX) > Math.abs(event.deltaY)
+            ? event.deltaX
+            : event.deltaY
+          : event.deltaY;
+
+        const currentIndex = emblaApi.selectedScrollSnap();
+        const targetIndex =
+          direction > 0
+            ? Math.min(currentIndex + 1, emblaApi.scrollSnapList().length - 1)
+            : Math.max(currentIndex - 1, 0);
+
+        emblaApi.scrollTo(targetIndex);
+        setSelectedIndex(targetIndex);
+
+        setTimeout(
+          () => setIsScrolling(false),
+          isTrackpad ? SCROLL_CONFIG.TRACKPAD.DELAY : SCROLL_CONFIG.MOUSE.DELAY,
+        );
+      });
+    },
+    [emblaApi, isScrolling, setSelectedIndex],
+  );
+
+  // Add keyboard handler
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (!emblaApi) return;
+
+      switch (event.key) {
+        case "ArrowLeft":
+        case "ArrowUp":
+          event.preventDefault();
+          const prevIndex = Math.max(emblaApi.selectedScrollSnap() - 1, 0);
+          emblaApi.scrollTo(prevIndex);
+          setSelectedIndex(prevIndex);
+          break;
+        case "ArrowRight":
+        case "ArrowDown":
+          event.preventDefault();
+          const nextIndex = Math.min(
+            emblaApi.selectedScrollSnap() + 1,
+            emblaApi.scrollSnapList().length - 1,
+          );
+          emblaApi.scrollTo(nextIndex);
+          setSelectedIndex(nextIndex);
+          break;
+      }
+    },
+    [emblaApi, setSelectedIndex],
+  );
+
+  // Add keyboard event listener
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
+
+  return { handleScroll };
+};
+
+// Update the type for team member to be more specific
+type TeamMember = NonNullable<NonNullable<About["team"]>[number]>;
+type QAPair = NonNullable<TeamMember["qaPairs"]>[number];
+
+// Components
+const CarouselSlide = ({
+  person,
+  index,
+  selectedIndex,
+  isLoaded,
+  onClick,
+}: {
+  person: TeamMember;
+  index: number;
+  selectedIndex: number;
+  isLoaded: boolean;
+  onClick: () => void;
+}) => (
+  <motion.div
+    key={person._key}
+    className="relative flex h-full w-full flex-[0_0_100%] items-center justify-center mix-blend-multiply md:flex-[0_0_25%]"
+    initial={{ scale: 0.8, filter: "blur(12px)", opacity: 0 }}
+    animate={{
+      scale: selectedIndex === index ? 1 : 0.9,
+      filter: selectedIndex === index ? "blur(0px)" : "blur(8px)",
+      opacity: isLoaded ? (selectedIndex === index ? 1 : 0.65) : 0,
+    }}
+    transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
+    onClick={onClick}
+    style={{ cursor: "pointer" }}
+  >
+    {person.media?.[0] && (
+      <MediaRenderer
+        className="object-contain mix-blend-multiply"
+        media={person.media[0]}
+        autoPlay={true}
+        disableThumbnail={true}
+        forcedVideoPlayback={true}
+      />
+    )}
+  </motion.div>
+);
+
+// First, let's add the NavigationDots component
+const NavigationDots = ({
+  team,
+  selectedIndex,
+  previewIndex,
+  onDotClick,
+  onHoverStart,
+  onHoverEnd,
+}: {
+  team?: About["team"];
+  selectedIndex: number;
+  previewIndex: number | null;
+  onDotClick: (index: number) => void;
+  onHoverStart: (index: number) => void;
+  onHoverEnd: () => void;
+}) => (
+  <div className="absolute bottom-36 left-1/2 z-10 -translate-x-1/2 md:bottom-40">
+    <motion.div className="dots-container flex px-4 py-2">
+      {team?.map((_, index) => (
+        <motion.button
+          key={index}
+          onClick={() => onDotClick(index)}
+          onHoverStart={() => onHoverStart(index)}
+          onHoverEnd={onHoverEnd}
+          className="relative px-2 py-3"
+        >
+          <motion.div
+            className="h-2 w-2 rounded-full bg-neutral-500"
+            animate={{
+              scale:
+                index === previewIndex || index === selectedIndex ? 1.5 : 1,
+              opacity:
+                index === previewIndex || index === selectedIndex ? 1 : 0.5,
+            }}
+            transition={{
+              duration: 0.4,
+              ease: EASINGS.easeOutQuart,
+            }}
+          />
+        </motion.button>
+      ))}
+    </motion.div>
+  </div>
+);
+
+// Main component
+export default function AboutPage({ aboutData }: { aboutData: About }) {
+  const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
+
+  // Carousel setup
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "center",
+    containScroll: false,
+    axis: "x",
+    direction: "ltr",
+    startIndex,
+    dragFree: true,
+    inViewThreshold: 0.7,
+  });
+
+  // State
+  const [selectedIndex, setSelectedIndex] = useState(startIndex);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+
+  // Custom hooks
+  const { handleScroll } = useCarouselNavigation(emblaApi, setSelectedIndex);
+
+  // Effects
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const timeoutId = setTimeout(() => setIsLoaded(true), 100);
+    const onSelect = () => {
+      requestAnimationFrame(() => {
+        setSelectedIndex(emblaApi.selectedScrollSnap());
+      });
+    };
+
+    emblaApi.on("select", onSelect);
+    const rootNode = emblaApi.rootNode();
+    rootNode.addEventListener("wheel", handleScroll, { passive: false });
+
+    return () => {
+      clearTimeout(timeoutId);
+      rootNode.removeEventListener("wheel", handleScroll);
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi, handleScroll]);
+
+  // Handlers
+  const handleSlideClick = useCallback(
+    (index: number) => {
+      setPreviewIndex(null);
+      emblaApi?.scrollTo(index);
+      setSelectedIndex(index);
+    },
+    [emblaApi],
+  );
+
+  return (
+    <motion.div className="fixed inset-0">
+      {/* Carousel */}
+      <div className="main-gradient absolute inset-0">
+        <div ref={emblaRef} className="h-full overflow-hidden">
+          <motion.div
+            className="flex h-full items-center mix-blend-multiply"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            {aboutData.team?.map((person, i) => (
+              <CarouselSlide
+                key={person._key}
+                person={person}
+                index={i}
+                selectedIndex={selectedIndex}
+                isLoaded={isLoaded}
+                onClick={() => handleSlideClick(i)}
+              />
+            ))}
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Info Card */}
+      <PersonInfo
+        person={aboutData.team?.[previewIndex ?? selectedIndex] || undefined}
+        isExpanded={isExpanded}
+        onToggle={() => setIsExpanded(!isExpanded)}
+        isPreview={previewIndex !== null}
+      />
+
+      {/* Navigation Dots */}
+      {!isExpanded && (
+        <NavigationDots
+          team={aboutData.team}
+          selectedIndex={selectedIndex}
+          previewIndex={previewIndex}
+          onDotClick={handleSlideClick}
+          onHoverStart={setPreviewIndex}
+          onHoverEnd={() => setPreviewIndex(null)}
+        />
+      )}
+    </motion.div>
+  );
 }
+
+export const getStaticProps: GetStaticProps = async () => {
+  const aboutData = await client.fetch(ABOUT_QUERY);
+
+  return {
+    props: {
+      aboutData,
+    },
+    revalidate: 60,
+  };
+};
 
 function PersonInfo({
   person,
@@ -32,16 +323,55 @@ function PersonInfo({
   onToggle,
   isPreview,
 }: {
-  person: TeamMember;
+  person?: TeamMember;
   isExpanded: boolean;
   onToggle: () => void;
   isPreview: boolean;
 }) {
+  if (!person) return null;
+
+  // Add keyboard handler for modal
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const modalElement = document.getElementById("person-info");
+      const isModalFocused = document.activeElement === modalElement;
+
+      // Always handle Escape
+      if (event.key === "Escape") {
+        event.preventDefault();
+        if (isExpanded) {
+          onToggle();
+          modalElement?.focus();
+        }
+        return;
+      }
+
+      // Handle space to toggle regardless of state
+      if (event.key === " ") {
+        event.preventDefault();
+        if (!isPreview) {
+          onToggle(); // Will toggle open/close
+        }
+        return;
+      }
+
+      // Handle enter only when focused
+      if (isModalFocused && event.key === "Enter") {
+        event.preventDefault();
+        if (!isPreview) {
+          onToggle();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isExpanded, isPreview, onToggle]);
+
   return (
     <motion.div
       layout
       layoutId="person-info-root"
-      role="dialog"
       className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
       style={{ transformOrigin: "bottom center" }}
       initial={{ opacity: 0, y: 20, scale: 0.9 }}
@@ -58,9 +388,7 @@ function PersonInfo({
       <motion.div
         layout
         layoutId="person-info-container"
-        className={cn(
-          "mx-auto h-min w-min overflow-hidden bg-white/50 p-1 drop-shadow-2xl backdrop-blur-md",
-        )}
+        className="mx-auto h-min w-min overflow-hidden bg-white/50 p-1 drop-shadow-2xl backdrop-blur-md"
         animate={{
           borderRadius: isExpanded ? 32 : 16,
         }}
@@ -68,13 +396,22 @@ function PersonInfo({
           duration: 0.6,
           ease: EASINGS.easeOutQuart,
         }}
-        style={{ transformOrigin: "bottom center" }}
       >
         <motion.div
+          id="person-info"
           layout
           layoutId="person-info-background"
+          role="button"
+          aria-expanded={isExpanded}
+          aria-haspopup="dialog"
+          aria-label={`${person.name}'s information. Press Enter to ${isExpanded ? "close" : "open"}`}
+          tabIndex={0}
           onClick={onToggle}
-          className="relative flex w-screen max-w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden bg-white/30 p-6 backdrop-blur-2xl md:max-w-[400px]"
+          className={cn(
+            "relative flex w-screen max-w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden bg-white/30 p-6 backdrop-blur-2xl md:max-w-[400px]",
+            !isExpanded &&
+              "focus-visible:ring-2 focus-visible:ring-neutral-500 [&:focus:not(:focus-visible)]:outline-none",
+          )}
           animate={{
             borderRadius: isExpanded ? 28 : 12,
           }}
@@ -85,7 +422,7 @@ function PersonInfo({
           style={{ transformOrigin: "bottom center" }}
         >
           <motion.div
-            layout="position"
+            layout
             layoutId="info-container"
             className={cn(
               "flex w-full",
@@ -95,7 +432,7 @@ function PersonInfo({
             )}
           >
             <motion.div
-              layout="position"
+              layout
               layoutId="text-content"
               className={cn("flex flex-col", isExpanded && "items-center")}
               transition={{
@@ -172,9 +509,9 @@ function PersonInfo({
                   {person.bio}
                 </motion.p>
                 <div className="flex items-start gap-1 self-stretch">
-                  {person.qaPairs.map((qaPair, index) => (
+                  {person.qaPairs?.map((qaPair: QAPair, index: number) => (
                     <motion.div
-                      key={index}
+                      key={qaPair._key || index}
                       initial={{ opacity: 0, filter: "blur(4px)" }}
                       animate={{ opacity: 1, filter: "blur(0px)" }}
                       exit={{ opacity: 0, filter: "blur(4px)" }}
@@ -201,274 +538,3 @@ function PersonInfo({
     </motion.div>
   );
 }
-
-export default function AboutPage({ aboutData }: { aboutData: About }) {
-  // --- Utilities ---
-  const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
-  const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
-
-  // --- Carousel Configuration ---
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "center",
-    containScroll: false,
-    axis: "x",
-    direction: "ltr",
-    startIndex,
-    dragFree: true,
-    inViewThreshold: 0.7,
-  });
-
-  // --- State Management ---
-  const [selectedIndex, setSelectedIndex] = useState(startIndex);
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-
-  // Keep original scroll handler
-  const handleScroll = useCallback(
-    (event: WheelEvent) => {
-      // 1. Early return if carousel isn't ready or is already scrolling
-      if (!emblaApi || isScrolling) return;
-      event.preventDefault();
-
-      // 2. Detect if user is using a trackpad
-      const isTrackpad =
-        Math.abs(event.deltaX) !== 0 || // Trackpads often have horizontal scroll
-        Math.abs(event.deltaY) < 50; // Trackpads have smaller delta values
-
-      // 3. Get scroll values
-      const deltaX = event.deltaX; // Horizontal scroll amount
-      const deltaY = event.deltaY; // Vertical scroll amount
-
-      // 4. Calculate the strongest scroll direction
-      const delta = isTrackpad
-        ? Math.max(Math.abs(deltaX), Math.abs(deltaY)) // For trackpad, use strongest direction
-        : Math.abs(deltaY); // For mouse wheel, only care about vertical
-
-      // 5. Set different sensitivity thresholds
-      const threshold = isTrackpad ? 15 : 35; // Trackpad needs lower threshold
-
-      // 6. Only proceed if scroll is strong enough
-      if (delta > threshold) {
-        setIsScrolling(true);
-
-        requestAnimationFrame(() => {
-          // 7. Determine scroll direction
-          const direction = isTrackpad
-            ? Math.abs(deltaX) > Math.abs(deltaY) // If trackpad, check which direction is stronger
-              ? deltaX // Use horizontal if stronger
-              : deltaY // Use vertical if stronger
-            : deltaY; // For mouse wheel, always use vertical
-
-          // 8. Calculate target slide
-          const currentIndex = emblaApi.selectedScrollSnap();
-          const targetIndex =
-            direction > 0
-              ? Math.min(currentIndex + 1, emblaApi.scrollSnapList().length - 1) // Next slide
-              : Math.max(currentIndex - 1, 0); // Previous slide
-
-          // 9. Perform the scroll
-          emblaApi.scrollTo(targetIndex);
-
-          // 10. Reset scrolling state after a delay
-          setTimeout(
-            () => {
-              setIsScrolling(false);
-            },
-            isTrackpad ? 100 : 300, // Shorter delay for trackpad
-          );
-        });
-      }
-    },
-    [emblaApi, isScrolling],
-  );
-
-  // --- Effects ---
-  // Carousel initialization and cleanup
-  useEffect(() => {
-    if (!emblaApi) return;
-
-    const timeoutId = setTimeout(() => setIsLoaded(true), 100);
-    const onSelect = () => {
-      requestAnimationFrame(() => {
-        setSelectedIndex(emblaApi.selectedScrollSnap());
-      });
-    };
-
-    emblaApi.on("select", onSelect);
-    const rootNode = emblaApi.rootNode();
-    rootNode.addEventListener("wheel", handleScroll, { passive: false });
-
-    return () => {
-      clearTimeout(timeoutId);
-      rootNode.removeEventListener("wheel", handleScroll);
-      emblaApi.off("select", onSelect);
-    };
-  }, [emblaApi, handleScroll]);
-
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!document.querySelector('[role="dialog"]')) return;
-
-      switch (e.code) {
-        case "Escape":
-          e.preventDefault();
-          e.stopPropagation();
-          if (isExpanded) {
-            setIsExpanded(false);
-          }
-          break;
-        case "Enter":
-        case "Space":
-        case "Tab":
-          e.preventDefault();
-          e.stopPropagation();
-          setIsExpanded(!isExpanded);
-          break;
-        case "ArrowLeft":
-        case "ArrowUp":
-          e.preventDefault();
-          e.stopPropagation();
-          if (emblaApi) {
-            const currentIndex = emblaApi.selectedScrollSnap();
-            const prevIndex = Math.max(currentIndex - 1, 0);
-            emblaApi.scrollTo(prevIndex);
-          }
-          break;
-        case "ArrowRight":
-        case "ArrowDown":
-          e.preventDefault();
-          e.stopPropagation();
-          if (emblaApi) {
-            const currentIndex = emblaApi.selectedScrollSnap();
-            const nextIndex = Math.min(
-              currentIndex + 1,
-              emblaApi.scrollSnapList().length - 1,
-            );
-            emblaApi.scrollTo(nextIndex);
-          }
-          break;
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown, true);
-    return () => window.removeEventListener("keydown", handleKeyDown, true);
-  }, [isExpanded, emblaApi]);
-
-  // --- Render ---
-  return (
-    <motion.div className="fixed inset-0">
-      {/* Full page gradient container */}
-      <div className="main-gradient absolute inset-0">
-        {/* Carousel container */}
-        <div ref={emblaRef} className="h-full overflow-hidden">
-          <motion.div
-            className="flex h-full items-center mix-blend-multiply"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            {aboutData.team?.map((person, i) => {
-              return (
-                <motion.div
-                  key={person._key}
-                  className="relative flex h-full w-full flex-[0_0_100%] items-center justify-center mix-blend-multiply md:flex-[0_0_25%]"
-                  initial={{
-                    scale: 0.8,
-                    filter: "blur(12px)",
-                    opacity: 0,
-                  }}
-                  animate={{
-                    scale: selectedIndex === i ? 1 : 0.9,
-                    filter: selectedIndex === i ? "blur(0px)" : "blur(8px)",
-                    opacity: isLoaded ? (selectedIndex === i ? 1 : 0.65) : 0,
-                  }}
-                  transition={{
-                    duration: 0.6,
-                    ease: EASINGS.easeOutQuart,
-                  }}
-                  onClick={() => {
-                    setPreviewIndex(null);
-                    emblaApi?.scrollTo(i);
-                    setSelectedIndex(i);
-                  }}
-                  style={{ cursor: "pointer" }}
-                >
-                  {person.media?.[0] && (
-                    <MediaRenderer
-                      className="object-contain mix-blend-multiply"
-                      media={person.media[0]}
-                      autoPlay={true}
-                      disableThumbnail={true}
-                      forcedVideoPlayback={true}
-                    />
-                  )}
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Navigation/Bio Card */}
-      <PersonInfo
-        person={aboutData.team?.[previewIndex ?? selectedIndex] as TeamMember}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
-        isPreview={previewIndex !== null}
-      />
-
-      {/* Updated Dots Navigation */}
-      {!isExpanded && (
-        <div className="absolute bottom-36 left-1/2 z-10 -translate-x-1/2 md:bottom-40">
-          <motion.div className="dots-container flex px-4 py-2">
-            {aboutData.team?.map((_, index) => (
-              <motion.button
-                key={index}
-                onClick={() => {
-                  setPreviewIndex(null);
-                  emblaApi?.scrollTo(index);
-                  setSelectedIndex(index);
-                }}
-                onHoverStart={() => setPreviewIndex(index)}
-                onHoverEnd={() => setPreviewIndex(null)}
-                className="relative px-2 py-3"
-              >
-                <motion.div
-                  className="h-2 w-2 rounded-full bg-neutral-500"
-                  animate={{
-                    scale:
-                      index === previewIndex || index === selectedIndex
-                        ? 1.5
-                        : 1,
-                    opacity:
-                      index === previewIndex || index === selectedIndex
-                        ? 1
-                        : 0.5,
-                  }}
-                  transition={{
-                    duration: 0.4,
-                    ease: EASINGS.easeOutQuart,
-                  }}
-                />
-              </motion.button>
-            ))}
-          </motion.div>
-        </div>
-      )}
-    </motion.div>
-  );
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-  const aboutData = await client.fetch(ABOUT_QUERY);
-
-  return {
-    props: {
-      aboutData,
-    },
-    revalidate: 60,
-  };
-};
