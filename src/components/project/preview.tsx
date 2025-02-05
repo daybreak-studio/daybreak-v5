@@ -302,23 +302,28 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           {/* Mobile view */}
           {isMobile && (
             <div className="relative flex flex-col">
-              <motion.div
-                onClick={handleNext}
+              <div
                 className="frame-inner w-full overflow-hidden"
-                key={currentIndex}
-                initial={{ filter: "blur(8px)" }}
-                animate={{ filter: "blur(0px)" }}
-                exit={{ filter: "blur(8px)" }}
-                transition={{ duration: 1, ease: EASINGS.easeOutQuart }}
+                onClick={handleNext}
               >
-                <MediaRenderer
-                  className="frame-inner h-full w-full overflow-hidden"
-                  media={mediaArray[currentIndex]}
-                  autoPlay={true}
-                  priority={true}
-                  loading="eager"
-                />
-              </motion.div>
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0, filter: "blur(8px)" }}
+                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(8px)" }}
+                  transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
+                  className="h-full w-full"
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <MediaRenderer
+                    className="frame-inner h-full w-full overflow-hidden"
+                    media={mediaArray[currentIndex]}
+                    autoPlay={true}
+                    priority={true}
+                    loading="eager"
+                  />
+                </motion.div>
+              </div>
               <PreviewDots total={mediaArray.length} current={currentIndex} />
             </div>
           )}
