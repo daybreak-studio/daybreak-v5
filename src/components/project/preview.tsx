@@ -243,34 +243,34 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
       {...CONTAINER_ANIMATION}
     >
       <motion.div
-        className="order-2 overflow-hidden pt-4 md:order-1 md:w-2/3 md:pt-0"
+        className="order-2 pt-4 md:order-1 md:w-2/3 md:pt-0"
         {...IMAGE_ANIMATION}
         layoutId={assetId || undefined}
       >
-        <div className="hidden overflow-hidden md:block">
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              onClick={() => handleNavigate(currentIndex + 1)}
-              className="cursor-pointer overflow-hidden transition-transform duration-300 hover:scale-[1.01] active:scale-[0.99]"
-              key={currentIndex}
-              initial={{ opacity: 0, filter: "blur(10px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, filter: "blur(10px)" }}
-              transition={EASINGS.easeOutQuart}
-            >
-              <div className="relative aspect-square w-full overflow-hidden">
-                <MediaRenderer
-                  className="frame-inner max-h-[700px] cursor-e-resize overflow-hidden"
-                  media={mediaAsset}
-                  autoPlay={true}
-                  priority={true}
-                  fill
-                  loading="eager"
-                />
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.div
+            onClick={() => handleNavigate(currentIndex + 1)}
+            className="hidden cursor-pointer overflow-hidden md:block"
+            key={currentIndex}
+            initial={{ opacity: 0, filter: "blur(8px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, filter: "blur(8px)" }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            transition={EASINGS.easeOutQuart}
+          >
+            <div className="relative aspect-square w-full overflow-hidden">
+              <MediaRenderer
+                className="frame-inner max-h-[700px] cursor-e-resize overflow-hidden"
+                media={mediaAsset}
+                autoPlay={true}
+                priority={true}
+                fill
+                loading="eager"
+              />
+            </div>
+          </motion.div>
+        </AnimatePresence>
 
         <div className="relative overflow-hidden md:hidden">
           <Swiper
