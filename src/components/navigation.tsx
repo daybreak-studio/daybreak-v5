@@ -1,20 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Logo from "/public/brand/daybreak-icon.svg";
 import Wordmark from "/public/brand/daybreak-wordmark.svg";
 import { usePathname } from "@/lib/hooks/use-pathname";
-import {
-  Grip,
-  Home,
-  Users,
-  Folder,
-  ShoppingBag,
-  Instagram,
-  Twitter,
-  LucideIcon,
-  X,
-} from "lucide-react";
+import { Grip, Instagram, Twitter, LucideIcon, X } from "lucide-react";
 import clsx from "clsx";
 import { EASINGS } from "./animations/easings";
 
@@ -24,26 +14,11 @@ interface Tab {
 }
 
 const tabs: Tab[] = [
-  {
-    href: "/",
-    label: "Home",
-  },
-  {
-    href: "/services",
-    label: "Services",
-  },
-  {
-    href: "/work",
-    label: "Work",
-  },
-  {
-    href: "/about",
-    label: "About",
-  },
-  {
-    href: "/contact",
-    label: "Contact",
-  },
+  { href: "/", label: "Home" },
+  { href: "/services", label: "Services" },
+  { href: "/work", label: "Work" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 interface CardProps {
@@ -115,167 +90,58 @@ const Card = ({
   size = "small",
   className,
   onClick,
-  isActive = false,
-}: CardProps) => {
-  const isLarge = size === "large";
-  const MIN_DELAY = 0.2;
-  const MAX_DELAY = 0.5;
-  const randomDelay = MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY);
-
-  return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 20,
-        scale: 0.9,
-        filter: "blur(10px)",
-      }}
-      animate={{
+  isActive,
+}: CardProps) => (
+  <motion.div
+    variants={{
+      hidden: { opacity: 0, y: 20, scale: 0.9, filter: "blur(10px)" },
+      visible: {
         opacity: 1,
         y: 0,
         scale: 1,
         filter: "blur(0px)",
-      }}
-      transition={{
-        duration: 1,
-        delay: randomDelay,
-        ease: EASINGS.easeOutQuart,
-      }}
-      className={clsx(
-        "frame-outer relative aspect-square overflow-hidden",
-        isLarge && "col-span-2 row-span-2",
-        className,
-      )}
-    >
-      <Link
-        href={href}
-        onClick={onClick}
-        className="relative block h-full w-full"
-      >
-        {isActive && (
-          <video
-            src="/videos/gradient-orange.mp4"
-            autoPlay
-            muted
-            playsInline
-            loop
-            className="frame-inner absolute inset-0 h-full w-full object-cover"
-          />
-        )}
-        <div
-          className={clsx(
-            "frame-inner relative z-20 flex h-full w-full flex-col items-center justify-center space-y-2 bg-white/25 shadow-inner shadow-white/75",
-          )}
-        >
-          <Icon
-            className={clsx(
-              "text-neutral-600/75",
-              isLarge ? "h-10 w-10" : "h-7 w-7",
-            )}
-          />
-          {label && (
-            <span className="text-md font-medium text-neutral-600/75">
-              {label}
-            </span>
-          )}
-        </div>
-      </Link>
-    </motion.div>
-  );
-};
-
-const MenuToggle = ({
-  isOpen,
-  onClick,
-}: {
-  isOpen: boolean;
-  onClick: () => void;
-}) => (
-  <nav
-    className="relative z-[120] flex aspect-square items-center justify-center rounded-md bg-white md:hidden"
-    onClick={onClick}
+        transition: { duration: 1, ease: EASINGS.easeOutQuart },
+      },
+    }}
+    className={clsx(
+      "frame-outer relative aspect-square overflow-hidden",
+      size === "large" && "col-span-2 row-span-2",
+      className,
+    )}
   >
-    <AnimatePresence mode="wait" initial={false}>
-      {isOpen ? (
-        <motion.div
-          key="x"
-          initial={{ opacity: 0, rotate: -90 }}
-          animate={{ opacity: 1, rotate: 0 }}
-          exit={{ opacity: 0, rotate: 90 }}
-          transition={{ duration: 0.2, ease: EASINGS.easeOutQuart }}
-        >
-          <X
-            className="m-3 aspect-square h-3 w-3 text-neutral-500"
-            strokeWidth={2.25}
-          />
-        </motion.div>
-      ) : (
-        <motion.div
-          key="grip"
-          initial={{ opacity: 0, rotate: -90 }}
-          animate={{ opacity: 1, rotate: 0 }}
-          exit={{ opacity: 0, rotate: 90 }}
-          transition={{ duration: 0.2, ease: EASINGS.easeOutQuart }}
-        >
-          <Grip
-            className="m-3 aspect-square h-3 w-3 text-neutral-500"
-            strokeWidth={2.25}
-          />
-        </motion.div>
+    <Link
+      href={href}
+      onClick={onClick}
+      className="relative block h-full w-full"
+    >
+      {isActive && (
+        <video
+          src="/videos/gradient-orange.mp4"
+          autoPlay
+          muted
+          playsInline
+          loop
+          className="frame-inner absolute inset-0 h-full w-full object-cover"
+        />
       )}
-    </AnimatePresence>
-  </nav>
-);
-
-const Bar = ({
-  isValidPath,
-  basePath,
-  onToggle,
-  isOpen,
-}: {
-  isValidPath: boolean;
-  basePath: string;
-  onToggle: () => void;
-  isOpen: boolean;
-}) => (
-  <motion.div className="container relative mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl border-[1px] border-neutral-300/25 bg-neutral-50 p-1 mix-blend-multiply shadow-lg backdrop-blur-3xl md:rounded-2xl">
-    {/* Logo */}
-    <Link href="/" className="relative flex items-stretch rounded-xl">
-      <div className="logo_container align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:rounded-xl md:p-0 md:pt-[2px]">
-        <div className="glyph_container z-10 flex w-1/4 items-center overflow-hidden">
-          <div className="glyph h-full w-full origin-bottom pb-1">
-            <Logo className="h-full w-full fill-current text-neutral-500" />
-          </div>
-        </div>
-        <div className="wordmark_container z-10 flex w-3/4 items-center overflow-hidden pl-[6%]">
-          <div className="wordmark h-full w-full">
-            <Wordmark className="h-full w-full fill-current text-neutral-500" />
-          </div>
-        </div>
+      <div className="frame-inner relative z-20 flex h-full w-full flex-col items-center justify-center space-y-2 bg-white/25 shadow-inner shadow-white/75">
+        <Icon
+          className={clsx(
+            "text-neutral-600/75",
+            size === "large" ? "h-10 w-10" : "h-7 w-7",
+          )}
+        />
+        {label && (
+          <span className="text-md font-medium text-neutral-600/75">
+            {label}
+          </span>
+        )}
       </div>
-      {isValidPath && basePath === "/" && <Pill />}
     </Link>
-
-    {/* Mobile Menu Toggle */}
-    <MenuToggle isOpen={isOpen} onClick={onToggle} />
-
-    {/* Navigation Links */}
-    <div className="items relative hidden space-x-1 md:flex">
-      {tabs
-        .filter((tab) => tab.href !== "/")
-        .map((tab) => (
-          <Link href={tab.href} className="rounded-xl" key={tab.label}>
-            <motion.h1 className="relative px-3 py-3 text-xs font-normal text-neutral-500">
-              <span className="relative z-10">{tab.label}</span>
-              {isValidPath && basePath === tab.href && <Pill />}
-            </motion.h1>
-          </Link>
-        ))}
-    </div>
   </motion.div>
 );
 
-const Cards = ({
+const MobileMenu = ({
   isOpen,
   onClose,
   currentPath,
@@ -289,11 +155,21 @@ const Cards = ({
     animate={{ opacity: 1, filter: "blur(0px)" }}
     exit={{ opacity: 0, filter: "blur(12px)" }}
     transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-    className="fixed inset-0 z-50 flex flex-col bg-white/50 pt-24 backdrop-blur-3xl"
+    className="fixed inset-0 z-50 flex flex-col items-center bg-white/50 backdrop-blur-3xl"
   >
-    <div className="container h-full w-full max-w-lg px-8 pt-20">
-      <div className="grid w-full auto-rows-fr grid-cols-3 gap-4">
-        {/* Home - Top Left 2x2 */}
+    <div className="container relative flex h-full w-full max-w-lg flex-col items-center justify-center px-8">
+      <motion.div
+        className="grid w-full auto-rows-fr grid-cols-3 gap-4"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1, when: "beforeChildren" },
+          },
+        }}
+      >
         <Card
           href="/"
           icon={HomeIcon}
@@ -303,7 +179,6 @@ const Cards = ({
           isActive={currentPath === "/"}
         />
 
-        {/* About & Services - Right Stack */}
         <div className="col-span-1 col-start-3 row-span-2 flex flex-col gap-4">
           <Card
             href="/about"
@@ -321,23 +196,15 @@ const Cards = ({
           />
         </div>
 
-        {/* Social Links - Left Stack */}
         <div className="col-span-1 col-start-1 row-span-2 row-start-3 flex flex-col gap-4">
           <Card
             href="https://instagram.com"
             icon={Instagram}
-            label=""
             onClick={onClose}
           />
-          <Card
-            href="https://x.com"
-            icon={Twitter}
-            label=""
-            onClick={onClose}
-          />
+          <Card href="https://x.com" icon={Twitter} onClick={onClose} />
         </div>
 
-        {/* Work - Bottom Right 2x2 */}
         <Card
           href="/work"
           icon={FolderIcon}
@@ -347,7 +214,33 @@ const Cards = ({
           isActive={currentPath === "/work"}
           className="col-start-2 row-start-3"
         />
-      </div>
+      </motion.div>
+
+      <motion.div
+        variants={{
+          hidden: { opacity: 0, y: 20 },
+          visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+              delay: 1,
+              duration: 0.8,
+              ease: EASINGS.easeOutQuart,
+            },
+          },
+        }}
+        initial="hidden"
+        animate="visible"
+        className="pt-16 text-center"
+      >
+        <Link
+          href="/contact"
+          onClick={onClose}
+          className="frame-outer rounded-full bg-white/80 px-6 py-4 text-center font-medium text-neutral-500"
+        >
+          <span className="relative">Contact Us</span>
+        </Link>
+      </motion.div>
     </div>
   </motion.div>
 );
@@ -355,24 +248,93 @@ const Cards = ({
 export default function Navigation() {
   const { basePath } = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
   const isValidPath = tabs.some((tab) => tab.href === basePath);
+
+  // Close mobile menu if window is resized to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768 && isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen]);
 
   return (
     <>
-      <motion.nav className="parent pointer-events-auto fixed z-[70] mx-auto flex h-fit w-full items-center justify-center">
-        <Bar
-          isValidPath={isValidPath}
-          basePath={basePath}
-          onToggle={() => setIsOpen(!isOpen)}
-          isOpen={isOpen}
-        />
+      <motion.nav className="pointer-events-auto fixed left-0 right-0 top-0 z-[70] mx-auto flex w-full justify-center">
+        <div className="mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl border-[1px] border-neutral-300/25 bg-neutral-50 p-1 mix-blend-multiply shadow-lg backdrop-blur-3xl md:rounded-2xl">
+          <Link
+            href="/"
+            className="pointer-events-none relative flex items-stretch rounded-xl md:pointer-events-auto"
+          >
+            <div className="logo_container align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:rounded-xl md:p-0 md:pt-[2px]">
+              <div className="glyph_container z-10 flex w-1/4 items-center overflow-hidden">
+                <Logo className="h-full w-full fill-current pb-1 text-neutral-500" />
+              </div>
+              <div className="wordmark_container z-10 flex w-3/4 items-center overflow-hidden pl-[6%]">
+                <Wordmark className="h-full w-full fill-current text-neutral-500" />
+              </div>
+            </div>
+            {isValidPath && basePath === "/" && <Pill />}
+          </Link>
+
+          <nav
+            className="relative z-[120] flex aspect-square items-center justify-center rounded-md bg-white md:hidden"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {isOpen ? (
+                <motion.div
+                  key="x"
+                  initial={{ opacity: 0, rotate: -90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: 90 }}
+                  transition={{ duration: 0.2, ease: EASINGS.easeOutQuart }}
+                >
+                  <X
+                    className="m-3 aspect-square h-3 w-3 text-neutral-500"
+                    strokeWidth={2.25}
+                  />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="grip"
+                  initial={{ opacity: 0, rotate: -90 }}
+                  animate={{ opacity: 1, rotate: 0 }}
+                  exit={{ opacity: 0, rotate: 90 }}
+                  transition={{ duration: 0.2, ease: EASINGS.easeOutQuart }}
+                >
+                  <Grip
+                    className="m-3 aspect-square h-3 w-3 text-neutral-500"
+                    strokeWidth={2.25}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </nav>
+
+          <div className="items relative hidden space-x-1 md:flex">
+            {tabs
+              .filter((tab) => tab.href !== "/")
+              .map((tab) => (
+                <Link href={tab.href} className="rounded-xl" key={tab.label}>
+                  <motion.h1 className="relative px-3 py-3 text-xs font-normal text-neutral-500">
+                    <span className="relative z-10">{tab.label}</span>
+                    {isValidPath && basePath === tab.href && <Pill />}
+                  </motion.h1>
+                </Link>
+              ))}
+          </div>
+        </div>
       </motion.nav>
 
-      {/* Mobile Cards Menu */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isOpen && (
-          <Cards
+          <MobileMenu
+            key={Date.now()}
             isOpen={isOpen}
             onClose={() => setIsOpen(false)}
             currentPath={basePath}
@@ -383,19 +345,12 @@ export default function Navigation() {
   );
 }
 
-const Pill = () => {
-  return (
-    <motion.span
-      layout
-      layoutId="pill"
-      className="pill absolute inset-0 z-0 rounded-md md:rounded-xl md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
-      style={{ originY: "top" }}
-      transition={{
-        type: "spring",
-        bounce: 0.2,
-        duration: 0.4,
-        ease: "easeOut",
-      }}
-    />
-  );
-};
+const Pill = () => (
+  <motion.span
+    layout
+    layoutId="pill"
+    className="pill absolute inset-0 z-0 rounded-md md:rounded-xl md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
+    style={{ originY: "top" }}
+    transition={{ type: "spring", bounce: 0.2, duration: 0.4, ease: "easeOut" }}
+  />
+);
