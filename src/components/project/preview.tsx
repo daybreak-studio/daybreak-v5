@@ -250,7 +250,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             onClick={() => handleNavigate(currentIndex + 1)}
-            className="hidden cursor-pointer overflow-hidden md:block"
+            className="hidden aspect-square h-full w-full cursor-pointer overflow-hidden focus:outline-none md:block"
             key={currentIndex}
             initial={{ opacity: 0, filter: "blur(8px)" }}
             animate={{ opacity: 1, filter: "blur(0px)" }}
@@ -259,16 +259,14 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             whileTap={{ scale: 0.97 }}
             transition={EASINGS.easeOutQuart}
           >
-            <div className="relative aspect-square w-full overflow-hidden">
-              <MediaRenderer
-                className="frame-inner max-h-[700px] cursor-e-resize overflow-hidden"
-                media={mediaAsset}
-                autoPlay={true}
-                priority={true}
-                fill
-                loading="eager"
-              />
-            </div>
+            <MediaRenderer
+              className="frame-inner max-h-[700px] cursor-e-resize"
+              media={mediaAsset}
+              autoPlay={true}
+              priority={true}
+              fill
+              loading="eager"
+            />
           </motion.div>
         </AnimatePresence>
 
@@ -304,7 +302,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
         </div>
       </motion.div>
 
-      <motion.div className="order-1 flex flex-col justify-between overflow-hidden md:order-2 md:w-1/3">
+      <motion.div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">
         <Navigation
           total={mediaArray.length}
           current={currentIndex}

@@ -134,7 +134,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   }, [clientSlug, isInitialMount]);
 
   return (
-    <div className="hide-scrollbar mx-auto p-8 lg:px-48 lg:py-16">
+    <div className="hide-scrollbar mx-auto overflow-y-scroll p-8 lg:px-48 lg:py-16">
       <div className="relative grid grid-cols-1 gap-6 pt-24 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
         {data.map((client) => {
           const mediaAsset = getClientFirstMedia(client);
