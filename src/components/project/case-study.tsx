@@ -139,13 +139,12 @@ const Navigation = memo(function Navigation({
   return (
     <motion.div
       className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
-      initial={{ y: 100, opacity: 0 }}
+      initial={{ y: 25, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      exit={{ y: 100, opacity: 0 }}
+      exit={{ y: 25, opacity: 0 }}
       transition={{
-        duration: 0.6,
-        ease: EASINGS.easeOutExpo,
-        delay: 0.8,
+        duration: 0.3,
+        ease: EASINGS.easeOutQuart,
       }}
     >
       <motion.div
@@ -338,6 +337,7 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
           handleNext();
           break;
         case "Space":
+        case "Enter":
           setIsZoomed((prev) => !prev);
           break;
       }
