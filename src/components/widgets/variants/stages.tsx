@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { BaseWidget } from "../grid/base-widget";
 import { StagesWidgetTypes } from "../grid/types";
 import { EASINGS } from "@/components/animations/easings";
@@ -72,6 +72,29 @@ interface Stage {
   description: string;
 }
 
+// Update the ANIMATION_CONFIG with text-specific timings
+const ANIMATION_CONFIG = {
+  duration: {
+    opacity: 1,
+    blur: 1,
+    layout: 2,
+    text: {
+      opacity: 1.8,
+      blur: 1.8,
+      delay: 0.25,
+    },
+  },
+  ease: {
+    opacity: EASINGS.easeOutQuart,
+    blur: EASINGS.easeOutQuart,
+    layout: EASINGS.easeOutQuart,
+    text: {
+      opacity: EASINGS.easeOutExpo,
+      blur: EASINGS.easeOutExpo,
+    },
+  },
+};
+
 export default function StagesWidget({ data }: StagesProps) {
   const stages = [...(data.stages ?? [])].reverse();
   const [index, setIndex] = useState(stages.length - 1);
@@ -122,84 +145,127 @@ export default function StagesWidget({ data }: StagesProps) {
             onTouchMove={(e: React.TouchEvent) => handleTouchMove(e)}
             onTouchStart={(e: React.TouchEvent) => handleTouchMove(e)}
           >
-            {stages.map((stage, stageIndex) => {
-              const offset = stageIndex * 15 + "%";
-              const isActive = stageIndex === index;
-              const tierLevel = stages.length - 1 - stageIndex;
-              const styles = getTierStyles(tierLevel, isActive);
+            {/* Single morphing background that follows active state */}
+            <motion.div
+              layoutId="morphing-background"
+              className={clsx(
+                "pointer-events-none absolute inset-0 rounded-2xl md:rounded-3xl",
+                TIER_CONFIG.background.active,
+              )}
+              animate={{
+                top: `${index * 15}%`,
+                right: `${index * 15}%`,
+              }}
+              transition={{
+                duration: 1.1,
+                ease: EASINGS.easeOutQuart,
+              }}
+            />
 
-              return (
-                <motion.div
-                  key={stage._key}
-                  className={clsx(
-                    "frame-inner absolute inset-0 origin-bottom-left border-[1px] border-dashed border-neutral-300/75",
-                    styles.padding,
-                    isActive
-                      ? TIER_CONFIG.background.active
-                      : styles.background,
-                    "cursor-pointer touch-none",
-                  )}
-                  style={{
-                    top: offset,
-                    right: offset,
-                    bottom: "0px",
-                    left: "0px",
-                  }}
-                  initial={false}
-                  animate={{
-                    opacity:
-                      stageIndex > index
-                        ? 0
-                        : stageIndex === index
-                          ? 1
-                          : TIER_CONFIG.opacity.inactive,
-                  }}
-                  transition={{
-                    duration: 0.4,
-                    ease: EASINGS.easeOutQuart,
-                  }}
-                  onHoverStart={() => handleStageInteraction(stageIndex)}
-                  onClick={() => handleStageInteraction(stageIndex)}
-                >
-                  <div className="flex h-full flex-col justify-between">
-                    <motion.h1
-                      className={clsx(
-                        "font-medium text-neutral-500",
-                        styles.titleSize,
-                      )}
-                      initial={{ filter: "blur(8px)", opacity: 0 }}
-                      animate={{
-                        filter: isActive ? "blur(0px)" : "blur(8px)",
-                        opacity: isActive ? 1 : 0,
-                      }}
-                      transition={{
-                        duration: 0.8,
-                        ease: EASINGS.easeOutExpo,
-                      }}
+            <AnimatePresence mode="wait">
+              {stages.map((stage, stageIndex) => {
+                const offset = stageIndex * 15 + "%";
+                const isActive = stageIndex === index;
+                const tierLevel = stages.length - 1 - stageIndex;
+                const styles = getTierStyles(tierLevel, isActive);
+
+                return (
+                  <motion.div
+                    key={stage._key}
+                    className={clsx(
+                      "frame-inner absolute inset-0 origin-bottom-left border-[1px] border-dashed border-neutral-300/75",
+                      styles.padding,
+                      !isActive && styles.background, // Only apply background if not active
+                      "cursor-pointer touch-none",
+                    )}
+                    style={{
+                      top: offset,
+                      right: offset,
+                      bottom: "0px",
+                      left: "0px",
+                    }}
+                    initial={{ opacity: 0 }}
+                    animate={{
+                      opacity:
+                        stageIndex > index
+                          ? 0
+                          : stageIndex === index
+                            ? 1
+                            : TIER_CONFIG.opacity.inactive,
+                    }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                      opacity: {
+                        duration: ANIMATION_CONFIG.duration.opacity,
+                        ease: ANIMATION_CONFIG.ease.opacity,
+                      },
+                      layout: {
+                        duration: ANIMATION_CONFIG.duration.layout,
+                        ease: ANIMATION_CONFIG.ease.layout,
+                      },
+                    }}
+                    layout
+                    layoutId={`stage-container-${stageIndex}`}
+                    onHoverStart={() => handleStageInteraction(stageIndex)}
+                    onClick={() => handleStageInteraction(stageIndex)}
+                  >
+                    <motion.div
+                      className="flex h-full flex-col justify-between"
+                      layoutId={`stage-content-${stageIndex}`}
                     >
-                      {stage.title}
-                    </motion.h1>
-                    <motion.p
-                      className={clsx(
-                        "text-neutral-400",
-                        styles.descriptionSize,
-                      )}
-                      initial={{ filter: "blur(8px)", opacity: 0 }}
-                      animate={{
-                        filter: isActive ? "blur(0px)" : "blur(8px)",
-                        opacity: isActive ? 1 : 0,
-                      }}
-                      transition={{
-                        duration: 0.8,
-                        ease: EASINGS.easeOutExpo,
-                      }}
-                    >
-                      {stage.description}
-                    </motion.p>
-                  </div>
-                </motion.div>
-              );
-            })}
+                      <motion.h1
+                        layoutId={`stage-title-${stageIndex}`}
+                        className={clsx(
+                          "font-medium text-neutral-500",
+                          styles.titleSize,
+                        )}
+                        initial={{ filter: "blur(8px)", opacity: 0 }}
+                        animate={{
+                          filter: isActive ? "blur(0px)" : "blur(8px)",
+                          opacity: isActive ? 1 : 0,
+                        }}
+                        transition={{
+                          duration: ANIMATION_CONFIG.duration.text.blur,
+                          ease: ANIMATION_CONFIG.ease.text.blur,
+                          delay: ANIMATION_CONFIG.duration.text.delay,
+                          opacity: {
+                            duration: ANIMATION_CONFIG.duration.text.opacity,
+                            ease: ANIMATION_CONFIG.ease.text.opacity,
+                            delay: ANIMATION_CONFIG.duration.text.delay,
+                          },
+                        }}
+                      >
+                        {stage.title}
+                      </motion.h1>
+                      <motion.p
+                        layoutId={`stage-description-${stageIndex}`}
+                        className={clsx(
+                          "text-neutral-400",
+                          styles.descriptionSize,
+                        )}
+                        initial={{ filter: "blur(8px)", opacity: 0 }}
+                        animate={{
+                          filter: isActive ? "blur(0px)" : "blur(8px)",
+                          opacity: isActive ? 1 : 0,
+                        }}
+                        transition={{
+                          duration: ANIMATION_CONFIG.duration.text.blur,
+                          ease: ANIMATION_CONFIG.ease.text.blur,
+                          delay: ANIMATION_CONFIG.duration.text.delay,
+                          opacity: {
+                            duration: ANIMATION_CONFIG.duration.text.opacity,
+                            ease: ANIMATION_CONFIG.ease.text.opacity,
+                            delay: ANIMATION_CONFIG.duration.text.delay,
+                          },
+                        }}
+                      >
+                        {stage.description}
+                      </motion.p>
+                    </motion.div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         );
     }
