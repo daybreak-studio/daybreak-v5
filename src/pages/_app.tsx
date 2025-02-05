@@ -7,6 +7,7 @@ import { AppProps } from "next/app";
 import { AnimatePresence, motion } from "framer-motion";
 import { DebugProvider } from "@/lib/contexts/debug";
 import { usePathname } from "@/lib/hooks/use-pathname";
+import { useEffect } from "react";
 
 const aspekta = localFont({
   src: "../../public/fonts/AspektaVF.woff2",
@@ -14,6 +15,19 @@ const aspekta = localFont({
 
 export default function App({ Component, pageProps }: AppProps) {
   const { basePath } = usePathname();
+
+  useEffect(() => {
+    // Prevent overscroll/bounce effect
+    document.body.style.overflow = "auto";
+    document.body.style.overscrollBehavior = "none";
+    document.documentElement.style.overscrollBehavior = "none";
+
+    return () => {
+      document.body.style.overflow = "";
+      document.body.style.overscrollBehavior = "";
+      document.documentElement.style.overscrollBehavior = "";
+    };
+  }, []);
 
   // console.log(`
 

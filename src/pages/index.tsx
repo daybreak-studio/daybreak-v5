@@ -4,7 +4,6 @@ import { GetStaticProps } from "next";
 import { PortableText, PortableTextProps } from "@portabletext/react";
 import { client } from "@/sanity/lib/client";
 import type { Home, Clients } from "@/sanity/types";
-import Drawer from "@/components/drawer";
 import Reveal from "@/components/animations/reveal";
 import { WidgetGrid } from "@/components/widgets/grid";
 import CarouselComponent from "@/components/carousel";
@@ -20,6 +19,7 @@ import ProjectWidget from "@/components/widgets/variants/project";
 import RecentsWidget from "@/components/widgets/variants/recents";
 import RiveWidget from "@/components/widgets/variants/rive";
 import { EASINGS } from "@/components/animations/easings";
+import ScrollDrawer from "@/components/scroll-drawer";
 
 // Register widgets specific to the home page
 const homeWidgets: WidgetRegistry = {
@@ -37,18 +37,6 @@ export default function Home({
   homeData: Home;
   clientsData: Clients[];
 }) {
-  const [windowHeight, setWindowHeight] = useState<number | null>(null);
-
-  // Handles updates for window height.
-  useEffect(() => {
-    const updateHeight = () => {
-      setWindowHeight(window.innerHeight);
-    };
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
-  }, []);
-
   // Handles text rendering for the CMS text.
   // We are applying reveal animation and controlling font size.
   const components: PortableTextProps["components"] = {
@@ -96,54 +84,50 @@ export default function Home({
             </WidgetDataProvider>
           </div>
         </motion.div>
-        {/* Drawer Content */}
-        {windowHeight !== null && homeData && (
-          <Drawer windowHeight={windowHeight}>
+
+        <ScrollDrawer>
+          <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
             {/* Mission Statement */}
-            <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
-              <div>
-                <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:w-9/12 xl:px-36 2xl:w-7/12">
-                  {homeData.missionStatement && (
-                    <PortableText
-                      value={homeData.missionStatement}
-                      components={components}
-                    />
-                  )}
-                </Reveal>
-
-                {/* Carousel - Lazy load when drawer is open */}
-                <Reveal>
-                  {homeData.media && (
-                    <CarouselComponent media={homeData.media} />
-                  )}
-                </Reveal>
-              </div>
-
-              {/* About Us - Simplified animation */}
-              <Reveal className="px-8 md:w-10/12 md:px-20 xl:w-9/12 xl:px-36 2xl:w-7/12">
-                <h2 className="mb-4 text-lg text-neutral-400 md:text-lg lg:text-2xl">
-                  About Us
-                </h2>
-                {homeData?.aboutUs && (
+            <div>
+              <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:w-9/12 xl:px-36 2xl:w-7/12">
+                {homeData.missionStatement && (
                   <PortableText
-                    value={homeData.aboutUs}
+                    value={homeData.missionStatement}
                     components={components}
                   />
                 )}
               </Reveal>
 
-              {/* Newsfeed with Masonry Layout */}
-              <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
-                <h2 className="mb-4 text-lg text-neutral-400 md:text-lg lg:text-2xl">
-                  Newsfeed
-                </h2>
-                <MasonryGrid articles={homeData?.newsfeed || []} />
+              {/* Carousel - Lazy load when drawer is open */}
+              <Reveal>
+                {homeData.media && <CarouselComponent media={homeData.media} />}
               </Reveal>
             </div>
 
-            <Footer />
-          </Drawer>
-        )}
+            {/* About Us - Simplified animation */}
+            <Reveal className="px-8 md:w-10/12 md:px-20 xl:w-9/12 xl:px-36 2xl:w-7/12">
+              <h2 className="mb-4 text-lg text-neutral-400 md:text-lg lg:text-2xl">
+                About Us
+              </h2>
+              {homeData?.aboutUs && (
+                <PortableText
+                  value={homeData.aboutUs}
+                  components={components}
+                />
+              )}
+            </Reveal>
+
+            {/* Newsfeed with Masonry Layout */}
+            <Reveal className="px-8 pb-8 md:px-20 xl:px-36">
+              <h2 className="mb-4 text-lg text-neutral-400 md:text-lg lg:text-2xl">
+                Newsfeed
+              </h2>
+              <MasonryGrid articles={homeData?.newsfeed || []} />
+            </Reveal>
+          </div>
+
+          <Footer />
+        </ScrollDrawer>
       </main>
     </>
   );
