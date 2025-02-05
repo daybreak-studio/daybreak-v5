@@ -59,7 +59,7 @@ function PersonInfo({
         layout
         layoutId="person-info-container"
         className={cn(
-          "mx-auto h-min w-min overflow-hidden bg-white/40 p-1 drop-shadow-2xl backdrop-blur-md",
+          "mx-auto h-min w-min overflow-hidden bg-white/50 p-1 drop-shadow-2xl backdrop-blur-md",
         )}
         animate={{
           borderRadius: isExpanded ? 32 : 16,
@@ -84,93 +84,104 @@ function PersonInfo({
           }}
           style={{ transformOrigin: "bottom center" }}
         >
-          <AnimatePresence mode="popLayout">
-            {isExpanded ? (
-              <motion.div
-                layout="position"
-                layoutId={person.name}
-                className="flex flex-col text-center"
-              >
-                <motion.h2
-                  key={person.name}
-                  initial={{ filter: "blur(2px)" }}
-                  animate={{ filter: "blur(0px)" }}
-                  exit={{ filter: "blur(2px)" }}
-                  layout="position"
-                  className="whitespace-nowrap font-medium text-neutral-500"
-                >
-                  {person.name}
-                </motion.h2>
-                <motion.h2
-                  key={person.role}
-                  initial={{ filter: "blur(2px)" }}
-                  animate={{ filter: "blur(0px)" }}
-                  exit={{ filter: "blur(2px)" }}
-                  layout="position"
-                  className="whitespace-nowrap text-neutral-400"
-                >
-                  {person.role}
-                </motion.h2>
-              </motion.div>
-            ) : (
-              <motion.div
-                layout
-                layoutId={person.name}
-                className="flex w-full items-center justify-between"
-              >
-                <div className="flex flex-col">
-                  <motion.div
-                    key={person.name}
-                    initial={{ filter: "blur(2px)" }}
-                    animate={{ filter: "blur(0px)" }}
-                    exit={{ filter: "blur(2px)" }}
-                    layout="position"
-                    className="whitespace-nowrap text-neutral-500"
-                  >
-                    {person.name}
-                  </motion.div>
-                  <motion.div
-                    key={person.role}
-                    initial={{ filter: "blur(2px)" }}
-                    animate={{ filter: "blur(0px)" }}
-                    exit={{ filter: "blur(2px)" }}
-                    layout="position"
-                    className="whitespace-nowrap text-neutral-400"
-                  >
-                    {person.role}
-                  </motion.div>
-                </div>
+          <motion.div
+            layout="position"
+            layoutId="info-container"
+            className={cn(
+              "flex w-full",
+              isExpanded
+                ? "flex-col items-center"
+                : "items-center justify-between",
+            )}
+          >
+            <motion.div
+              layout="position"
+              layoutId="text-content"
+              className={cn("flex flex-col", isExpanded && "items-center")}
+              transition={{
+                layout: {
+                  duration: 0.3,
+                  ease: EASINGS.easeOutQuart,
+                },
+                ease: EASINGS.easeOutQuart,
+              }}
+            >
+              <AnimatePresence mode="wait">
                 <motion.div
-                  key={"state: " + isExpanded}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 }}
+                  layout
+                  key={person._key + "-" + isExpanded}
+                  initial={{ filter: "blur(2px)" }}
+                  animate={{ filter: "blur(0px)" }}
+                  exit={{ filter: "blur(2px)" }}
+                  transition={{
+                    duration: 0.1,
+                    ease: EASINGS.easeOutQuart,
+                  }}
+                  className={cn(
+                    "flex flex-col",
+                    isExpanded ? "items-center" : "items-start",
+                  )}
                 >
-                  <ExpandIcon className="h-4 w-4 text-neutral-500" />
+                  <span className="whitespace-nowrap font-medium text-neutral-500">
+                    {person.name}
+                  </span>
+                  <span className="whitespace-nowrap text-neutral-400">
+                    {person.role}
+                  </span>
                 </motion.div>
+              </AnimatePresence>
+            </motion.div>
+
+            {!isExpanded && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
+                <ExpandIcon className="h-4 w-4 text-neutral-500" />
               </motion.div>
             )}
-          </AnimatePresence>
+          </motion.div>
 
           <AnimatePresence mode="popLayout">
             {isExpanded && (
               <motion.div
                 key={person._key}
-                initial={{ opacity: 0, filter: "blur(2px)" }}
+                initial={{ opacity: 0, filter: "blur(4px)" }}
                 animate={{ opacity: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, filter: "blur(2px)" }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, filter: "blur(4px)" }}
+                transition={{
+                  duration: 0.4,
+                  ease: EASINGS.easeOutQuart,
+                  layout: { duration: 0.3 },
+                }}
                 className="flex w-full flex-col space-y-6"
                 layout="position"
               >
-                <p className="px-8 text-center text-neutral-500">
+                <motion.p
+                  initial={{ opacity: 0, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(4px)" }}
+                  transition={{
+                    duration: 0.4,
+                    ease: EASINGS.easeOutQuart,
+                  }}
+                  className="px-8 text-center text-neutral-500"
+                >
                   {person.bio}
-                </p>
+                </motion.p>
                 <div className="flex items-start gap-1 self-stretch">
                   {person.qaPairs.map((qaPair, index) => (
-                    <div
+                    <motion.div
                       key={index}
+                      initial={{ opacity: 0, filter: "blur(4px)" }}
+                      animate={{ opacity: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, filter: "blur(4px)" }}
+                      transition={{
+                        duration: 0.4,
+                        ease: EASINGS.easeOutQuart,
+                      }}
                       className="flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-neutral-200 bg-neutral-400/5 p-4 text-center"
                     >
                       <div className="pb-1 text-sm text-neutral-500">
@@ -179,7 +190,7 @@ function PersonInfo({
                       <div className="text-md text-neutral-400">
                         {qaPair.answer}
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </motion.div>
@@ -203,7 +214,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     axis: "x",
     direction: "ltr",
     startIndex,
-    dragFree: false,
+    dragFree: true,
     inViewThreshold: 0.7,
   });
 
@@ -214,56 +225,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   const [isScrolling, setIsScrolling] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
 
-  // Add new state for drag handling
-  const [isDragging, setIsDragging] = useState(false);
-
-  // Function to handle dot scrubbing
-  const handleDotDrag = useCallback(
-    (clientX: number) => {
-      if (!emblaApi) return;
-
-      // Get the dots container element
-      const dotsContainer = document.querySelector(".dots-container");
-      if (!dotsContainer) return;
-
-      // Get container bounds
-      const rect = dotsContainer.getBoundingClientRect();
-
-      // Calculate relative position (0 to 1), clamped to container bounds
-      const relativeX = Math.max(
-        0,
-        Math.min(1, (clientX - rect.left) / rect.width),
-      );
-
-      // Calculate target index based on position
-      const totalSlides = emblaApi.scrollSnapList().length;
-      const targetIndex = Math.min(
-        totalSlides - 1,
-        Math.floor(relativeX * totalSlides),
-      );
-
-      emblaApi.scrollTo(targetIndex);
-      setPreviewIndex(targetIndex);
-    },
-    [emblaApi],
-  );
-
-  // Update pointer event handlers
-  const handlePointerMove = useCallback(
-    (e: ReactPointerEvent) => {
-      if (isDragging) {
-        handleDotDrag(e.clientX);
-      }
-    },
-    [isDragging, handleDotDrag],
-  );
-
-  const handlePointerUp = useCallback(() => {
-    setIsDragging(false);
-    setPreviewIndex(null);
-  }, []);
-
-  // --- Event Handlers ---
+  // Keep original scroll handler
   const handleScroll = useCallback(
     (event: WheelEvent) => {
       // 1. Early return if carousel isn't ready or is already scrolling
@@ -427,6 +389,12 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
                     duration: 0.6,
                     ease: EASINGS.easeOutQuart,
                   }}
+                  onClick={() => {
+                    setPreviewIndex(null);
+                    emblaApi?.scrollTo(i);
+                    setSelectedIndex(i);
+                  }}
+                  style={{ cursor: "pointer" }}
                 >
                   {person.media?.[0] && (
                     <MediaRenderer
@@ -455,46 +423,28 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
       {/* Updated Dots Navigation */}
       {!isExpanded && (
         <div className="absolute bottom-36 left-1/2 z-10 -translate-x-1/2 md:bottom-40">
-          <motion.div
-            className="dots-container flex px-4 py-2"
-            onPointerDown={(e) => {
-              const target = e.currentTarget;
-              target.setPointerCapture(e.pointerId);
-              setIsDragging(true);
-              handleDotDrag(e.clientX);
-            }}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
-          >
+          <motion.div className="dots-container flex px-4 py-2">
             {aboutData.team?.map((_, index) => (
               <motion.button
                 key={index}
                 onClick={() => {
-                  if (!isDragging) {
-                    setPreviewIndex(null);
-                    emblaApi?.scrollTo(index);
-                  }
+                  setPreviewIndex(null);
+                  emblaApi?.scrollTo(index);
+                  setSelectedIndex(index);
                 }}
-                onHoverStart={() => !isDragging && setPreviewIndex(index)}
-                onHoverEnd={() => !isDragging && setPreviewIndex(null)}
+                onHoverStart={() => setPreviewIndex(index)}
+                onHoverEnd={() => setPreviewIndex(null)}
                 className="relative px-2 py-3"
               >
                 <motion.div
                   className="h-2 w-2 rounded-full bg-neutral-500"
                   animate={{
-                    scale: isDragging
-                      ? index === previewIndex
-                        ? 1.5
-                        : 1
-                      : index === previewIndex || index === selectedIndex
+                    scale:
+                      index === previewIndex || index === selectedIndex
                         ? 1.5
                         : 1,
-                    opacity: isDragging
-                      ? index === previewIndex
-                        ? 1
-                        : 0.5
-                      : index === previewIndex || index === selectedIndex
+                    opacity:
+                      index === previewIndex || index === selectedIndex
                         ? 1
                         : 0.5,
                   }}

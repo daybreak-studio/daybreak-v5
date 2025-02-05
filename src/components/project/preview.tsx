@@ -40,7 +40,7 @@ const Navigation = memo(function Navigation({
     >
       <motion.button
         onClick={() => onSelect(current - 1)}
-        className="rounded-full p-1"
+        className="rounded-full p-1 focus:outline-none focus:ring-0"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
@@ -63,10 +63,9 @@ const Navigation = memo(function Navigation({
             media={media}
             className="h-5 w-5 rounded-md"
             priority={true}
-            quality={10}
-            sizes="10px"
-            width={10}
-            height={10}
+            sizes="32px"
+            width={32}
+            height={32}
             playsInline={true}
           />
         </motion.button>
@@ -74,7 +73,7 @@ const Navigation = memo(function Navigation({
 
       <motion.button
         onClick={() => onSelect(current + 1)}
-        className="rounded-full p-1"
+        className="rounded-full p-1 focus:outline-none focus:ring-0"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
       >
