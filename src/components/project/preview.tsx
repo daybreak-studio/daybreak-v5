@@ -300,33 +300,31 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           )}
 
           {/* Mobile view */}
-          {isMobile && (
-            <div className="relative flex flex-col">
-              <div
-                className="frame-inner w-full overflow-hidden"
-                onClick={handleNext}
+          <div className="relative flex flex-col md:hidden">
+            <div
+              className="frame-inner w-full overflow-hidden"
+              onClick={handleNext}
+            >
+              <motion.div
+                key={currentIndex}
+                initial={{ opacity: 0, filter: "blur(8px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(8px)" }}
+                transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
+                className="h-full w-full"
+                whileTap={{ scale: 0.97 }}
               >
-                <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, filter: "blur(8px)" }}
-                  animate={{ opacity: 1, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, filter: "blur(8px)" }}
-                  transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-                  className="h-full w-full"
-                  whileTap={{ scale: 0.97 }}
-                >
-                  <MediaRenderer
-                    className="frame-inner h-full w-full overflow-hidden"
-                    media={mediaArray[currentIndex]}
-                    autoPlay={true}
-                    priority={true}
-                    loading="eager"
-                  />
-                </motion.div>
-              </div>
-              <PreviewDots total={mediaArray.length} current={currentIndex} />
+                <MediaRenderer
+                  className="frame-inner h-full w-full overflow-hidden"
+                  media={mediaArray[currentIndex]}
+                  autoPlay={true}
+                  priority={true}
+                  loading="eager"
+                />
+              </motion.div>
             </div>
-          )}
+            <PreviewDots total={mediaArray.length} current={currentIndex} />
+          </div>
         </AnimatePresence>
       </motion.div>
 
