@@ -13,8 +13,14 @@ const aspekta = localFont({
   src: "../../public/fonts/AspektaVF.woff2",
 });
 
+// Add an array of paths that have drawers
+const DRAWER_PATHS = ["/", "/work"]; // Add other paths that use drawers
+
 export default function App({ Component, pageProps }: AppProps) {
   const { basePath } = usePathname();
+
+  // Check if current path has a drawer
+  const hasDrawer = DRAWER_PATHS.includes(basePath);
 
   useEffect(() => {
     // Prevent overscroll/bounce effect
@@ -60,7 +66,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className={`${aspekta.className}`}>
       <DebugProvider>
-        <Navigation />
+        <Navigation disableScrollHiding={hasDrawer} />
         <motion.div className="main-gradient fixed inset-0" />
         <AnimatePresence mode="wait">
           <Layout key={basePath}>

@@ -247,14 +247,20 @@ const MobileMenu = ({
 
 interface NavigationProps {
   forceHide?: boolean;
+  disableScrollHiding?: boolean;
 }
 
-function useScrollDirection() {
+function useScrollDirection(disabled?: boolean) {
   const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
   const [prevScroll, setPrevScroll] = useState(0);
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
+    if (disabled) {
+      setVisible(true);
+      return;
+    }
+
     const threshold = 10;
     let ticking = false;
 
@@ -266,7 +272,6 @@ function useScrollDirection() {
         return;
       }
 
-      // Don't hide nav when at the top of the page
       if (currentScroll < threshold) {
         setVisible(true);
         setPrevScroll(currentScroll);
@@ -289,18 +294,20 @@ function useScrollDirection() {
 
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
-  }, [prevScroll]);
+  }, [prevScroll, disabled]);
 
-  return visible;
+  return disabled ? true : visible;
 }
 
-export default function Navigation({ forceHide }: NavigationProps) {
+export default function Navigation({
+  forceHide,
+  disableScrollHiding,
+}: NavigationProps) {
   const { basePath } = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const isValidPath = tabs.some((tab) => tab.href === basePath);
-  const showNav = useScrollDirection();
+  const showNav = useScrollDirection(disableScrollHiding);
 
-  // Close mobile menu if window is resized to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768 && isOpen) {
