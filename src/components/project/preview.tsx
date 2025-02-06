@@ -299,18 +299,20 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           {...IMAGE_ANIMATION}
           layoutId={assetId || ""}
         >
-          <MediaRenderer
-            className="frame-inner max-h-[700px] cursor-e-resize"
-            media={mediaArray[currentIndex]}
-            autoPlay={true}
-            priority={true}
-            fill
-            loading="eager"
-          />
+          <div className="relative aspect-square h-full w-full">
+            <MediaRenderer
+              className="frame-inner h-full w-full"
+              media={mediaArray[currentIndex]}
+              autoPlay={true}
+              priority={true}
+              fill
+              loading="eager"
+            />
+          </div>
         </motion.div>
         <div className="relative flex flex-col md:hidden">
           <motion.div
-            className="frame-inner h-full w-full touch-pan-y overflow-hidden"
+            className="frame-inner relative aspect-square h-full w-full touch-pan-y overflow-hidden"
             onClick={handleNext}
             whileTap={{ scale: 0.97 }}
             drag="x"
@@ -320,13 +322,16 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
             dragMomentum={false}
             onDragEnd={handleDragEnd}
           >
-            <MediaRenderer
-              fill
-              media={mediaArray[currentIndex]}
-              autoPlay={true}
-              priority={true}
-              loading="eager"
-            />
+            <div className="pointer-events-none h-full w-full">
+              <MediaRenderer
+                fill
+                media={mediaArray[currentIndex]}
+                autoPlay={true}
+                priority={true}
+                loading="eager"
+                className="pointer-events-none"
+              />
+            </div>
           </motion.div>
           <PreviewDots total={mediaArray.length} current={currentIndex} />
         </div>
