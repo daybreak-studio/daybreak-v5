@@ -16,15 +16,22 @@ const GRID_ANIMATION = {
 };
 
 const WIDTHS = {
-  standard: "w-[400px]",
+  // Desktop widths
+  standard: "hidden md:block md:w-[400px]",
   hero: {
-    side: "w-[360px]",
-    middle: "w-[520px]",
+    side: "hidden md:block md:w-[360px]",
+    middle: "hidden md:block md:w-[520px]",
+  },
+  // Mobile widths with 2:1 ratio
+  mobile: {
+    small: "block w-4/12 md:hidden", // 1/3 width
+    large: "block w-8/12 md:hidden", // 2/3 width
   },
 } as const;
 
 const WorksGrid: React.FC<WorksGridProps> = ({ data, children }) => {
-  const rows = useMemo(() => {
+  // Desktop layout rows
+  const desktopRows = useMemo(() => {
     const result: Clients[][] = [];
     let currentIndex = 0;
 
@@ -47,6 +54,18 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data, children }) => {
     return result;
   }, [data]);
 
+  // Simplified mobile rows logic
+  const mobileRows = useMemo(() => {
+    const result: Clients[][] = [];
+    for (let i = 0; i < data.length; i += 2) {
+      const pair = data.slice(i, i + 2);
+      if (pair.length === 2) {
+        result.push(pair);
+      }
+    }
+    return result;
+  }, [data]);
+
   return (
     <motion.div
       initial="hidden"
@@ -55,39 +74,75 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data, children }) => {
       className="relative mx-auto pt-24"
     >
       <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
-        {rows.map((row, rowIndex) => {
-          const isFirstRow = rowIndex === 0;
-          const isLastRow = rowIndex === rows.length - 1;
-          const isHeroRow = isFirstRow || (isLastRow && row.length === 3);
+        {/* Mobile Layout */}
+        <div className="flex flex-col gap-4 md:hidden">
+          {mobileRows.map((row, rowIndex) => {
+            const isEvenRow = rowIndex % 2 === 0;
 
-          return (
-            <div
-              key={rowIndex}
-              className={`flex justify-center gap-4 ${
-                isFirstRow
-                  ? "items-end"
-                  : isLastRow
-                    ? "items-start"
-                    : "items-center"
-              }`}
-            >
-              {row.map((client, index) => (
-                <div
-                  key={client._id}
-                  className={
-                    isHeroRow
-                      ? index === 1
-                        ? WIDTHS.hero.middle
-                        : WIDTHS.hero.side
-                      : WIDTHS.standard
-                  }
-                >
-                  {children(client, rowIndex)}
-                </div>
-              ))}
-            </div>
-          );
-        })}
+            return (
+              <div
+                key={rowIndex}
+                className={`flex justify-center gap-2 ${
+                  isEvenRow ? "items-end" : "items-start"
+                }`}
+              >
+                {row.map((client, index) => (
+                  <div
+                    key={client._id}
+                    className={
+                      isEvenRow
+                        ? index === 0
+                          ? WIDTHS.mobile.large
+                          : WIDTHS.mobile.small
+                        : index === 0
+                          ? WIDTHS.mobile.small
+                          : WIDTHS.mobile.large
+                    }
+                  >
+                    {children(client, rowIndex)}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:flex md:flex-col md:gap-8">
+          {desktopRows.map((row, rowIndex) => {
+            const isFirstRow = rowIndex === 0;
+            const isLastRow = rowIndex === desktopRows.length - 1;
+            const isHeroRow = isFirstRow || (isLastRow && row.length === 3);
+
+            return (
+              <div
+                key={rowIndex}
+                className={`flex justify-center gap-4 ${
+                  isFirstRow
+                    ? "items-end"
+                    : isLastRow
+                      ? "items-start"
+                      : "items-center"
+                }`}
+              >
+                {row.map((client, index) => (
+                  <div
+                    key={client._id}
+                    className={
+                      isHeroRow
+                        ? index === 1
+                          ? WIDTHS.hero.middle
+                          : WIDTHS.hero.side
+                        : WIDTHS.standard
+                    }
+                  >
+                    {children(client, rowIndex)}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </motion.div>
   );

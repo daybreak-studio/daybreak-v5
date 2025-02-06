@@ -231,15 +231,15 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: 0.2 }}
-                      className="absolute bottom-6 left-6 flex items-center gap-3"
+                      className="absolute bottom-6 left-6 hidden items-center gap-3 lg:flex"
                     >
-                      <div className="size-10 rounded-lg bg-neutral-100" />
+                      <div className="aspect-square size-10 rounded-lg bg-neutral-100/25" />
                       <div className="flex flex-col">
-                        <h2 className="text-shadow text-base font-medium text-neutral-50/90 [text-shadow:_0_1px_0_rgb(0_0_0_/30%)]">
+                        <h2 className="text-shadow text-xs font-medium text-neutral-50/90 [text-shadow:_0_1px_0_rgb(0_0_0_/30%)]">
                           {client.name}
                         </h2>
                         {client.projects && (
-                          <h2 className="text-sm font-medium text-neutral-50/75 [text-shadow:_0_1px_0_rgb(0_0_0_/20%)]">
+                          <h2 className="text-xs font-medium text-neutral-50/75 [text-shadow:_0_1px_0_rgb(0_0_0_/20%)]">
                             {client.projects
                               .map((project) =>
                                 capitalizeFirstLetter(project.category || ""),
