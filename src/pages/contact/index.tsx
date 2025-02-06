@@ -11,11 +11,32 @@ import {
   getCardVisibility,
 } from "@/components/form/utils/animations";
 import { usePersistedForm } from "@/components/form/utils/storage";
+import { EASINGS } from "@/components/animations/easings";
 
 interface FormStep {
   id: string;
   content: React.ReactNode;
 }
+
+// Add animation variants at the top
+const FORM_ANIMATION = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+    scale: 0.95,
+    filter: "blur(10px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: {
+      duration: 1,
+      ease: EASINGS.easeOutQuart,
+    },
+  },
+} as const;
 
 export default function ContactPage() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -64,7 +85,12 @@ export default function ContactPage() {
 
   return (
     <FormProvider {...form}>
-      <div className="fixed inset-0">
+      <motion.div
+        className="fixed inset-0"
+        initial="hidden"
+        animate="visible"
+        variants={FORM_ANIMATION}
+      >
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="grid h-screen w-screen place-items-center"
@@ -90,7 +116,11 @@ export default function ContactPage() {
                 exit={{
                   opacity: 0,
                   scale: 0.95,
-                  transition: { duration: 0.2 },
+                  filter: "blur(10px)",
+                  transition: {
+                    duration: 0.6,
+                    ease: EASINGS.easeOutQuart,
+                  },
                 }}
                 transition={{
                   type: "spring",
@@ -98,8 +128,8 @@ export default function ContactPage() {
                   damping: 20,
                   mass: 1,
                   velocity: 0.5,
-                  opacity: { duration: 0.4 },
-                  filter: { duration: 0.2 },
+                  opacity: { duration: 0.6 },
+                  filter: { duration: 0.6 },
                 }}
                 style={{
                   position: "absolute",
@@ -112,7 +142,7 @@ export default function ContactPage() {
             ))}
           </AnimatePresence>
         </form>
-      </div>
+      </motion.div>
     </FormProvider>
   );
 }

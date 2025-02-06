@@ -80,6 +80,37 @@ const shouldShowCloseButton = (modalType: string) => {
   return "inline-flex"; // Show for all other modal types
 };
 
+// First, let's add the stagger animation variants
+const GRID_ANIMATION = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+} as const;
+
+const ITEM_ANIMATION = {
+  hidden: {
+    opacity: 0,
+    y: 20,
+    scale: 0.9,
+    filter: "blur(10px)",
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.8,
+      ease: EASINGS.easeOutQuart,
+    },
+  },
+} as const;
+
 export default function WorkPage({ data }: { data: Clients[] }) {
   const router = useRouter();
   const { slug } = router.query;
@@ -143,7 +174,12 @@ export default function WorkPage({ data }: { data: Clients[] }) {
 
   return (
     <div className="hide-scrollbar mx-auto overflow-y-scroll p-8 lg:px-48 lg:py-16">
-      <div className="relative grid grid-cols-1 gap-6 pt-24 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+      <motion.div
+        className="relative grid grid-cols-1 gap-6 pt-24 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
+        initial="hidden"
+        animate="visible"
+        variants={GRID_ANIMATION}
+      >
         {data.map((client) => {
           const mediaAsset = getClientFirstMedia(client);
           const assetId = getMediaAssetId(mediaAsset);
@@ -169,6 +205,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
               </Dialog.Description>
               <Dialog.Trigger asChild>
                 <motion.div
+                  variants={ITEM_ANIMATION}
                   {...CONTAINER_ANIMATION}
                   layoutId={containerLayoutId}
                   className={cn(
@@ -240,7 +277,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                           duration: 0.4,
                           ease: EASINGS.easeOutQuart,
                         }}
-                        className="fixed inset-0 z-40 bg-white/70 backdrop-blur-3xl"
+                        className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
                       />
                     </Dialog.Overlay>
 
@@ -249,7 +286,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         {...CONTAINER_ANIMATION}
                         layoutId={containerLayoutId}
                         className={cn(
-                          "fixed bottom-0 left-0 right-0 top-0 z-50 m-auto h-fit w-fit",
+                          "fixed bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit",
                           "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white",
                           modalVariant.className,
                         )}
@@ -303,7 +340,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
             </Dialog.Root>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 }

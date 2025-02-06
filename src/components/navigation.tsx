@@ -155,7 +155,10 @@ const MobileMenu = ({
     animate={{ opacity: 1, filter: "blur(0px)" }}
     exit={{ opacity: 0, filter: "blur(12px)" }}
     transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-    className="fixed inset-0 z-[100] flex h-[100svh] flex-col items-center bg-white/50 backdrop-blur-3xl"
+    className={clsx(
+      "fixed inset-0 z-40 flex h-[100dvh] flex-col items-center bg-white/50 pt-12 backdrop-blur-3xl",
+      isOpen && "touch-none overflow-hidden",
+    )}
   >
     <div className="container relative flex h-full w-full max-w-lg flex-col items-center justify-center px-8">
       <motion.div
@@ -231,7 +234,7 @@ const MobileMenu = ({
         }}
         initial="hidden"
         animate="visible"
-        className="pt-16 text-center"
+        className="pt-12 text-center"
       >
         <Link
           href="/contact"
@@ -249,6 +252,11 @@ interface NavigationProps {
   forceHide?: boolean;
   disableScrollHiding?: boolean;
 }
+// Add a simple event system to handle video pausing
+export const VIDEO_EVENTS = {
+  PAUSE_ALL: "PAUSE_ALL_VIDEOS",
+  RESUME_ALL: "RESUME_ALL_VIDEOS",
+};
 
 function useScrollDirection(disabled?: boolean) {
   const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
@@ -319,10 +327,19 @@ export default function Navigation({
     return () => window.removeEventListener("resize", handleResize);
   }, [isOpen]);
 
+  // Add effect for video control
+  useEffect(() => {
+    if (isOpen) {
+      window.dispatchEvent(new Event(VIDEO_EVENTS.PAUSE_ALL));
+    } else {
+      window.dispatchEvent(new Event(VIDEO_EVENTS.RESUME_ALL));
+    }
+  }, [isOpen]);
+
   return (
     <>
       <motion.nav
-        className="pointer-events-auto fixed left-0 right-0 top-0 z-30 mx-auto flex w-full justify-center"
+        className="pointer-events-auto fixed left-0 right-0 top-0 z-50 mx-auto flex w-full justify-center"
         initial={{ y: 0 }}
         animate={{ y: !showNav || forceHide ? -100 : 0 }}
         transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
