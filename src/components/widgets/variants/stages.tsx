@@ -149,7 +149,7 @@ export default function StagesWidget({ data }: StagesProps) {
             <motion.div
               layoutId="morphing-background"
               className={clsx(
-                "pointer-events-none absolute inset-0 rounded-2xl md:rounded-3xl",
+                "frame-inner pointer-events-none absolute inset-0",
                 TIER_CONFIG.background.active,
               )}
               animate={{
