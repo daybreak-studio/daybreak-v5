@@ -143,7 +143,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
           initial="hidden"
           animate="visible"
           variants={CONTAINER_ANIMATION}
-          className="hidden md:flex md:flex-col md:gap-8"
+          className="hidden md:flex md:flex-col md:gap-4"
         >
           {desktopRows.map((row, rowIndex) => {
             const isFirstRow = rowIndex === 0;
