@@ -14,7 +14,7 @@ import ProjectCaseStudy from "@/components/project/case-study";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
-import { useEffect, useState, Suspense, useCallback } from "react";
+import { useEffect, useState, Suspense, useCallback, useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
 import { client } from "@/sanity/lib/client";
 import { CLIENTS_QUERY } from "@/sanity/lib/queries";
@@ -27,6 +27,7 @@ import { HoverCard } from "@/components/animations/hover";
 import { Metadata } from "next";
 import { urlFor } from "@/sanity/lib/image";
 import { VIDEO_EVENTS } from "@/components/media-renderer";
+import WorksGrid from "./components/works-grid";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -174,20 +175,14 @@ export default function WorkPage({ data }: { data: Clients[] }) {
 
   return (
     <div className="hide-scrollbar mx-auto overflow-y-scroll p-8 lg:px-48 lg:py-16">
-      <motion.div
-        className="relative grid grid-cols-1 gap-6 pt-24 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
-        initial="hidden"
-        animate="visible"
-        variants={GRID_ANIMATION}
-      >
-        {data.map((client) => {
+      <WorksGrid data={data}>
+        {(client, index) => {
           const mediaAsset = getClientFirstMedia(client);
           const assetId = getMediaAssetId(mediaAsset);
           if (!client.slug) return null;
 
           const containerLayoutId = `${client.slug.current}`;
           const modalVariant = getModalVariant(client, projectSlug);
-
           const isOpen = shouldShowModal && clientSlug === client.slug.current;
 
           return (
@@ -333,14 +328,13 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         </Dialog.Close>
                       </motion.div>
                     </Dialog.Content>
-                    {/* </div> */}
                   </Dialog.Portal>
                 )}
               </AnimatePresence>
             </Dialog.Root>
           );
-        })}
-      </motion.div>
+        }}
+      </WorksGrid>
     </div>
   );
 }

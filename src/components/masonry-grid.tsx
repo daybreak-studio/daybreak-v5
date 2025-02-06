@@ -1,6 +1,7 @@
 import type { Home } from "@/sanity/types";
 import Article from "@/components/article";
-import { useEffect, useState } from "react";
+import { useViewport } from "@/lib/hooks/use-viewport";
+import { BREAKPOINTS } from "@/lib/hooks/use-viewport";
 
 type ArticleType = NonNullable<Home["newsfeed"]>[number];
 
@@ -9,26 +10,7 @@ interface MasonryGridProps {
 }
 
 const MasonryGrid: React.FC<MasonryGridProps> = ({ articles }) => {
-  const [columns, setColumns] = useState(3);
-
-  // Update columns based on viewport width
-  useEffect(() => {
-    const updateColumns = () => {
-      if (window.innerWidth >= 1920)
-        setColumns(4); // 3xl
-      else if (window.innerWidth >= 1024)
-        setColumns(3); // lg
-      else if (window.innerWidth >= 768)
-        setColumns(2); // md
-      else if (window.innerWidth >= 640)
-        setColumns(2); // sm
-      else setColumns(1); // mobile
-    };
-
-    updateColumns();
-    window.addEventListener("resize", updateColumns);
-    return () => window.removeEventListener("resize", updateColumns);
-  }, []);
+  const { breakpoint } = useViewport();
 
   // Sort articles by date
   const sortedArticles = [...articles].sort((a, b) => {
@@ -37,27 +19,26 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ articles }) => {
     return dateB - dateA;
   });
 
-  // Distribute articles across columns horizontally
-  const distributeArticles = () => {
-    const distributedColumns: ArticleType[][] = Array.from(
-      { length: columns },
-      () => [],
-    );
-
-    sortedArticles.forEach((article, index) => {
-      const columnIndex = index % columns;
-      distributedColumns[columnIndex].push(article);
-    });
-
-    return distributedColumns;
+  // Get column count based on viewport width
+  const getColumnCount = () => {
+    const width = BREAKPOINTS[breakpoint];
+    if (width >= BREAKPOINTS["3xl"]) return 4; // ≥1920px
+    if (width >= BREAKPOINTS.lg) return 3; // ≥1024px
+    if (width >= BREAKPOINTS.md) return 2; // ≥768px
+    return 1; // <768px
   };
+
+  const columnCount = getColumnCount();
+  const columns = Array.from({ length: columnCount }, (_, i) =>
+    sortedArticles.filter((_, index) => index % columnCount === i),
+  );
 
   return (
     <div className="flex w-full gap-4">
-      {distributeArticles().map((column, columnIndex) => (
+      {columns.map((column, columnIndex) => (
         <div key={columnIndex} className="flex flex-1 flex-col gap-4">
           {column.map((article) => (
-            <div key={article._key} className="w-full">
+            <div key={article._key}>
               <Article article={article} />
             </div>
           ))}
