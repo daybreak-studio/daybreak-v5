@@ -7,7 +7,7 @@ export const CONTAINER_ANIMATION: MotionProps = {
   transition: {
     layout: {
       duration: 1,
-      ease: EASINGS.easeInOutQuart,
+      ease: EASINGS.easeOutQuart,
     },
   },
 };
@@ -17,7 +17,7 @@ export const IMAGE_ANIMATION: MotionProps = {
   transition: {
     layout: {
       duration: 1,
-      ease: EASINGS.easeInOutQuart,
+      ease: EASINGS.easeOutQuart,
     },
   },
 };

@@ -32,7 +32,8 @@ const Navigation = memo(function Navigation({
     <motion.div
       initial={{ opacity: 0, filter: "blur(4px)" }}
       animate={{ opacity: 1, filter: "blur(0px)" }}
-      transition={{ delay: 0.4, duration: 1, ease: EASINGS.easeOutQuart }}
+      exit={{ opacity: 0, filter: "blur(4px)" }}
+      transition={{ duration: 1, ease: EASINGS.easeOutQuart }}
       className="hidden items-center space-x-2 md:flex"
     >
       <motion.button
@@ -94,6 +95,7 @@ const ProjectInfo = memo(function ProjectInfo({
     <motion.div
       initial="hidden"
       animate="visible"
+      exit="hidden"
       variants={{
         hidden: { opacity: 0 },
         visible: {
