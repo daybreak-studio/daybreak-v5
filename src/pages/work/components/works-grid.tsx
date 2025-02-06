@@ -35,8 +35,12 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data, children }) => {
     const result: Clients[][] = [];
     let currentIndex = 0;
 
-    // First row is always 3 items
-    result.push(data.slice(0, 3));
+    // First row is always 3 items, but swap first two items
+    const firstThree = data.slice(0, 3);
+    if (firstThree.length === 3) {
+      // Create a new array with first two items swapped
+      result.push([firstThree[1], firstThree[0], firstThree[2]]);
+    }
     currentIndex = 3;
 
     // Process remaining items in alternating 2-3 pattern
