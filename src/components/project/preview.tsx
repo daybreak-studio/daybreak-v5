@@ -221,6 +221,18 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
   );
 
   const mediaArray = useMemo(() => project?.media || [], [project]);
+  const currentMediaAsset = useMemo(
+    () => mediaArray[currentIndex],
+    [mediaArray, currentIndex],
+  );
+
+  // Move logging effect to top level
+  useEffect(() => {
+    if (isMobile !== undefined && currentMediaAsset) {
+      console.log(isMobile);
+      console.log("PREVIEW", getMediaAssetId(currentMediaAsset));
+    }
+  }, [isMobile, currentMediaAsset]);
 
   // Move all hooks before any conditional logic
   const handleNavigate = useCallback(
@@ -276,16 +288,9 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     }
   }, [isBlurred]);
 
-  // Early return after all hooks
   if (!project) return null;
 
-  const mediaAsset = mediaArray[currentIndex];
-  const assetId = getMediaAssetId(mediaAsset);
-
-  useEffect(() => {
-    console.log(isMobile);
-    console.log("PREVIEW", getMediaAssetId(mediaArray[currentIndex]));
-  }, [currentIndex]);
+  const assetId = getMediaAssetId(currentMediaAsset);
 
   return (
     <motion.div className="flex flex-col overflow-hidden p-8 md:flex-row md:space-x-8">
