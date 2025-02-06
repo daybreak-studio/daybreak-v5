@@ -7,11 +7,25 @@ interface WorksGridProps {
   children: (client: Clients, index: number) => React.ReactNode;
 }
 
-const GRID_ANIMATION = {
+const CONTAINER_ANIMATION = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const ITEM_ANIMATION = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
   },
 };
 
@@ -75,15 +89,15 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
   }, [data]);
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={GRID_ANIMATION}
-      className="relative mx-auto pt-24"
-    >
+    <div className="relative mx-auto pt-24">
       <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
         {/* Mobile Layout */}
-        <div className="flex flex-col gap-4 md:hidden">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={CONTAINER_ANIMATION}
+          className="flex flex-col gap-4 md:hidden"
+        >
           {mobileRows.map((row, rowIndex) => {
             const isEvenRow = rowIndex % 2 === 0;
 
@@ -95,8 +109,9 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
                 }`}
               >
                 {row.map((client, index) => (
-                  <div
+                  <motion.div
                     key={client._id}
+                    variants={ITEM_ANIMATION}
                     className={
                       isEvenRow
                         ? index === 0
@@ -108,15 +123,20 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
                     }
                   >
                     {children(client, rowIndex)}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             );
           })}
-        </div>
+        </motion.div>
 
         {/* Desktop Layout */}
-        <div className="hidden md:flex md:flex-col md:gap-8">
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          variants={CONTAINER_ANIMATION}
+          className="hidden md:flex md:flex-col md:gap-8"
+        >
           {desktopRows.map((row, rowIndex) => {
             const isFirstRow = rowIndex === 0;
             const isLastRow = rowIndex === desktopRows.length - 1;
@@ -134,8 +154,9 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
                 }`}
               >
                 {row.map((client, index) => (
-                  <div
+                  <motion.div
                     key={client._id}
+                    variants={ITEM_ANIMATION}
                     className={
                       isHeroRow
                         ? index === 1
@@ -145,14 +166,14 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
                     }
                   >
                     {children(client, rowIndex)}
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

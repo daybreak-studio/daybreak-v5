@@ -94,23 +94,12 @@ const GRID_ANIMATION = {
 } as const;
 
 const ITEM_ANIMATION = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-    scale: 0.9,
-    filter: "blur(10px)",
-  },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
-    scale: 1,
-    filter: "blur(0px)",
-    transition: {
-      duration: 0.8,
-      ease: EASINGS.easeOutQuart,
-    },
+    transition: { duration: 0.3 },
   },
-} as const;
+};
 
 export default function WorkPage({ data }: { data: Clients[] }) {
   const router = useRouter();
@@ -118,17 +107,14 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   const [clientSlug, projectSlug] = Array.isArray(slug)
     ? slug
     : [slug, undefined];
-  const [isAnimating, setIsAnimating] = useState(false);
 
-  // Add a handler for modal state changes
+  // Remove animation states
   const handleOpenChange = useCallback(
     (open: boolean, client: Clients) => {
       if (!open) {
         router.push("/work", undefined, { shallow: true });
-        // Resume videos when modal closes
         window.dispatchEvent(new Event(VIDEO_EVENTS.RESUME_ALL));
       } else {
-        // Pause videos when modal opens
         window.dispatchEvent(new Event(VIDEO_EVENTS.PAUSE_ALL));
         router.push(`/work/${client.slug?.current}`, undefined, {
           shallow: true,
@@ -137,41 +123,6 @@ export default function WorkPage({ data }: { data: Clients[] }) {
     },
     [router],
   );
-
-  // Add state to track the active thumbnail during animation
-  const [activeThumbId, setActiveThumbId] = useState<string | null>(null);
-  const [isInitialMount, setIsInitialMount] = useState(true);
-
-  // First, let's add a state for controlling grid animation
-  const [shouldShowGrid, setShouldShowGrid] = useState(false);
-
-  // Find the current client based on the slug
-  const currentClient = data.find(
-    (client) => client.slug?.current === clientSlug,
-  );
-
-  // Force modal to be mounted when route includes client/project
-  const shouldShowModal = Boolean(clientSlug);
-
-  // Update the useEffect to handle both cases
-  useEffect(() => {
-    if (isInitialMount) {
-      if (clientSlug) {
-        // If we have a clientSlug, delay the modal opening
-        const timer = setTimeout(() => {
-          setIsInitialMount(false);
-        }, 600);
-        return () => clearTimeout(timer);
-      } else {
-        // If we're on the index page, animate in the grid
-        const timer = setTimeout(() => {
-          setShouldShowGrid(true);
-          setIsInitialMount(false);
-        }, 100);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [clientSlug, isInitialMount]);
 
   return (
     <div className="hide-scrollbar mx-auto overflow-y-scroll p-8 lg:px-48 lg:py-16">
@@ -183,7 +134,8 @@ export default function WorkPage({ data }: { data: Clients[] }) {
 
           const containerLayoutId = `${client.slug.current}`;
           const modalVariant = getModalVariant(client, projectSlug);
-          const isOpen = shouldShowModal && clientSlug === client.slug.current;
+          const isOpen =
+            Boolean(clientSlug) && clientSlug === client.slug.current;
 
           return (
             <Dialog.Root
@@ -199,17 +151,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                 View details about the {client.name} project.
               </Dialog.Description>
               <Dialog.Trigger asChild>
-                <motion.div
-                  variants={ITEM_ANIMATION}
-                  {...CONTAINER_ANIMATION}
-                  layoutId={containerLayoutId}
-                  className={cn(
-                    "relative aspect-square w-full origin-center cursor-pointer",
-                    isAnimating &&
-                      activeThumbId === client.slug?.current &&
-                      "z-50",
-                  )}
-                >
+                <div className="relative aspect-square w-full origin-center cursor-pointer">
                   <HoverCard>
                     <motion.div
                       {...IMAGE_ANIMATION}
@@ -250,7 +192,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                       </div>
                     </motion.div>
                   </HoverCard>
-                </motion.div>
+                </div>
               </Dialog.Trigger>
 
               <AnimatePresence
