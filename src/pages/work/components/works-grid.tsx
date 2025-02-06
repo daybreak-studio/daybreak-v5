@@ -17,15 +17,15 @@ const GRID_ANIMATION = {
 
 const WIDTHS = {
   // Desktop widths
-  standard: "hidden md:block md:w-[400px]",
+  standard: "w-[400px]",
   hero: {
-    side: "hidden md:block md:w-[360px]",
-    middle: "hidden md:block md:w-[520px]",
+    side: "w-[360px]",
+    middle: "w-[520px]",
   },
   // Mobile widths with 2:1 ratio
   mobile: {
-    small: "block w-4/12 md:hidden", // 1/3 width
-    large: "block w-8/12 md:hidden", // 2/3 width
+    small: "block w-4/12 ", // 1/3 width
+    large: "block w-8/12 ", // 2/3 width
   },
 } as const;
 
