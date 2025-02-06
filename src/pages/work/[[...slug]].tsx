@@ -81,26 +81,6 @@ const shouldShowCloseButton = (modalType: string) => {
   return "inline-flex"; // Show for all other modal types
 };
 
-// First, let's add the stagger animation variants
-const GRID_ANIMATION = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-} as const;
-
-const ITEM_ANIMATION = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.3 },
-  },
-};
-
 export default function WorkPage({ data }: { data: Clients[] }) {
   const router = useRouter();
   const { slug } = router.query;
@@ -151,14 +131,15 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                 View details about the {client.name} project.
               </Dialog.Description>
               <Dialog.Trigger asChild>
-                <div className="relative aspect-square w-full origin-center cursor-pointer">
+                <motion.div
+                  {...CONTAINER_ANIMATION}
+                  layoutId={containerLayoutId}
+                  className="relative aspect-square w-full origin-center cursor-pointer"
+                >
                   <HoverCard>
                     <motion.div
                       {...IMAGE_ANIMATION}
                       layoutId={assetId || ""}
-                      onLayoutAnimationComplete={() => {
-                        console.log("SLUG", assetId);
-                      }}
                       className="frame-inner relative aspect-square overflow-hidden"
                     >
                       <MediaRenderer
@@ -192,7 +173,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                       </div>
                     </motion.div>
                   </HoverCard>
-                </div>
+                </motion.div>
               </Dialog.Trigger>
 
               <AnimatePresence

@@ -43,6 +43,14 @@ const WIDTHS = {
   },
 } as const;
 
+const GRID_ANIMATION = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+  },
+};
+
 const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
   // Desktop layout rows
   const desktopRows = useMemo(() => {
@@ -95,7 +103,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={CONTAINER_ANIMATION}
+          variants={GRID_ANIMATION}
           className="flex flex-col gap-4 md:hidden"
         >
           {mobileRows.map((row, rowIndex) => {
