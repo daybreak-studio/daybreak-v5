@@ -11,7 +11,7 @@ const ScrollDrawer: React.FC<ScrollDrawerProps> = ({ children, className }) => {
   return (
     <div
       className={clsx(
-        "relative mt-[90vh] rounded-t-[24px] bg-white/90 shadow backdrop-blur-2xl",
+        "relative mt-[93vh] rounded-t-[24px] bg-white/90 shadow backdrop-blur-2xl",
         "overscroll-behavior-none z-[100]",
         className,
       )}
@@ -19,6 +19,10 @@ const ScrollDrawer: React.FC<ScrollDrawerProps> = ({ children, className }) => {
         overscrollBehavior: "none",
       }}
     >
+      <div className="absolute left-1/2 top-3 -translate-x-1/2">
+        <div className="h-1 w-12 rounded-full bg-neutral-500/15" />
+      </div>
+
       <motion.div
         className="relative h-full w-full"
         initial={{ opacity: 0 }}

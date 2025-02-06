@@ -20,6 +20,7 @@ import RecentsWidget from "@/components/widgets/variants/recents";
 import RiveWidget from "@/components/widgets/variants/rive";
 import { EASINGS } from "@/components/animations/easings";
 import ScrollDrawer from "@/components/scroll-drawer";
+import Lenis from "lenis";
 
 // Register widgets specific to the home page
 const homeWidgets: WidgetRegistry = {
@@ -37,6 +38,19 @@ export default function Home({
   homeData: Home;
   clientsData: Clients[];
 }) {
+  // Initialize Lenis
+  if (typeof window !== "undefined") {
+    const lenis = new Lenis();
+
+    // Use requestAnimationFrame to continuously update the scroll
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+  }
+
   // Handles text rendering for the CMS text.
   // We are applying reveal animation and controlling font size.
   const components: PortableTextProps["components"] = {

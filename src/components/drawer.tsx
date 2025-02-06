@@ -2,7 +2,7 @@ import { ReactNode, useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronUp } from "lucide-react";
 import clsx from "clsx";
-import { useMediaQuery } from "usehooks-ts";
+import { useViewport } from "@/lib/hooks/use-viewport";
 
 interface DrawerProps {
   children: ReactNode;
@@ -19,7 +19,7 @@ const DrawerButton = ({
   isHovered: boolean;
   onClick: () => void;
 }) => {
-  const isMobile = useMediaQuery("(max-width: 767px)");
+  const { isMobile } = useViewport();
 
   return (
     <div className={clsx("absolute flex w-full justify-center p-4 md:p-8")}>
