@@ -14,7 +14,7 @@ const aspekta = localFont({
 });
 
 // Add an array of paths that have drawers
-const DRAWER_PATHS = ["/", "/work"]; // Add other paths that use drawers
+const DRAWER_PATHS = ["/"]; // Add other paths that use drawers
 
 export default function App({ Component, pageProps }: AppProps) {
   const { basePath } = usePathname();
