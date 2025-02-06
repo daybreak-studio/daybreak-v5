@@ -1,17 +1,13 @@
-import { motion, AnimatePresence, PanInfo, useAnimation } from "framer-motion";
+import { motion, PanInfo } from "framer-motion";
 import { Preview, Clients } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getMediaAssetId } from "@/sanity/lib/media";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { IMAGE_ANIMATION, CONTAINER_ANIMATION } from "./animations";
+import { IMAGE_ANIMATION } from "./animations";
 import { EASINGS } from "../animations/easings";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useCallback, memo, useMemo } from "react";
 import { useRouter } from "next/router";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
 import { useViewport } from "@/lib/hooks/use-viewport";
 
 interface ProjectPreviewProps {
@@ -208,8 +204,8 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     : [slug, undefined];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const controls = useAnimation();
   const { isMobile } = useViewport();
+  const [isBlurred, setIsBlurred] = useState(false);
 
   // Move project finding inside a useMemo to avoid recalculations
   const project = useMemo(
@@ -228,6 +224,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
   const handleNavigate = useCallback(
     (index: number) => {
       if (!mediaArray.length) return;
+      setIsBlurred(true);
       const normalizedIndex =
         ((index % mediaArray.length) + mediaArray.length) % mediaArray.length;
       setCurrentIndex(normalizedIndex);
@@ -236,8 +233,20 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
   );
 
   const handleNext = useCallback(() => {
+    setIsBlurred(true);
     setCurrentIndex((prev) => (prev + 1) % mediaArray.length);
   }, [mediaArray.length]);
+
+  const handleDragEnd = useCallback(
+    (_: any, info: PanInfo) => {
+      if (info.offset.x > 30) {
+        handleNavigate(currentIndex - 1); // Swipe right = previous
+      } else if (info.offset.x < -30) {
+        handleNavigate(currentIndex + 1); // Swipe left = next
+      }
+    },
+    [currentIndex, handleNavigate],
+  );
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -258,76 +267,72 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentIndex, handleNavigate]);
 
+  useEffect(() => {
+    if (isBlurred) {
+      const timer = setTimeout(() => setIsBlurred(false), 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isBlurred]);
+
   // Early return after all hooks
   if (!project) return null;
 
   const mediaAsset = mediaArray[currentIndex];
   const assetId = getMediaAssetId(mediaAsset);
 
-  return (
-    <motion.div
-      className="flex flex-col overflow-hidden p-8 md:flex-row md:space-x-8"
-      {...CONTAINER_ANIMATION}
-    >
-      <motion.div
-        className="order-2 pt-4 md:order-1 md:w-2/3 md:pt-0"
-        {...IMAGE_ANIMATION}
-        layoutId={assetId || undefined}
-      >
-        <AnimatePresence mode="popLayout" initial={false}>
-          {/* Desktop view */}
-          {!isMobile && (
-            <motion.div
-              onClick={handleNext}
-              className="hidden aspect-square h-full w-full cursor-pointer overflow-hidden focus:outline-none md:block"
-              key={currentIndex}
-              initial={{ opacity: 0, filter: "blur(8px)" }}
-              animate={{ opacity: 1, filter: "blur(0px)" }}
-              exit={{ opacity: 0, filter: "blur(8px)" }}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.97 }}
-              transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
-            >
-              <MediaRenderer
-                className="frame-inner max-h-[700px] cursor-e-resize"
-                media={mediaArray[currentIndex]}
-                autoPlay={true}
-                priority={true}
-                fill
-                loading="eager"
-              />
-            </motion.div>
-          )}
+  useEffect(() => {
+    console.log(isMobile);
+    console.log("PREVIEW", getMediaAssetId(mediaArray[currentIndex]));
+  }, [currentIndex]);
 
-          {/* Mobile view */}
-          <div className="relative flex flex-col md:hidden">
-            <div
-              className="frame-inner w-full overflow-hidden"
-              onClick={handleNext}
-            >
-              <motion.div
-                key={currentIndex}
-                initial={{ opacity: 0, filter: "blur(8px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, filter: "blur(8px)" }}
-                transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-                className="h-full w-full"
-                whileTap={{ scale: 0.97 }}
-              >
-                <MediaRenderer
-                  className="frame-inner h-full w-full overflow-hidden"
-                  media={mediaArray[currentIndex]}
-                  autoPlay={true}
-                  priority={true}
-                  loading="eager"
-                />
-              </motion.div>
-            </div>
-            <PreviewDots total={mediaArray.length} current={currentIndex} />
-          </div>
-        </AnimatePresence>
+  return (
+    <motion.div className="flex flex-col overflow-hidden p-8 md:flex-row md:space-x-8">
+      {/* Media Section */}
+      <motion.div className="order-2 pt-4 md:order-1 md:w-2/3 md:pt-0">
+        <motion.div
+          onClick={handleNext}
+          className="hidden aspect-square h-full w-full cursor-pointer overflow-hidden focus:outline-none md:block"
+          animate={{ filter: isBlurred ? "blur(8px)" : "blur(0px)" }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
+          {...IMAGE_ANIMATION}
+          layoutId={assetId || ""}
+        >
+          <MediaRenderer
+            className="frame-inner max-h-[700px] cursor-e-resize"
+            media={mediaArray[currentIndex]}
+            autoPlay={true}
+            priority={true}
+            fill
+            loading="eager"
+          />
+        </motion.div>
+        <div className="relative flex flex-col md:hidden">
+          <motion.div
+            className="frame-inner h-full w-full touch-pan-y overflow-hidden"
+            onClick={handleNext}
+            whileTap={{ scale: 0.97 }}
+            drag="x"
+            dragDirectionLock
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.03}
+            dragMomentum={false}
+            onDragEnd={handleDragEnd}
+          >
+            <MediaRenderer
+              fill
+              media={mediaArray[currentIndex]}
+              autoPlay={true}
+              priority={true}
+              loading="eager"
+            />
+          </motion.div>
+          <PreviewDots total={mediaArray.length} current={currentIndex} />
+        </div>
       </motion.div>
 
+      {/* Info Section */}
       <motion.div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">
         <Navigation
           total={mediaArray.length}

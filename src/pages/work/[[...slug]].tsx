@@ -72,10 +72,10 @@ const capitalizeFirstLetter = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-// Add this helper function to determine if we should show the close button
+// Update this helper function to return hidden for case studies
 const shouldShowCloseButton = (modalType: string) => {
   if (modalType === "caseStudy") {
-    return "hidden md:inline-flex"; // Only show on desktop for case studies
+    return "hidden"; // Hide for case studies
   }
   return "inline-flex"; // Show for all other modal types
 };
@@ -149,7 +149,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
           const assetId = getMediaAssetId(mediaAsset);
           if (!client.slug) return null;
 
-          const containerLayoutId = `container-${client.slug.current}`;
+          const containerLayoutId = `${client.slug.current}`;
           const modalVariant = getModalVariant(client, projectSlug);
 
           const isOpen = shouldShowModal && clientSlug === client.slug.current;
@@ -159,6 +159,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
               key={client._id}
               open={isOpen}
               onOpenChange={(open) => handleOpenChange(open, client)}
+              modal={modalVariant.type !== "caseStudy"}
             >
               <Dialog.Title className="sr-only">
                 {client.name} Project Details
@@ -170,38 +171,30 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                 <motion.div
                   {...CONTAINER_ANIMATION}
                   layoutId={containerLayoutId}
-                  initial={{ opacity: 0 }}
-                  animate={{
-                    opacity: shouldShowGrid || !isInitialMount ? 1 : 0,
-                  }}
-                  transition={{
-                    duration: 0.5,
-                    ease: EASINGS.easeOutQuart,
-                    delay: isInitialMount ? 0.2 : 0,
-                  }}
                   className={cn(
                     "relative aspect-square w-full origin-center cursor-pointer",
                     isAnimating &&
                       activeThumbId === client.slug?.current &&
                       "z-50",
                   )}
-                  onAnimationStart={() => setIsAnimating(true)}
-                  onAnimationComplete={() => {
-                    setIsAnimating(false);
-                    setActiveThumbId(null);
-                  }}
                 >
                   <HoverCard>
-                    <div className="frame-inner relative aspect-square overflow-hidden">
-                      <div className="relative h-full w-full">
-                        <MediaRenderer
-                          fill
-                          media={mediaAsset}
-                          autoPlay={true}
-                        />
-                      </div>
+                    <motion.div
+                      {...IMAGE_ANIMATION}
+                      layoutId={assetId || ""}
+                      onLayoutAnimationComplete={() => {
+                        console.log("SLUG", assetId);
+                      }}
+                      className="frame-inner relative aspect-square overflow-hidden"
+                    >
+                      <MediaRenderer
+                        fill
+                        media={mediaAsset}
+                        autoPlay={true}
+                        priority={true}
+                      />
                       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                    </div>
+                    </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -238,84 +231,72 @@ export default function WorkPage({ data }: { data: Clients[] }) {
               >
                 {isOpen && (
                   <Dialog.Portal forceMount>
-                    <div className="fixed inset-0 z-[100]">
-                      <Dialog.Overlay asChild forceMount>
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{
-                            duration: 0.4,
-                            ease: EASINGS.easeOutQuart,
-                          }}
-                          className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
-                        />
-                      </Dialog.Overlay>
-                      <Dialog.Content
-                        asChild
-                        forceMount
-                        className="h-full w-full"
+                    <Dialog.Overlay asChild forceMount>
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 0.4,
+                          ease: EASINGS.easeOutQuart,
+                        }}
+                        className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
+                      />
+                    </Dialog.Overlay>
+
+                    <Dialog.Content asChild forceMount>
+                      <motion.div
+                        {...CONTAINER_ANIMATION}
+                        layoutId={containerLayoutId}
+                        className={cn(
+                          "fixed bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit",
+                          "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white",
+                          modalVariant.className,
+                        )}
                       >
-                        <motion.div className="flex items-center justify-center focus:outline-none">
-                          <motion.div
-                            {...CONTAINER_ANIMATION}
-                            layoutId={containerLayoutId}
-                            onAnimationStart={() => setIsAnimating(true)}
-                            onAnimationComplete={() => setIsAnimating(false)}
+                        {modalVariant.type === "selector" && (
+                          <ProjectSelector data={client} />
+                        )}
+                        {modalVariant.type === "preview" && (
+                          <ProjectPreview data={client} />
+                        )}
+                        {modalVariant.type === "caseStudy" && (
+                          <ProjectCaseStudy data={client} />
+                        )}
+
+                        {/* Single Dialog.Close component for all modal types */}
+                        <Dialog.Close asChild>
+                          <motion.button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (projectSlug) {
+                                router.push(`/work/${clientSlug}`, undefined, {
+                                  shallow: true,
+                                });
+                              } else {
+                                router.push("/work", undefined, {
+                                  shallow: true,
+                                });
+                              }
+                            }}
+                            initial={{ scale: 1 }}
+                            whileHover={{ scale: 0.95 }}
+                            whileTap={{ scale: 0.9 }}
+                            transition={{
+                              duration: 0.2,
+                              ease: EASINGS.easeOutQuart,
+                            }}
                             className={cn(
-                              "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white/70 p-0 backdrop-blur-lg",
-                              "will-change-transform",
-                              modalVariant.className,
+                              "frame-inner absolute right-6 top-6 size-10 cursor-pointer appearance-none items-center justify-center border-2 border-neutral-600/5 bg-white/50 text-neutral-500 backdrop-blur-lg transition-colors duration-300 focus:outline-none",
+                              shouldShowCloseButton(modalVariant.type),
                             )}
                           >
-                            {modalVariant.type === "selector" && (
-                              <ProjectSelector data={client} />
-                            )}
-                            {modalVariant.type === "preview" && (
-                              <ProjectPreview data={client} />
-                            )}
-                            {modalVariant.type === "caseStudy" && (
-                              <ProjectCaseStudy data={client} />
-                            )}
-
-                            {/* Single Dialog.Close component for all modal types */}
-                            <Dialog.Close asChild>
-                              <motion.button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  if (projectSlug) {
-                                    router.push(
-                                      `/work/${clientSlug}`,
-                                      undefined,
-                                      {
-                                        shallow: true,
-                                      },
-                                    );
-                                  } else {
-                                    router.push("/work", undefined, {
-                                      shallow: true,
-                                    });
-                                  }
-                                }}
-                                initial={{ scale: 1 }}
-                                whileHover={{ scale: 0.95 }}
-                                whileTap={{ scale: 0.9 }}
-                                transition={{
-                                  duration: 0.2,
-                                  ease: EASINGS.easeOutQuart,
-                                }}
-                                className={cn(
-                                  "frame-inner absolute right-6 top-6 size-10 cursor-pointer appearance-none items-center justify-center border-2 border-neutral-600/5 bg-white/50 text-neutral-500 backdrop-blur-lg transition-colors duration-300 focus:outline-none",
-                                  shouldShowCloseButton(modalVariant.type),
-                                )}
-                              >
-                                <Cross2Icon className="h-4 w-4" />
-                              </motion.button>
-                            </Dialog.Close>
-                          </motion.div>
-                        </motion.div>
-                      </Dialog.Content>
-                    </div>
+                            <Cross2Icon className="h-4 w-4" />
+                          </motion.button>
+                        </Dialog.Close>
+                      </motion.div>
+                    </Dialog.Content>
+                    {/* </div> */}
                   </Dialog.Portal>
                 )}
               </AnimatePresence>

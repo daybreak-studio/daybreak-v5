@@ -51,6 +51,42 @@ interface NavigationProps {
   canGoPrev: boolean;
 }
 
+// Add stagger animation for media groups
+const STAGGER_ANIMATION = {
+  initial: "hidden",
+  animate: "visible",
+  variants: {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.3,
+      },
+    },
+  },
+} as const;
+
+// Add fade up animation for media items
+const FADE_UP_ANIMATION = {
+  variants: {
+    hidden: {
+      opacity: 0,
+      y: 20,
+      filter: "blur(8px)",
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.8,
+        ease: EASINGS.easeOutQuart,
+      },
+    },
+  },
+} as const;
+
 // MediaGroup Component - Optimized with memo and simplified scroll handling
 const MediaGroup = memo(function MediaGroup({
   id,
@@ -85,12 +121,15 @@ const MediaGroup = memo(function MediaGroup({
       id={id}
       initial={false}
       animate={{
-        scale: isZoomed ? (isActive ? 0.95 : 0.85) : 1,
+        scale: isZoomed ? (isActive ? 0.98 : 0.92) : 1,
       }}
       whileHover={{
-        scale: isZoomed ? (isActive ? 0.95 : 0.88) : 0.99,
+        scale: isZoomed ? (isActive ? 0.98 : 0.92) : 0.99,
       }}
-      transition={{ duration: 0.4, ease: EASINGS.easeOutQuart }}
+      transition={{
+        duration: 1.2,
+        ease: EASINGS.easeOutQuart,
+      }}
       className={cn(
         "grid origin-center gap-4 md:cursor-pointer",
         group.media?.length === 1
@@ -103,20 +142,58 @@ const MediaGroup = memo(function MediaGroup({
         }
       }}
     >
-      {group.media?.map((media, mediaIndex) => (
-        <motion.div
-          // {...IMAGE_ANIMATION}
-          // layoutId={getMediaAssetId(media) || undefined}
-          key={`${index}-${mediaIndex}`}
-        >
-          <MediaRenderer
-            className="max-h-[95vh] rounded-xl"
-            media={media}
-            autoPlay={isActive}
-            priority={true}
-          />
-        </motion.div>
-      ))}
+      {group.media?.map((media, mediaIndex) => {
+        // First two groups load immediately with no animation
+        const isInitialGroup = index < 2;
+
+        return (
+          <motion.div
+            key={`${index}-${mediaIndex}`}
+            initial={
+              isInitialGroup
+                ? { opacity: 1 }
+                : { opacity: 0, y: 20, filter: "blur(8px)" }
+            }
+            animate={
+              isInitialGroup
+                ? undefined
+                : {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    transition: {
+                      duration: 0.8,
+                      ease: EASINGS.easeOutQuart,
+                      delay: mediaIndex * 0.1,
+                    },
+                  }
+            }
+            whileInView={
+              isInitialGroup
+                ? undefined
+                : {
+                    opacity: 1,
+                    y: 0,
+                    filter: "blur(0px)",
+                    transition: {
+                      duration: 0.8,
+                      ease: EASINGS.easeOutQuart,
+                      delay: mediaIndex * 0.1,
+                    },
+                  }
+            }
+            viewport={{ once: true, margin: "-10%" }}
+          >
+            <MediaRenderer
+              className="max-h-[95vh] rounded-xl"
+              media={media}
+              autoPlay={isActive}
+              priority={index === 0} // Only first group gets priority
+              loading={index < 2 ? "eager" : "lazy"} // First two groups load eagerly
+            />
+          </motion.div>
+        );
+      })}
     </motion.div>
   );
 });
@@ -269,11 +346,23 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   // Smooth scroll helper
   const scrollToGroup = useCallback((index: number) => {
     const element = document.getElementById(`media-group-${index}`);
-    if (!element) return;
+    if (!element || !containerRef.current) return;
 
-    element.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
+    const container = containerRef.current;
+    const elementBounds = element.getBoundingClientRect();
+    const containerBounds = container.getBoundingClientRect();
+    const targetScroll =
+      container.scrollTop +
+      elementBounds.top -
+      containerBounds.height / 2 +
+      elementBounds.height / 2;
+
+    animate(container.scrollTop, targetScroll, {
+      duration: 1.2,
+      ease: [0.32, 0.72, 0, 1], // Custom easing for super smooth movement
+      onUpdate: (value) => {
+        container.scrollTop = value;
+      },
     });
   }, []);
 
@@ -299,7 +388,6 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   const handleGroupActivate = useCallback(
     (index: number) => {
       setActiveGroupIndex(index);
-      setIsZoomed(true);
       requestAnimationFrame(() => scrollToGroup(index));
     },
     [scrollToGroup],
@@ -319,6 +407,14 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
     if (prevIndex !== null) handleGroupActivate(prevIndex);
   }, [activeGroupIndex, isZoomed, findNextGroup, handleGroupActivate]);
 
+  const handleClose = useCallback(() => {
+    if (data.slug?.current) {
+      router.push(`/work/${data.slug.current}`, undefined, {
+        shallow: true,
+      });
+    }
+  }, [router, data.slug]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -327,28 +423,35 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
       switch (e.code) {
         case "Escape":
           e.preventDefault();
-          if (isZoomed) setIsZoomed(false);
-          else if (data.slug?.current) {
+          e.stopPropagation(); // Stop event from bubbling to Dialog
+          if (isZoomed) {
+            setIsZoomed(false);
+            return;
+          }
+          if (data.slug?.current) {
             router.push(`/work/${data.slug.current}`, undefined, {
               shallow: true,
             });
           }
           break;
         case "ArrowUp":
+          e.preventDefault();
           handlePrev();
           break;
         case "ArrowDown":
+          e.preventDefault();
           handleNext();
           break;
         case "Space":
         case "Enter":
+          e.preventDefault();
           setIsZoomed((prev) => !prev);
           break;
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown, true); // Use capture phase
+    return () => window.removeEventListener("keydown", handleKeyDown, true);
   }, [isZoomed, handleNext, handlePrev, router, data.slug]);
 
   // Memoize mediaGroups to prevent unnecessary re-renders
@@ -364,37 +467,69 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
 
   return (
     <div ref={containerRef} className="h-full overflow-y-auto overscroll-none">
-      <div className="hide-scrollbar px-4 py-8 pt-24 xl:px-8 xl:pt-32">
-        <motion.h1
-          className="mb-8 py-24 text-center text-4xl xl:text-5xl"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: easeOut }}
-        >
-          {project.heading}
-        </motion.h1>
+      <div className="hide-scrollbar px-4 py-8 xl:px-8">
+        <div className="mb-8 flex justify-end">
+          <motion.button
+            onClick={handleClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.3 }}
+            className="rounded-full p-2 text-neutral-400 transition-colors hover:text-neutral-600"
+            tabIndex={-1}
+          >
+            <XIcon className="h-5 w-5" />
+          </motion.button>
+        </div>
 
-        <div className="flex flex-col gap-4 xl:gap-4">
+        <motion.div
+          {...STAGGER_ANIMATION}
+          className="mb-8 space-y-4 py-64 text-center"
+        >
+          <motion.h1 {...FADE_UP_ANIMATION} className="text-4xl xl:text-5xl">
+            {project.heading}
+          </motion.h1>
+          {/* {project.description && (
+            <motion.p
+              {...FADE_UP_ANIMATION}
+              className="text-lg text-neutral-500"
+            >
+              {project.description}
+            </motion.p>
+          )} */}
+        </motion.div>
+
+        <motion.div
+          {...STAGGER_ANIMATION}
+          className="flex flex-col gap-4 xl:gap-4"
+        >
           {mediaGroups?.map(({ key, group, index }) => (
-            <MediaGroup
-              key={key}
-              id={`media-group-${index}`}
-              group={group}
-              index={index}
-              isActive={activeGroupIndex === index}
-              isZoomed={isZoomed}
-              activeGroupIndex={activeGroupIndex}
-              onScroll={handleGroupScroll}
-              onActivate={() => handleGroupActivate(index)}
-            />
+            <motion.div key={key} {...FADE_UP_ANIMATION}>
+              <MediaGroup
+                id={`media-group-${index}`}
+                group={group}
+                index={index}
+                isActive={activeGroupIndex === index}
+                isZoomed={isZoomed}
+                activeGroupIndex={activeGroupIndex}
+                onScroll={handleGroupScroll}
+                onActivate={() => handleGroupActivate(index)}
+              />
+            </motion.div>
           ))}
 
           {project.credits && (
             <motion.div
               className="mx-auto my-72 grid w-96 grid-cols-2 gap-y-6 text-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  duration: 0.8,
+                  ease: EASINGS.easeOutQuart,
+                },
+              }}
+              viewport={{ once: true, margin: "-10%" }}
             >
               {project.credits.map((credit, index) => (
                 <Fragment key={index}>
@@ -411,7 +546,17 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
               ))}
             </motion.div>
           )}
-        </div>
+
+          <motion.button
+            onClick={handleClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.3 }}
+            className="mx-auto mb-24 mt-8 text-sm text-neutral-400 transition-colors hover:text-neutral-600"
+          >
+            Close
+          </motion.button>
+        </motion.div>
 
         <AnimatePresence mode="popLayout">
           {project.mediaGroups?.[activeGroupIndex]?.heading && (
