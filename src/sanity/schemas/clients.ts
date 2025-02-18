@@ -13,6 +13,16 @@ export const clients = defineType({
       type: "string",
     }),
     defineField({
+      name: "logo",
+      title: "Client Logo",
+      type: "image",
+      description: "Square aspect ratio recommended.",
+      options: {
+        accept: "image/png,image/jpeg",
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: "slug",
       title: "Slug",
       type: "slug",
