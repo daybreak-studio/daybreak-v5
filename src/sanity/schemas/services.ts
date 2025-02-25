@@ -1,5 +1,6 @@
 import { defineField, defineType } from "sanity";
 import { widgets } from "./widgets";
+import { createMediaArray } from "./media";
 
 const tab = defineField({
   name: "tab",
@@ -9,8 +10,23 @@ const tab = defineField({
     defineField({ name: "heading", title: "Heading", type: "string" }),
     defineField({ name: "title", title: "Title", type: "string" }),
     defineField({ name: "caption", title: "Caption", type: "text" }),
-    defineField({ name: "image", title: "Image", type: "image" }),
+    createMediaArray({
+      validation: (Rule) => Rule.required().max(1),
+    }),
   ],
+  preview: {
+    select: {
+      title: "title",
+      media: "media.0.source",
+    },
+    prepare(selection) {
+      const { title, media } = selection;
+      return {
+        title: title || "No title",
+        media: media,
+      };
+    },
+  },
 });
 
 export const services = defineType({
@@ -28,69 +44,31 @@ export const services = defineType({
       name: "categories",
       title: "Categories",
       type: "object",
-      groups: [
-        { name: "brand", title: "Brand" },
-        { name: "product", title: "Product" },
-        { name: "motion", title: "Motion" },
-        { name: "development", title: "Development" },
-      ],
       fields: [
-        {
+        defineField({
           name: "brand",
           title: "Brand",
-          type: "object",
-          group: "brand",
-          fields: [
-            defineField({
-              name: "tabs",
-              title: "Tabs",
-              type: "array",
-              of: [tab],
-            }),
-          ],
-        },
-        {
+          type: "array",
+          of: [tab],
+        }),
+        defineField({
           name: "product",
           title: "Product",
-          type: "object",
-          group: "product",
-          fields: [
-            defineField({
-              name: "tabs",
-              title: "Tabs",
-              type: "array",
-              of: [tab],
-            }),
-          ],
-        },
-        {
+          type: "array",
+          of: [tab],
+        }),
+        defineField({
           name: "motion",
           title: "Motion",
-          type: "object",
-          group: "motion",
-          fields: [
-            defineField({
-              name: "tabs",
-              title: "Tabs",
-              type: "array",
-              of: [tab],
-            }),
-          ],
-        },
-        {
+          type: "array",
+          of: [tab],
+        }),
+        defineField({
           name: "development",
           title: "Development",
-          type: "object",
-          group: "development",
-          fields: [
-            defineField({
-              name: "tabs",
-              title: "Tabs",
-              type: "array",
-              of: [tab],
-            }),
-          ],
-        },
+          type: "array",
+          of: [tab],
+        }),
       ],
     }),
   ],

@@ -277,86 +277,138 @@ export type Services = {
       }
   >;
   categories?: {
-    brand?: {
-      tabs?: Array<{
-        heading?: string;
-        title?: string;
-        caption?: string;
-        image?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        _type: "tab";
-        _key: string;
-      }>;
-    };
-    product?: {
-      tabs?: Array<{
-        heading?: string;
-        title?: string;
-        caption?: string;
-        image?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        _type: "tab";
-        _key: string;
-      }>;
-    };
-    motion?: {
-      tabs?: Array<{
-        heading?: string;
-        title?: string;
-        caption?: string;
-        image?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        _type: "tab";
-        _key: string;
-      }>;
-    };
-    development?: {
-      tabs?: Array<{
-        heading?: string;
-        title?: string;
-        caption?: string;
-        image?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        _type: "tab";
-        _key: string;
-      }>;
-    };
+    brand?: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media?: Array<
+        | {
+            source?: {
+              asset?: {
+                _ref: string;
+                _type: "reference";
+                _weak?: boolean;
+                [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+              };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            };
+            width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source?: MuxVideo;
+            width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      >;
+      _type: "tab";
+      _key: string;
+    }>;
+    product?: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media?: Array<
+        | {
+            source?: {
+              asset?: {
+                _ref: string;
+                _type: "reference";
+                _weak?: boolean;
+                [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+              };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            };
+            width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source?: MuxVideo;
+            width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      >;
+      _type: "tab";
+      _key: string;
+    }>;
+    motion?: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media?: Array<
+        | {
+            source?: {
+              asset?: {
+                _ref: string;
+                _type: "reference";
+                _weak?: boolean;
+                [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+              };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            };
+            width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source?: MuxVideo;
+            width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      >;
+      _type: "tab";
+      _key: string;
+    }>;
+    development?: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media?: Array<
+        | {
+            source?: {
+              asset?: {
+                _ref: string;
+                _type: "reference";
+                _weak?: boolean;
+                [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+              };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            };
+            width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source?: MuxVideo;
+            width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      >;
+      _type: "tab";
+      _key: string;
+    }>;
   };
 };
 
@@ -686,6 +738,17 @@ export type Clients = {
   _updatedAt: string;
   _rev: string;
   name?: string;
+  logo?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   slug?: Slug;
   description?: string;
   projects?: Array<
@@ -883,6 +946,17 @@ export type CLIENTS_QUERYResult = Array<{
   _updatedAt: string;
   _rev: string;
   name?: string;
+  logo?: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
   slug?: Slug;
   description?: string;
   projects: Array<
@@ -1315,66 +1389,46 @@ export type HOME_QUERYResult = {
   }> | null;
 } | null;
 // Variable: SERVICES_QUERY
-// Query: *[_type == "services"][!(_id in path('drafts.**'))][0] {    ...,    widgets[] {      ...,      media[] {          ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }      }    }  }
+// Query: *[_type == "services"][!(_id in path('drafts.**'))][0] {    ...,    categories {      brand[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      product[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      motion[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      development[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      }    }  }
 export type SERVICES_QUERYResult = {
   _id: string;
   _type: "services";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  widgets: Array<
+  widgets?: Array<
     | {
         position?: {
           row?: number;
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
-        media: Array<
+        media?: Array<
           | {
-              source: {
-                asset:
-                  | {
-                      _ref: string | null;
-                      _type: "reference" | null;
-                      playbackId: null;
-                      assetId: string | null;
-                      status: null;
-                      metadata: {
-                        dimensions: SanityImageDimensions | null;
-                        lqip: string | null;
-                        palette: SanityImagePalette | null;
-                        hasAlpha: boolean | null;
-                        isOpaque: boolean | null;
-                        blurHash: string | null;
-                      } | null;
-                    }
-                  | {
-                      _ref: string | null;
-                      _type: "reference" | null;
-                    };
+              source?: {
+                asset?: {
+                  _ref: string;
+                  _type: "reference";
+                  _weak?: boolean;
+                  [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+                };
                 hotspot?: SanityImageHotspot;
                 crop?: SanityImageCrop;
                 _type: "image";
-              } | null;
+              };
               width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
               alt?: string;
               _type: "imageItem";
               _key: string;
             }
           | {
-              source: {
-                _type: "mux.video";
-                asset: {
-                  _ref: string | null;
-                  _type: "reference" | null;
-                };
-              } | null;
+              source?: MuxVideo;
               width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
               alt?: string;
               _type: "videoItem";
               _key: string;
             }
-        > | null;
+        >;
         _type: "media";
         _key: string;
       }
@@ -1394,7 +1448,6 @@ export type SERVICES_QUERYResult = {
         type?: "caseStudy" | "preview";
         _type: "project";
         _key: string;
-        media: null;
       }
     | {
         position?: {
@@ -1411,7 +1464,6 @@ export type SERVICES_QUERYResult = {
         }>;
         _type: "quotes";
         _key: string;
-        media: null;
       }
     | {
         position?: {
@@ -1428,7 +1480,6 @@ export type SERVICES_QUERYResult = {
         }>;
         _type: "recents";
         _key: string;
-        media: null;
       }
     | {
         position?: {
@@ -1439,7 +1490,6 @@ export type SERVICES_QUERYResult = {
         src?: string;
         _type: "rive";
         _key: string;
-        media: null;
       }
     | {
         position?: {
@@ -1455,7 +1505,6 @@ export type SERVICES_QUERYResult = {
         }>;
         _type: "stages";
         _key: string;
-        media: null;
       }
     | {
         position?: {
@@ -1466,7 +1515,7 @@ export type SERVICES_QUERYResult = {
         tweet?: string;
         author?: string;
         link?: string;
-        media: Array<{
+        media?: Array<{
           asset?: {
             _ref: string;
             _type: "reference";
@@ -1477,94 +1526,225 @@ export type SERVICES_QUERYResult = {
           crop?: SanityImageCrop;
           _type: "image";
           _key: string;
-          source: null;
-        }> | null;
+        }>;
         _type: "twitter";
         _key: string;
       }
-  > | null;
-  categories?: {
-    brand?: {
-      tabs?: Array<{
-        heading?: string;
-        title?: string;
-        caption?: string;
-        image?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        _type: "tab";
-        _key: string;
-      }>;
-    };
-    product?: {
-      tabs?: Array<{
-        heading?: string;
-        title?: string;
-        caption?: string;
-        image?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        _type: "tab";
-        _key: string;
-      }>;
-    };
-    motion?: {
-      tabs?: Array<{
-        heading?: string;
-        title?: string;
-        caption?: string;
-        image?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        _type: "tab";
-        _key: string;
-      }>;
-    };
-    development?: {
-      tabs?: Array<{
-        heading?: string;
-        title?: string;
-        caption?: string;
-        image?: {
-          asset?: {
-            _ref: string;
-            _type: "reference";
-            _weak?: boolean;
-            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
-          };
-          hotspot?: SanityImageHotspot;
-          crop?: SanityImageCrop;
-          _type: "image";
-        };
-        _type: "tab";
-        _key: string;
-      }>;
-    };
-  };
+  >;
+  categories: {
+    brand: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media: Array<
+        | {
+            source: {
+              asset:
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                    playbackId: null;
+                    assetId: string | null;
+                    status: null;
+                    metadata: {
+                      dimensions: SanityImageDimensions | null;
+                      lqip: string | null;
+                      palette: SanityImagePalette | null;
+                      hasAlpha: boolean | null;
+                      isOpaque: boolean | null;
+                      blurHash: string | null;
+                    } | null;
+                  }
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                  };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source: {
+              _type: "mux.video";
+              asset: {
+                _ref: string | null;
+                _type: "reference" | null;
+              };
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      > | null;
+      _type: "tab";
+      _key: string;
+    }> | null;
+    product: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media: Array<
+        | {
+            source: {
+              asset:
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                    playbackId: null;
+                    assetId: string | null;
+                    status: null;
+                    metadata: {
+                      dimensions: SanityImageDimensions | null;
+                      lqip: string | null;
+                      palette: SanityImagePalette | null;
+                      hasAlpha: boolean | null;
+                      isOpaque: boolean | null;
+                      blurHash: string | null;
+                    } | null;
+                  }
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                  };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source: {
+              _type: "mux.video";
+              asset: {
+                _ref: string | null;
+                _type: "reference" | null;
+              };
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      > | null;
+      _type: "tab";
+      _key: string;
+    }> | null;
+    motion: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media: Array<
+        | {
+            source: {
+              asset:
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                    playbackId: null;
+                    assetId: string | null;
+                    status: null;
+                    metadata: {
+                      dimensions: SanityImageDimensions | null;
+                      lqip: string | null;
+                      palette: SanityImagePalette | null;
+                      hasAlpha: boolean | null;
+                      isOpaque: boolean | null;
+                      blurHash: string | null;
+                    } | null;
+                  }
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                  };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source: {
+              _type: "mux.video";
+              asset: {
+                _ref: string | null;
+                _type: "reference" | null;
+              };
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      > | null;
+      _type: "tab";
+      _key: string;
+    }> | null;
+    development: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media: Array<
+        | {
+            source: {
+              asset:
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                    playbackId: null;
+                    assetId: string | null;
+                    status: null;
+                    metadata: {
+                      dimensions: SanityImageDimensions | null;
+                      lqip: string | null;
+                      palette: SanityImagePalette | null;
+                      hasAlpha: boolean | null;
+                      isOpaque: boolean | null;
+                      blurHash: string | null;
+                    } | null;
+                  }
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                  };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source: {
+              _type: "mux.video";
+              asset: {
+                _ref: string | null;
+                _type: "reference" | null;
+              };
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      > | null;
+      _type: "tab";
+      _key: string;
+    }> | null;
+  } | null;
 } | null;
 // Variable: ABOUT_QUERY
 // Query: *[_type == "about"][!(_id in path('drafts.**'))][0] {    ...,    team[] {      ...,      media[] {          ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }      }    }  }
@@ -1640,7 +1820,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "clients"][!(_id in path(\'drafts.**\'))] {\n    ...,\n    projects[] {\n      ...,\n      _type == "preview" => {\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      _type == "caseStudy" => {\n        mediaGroups[] {\n          ...,\n          heading,\n          caption,\n          media[] {\n            \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n          }\n        }\n      }\n    }\n  }\n': CLIENTS_QUERYResult;
     '\n  *[_type == "home"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    media[] {\n      \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n    },\n    widgets[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    },\n    newsfeed[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': HOME_QUERYResult;
-    '\n  *[_type == "services"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    widgets[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': SERVICES_QUERYResult;
+    '\n  *[_type == "services"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    categories {\n      brand[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      product[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      motion[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      development[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      }\n    }\n  }\n': SERVICES_QUERYResult;
     '\n  *[_type == "about"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    team[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': ABOUT_QUERYResult;
   }
 }

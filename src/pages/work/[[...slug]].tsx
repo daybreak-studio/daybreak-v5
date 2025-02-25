@@ -27,7 +27,7 @@ import { HoverCard } from "@/components/animations/hover";
 import { Metadata } from "next";
 import { urlFor } from "@/sanity/lib/image";
 import { VIDEO_EVENTS } from "@/components/media-renderer";
-import WorksGrid from "./components/works-grid";
+import WorksGrid from "@/components/works-grid";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -92,13 +92,18 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   const handleOpenChange = useCallback(
     (open: boolean, client: Clients) => {
       if (!open) {
-        router.push("/work", undefined, { shallow: true });
+        // Don't redirect if we're on a project page
+        if (!router.query.slug?.[1]) {
+          router.push("/work", undefined, { shallow: true });
+        }
         window.dispatchEvent(new Event(VIDEO_EVENTS.RESUME_ALL));
       } else {
         window.dispatchEvent(new Event(VIDEO_EVENTS.PAUSE_ALL));
-        router.push(`/work/${client.slug?.current}`, undefined, {
-          shallow: true,
-        });
+        if (!router.query.slug?.[0]) {
+          router.push(`/work/${client.slug?.current}`, undefined, {
+            shallow: true,
+          });
+        }
       }
     },
     [router],
@@ -207,6 +212,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                           "fixed bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit",
                           "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white",
                           modalVariant.className,
+                          modalVariant.type === "caseStudy" && "z-60",
                         )}
                       >
                         {modalVariant.type === "selector" && (

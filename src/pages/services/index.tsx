@@ -11,6 +11,7 @@ import QuotesWidget from "@/components/widgets/variants/quotes";
 import StagesWidget from "@/components/widgets/variants/stages";
 import { EASINGS } from "@/components/animations/easings";
 import { motion } from "framer-motion";
+import { services } from "@/sanity/schemas/services";
 
 const servicesWidgets: WidgetRegistry = {
   quotes: QuotesWidget,
@@ -20,7 +21,7 @@ const servicesWidgets: WidgetRegistry = {
 
 export default function Services({ servicesData }: { servicesData: Services }) {
   return (
-    <div className="flex h-full min-h-screen flex-col items-center justify-center space-y-6 lg:space-y-8">
+    <div className="relative flex flex-col items-center justify-center space-y-6 pt-48 lg:space-y-8">
       <motion.h1
         initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -36,7 +37,10 @@ export default function Services({ servicesData }: { servicesData: Services }) {
       <WidgetDataProvider data={{ widgets: servicesData.widgets as Widget[] }}>
         <WidgetGrid components={servicesWidgets} />
       </WidgetDataProvider>
-      {/* <ServicesCarousel /> */}
+
+      {servicesData.categories && (
+        <ServicesCarousel categories={servicesData.categories} />
+      )}
     </div>
   );
 }

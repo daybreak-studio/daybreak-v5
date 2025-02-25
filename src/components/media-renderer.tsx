@@ -1,254 +1,128 @@
-import { memo, useRef, useState, useEffect } from "react";
+import { memo, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { urlFor, getMuxThumbnailUrl } from "@/sanity/lib/image";
-import { useLowPowerMode } from "@/lib/hooks/use-low-power-mode";
 import { MediaItem } from "@/sanity/lib/media";
 import { cn } from "@/lib/utils";
 
 interface MediaRendererProps {
   media: MediaItem | null;
-  layout?: boolean | "position" | "size" | "preserve-aspect";
-  layoutId?: string;
   className?: string;
+  // Video props
   autoPlay?: boolean;
+  thumbnailTime?: number;
+  // Image props
   priority?: boolean;
   fill?: boolean;
-  thumbnailTime?: number;
-  disableThumbnail?: boolean;
   loading?: "lazy" | "eager";
-  forcedVideoPlayback?: boolean;
-  playsInline?: boolean;
-  muted?: boolean;
-  loop?: boolean;
-  onLoad?: () => void;
-  onError?: () => void;
-  transition?: {
-    duration?: number;
-    ease?: number[] | string;
-    delay?: number;
-  };
-  quality?: number;
-  width?: number;
-  height?: number;
-  sizes?: string;
 }
 
-interface ImageProps {
-  priority: boolean;
-  fill: boolean;
-  className?: string;
-  onError?: () => void;
-  onLoad?: () => void;
-}
-
-interface VideoProps {
-  autoPlay: boolean;
-  className?: string;
-  onError?: () => void;
-  onLoad?: () => void;
-  disableThumbnail: boolean;
-  forcedVideoPlayback: boolean;
-  playsInline?: boolean;
-  muted?: boolean;
-  loop?: boolean;
-}
-
-const isMuxVideo = (media: MediaItem): boolean => {
-  return media._type === "videoItem" && media.source?._type === "mux.video";
-};
-
-// Add a simple event system to handle video pausing
+// Video events for controlling playback across components
 export const VIDEO_EVENTS = {
   PAUSE_ALL: "PAUSE_ALL_VIDEOS",
   RESUME_ALL: "RESUME_ALL_VIDEOS",
-};
+} as const;
+
+// Optimize image loading with better defaults
+const DEFAULT_IMAGE_PROPS = {
+  sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+  quality: 90,
+} as const;
 
 export const MediaRenderer = memo(
   function MediaRenderer({
     media,
-    layout,
-    layoutId,
-    className = "",
+    className,
     autoPlay = false,
+    thumbnailTime,
     priority = false,
     fill = false,
-    thumbnailTime,
-    disableThumbnail = false,
     loading,
-    forcedVideoPlayback = false,
-    playsInline = true,
-    muted = true,
-    loop = true,
-    onLoad,
-    onError,
-    transition,
-    quality = 95,
-    width,
-    height,
-    sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 60vw, 2400px",
   }: MediaRendererProps) {
-    const isLowPowerMode = useLowPowerMode();
-    const [error, setError] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
 
+    // Essential video control
     useEffect(() => {
       const video = videoRef.current;
       if (!video) return;
 
-      const handleVisibilityChange = () => {
-        if (document.hidden) {
-          video.play().catch(() => {});
-        }
-      };
+      const handlePause = () => video.pause();
+      const handleResume = () => autoPlay && video.play().catch(() => {});
 
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-      return () =>
-        document.removeEventListener(
-          "visibilitychange",
-          handleVisibilityChange,
-        );
-    }, []);
-
-    useEffect(() => {
-      const handlePauseAll = () => {
-        if (videoRef.current) {
-          videoRef.current.pause();
-        }
-      };
-
-      const handleResumeAll = () => {
-        if (videoRef.current && autoPlay) {
-          videoRef.current.play();
-        }
-      };
-
-      window.addEventListener(VIDEO_EVENTS.PAUSE_ALL, handlePauseAll);
-      window.addEventListener(VIDEO_EVENTS.RESUME_ALL, handleResumeAll);
+      window.addEventListener(VIDEO_EVENTS.PAUSE_ALL, handlePause);
+      window.addEventListener(VIDEO_EVENTS.RESUME_ALL, handleResume);
 
       return () => {
-        window.removeEventListener(VIDEO_EVENTS.PAUSE_ALL, handlePauseAll);
-        window.removeEventListener(VIDEO_EVENTS.RESUME_ALL, handleResumeAll);
+        window.removeEventListener(VIDEO_EVENTS.PAUSE_ALL, handlePause);
+        window.removeEventListener(VIDEO_EVENTS.RESUME_ALL, handleResume);
       };
     }, [autoPlay]);
 
     if (!media?.source?.asset) return null;
 
-    const shouldShowVideo =
-      isMuxVideo(media) && (forcedVideoPlayback || !isLowPowerMode) && !error;
+    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+      <motion.div className={fill ? "relative h-full w-full" : ""}>
+        {children}
+      </motion.div>
+    );
 
-    const handleError = () => {
-      setError(true);
-      onError?.();
-    };
+    // Handle videos
+    if (media._type === "videoItem" && media.source._type === "mux.video") {
+      const playbackId = media.source.asset.playbackId;
+      if (!playbackId) return null;
 
-    // For thumbnails of videos, use Mux thumbnail URL
-    if (isMuxVideo(media) && !shouldShowVideo) {
       return (
-        <motion.figure
-          layout={layout}
-          layoutId={layoutId}
-          className={fill ? "relative h-full w-full will-change-transform" : ""}
-          transition={transition}
-        >
+        <Wrapper>
+          <video
+            ref={videoRef}
+            className={cn("h-full w-full object-cover", className)}
+            src={`https://stream.mux.com/${playbackId}/high.mp4`}
+            poster={getMuxThumbnailUrl(media, thumbnailTime)}
+            autoPlay={autoPlay}
+            muted
+            playsInline
+            loop
+          />
+        </Wrapper>
+      );
+    }
+
+    // Handle images
+    if (media.source.asset._ref.startsWith("image-")) {
+      const imageUrl = urlFor(media.source);
+
+      return (
+        <Wrapper>
           <Image
-            src={getMuxThumbnailUrl(media)}
+            src={imageUrl}
             alt={media.alt || ""}
             className={cn("object-cover", className)}
             {...(fill
               ? { fill: true }
               : {
-                  width: width || 40,
-                  height: height || 40,
+                  width: media.source.asset.metadata?.dimensions?.width || 2000,
+                  height:
+                    media.source.asset.metadata?.dimensions?.height || 2000,
                 })}
             priority={priority}
             loading={loading}
-            quality={quality}
-            sizes={sizes}
-            onError={handleError}
-            onLoad={onLoad}
+            placeholder={media.source.asset.metadata?.lqip ? "blur" : undefined}
+            blurDataURL={media.source.asset.metadata?.lqip}
+            {...DEFAULT_IMAGE_PROPS}
           />
-        </motion.figure>
+        </Wrapper>
       );
     }
 
-    if (shouldShowVideo) {
-      return (
-        <motion.figure
-          layout={layout}
-          layoutId={layoutId}
-          className={fill ? "relative h-full w-full will-change-transform" : ""}
-          transition={transition}
-        >
-          <video
-            ref={videoRef}
-            className={cn("h-full w-full object-cover", className)}
-            src={`https://stream.mux.com/${media.source?.asset?.playbackId}/high.mp4`}
-            poster={
-              !disableThumbnail
-                ? getMuxThumbnailUrl(media, thumbnailTime)
-                : undefined
-            }
-            autoPlay={forcedVideoPlayback ? true : autoPlay && !isLowPowerMode}
-            muted={muted}
-            playsInline={playsInline}
-            loop={loop}
-            onError={handleError}
-            onLoadedMetadata={onLoad}
-          />
-        </motion.figure>
-      );
-    }
-
-    // For images, ensure we have a valid Sanity image reference
-    if (!media.source?.asset?._ref?.startsWith("image-")) {
-      console.warn("Invalid image asset reference:", media);
-      return null;
-    }
-
-    return (
-      <motion.figure
-        layout={layout}
-        layoutId={layoutId}
-        className={fill ? "relative h-full w-full will-change-transform" : ""}
-        transition={transition}
-      >
-        <Image
-          src={urlFor(media.source)}
-          alt={media.alt || ""}
-          className={cn("object-cover", className)}
-          {...(fill
-            ? { fill: true }
-            : {
-                width:
-                  width ||
-                  media.source?.asset?.metadata?.dimensions?.width ||
-                  2000,
-                height:
-                  height ||
-                  media.source?.asset?.metadata?.dimensions?.height ||
-                  2000,
-              })}
-          priority={priority}
-          loading={loading}
-          quality={quality}
-          sizes={sizes}
-          placeholder={media.source?.asset?.metadata?.lqip ? "blur" : undefined}
-          blurDataURL={media.source?.asset?.metadata?.lqip}
-          onError={handleError}
-          onLoad={onLoad}
-        />
-      </motion.figure>
-    );
+    return null;
   },
   (prevProps, nextProps) => {
-    // Only re-render if these props change
+    // Improve memoization to prevent unnecessary rerenders
     return (
       prevProps.media?._key === nextProps.media?._key &&
       prevProps.autoPlay === nextProps.autoPlay &&
-      prevProps.className === nextProps.className &&
-      prevProps.layout === nextProps.layout &&
-      prevProps.layoutId === nextProps.layoutId
+      prevProps.priority === nextProps.priority &&
+      prevProps.loading === nextProps.loading
     );
   },
 );

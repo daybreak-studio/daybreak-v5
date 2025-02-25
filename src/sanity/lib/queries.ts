@@ -76,10 +76,30 @@ export const HOME_QUERY = groq`
 export const SERVICES_QUERY = groq`
   *[_type == "services"][!(_id in path('drafts.**'))][0] {
     ...,
-    widgets[] {
-      ...,
-      media[] {
-        ${MEDIA_PROJECTION}
+    categories {
+      brand[] {
+        ...,
+        media[] {
+          ${MEDIA_PROJECTION}
+        }
+      },
+      product[] {
+        ...,
+        media[] {
+          ${MEDIA_PROJECTION}
+        }
+      },
+      motion[] {
+        ...,
+        media[] {
+          ${MEDIA_PROJECTION}
+        }
+      },
+      development[] {
+        ...,
+        media[] {
+          ${MEDIA_PROJECTION}
+        }
       }
     }
   }

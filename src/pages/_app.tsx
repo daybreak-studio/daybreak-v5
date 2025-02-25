@@ -67,7 +67,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <div className={`${aspekta.className}`}>
       <DebugProvider>
         <Navigation disableScrollHiding={hasDrawer} />
-        <motion.div className="main-gradient fixed inset-0" />
+        <motion.div className="main-gradient fixed inset-0 z-0" />
         <AnimatePresence mode="wait">
           <Layout key={basePath}>
             <Component {...pageProps} />

@@ -1,278 +1,244 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Services } from "@/sanity/types";
+import { useState, useEffect } from "react";
+import { MediaRenderer } from "./media-renderer";
+import { AnimatePresence, motion } from "framer-motion";
+import { EASINGS } from "@/components/animations/easings";
+import { cn } from "@/lib/utils";
 
-// Mock data structure
-const MOCK_SERVICES = [
-  {
-    id: "brand",
-    name: "Brand",
-    tabs: [
-      {
-        _key: "campaign",
-        heading: "Campaign",
-        subheading: "Craft your brand narrative",
-        copy: "Strategic campaigns that capture attention and drive results, crafted to resonate with your target audience and create lasting impact.",
-      },
-      {
-        _key: "rebrand",
-        heading: "Rebrand",
-        subheading: "Shape your next chapter",
-        copy: "Revitalize your brand identity for the modern landscape while preserving your core values and building stronger connections with your audience.",
-      },
-      {
-        _key: "reposition",
-        heading: "Reposition",
-        subheading: "Capture your new market",
-        copy: "Shift market perception and reach new audiences by strategically repositioning your brand to capture untapped opportunities and drive growth.",
-      },
-    ],
-  },
-  {
-    id: "product",
-    name: "Product",
-    tabs: [
-      {
-        _key: "design",
-        heading: "Design",
-        subheading: "Design tomorrow's products",
-        copy: "Beautiful, intuitive products that users love, built with meticulous attention to detail and focused on delivering exceptional user experiences.",
-      },
-      {
-        _key: "research",
-        heading: "Research",
-        subheading: "Understanding user needs",
-        copy: "Data-driven user research that uncovers real insights, helping you make confident product decisions and reduce time to market.",
-      },
-      {
-        _key: "testing",
-        heading: "Testing",
-        subheading: "Iterate with confidence",
-        copy: "Rapid user testing cycles that ensure product-market fit, turning user feedback into actionable improvements that drive product adoption.",
-      },
-    ],
-  },
-  {
-    id: "motion",
-    name: "Motion",
-    tabs: [
-      {
-        _key: "launch",
-        heading: "Launch",
-        subheading: "Bring your product to life",
-        copy: "Compelling product launch videos that showcase your innovation, designed to captivate investors and early adopters.",
-      },
-      {
-        _key: "interactive",
-        heading: "Interactive",
-        subheading: "Interfaces that spark joy",
-        copy: "Thoughtfully crafted UI animations that elevate user experiences, bringing interfaces to life with delightful micro-interactions.",
-      },
-      {
-        _key: "marketing",
-        heading: "Marketing",
-        subheading: "Highlight your product's features",
-        copy: "Engaging product demonstrations and UI animations that communicate value clearly, helping you stand out in a crowded market.",
-      },
-    ],
-  },
-  {
-    id: "development",
-    name: "Development",
-    tabs: [
-      {
-        _key: "landing",
-        heading: "Landing",
-        subheading: "Launch unforgettable products",
-        copy: "Bold, memorable landing pages that make a lasting first impression, turning curious visitors into customers.",
-      },
-      {
-        _key: "content",
-        heading: "Content",
-        subheading: "Build your digital presence",
-        copy: "Richly crafted blogs and editorial experiences that elevate your brand's voice, creating meaningful connections with your audience through digital-first storytelling.",
-      },
-      {
-        _key: "microsites",
-        heading: "Microsites",
-        subheading: "Create interactive campaigns",
-        copy: "Immerse your audience in campaign experiences that push creative boundaries, transforming brand touch points into interactive journeys that users want to explore and share.",
-      },
-    ],
-  },
+interface ServicesCarouselProps {
+  categories: NonNullable<Services["categories"]>;
+}
+import Image from "next/image";
+type CategoryKey = "brand" | "development" | "product" | "motion";
+const CATEGORY_ORDER: CategoryKey[] = [
+  "brand",
+  "development",
+  "product",
+  "motion",
 ];
 
-interface Tab {
-  _key: string;
-  heading: string;
-  subheading: string;
-  copy: string;
-}
+export default function ServicesCarousel({
+  categories,
+}: ServicesCarouselProps) {
+  const [activeCategory, setActiveCategory] = useState<CategoryKey>("brand");
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [shiftPressed, setShiftPressed] = useState(false);
+  const [isCategoryChanging, setIsCategoryChanging] = useState(false);
 
-interface Service {
-  id: string;
-  name: string;
-  tabs: Tab[];
-}
+  // Reset activeTabIndex when category changes
+  useEffect(() => {
+    setActiveTabIndex(0);
+  }, [activeCategory]);
 
-// Fixed positions in 3D space
-const POSITIONS = [
-  {
-    // Front
-    x: 0,
-    y: 0,
-    scale: 1,
-    rotate: 0,
-    zIndex: 4,
-  },
-  {
-    // First stack
-    x: 15,
-    y: 12,
-    scale: 0.95,
-    rotate: 2,
-    zIndex: 3,
-  },
-  {
-    // Second stack
-    x: 30,
-    y: 24,
-    scale: 0.9,
-    rotate: 4,
-    zIndex: 2,
-  },
-  {
-    // Back
-    x: 45,
-    y: 36,
-    scale: 0.85,
-    rotate: 6,
-    zIndex: 1,
-  },
-];
-
-export default function ServicesCarousel() {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [tabStates, setTabStates] = useState<Record<string, number>>(
-    MOCK_SERVICES.reduce((acc, service) => ({ ...acc, [service.id]: 0 }), {}),
-  );
-
-  const getCardPosition = (index: number) => {
-    // Calculate how far this card is from the active card
-    const distance =
-      (index - activeIndex + MOCK_SERVICES.length) % MOCK_SERVICES.length;
-    return POSITIONS[distance];
+  // Update the category change handlers to set both states at once
+  const handleCategoryChange = (category: CategoryKey) => {
+    if (category !== activeCategory) {
+      setIsCategoryChanging(true);
+      setActiveCategory(category);
+      setActiveTabIndex(0);
+      // Reset the flag after animation duration
+      setTimeout(() => setIsCategoryChanging(false), 1000);
+    }
   };
 
-  const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % MOCK_SERVICES.length);
-  };
+  // First, let's update the keyboard handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Handle category changes with regular numbers
+      if (!shiftPressed && e.key >= "1" && e.key <= "4") {
+        const index = Number(e.key) - 1;
+        if (index < CATEGORY_ORDER.length) {
+          handleCategoryChange(CATEGORY_ORDER[index]);
+        }
+        return;
+      }
 
-  const handlePrevious = () => {
-    setActiveIndex(
-      (prev) => (prev - 1 + MOCK_SERVICES.length) % MOCK_SERVICES.length,
-    );
-  };
+      // Handle heading changes with shift + numbers
+      if (shiftPressed) {
+        const shiftKeys = { "!": 0, "@": 1, "#": 2, $: 3 };
+        const index = shiftKeys[e.key as keyof typeof shiftKeys];
 
-  const handleTabChange = (serviceId: string, tabIndex: number) => {
-    setTabStates((prev) => ({ ...prev, [serviceId]: tabIndex }));
-  };
+        if (index !== undefined) {
+          const currentTabs = categories[activeCategory] || [];
+          if (index < currentTabs.length) {
+            setActiveTabIndex(index);
+          }
+        }
+        return;
+      }
+
+      // Handle shift key press
+      if (e.key === "Shift") {
+        setShiftPressed(true);
+      }
+    };
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.key === "Shift") {
+        setShiftPressed(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [shiftPressed, activeCategory, categories]);
+
+  console.log(categories);
 
   return (
-    <div className="relative mx-auto w-full max-w-4xl px-4">
-      <div className="relative h-[100vh] sm:h-[600px]">
-        {MOCK_SERVICES.map((service, index) => {
-          const position = getCardPosition(index);
-          const isActive = index === activeIndex;
-          const currentTab = tabStates[service.id];
-
-          return (
+    <div className="flex h-screen w-full flex-col items-center justify-center p-8">
+      {/* Tabs */}
+      <div className="relative h-full max-h-fit w-full max-w-[500px] lg:max-w-[500px] xl:max-w-[1100px]">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`${activeCategory}-${activeTabIndex}`}
+            layout
+            layoutId="services-outer"
+            className="frame-outer h-full shadow-xl shadow-stone-500/5"
+            transition={{
+              layout: {
+                duration: 0.8,
+                ease: EASINGS.easeOutQuart,
+              },
+            }}
+          >
             <motion.div
-              key={service.id}
-              className="absolute inset-0"
-              style={{ zIndex: position.zIndex }}
-              animate={{
-                x: position.x,
-                y: position.y,
-                scale: position.scale,
-                rotate: position.rotate,
-              }}
+              layoutId="services-inner"
+              layout
+              className="frame-inner h-full bg-white/30 backdrop-blur-2xl"
               transition={{
-                type: "spring",
-                stiffness: 300,
-                damping: 30,
+                layout: {
+                  duration: 0.8,
+                  ease: EASINGS.easeOutQuart,
+                },
               }}
             >
-              <div className="rounded-2xl bg-white p-8 shadow-lg">
-                <div className="flex flex-col sm:grid sm:grid-cols-2 sm:gap-8">
-                  <div className="flex flex-col">
-                    <h3 className="mb-4 text-lg font-medium text-gray-400">
-                      {service.name}
-                    </h3>
-
-                    <div className="mb-8">
-                      <div className="flex gap-6">
-                        {service.tabs.map((tab, idx) => (
-                          <button
-                            key={tab._key}
-                            onClick={() =>
-                              isActive && handleTabChange(service.id, idx)
-                            }
-                            className={`relative py-2 ${
-                              idx === currentTab
-                                ? "text-black"
-                                : "text-gray-400"
-                            }`}
-                            disabled={!isActive}
-                          >
-                            {tab.heading}
-                            {idx === currentTab && (
-                              <motion.div
-                                layoutId={`activeTab-${service.id}`}
-                                className="absolute -bottom-px left-0 right-0 h-px bg-black"
-                              />
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
+              <div className="flex h-full flex-col items-center justify-center space-y-2 text-center text-sm text-stone-500 xl:flex-row xl:space-y-0">
+                <div className="relative aspect-square h-full w-full xl:order-2 xl:w-7/12 xl:p-2">
+                  <AnimatePresence mode="wait">
                     <motion.div
-                      key={`${service.id}-${currentTab}`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.3 }}
+                      key={`media-${activeCategory}-${activeTabIndex}`}
+                      initial={{ opacity: 0, filter: "blur(8px)" }}
+                      animate={{ opacity: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, filter: "blur(8px)" }}
+                      transition={{
+                        duration: 1,
+                        ease: EASINGS.easeOutQuart,
+                      }}
+                      className="h-full w-full"
                     >
-                      <h2 className="text-[2.5rem] font-normal leading-tight">
-                        {service.tabs[currentTab].subheading}
-                      </h2>
-                      <p className="mt-4 text-gray-600">
-                        {service.tabs[currentTab].copy}
-                      </p>
+                      <MediaRenderer
+                        className="frame-inner size-full"
+                        media={
+                          categories[activeCategory]?.[activeTabIndex]
+                            ?.media?.[0] ?? null
+                        }
+                      />
                     </motion.div>
-                  </div>
+                  </AnimatePresence>
+                </div>
 
-                  <div className="aspect-square rounded-xl bg-gray-100" />
+                <div className="flex flex-col space-y-2 p-6 pt-0 xl:h-full xl:w-5/12 xl:justify-between xl:p-2 xl:text-left">
+                  <nav className="flex justify-center xl:justify-start xl:space-x-4">
+                    <AnimatePresence mode="wait">
+                      {categories[activeCategory]?.map((item, index) => (
+                        <motion.button
+                          key={item._key}
+                          initial={
+                            isCategoryChanging ? { opacity: 0, y: 10 } : false
+                          }
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -10 }}
+                          whileTap={{ scale: 0.95 }}
+                          transition={{
+                            duration: 0.8,
+                            ease: EASINGS.easeOutQuart,
+                            delay: isCategoryChanging ? index * 0.1 : 0,
+                          }}
+                          className={cn(
+                            "xl:frame-inner flex items-center justify-center px-4 py-2 font-medium transition-colors duration-300 xl:bg-neutral-200/75 xl:p-8",
+                            activeTabIndex === index
+                              ? "text-stone-800"
+                              : "text-stone-400/70 hover:text-stone-600",
+                          )}
+                          onClick={() => setActiveTabIndex(index)}
+                        >
+                          {item.heading}
+                        </motion.button>
+                      ))}
+                    </AnimatePresence>
+                  </nav>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`text-${activeCategory}-${activeTabIndex}`}
+                      initial={{ opacity: 0, filter: "blur(8px)", y: 10 }}
+                      animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+                      exit={{ opacity: 0, filter: "blur(8px)", y: -10 }}
+                      transition={{
+                        duration: 1,
+                        ease: EASINGS.easeOutQuart,
+                        delay: 0.1,
+                      }}
+                      className="xl:space-y-4 xl:p-4"
+                    >
+                      <h1 className="hidden text-4xl xl:block">
+                        {categories[activeCategory]?.[activeTabIndex]?.heading}
+                      </h1>
+                      <h2 className="text-pretty text-lg text-stone-400 xl:text-2xl">
+                        {categories[activeCategory]?.[activeTabIndex]?.caption}
+                      </h2>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               </div>
             </motion.div>
-          );
-        })}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      <div className="pointer-events-none absolute inset-x-8 inset-y-0 z-50 flex items-center justify-between">
-        <button
-          onClick={handlePrevious}
-          className="pointer-events-auto rounded-full bg-white p-3 shadow-lg"
-        >
-          <ChevronLeft />
-        </button>
-        <button
-          onClick={handleNext}
-          className="pointer-events-auto rounded-full bg-white p-3 shadow-lg"
-        >
-          <ChevronRight />
-        </button>
+      {/* Categories */}
+      <div className="frame-outer mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-stone-300/25 p-1 shadow-2xl shadow-stone-500/15 backdrop-blur-3xl">
+        <nav className="frame-inner relative flex justify-center bg-white/30 backdrop-blur-2xl">
+          {CATEGORY_ORDER.map((category, index) => (
+            <motion.button
+              key={category}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className={cn(
+                "relative px-4 py-3 text-sm font-medium transition-colors duration-300",
+                activeCategory === category
+                  ? "text-stone-600"
+                  : "text-stone-400 hover:text-stone-600",
+              )}
+              onClick={() => handleCategoryChange(category)}
+            >
+              <span className="relative z-10">
+                <span className="mr-2 hidden text-xs text-stone-400 xl:block">
+                  {index + 1}
+                </span>
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </span>
+
+              {activeCategory === category && (
+                <motion.span
+                  layoutId="category-pill"
+                  className="frame-inner absolute inset-0 z-0 border-[1px] border-stone-600/5 bg-white/30 shadow-lg shadow-stone-500/15 backdrop-blur-2xl"
+                  transition={{
+                    type: "spring",
+                    bounce: 0.2,
+                    duration: 0.4,
+                    ease: "easeOut",
+                  }}
+                />
+              )}
+            </motion.button>
+          ))}
+        </nav>
       </div>
     </div>
   );

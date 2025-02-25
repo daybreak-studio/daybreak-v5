@@ -162,7 +162,7 @@ export default function StagesWidget({ data }: StagesProps) {
               }}
             />
 
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="sync">
               {stages.map((stage, stageIndex) => {
                 const offset = stageIndex * 15 + "%";
                 const isActive = stageIndex === index;
@@ -175,7 +175,7 @@ export default function StagesWidget({ data }: StagesProps) {
                     className={clsx(
                       "frame-inner absolute inset-0 origin-bottom-left border-[1px] border-dashed border-neutral-300/75",
                       styles.padding,
-                      !isActive && styles.background, // Only apply background if not active
+                      !isActive && styles.background,
                       "cursor-pointer touch-none",
                     )}
                     style={{

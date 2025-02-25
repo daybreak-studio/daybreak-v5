@@ -15,6 +15,15 @@ interface ProjectSelectorProps {
 export default function ProjectSelector({ data }: ProjectSelectorProps) {
   const router = useRouter();
 
+  const handleProjectClick = (e: React.MouseEvent, projectCategory: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    router.push(`/work/${data.slug?.current}/${projectCategory}`, undefined, {
+      shallow: true,
+    });
+  };
+
   return (
     <div className="space-y-4 p-4">
       <motion.div
@@ -93,13 +102,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                 ease: EASINGS.easeOutQuart,
                 delay: 0.4 + index * 0.15,
               }}
-              onClick={() => {
-                router.push(
-                  `/work/${data.slug?.current}/${project.category}`,
-                  undefined,
-                  { shallow: true },
-                );
-              }}
+              onClick={(e) => handleProjectClick(e, project.category!)}
               className="cursor-pointer overflow-hidden"
             >
               <div className="frame-inner flex items-center justify-center overflow-hidden border border-neutral-400/10 bg-neutral-300/10 p-2 md:flex-col md:items-start md:p-1">
