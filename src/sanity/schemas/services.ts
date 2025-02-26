@@ -64,8 +64,8 @@ export const services = defineType({
           of: [tab],
         }),
         defineField({
-          name: "development",
-          title: "Development",
+          name: "web",
+          title: "Web",
           type: "array",
           of: [tab],
         }),

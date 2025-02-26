@@ -85,7 +85,7 @@ export const SERVICES_QUERY = groq`
       },
       product[] {
         ...,
-        media[] {
+      media[] {
           ${MEDIA_PROJECTION}
         }
       },
@@ -95,7 +95,7 @@ export const SERVICES_QUERY = groq`
           ${MEDIA_PROJECTION}
         }
       },
-      development[] {
+      web[] {
         ...,
         media[] {
           ${MEDIA_PROJECTION}

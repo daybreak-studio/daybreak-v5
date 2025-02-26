@@ -376,7 +376,7 @@ export type Services = {
       _type: "tab";
       _key: string;
     }>;
-    development?: Array<{
+    web?: Array<{
       heading?: string;
       title?: string;
       caption?: string;
@@ -1691,59 +1691,7 @@ export type SERVICES_QUERYResult = {
       _type: "tab";
       _key: string;
     }> | null;
-    development: Array<{
-      heading?: string;
-      title?: string;
-      caption?: string;
-      media: Array<
-        | {
-            source: {
-              asset:
-                | {
-                    _ref: string | null;
-                    _type: "reference" | null;
-                    playbackId: null;
-                    assetId: string | null;
-                    status: null;
-                    metadata: {
-                      dimensions: SanityImageDimensions | null;
-                      lqip: string | null;
-                      palette: SanityImagePalette | null;
-                      hasAlpha: boolean | null;
-                      isOpaque: boolean | null;
-                      blurHash: string | null;
-                    } | null;
-                  }
-                | {
-                    _ref: string | null;
-                    _type: "reference" | null;
-                  };
-              hotspot?: SanityImageHotspot;
-              crop?: SanityImageCrop;
-              _type: "image";
-            } | null;
-            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
-            alt?: string;
-            _type: "imageItem";
-            _key: string;
-          }
-        | {
-            source: {
-              _type: "mux.video";
-              asset: {
-                _ref: string | null;
-                _type: "reference" | null;
-              };
-            } | null;
-            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
-            alt?: string;
-            _type: "videoItem";
-            _key: string;
-          }
-      > | null;
-      _type: "tab";
-      _key: string;
-    }> | null;
+    development: null;
   } | null;
 } | null;
 // Variable: ABOUT_QUERY

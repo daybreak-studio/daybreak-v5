@@ -2592,7 +2592,7 @@
               },
               "optional": true
             },
-            "development": {
+            "web": {
               "type": "objectAttribute",
               "value": {
                 "type": "array",

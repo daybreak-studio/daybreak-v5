@@ -14,7 +14,7 @@ import ProjectCaseStudy from "@/components/project/case-study";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
-import { useEffect, useState, Suspense, useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import { client } from "@/sanity/lib/client";
 import { CLIENTS_QUERY } from "@/sanity/lib/queries";
@@ -28,7 +28,7 @@ import { Metadata } from "next";
 import { urlFor } from "@/sanity/lib/image";
 import { VIDEO_EVENTS } from "@/components/media-renderer";
 import WorksGrid from "@/components/works-grid";
-
+import Image from "next/image";
 // Define modal variants
 const MODAL_VARIANTS = {
   selector: {
@@ -116,6 +116,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
           const mediaAsset = getClientFirstMedia(client);
           const assetId = getMediaAssetId(mediaAsset);
           if (!client.slug) return null;
+          console.log(client);
 
           const containerLayoutId = `${client.slug.current}`;
           const modalVariant = getModalVariant(client, projectSlug);
@@ -153,7 +154,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         autoPlay={true}
                         priority={true}
                       />
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -161,7 +162,14 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                       transition={{ duration: 0.3, delay: 0.2 }}
                       className="absolute bottom-6 left-6 hidden items-center gap-3 md:flex"
                     >
-                      <div className="aspect-square size-10 rounded-lg bg-neutral-100/25" />
+                      <div className="relative aspect-square size-10 overflow-hidden rounded-lg bg-neutral-100/25">
+                        <Image
+                          className=""
+                          src={urlFor(client.logo)}
+                          alt={client.name || ""}
+                          fill
+                        />
+                      </div>
                       <div className="flex flex-col">
                         <h2 className="text-shadow text-xs font-medium text-neutral-50/90 [text-shadow:_0_1px_0_rgb(0_0_0_/30%)]">
                           {client.name}
