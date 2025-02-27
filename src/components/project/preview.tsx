@@ -61,10 +61,6 @@ const Navigation = memo(function Navigation({
             media={media}
             className="h-5 w-5 rounded-md"
             priority={true}
-            sizes="32px"
-            width={32}
-            height={32}
-            playsInline={true}
           />
         </motion.button>
       ))}
