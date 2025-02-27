@@ -184,8 +184,8 @@ function ServiceContent({
 }) {
   console.log(categories);
   return (
-    <div className="flex h-full flex-col items-center justify-center space-y-2 text-center text-sm text-neutral-500 xl:flex-row xl:space-y-0">
-      <div className="relative aspect-square h-full w-full xl:order-2 xl:w-7/12 xl:p-2">
+    <div className="flex h-full flex-col items-center justify-center space-y-2 text-center text-sm text-neutral-500 2xl:flex-row 2xl:space-y-0">
+      <div className="relative aspect-square h-full w-full 2xl:order-2 2xl:w-7/12 2xl:p-2">
         <AnimatePresence mode="wait">
           <motion.div
             key={`media-${activeCategory}-${activeTabIndex}`}
@@ -208,8 +208,8 @@ function ServiceContent({
         </AnimatePresence>
       </div>
 
-      <div className="flex flex-col space-y-2 p-6 pt-0 xl:h-full xl:w-5/12 xl:justify-between xl:p-2 xl:text-left">
-        <nav className="flex justify-center xl:justify-start xl:space-x-2">
+      <div className="flex flex-col space-y-2 p-6 pt-0 2xl:h-full 2xl:w-5/12 2xl:justify-between 2xl:p-2 2xl:text-left">
+        <nav className="flex justify-center 2xl:justify-start 2xl:space-x-2">
           {categories[activeCategory]?.map((item, index) => (
             <motion.button
               key={item._key}
@@ -243,7 +243,7 @@ function ServiceContent({
                 restDelta: 0.001, // More precise resting point
               }}
               className={cn(
-                "xl:frame-inner relative flex items-center justify-center overflow-hidden px-4 py-2 font-medium xl:h-32 xl:w-32 xl:p-4",
+                "2xl:frame-inner relative flex items-center justify-center overflow-hidden px-4 py-2 font-medium 2xl:h-32 2xl:w-32 2xl:p-4",
                 "bg-neutral-200/15",
                 activeTabIndex === index && "bg-neutral-100",
                 "border border-neutral-200/80",
@@ -256,39 +256,44 @@ function ServiceContent({
               }}
               onClick={() => onTabChange(index)}
             >
-              <span className="relative z-10 flex h-full w-full flex-col justify-between text-left">
-                <span
-                  className={cn(
-                    "flex w-fit rounded-lg border-[1px] border-neutral-200 bg-neutral-200/25 px-2 py-1 text-xs font-normal text-neutral-400",
-                    keyboardState.shiftPressed &&
-                      keyboardState.pressedKeys.includes(index) &&
-                      "text-neutral-600",
-                  )}
-                >
+              <div className="relative z-10 flex h-full w-full flex-col justify-between text-left">
+                <div className="flex items-center">
                   <span
                     className={cn(
-                      "relative text-neutral-400",
-                      keyboardState.shiftPressed && "text-neutral-600",
+                      "hidden w-fit rounded-lg border-[1px] border-neutral-200 bg-neutral-200/25 px-2 py-1 text-xs font-normal text-neutral-400 2xl:flex",
+                      keyboardState.shiftPressed &&
+                        keyboardState.pressedKeys.includes(index) &&
+                        "text-neutral-600",
                     )}
                   >
-                    Shift
+                    <span
+                      className={cn(
+                        "relative text-neutral-400",
+                        keyboardState.shiftPressed && "text-neutral-600",
+                      )}
+                    >
+                      Shift
+                    </span>
                   </span>
 
-                  <span className="mx-1">+</span>
+                  <span className="mx-1 hidden text-neutral-300 2xl:block">
+                    +
+                  </span>
 
-                  {index + 1}
-                </span>
-                <span
-                  className={cn(
-                    "p-2 text-sm",
-                    activeTabIndex === index
-                      ? "text-neutral-600"
-                      : "text-neutral-300",
-                  )}
-                >
-                  {item.heading}
-                </span>
-              </span>
+                  <span
+                    className={cn(
+                      "hidden w-fit rounded-lg border-[1px] border-neutral-200 bg-neutral-200/25 px-2 py-1 text-xs font-normal text-neutral-400 2xl:flex",
+                      keyboardState.shiftPressed &&
+                        keyboardState.pressedKeys.includes(index) &&
+                        "text-neutral-600",
+                    )}
+                  >
+                    {index + 1}
+                  </span>
+                </div>
+
+                <span className="p-2">{item.heading}</span>
+              </div>
             </motion.button>
           ))}
         </nav>
@@ -296,7 +301,7 @@ function ServiceContent({
         <AnimatePresence mode="wait">
           <div
             key={`text-${activeCategory}-${activeTabIndex}`}
-            className="xl:space-y-4 xl:p-4"
+            className="2xl:space-y-4 2xl:p-4"
           >
             <motion.h1
               initial={{ opacity: 0, filter: "blur(8px)", y: 10 }}
@@ -306,7 +311,7 @@ function ServiceContent({
                 duration: 0.6,
                 ease: EASINGS.easeOutQuart,
               }}
-              className="hidden text-4xl xl:block"
+              className="hidden text-4xl 2xl:block"
             >
               {categories[activeCategory]?.[activeTabIndex]?.heading}
             </motion.h1>
@@ -319,7 +324,7 @@ function ServiceContent({
                 ease: EASINGS.easeOutQuart,
                 delay: 0.15, // Slight delay for second element
               }}
-              className="text-pretty text-lg text-neutral-400 xl:text-2xl"
+              className="text-pretty text-lg text-neutral-400 2xl:text-2xl"
             >
               {categories[activeCategory]?.[activeTabIndex]?.caption}
             </motion.h2>
@@ -355,18 +360,18 @@ function CategoryNav({
   return (
     <div
       className={cn(
-        "frame-outer mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-stone-300/25 p-1 shadow-2xl shadow-stone-500/15 backdrop-blur-3xl xl:absolute xl:left-8",
+        "frame-outer mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-stone-300/25 p-1 shadow-2xl shadow-stone-500/15 backdrop-blur-3xl 2xl:absolute 2xl:left-8",
         className,
       )}
     >
-      <nav className="frame-inner relative grid grid-cols-4 bg-white/30 backdrop-blur-2xl xl:grid-cols-2 xl:grid-rows-2 xl:gap-2 xl:p-2">
+      <nav className="frame-inner relative grid grid-cols-4 bg-white/30 backdrop-blur-2xl 2xl:grid-cols-2 2xl:grid-rows-2 2xl:gap-2 2xl:p-2">
         {CATEGORY_ORDER.map((category, index) => (
           <motion.button
             key={category}
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "relative text-sm font-medium transition-colors duration-300 xl:size-20",
+              "relative text-sm font-medium transition-colors duration-300 2xl:size-20",
               activeCategory === category
                 ? "text-neutral-600"
                 : "text-neutral-400 hover:text-neutral-600",
@@ -376,7 +381,7 @@ function CategoryNav({
             <span className="relative z-10 flex flex-col">
               <motion.span
                 className={cn(
-                  "frame-inner hidden aspect-square items-center justify-center border border-neutral-200/80 bg-neutral-100/50 text-neutral-400 xl:flex xl:flex-col",
+                  "frame-inner hidden aspect-square items-center justify-center border border-neutral-200/80 bg-neutral-100/50 text-neutral-400 2xl:flex 2xl:flex-col",
                   activeCategory === category && "bg-neutral-100",
                 )}
                 animate={{
@@ -422,7 +427,7 @@ function CategoryNav({
               </motion.span>
               <span
                 className={cn(
-                  "mt-1 block px-4 py-3 text-center text-neutral-400 xl:hidden",
+                  "mt-1 block px-4 py-3 text-center text-neutral-400 2xl:hidden",
                   activeCategory === category && "text-neutral-600",
                 )}
               >
@@ -433,7 +438,7 @@ function CategoryNav({
             {activeCategory === category && (
               <motion.span
                 layoutId="category-pill"
-                className="frame-inner absolute inset-0 z-0 border-[1px] border-stone-600/5 bg-white/30 shadow-lg shadow-stone-500/15 backdrop-blur-2xl xl:hidden"
+                className="frame-inner absolute inset-0 z-0 border-[1px] border-stone-600/5 bg-white/30 shadow-lg shadow-stone-500/15 backdrop-blur-2xl 2xl:hidden"
                 transition={{
                   type: "spring",
                   bounce: 0.2,
@@ -482,7 +487,7 @@ export default function ServicesCarousel({
   });
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center p-8">
-      <div className="relative h-full max-h-fit w-full max-w-[500px] lg:max-w-[500px] xl:max-w-[1100px]">
+      <div className="relative h-full max-h-fit w-full max-w-[500px] lg:max-w-[500px] 2xl:max-w-[1100px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}

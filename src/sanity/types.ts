@@ -1389,7 +1389,7 @@ export type HOME_QUERYResult = {
   }> | null;
 } | null;
 // Variable: SERVICES_QUERY
-// Query: *[_type == "services"][!(_id in path('drafts.**'))][0] {    ...,    categories {      brand[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      product[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      motion[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      development[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      }    }  }
+// Query: *[_type == "services"][!(_id in path('drafts.**'))][0] {    ...,    categories {      brand[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      product[] {        ...,      media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      motion[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      },      web[] {        ...,        media[] {            ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }        }      }    }  }
 export type SERVICES_QUERYResult = {
   _id: string;
   _type: "services";
@@ -1691,7 +1691,59 @@ export type SERVICES_QUERYResult = {
       _type: "tab";
       _key: string;
     }> | null;
-    development: null;
+    web: Array<{
+      heading?: string;
+      title?: string;
+      caption?: string;
+      media: Array<
+        | {
+            source: {
+              asset:
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                    playbackId: null;
+                    assetId: string | null;
+                    status: null;
+                    metadata: {
+                      dimensions: SanityImageDimensions | null;
+                      lqip: string | null;
+                      palette: SanityImagePalette | null;
+                      hasAlpha: boolean | null;
+                      isOpaque: boolean | null;
+                      blurHash: string | null;
+                    } | null;
+                  }
+                | {
+                    _ref: string | null;
+                    _type: "reference" | null;
+                  };
+              hotspot?: SanityImageHotspot;
+              crop?: SanityImageCrop;
+              _type: "image";
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "imageItem";
+            _key: string;
+          }
+        | {
+            source: {
+              _type: "mux.video";
+              asset: {
+                _ref: string | null;
+                _type: "reference" | null;
+              };
+            } | null;
+            width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+            alt?: string;
+            _type: "videoItem";
+            _key: string;
+          }
+      > | null;
+      _type: "tab";
+      _key: string;
+    }> | null;
   } | null;
 } | null;
 // Variable: ABOUT_QUERY
@@ -1768,7 +1820,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "clients"][!(_id in path(\'drafts.**\'))] {\n    ...,\n    projects[] {\n      ...,\n      _type == "preview" => {\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      _type == "caseStudy" => {\n        mediaGroups[] {\n          ...,\n          heading,\n          caption,\n          media[] {\n            \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n          }\n        }\n      }\n    }\n  }\n': CLIENTS_QUERYResult;
     '\n  *[_type == "home"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    media[] {\n      \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n    },\n    widgets[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    },\n    newsfeed[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': HOME_QUERYResult;
-    '\n  *[_type == "services"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    categories {\n      brand[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      product[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      motion[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      development[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      }\n    }\n  }\n': SERVICES_QUERYResult;
+    '\n  *[_type == "services"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    categories {\n      brand[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      product[] {\n        ...,\n      media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      motion[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      web[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      }\n    }\n  }\n': SERVICES_QUERYResult;
     '\n  *[_type == "about"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    team[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': ABOUT_QUERYResult;
   }
 }
