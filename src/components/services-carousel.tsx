@@ -182,10 +182,9 @@ function ServiceContent({
   keyboardState: KeyboardState;
   onTabChange: (index: number) => void;
 }) {
-  console.log(categories);
   return (
-    <div className="flex h-full flex-col items-center justify-center space-y-2 text-center text-sm text-neutral-500 2xl:flex-row 2xl:space-y-0">
-      <div className="relative aspect-square h-full w-full 2xl:order-2 2xl:w-7/12 2xl:p-2">
+    <section className="relative flex h-full w-full flex-col 2xl:flex-row">
+      <div className="relative h-full w-full 2xl:order-2 2xl:w-7/12">
         <AnimatePresence mode="wait">
           <motion.div
             key={`media-${activeCategory}-${activeTabIndex}`}
@@ -196,7 +195,7 @@ function ServiceContent({
               duration: 0.8,
               ease: EASINGS.easeOutQuart,
             }}
-            className="h-full w-full"
+            className="h-full w-full 2xl:p-4"
           >
             <MediaRenderer
               className="frame-inner size-full"
@@ -208,100 +207,129 @@ function ServiceContent({
         </AnimatePresence>
       </div>
 
-      <div className="flex flex-col space-y-2 p-6 pt-0 2xl:h-full 2xl:w-5/12 2xl:justify-between 2xl:p-2 2xl:text-left">
-        <nav className="flex justify-center 2xl:justify-start 2xl:space-x-2">
+      <div className="flex flex-1 flex-col justify-between gap-2 p-4 pb-6 2xl:order-1 2xl:w-5/12 2xl:p-2 2xl:text-left">
+        <nav className="flex justify-center gap-2 text-sm md:text-base 2xl:justify-start 2xl:gap-0 2xl:space-x-2">
           {categories[activeCategory]?.map((item, index) => (
-            <motion.button
-              key={item._key}
-              initial={{}}
-              animate={{
-                y: keyboardState.shiftPressed
-                  ? keyboardState.pressedKeys.includes(index)
-                    ? 3 // Full press
-                    : 1 // Shift held
-                  : 0, // Rest state
-                scale: keyboardState.shiftPressed
-                  ? keyboardState.pressedKeys.includes(index)
-                    ? 0.97 // Full press
-                    : 0.99 // Shift held
-                  : 1, // Rest state
-                boxShadow: keyboardState.shiftPressed
-                  ? keyboardState.pressedKeys.includes(index)
-                    ? "inset 0 3px 4px rgba(0,0,0,0.2), inset 0 0 2px rgba(0,0,0,0.15)"
-                    : "inset 0 1px 2px rgba(0,0,0,0.3)"
-                  : "0 4px 6px -1px rgba(0,0,0,0.04), 0 2px 4px -2px rgba(0,0,0,0.04), 0 0 2px 0 rgba(0,0,0,0.03)",
-              }}
-              whileTap={{
-                scale: 0.97,
-                y: 3,
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 400,
-                damping: 15,
-                mass: 0.3, // Even lighter for faster response
-                restDelta: 0.001, // More precise resting point
-              }}
-              className={cn(
-                "2xl:frame-inner relative flex items-center justify-center overflow-hidden px-4 py-2 font-medium 2xl:h-32 2xl:w-32 2xl:p-4",
-                "bg-neutral-200/15",
-                activeTabIndex === index && "bg-neutral-100",
-                "border border-neutral-200/80",
-                activeTabIndex === index
-                  ? "text-neutral-600"
-                  : "text-neutral-400/70 hover:text-neutral-600",
-              )}
-              style={{
-                transformOrigin: "center bottom",
-              }}
-              onClick={() => onTabChange(index)}
-            >
-              <div className="relative z-10 flex h-full w-full flex-col justify-between text-left">
-                <div className="flex items-center">
-                  <span
-                    className={cn(
-                      "hidden w-fit rounded-lg border-[1px] border-neutral-200 bg-neutral-200/25 px-2 py-1 text-xs font-normal text-neutral-400 2xl:flex",
-                      keyboardState.shiftPressed &&
-                        keyboardState.pressedKeys.includes(index) &&
-                        "text-neutral-600",
-                    )}
-                  >
+            <div key={item._key} className="relative">
+              {/* Mobile Version */}
+              <motion.button
+                initial={{}}
+                whileTap={{
+                  scale: 0.99,
+                  y: 2,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 15,
+                  mass: 0.3,
+                  restDelta: 0.001,
+                }}
+                className={cn(
+                  "relative flex items-center justify-center overflow-hidden font-[450]",
+                  activeTabIndex === index
+                    ? "text-neutral-500"
+                    : "text-neutral-400/70 hover:text-neutral-500",
+                  "2xl:hidden",
+                )}
+                style={{
+                  transformOrigin: "center bottom",
+                }}
+                onClick={() => onTabChange(index)}
+              >
+                <span className="p-2">{item.heading}</span>
+              </motion.button>
+
+              {/* Desktop Version */}
+              <motion.button
+                initial={{}}
+                animate={{
+                  y: keyboardState.shiftPressed
+                    ? keyboardState.pressedKeys.includes(index)
+                      ? 3
+                      : 1
+                    : 0,
+                  scale: keyboardState.shiftPressed
+                    ? keyboardState.pressedKeys.includes(index)
+                      ? 0.97
+                      : 0.99
+                    : 1,
+                  boxShadow: keyboardState.shiftPressed
+                    ? keyboardState.pressedKeys.includes(index)
+                      ? "inset 0 3px 4px rgba(0,0,0,0.2), inset 0 0 2px rgba(0,0,0,0.15)"
+                      : "inset 0 1px 2px rgba(0,0,0,0.3)"
+                    : "0 4px 6px -1px rgba(0,0,0,0.04), 0 2px 4px -2px rgba(0,0,0,0.04), 0 0 2px 0 rgba(0,0,0,0.03)",
+                }}
+                whileTap={{
+                  scale: 0.97,
+                  y: 3,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 400,
+                  damping: 15,
+                  mass: 0.3,
+                  restDelta: 0.001,
+                }}
+                className={cn(
+                  "frame-inner hidden h-32 w-32 items-center justify-center overflow-hidden p-4 font-[450]",
+                  activeTabIndex === index && "bg-neutral-100",
+                  "border border-neutral-200/80",
+                  activeTabIndex === index
+                    ? "text-neutral-500"
+                    : "text-neutral-400/70 hover:text-neutral-500",
+                  "2xl:flex",
+                )}
+                style={{
+                  transformOrigin: "center bottom",
+                }}
+                onClick={() => onTabChange(index)}
+              >
+                <div className="relative z-10 flex h-full w-full flex-col justify-between text-left">
+                  <div className="flex items-center">
                     <span
                       className={cn(
-                        "relative text-neutral-400",
-                        keyboardState.shiftPressed && "text-neutral-600",
+                        "w-fit rounded-lg border-[1px] border-neutral-200 bg-neutral-200/25 px-2 py-1 text-xs font-normal text-neutral-400",
+                        keyboardState.shiftPressed &&
+                          keyboardState.pressedKeys.includes(index) &&
+                          "text-neutral-500",
                       )}
                     >
-                      Shift
+                      <span
+                        className={cn(
+                          "relative text-neutral-400",
+                          keyboardState.shiftPressed && "text-neutral-500",
+                        )}
+                      >
+                        Shift
+                      </span>
                     </span>
-                  </span>
 
-                  <span className="mx-1 hidden text-neutral-300 2xl:block">
-                    +
-                  </span>
+                    <span className="mx-1 text-neutral-300">+</span>
 
-                  <span
-                    className={cn(
-                      "hidden w-fit rounded-lg border-[1px] border-neutral-200 bg-neutral-200/25 px-2 py-1 text-xs font-normal text-neutral-400 2xl:flex",
-                      keyboardState.shiftPressed &&
-                        keyboardState.pressedKeys.includes(index) &&
-                        "text-neutral-600",
-                    )}
-                  >
-                    {index + 1}
-                  </span>
+                    <span
+                      className={cn(
+                        "w-fit rounded-lg border-[1px] border-neutral-200 bg-neutral-200/25 px-2 py-1 text-xs font-normal text-neutral-400",
+                        keyboardState.shiftPressed &&
+                          keyboardState.pressedKeys.includes(index) &&
+                          "text-neutral-500",
+                      )}
+                    >
+                      {index + 1}
+                    </span>
+                  </div>
+
+                  <span className="p-2">{item.heading}</span>
                 </div>
-
-                <span className="p-2">{item.heading}</span>
-              </div>
-            </motion.button>
+              </motion.button>
+            </div>
           ))}
         </nav>
 
         <AnimatePresence mode="wait">
           <div
             key={`text-${activeCategory}-${activeTabIndex}`}
-            className="2xl:space-y-4 2xl:p-4"
+            className="flex items-center justify-center 2xl:space-y-4 2xl:p-4"
           >
             <motion.h1
               initial={{ opacity: 0, filter: "blur(8px)", y: 10 }}
@@ -311,7 +339,7 @@ function ServiceContent({
                 duration: 0.6,
                 ease: EASINGS.easeOutQuart,
               }}
-              className="hidden text-4xl 2xl:block"
+              className="hidden text-3xl text-neutral-500 2xl:block"
             >
               {categories[activeCategory]?.[activeTabIndex]?.heading}
             </motion.h1>
@@ -322,16 +350,16 @@ function ServiceContent({
               transition={{
                 duration: 0.6,
                 ease: EASINGS.easeOutQuart,
-                delay: 0.15, // Slight delay for second element
+                delay: 0.15,
               }}
-              className="text-pretty text-lg text-neutral-400 2xl:text-2xl"
+              className="text-pretty text-center text-neutral-400 md:w-10/12 md:text-lg 2xl:text-xl"
             >
               {categories[activeCategory]?.[activeTabIndex]?.caption}
             </motion.h2>
           </div>
         </AnimatePresence>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -344,23 +372,10 @@ function CategoryNav({
   activeCategory: CategoryKey;
   onCategoryChange: (category: CategoryKey) => void;
 }) {
-  const keyboardState = useKeyboardNavigation({
-    onNumberKeyPress: (index) => {
-      if (index < CATEGORY_ORDER.length) {
-        onCategoryChange(CATEGORY_ORDER[index]);
-      }
-    },
-    onNumberKeyRelease: (index, lastKey) => {
-      if (lastKey !== null && lastKey < CATEGORY_ORDER.length) {
-        onCategoryChange(CATEGORY_ORDER[lastKey]);
-      }
-    },
-  });
-
   return (
     <div
       className={cn(
-        "frame-outer mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-stone-300/25 p-1 shadow-2xl shadow-stone-500/15 backdrop-blur-3xl 2xl:absolute 2xl:left-8",
+        "frame-outer mt-4 flex w-fit items-stretch justify-center p-1 2xl:absolute 2xl:left-8 2xl:border-[1px] 2xl:border-stone-300/25 2xl:shadow-2xl 2xl:shadow-stone-500/15 2xl:backdrop-blur-3xl",
         className,
       )}
     >
@@ -371,32 +386,25 @@ function CategoryNav({
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "relative text-sm font-medium transition-colors duration-300 2xl:size-20",
+              "relative text-sm font-[450] transition-colors duration-300",
               activeCategory === category
-                ? "text-neutral-600"
-                : "text-neutral-400 hover:text-neutral-600",
+                ? "text-neutral-500"
+                : "text-neutral-400 hover:text-neutral-500",
             )}
             onClick={() => onCategoryChange(category)}
           >
             <span className="relative z-10 flex flex-col">
               <motion.span
                 className={cn(
-                  "frame-inner hidden aspect-square items-center justify-center border border-neutral-200/80 bg-neutral-100/50 text-neutral-400 2xl:flex 2xl:flex-col",
-                  activeCategory === category && "bg-neutral-100",
+                  "frame-inner hidden aspect-[4/5] items-start justify-end border-dotted border-neutral-200/80 p-4 text-neutral-400 2xl:flex 2xl:flex-col",
                 )}
                 animate={{
-                  y: keyboardState.pressedKeys.includes(index) ? 3 : 0,
-                  scale: keyboardState.pressedKeys.includes(index) ? 0.97 : 1,
-                  boxShadow: keyboardState.pressedKeys.includes(index)
-                    ? "inset 0 3px 4px rgba(0,0,0,0.2), inset 0 0 2px rgba(0,0,0,0.15)"
-                    : "0 4px 6px -1px rgba(0,0,0,0.04), 0 2px 4px -2px rgba(0,0,0,0.04), 0 0 2px 0 rgba(0,0,0,0.03)",
+                  scale: 1,
                 }}
                 transition={{
                   type: "spring",
                   stiffness: 400,
                   damping: 15,
-                  mass: 0.3, // Even lighter for faster response
-                  restDelta: 0.001, // More precise resting point
                 }}
                 style={{
                   transformOrigin: "center bottom",
@@ -405,30 +413,27 @@ function CategoryNav({
                 <span
                   className={cn(
                     "text-neutral-400",
-                    (keyboardState.pressedKeys.includes(index) ||
-                      activeCategory === category) &&
-                      "text-neutral-500",
+                    activeCategory === category && "text-neutral-500",
                   )}
                 >
-                  {index === 0 && "!"}
-                  {index === 1 && "@"}
-                  {index === 2 && "#"}
-                  {index === 3 && "$"}
+                  {index === 0 && "Brand"}
+                  {index === 1 && "Product"}
+                  {index === 2 && "Motion"}
+                  {index === 3 && "Web"}
                 </span>
-                <span
+                {/* <span
                   className={cn(
                     "text-neutral-400",
-                    keyboardState.pressedKeys.includes(index) ||
-                      (activeCategory === category && "text-neutral-600"),
+                    activeCategory === category && "text-neutral-500",
                   )}
                 >
                   {index + 1}
-                </span>
+                </span> */}
               </motion.span>
               <span
                 className={cn(
                   "mt-1 block px-4 py-3 text-center text-neutral-400 2xl:hidden",
-                  activeCategory === category && "text-neutral-600",
+                  activeCategory === category && "text-neutral-500",
                 )}
               >
                 {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -438,7 +443,7 @@ function CategoryNav({
             {activeCategory === category && (
               <motion.span
                 layoutId="category-pill"
-                className="frame-inner absolute inset-0 z-0 border-[1px] border-stone-600/5 bg-white/30 shadow-lg shadow-stone-500/15 backdrop-blur-2xl 2xl:hidden"
+                className="frame-inner frame-inner absolute inset-0 z-0 border-[1px] border-stone-600/5 bg-white/30 shadow-lg shadow-stone-500/15 backdrop-blur-2xl 2xl:rounded-2xl"
                 transition={{
                   type: "spring",
                   bounce: 0.2,
@@ -485,9 +490,10 @@ export default function ServicesCarousel({
       }
     },
   });
+
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center p-8">
-      <div className="relative h-full max-h-fit w-full max-w-[500px] lg:max-w-[500px] 2xl:max-w-[1100px]">
+    <div className="flex flex-col items-center justify-center p-4">
+      <div className="relative h-full w-full max-w-[450px] 2xl:max-w-[1100px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}

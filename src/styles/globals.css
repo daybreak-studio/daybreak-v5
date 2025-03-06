@@ -127,6 +127,7 @@
   .main-gradient {
     background: var(--main-gradient);
     position: relative;
+    overflow: hidden;
   }
 
   .main-gradient::before {

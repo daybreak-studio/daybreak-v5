@@ -22,7 +22,7 @@ const socialLinks: SocialLink[] = [
 
 export const Footer = () => {
   return (
-    <footer className="flex flex-col items-center justify-center gap-4 py-8 md:flex-row md:gap-8">
+    <footer className="relative flex flex-col items-center justify-center gap-4 py-8 md:flex-row md:gap-8">
       {socialLinks.map((link) => (
         <a
           key={link.label}
