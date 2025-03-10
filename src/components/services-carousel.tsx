@@ -485,42 +485,46 @@ export default function ServicesCarousel({
   });
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <div className="relative h-full w-full max-w-[calc(100vw-2rem)] md:max-w-[450px] 2xl:max-w-[1100px]">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeCategory}
-            layout
-            layoutId="services-outer"
-            className="frame-outer h-full shadow-xl shadow-stone-500/5"
-            transition={{
-              layout: { duration: 0.8, ease: EASINGS.easeOutQuart },
-            }}
-          >
-            <motion.div
-              layoutId="services-inner"
-              layout
-              className="frame-inner h-full bg-white/30 backdrop-blur-2xl"
-              transition={{
-                layout: { duration: 0.8, ease: EASINGS.easeOutQuart },
-              }}
-            >
-              <ServiceContent
-                categories={categories}
-                activeCategory={activeCategory}
-                activeTabIndex={activeTabIndex}
-                keyboardState={keyboardState}
-                onTabChange={setActiveTabIndex}
-              />
-            </motion.div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
+    <motion.div
+      initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{
+        delay: 0.4,
+        duration: 1,
+        ease: EASINGS.easeOutQuart,
+      }}
+      className="flex w-full flex-col items-center justify-center p-4"
+    >
+      <motion.div
+        key={activeCategory}
+        layout
+        layoutId="services-outer"
+        className="frame-outer relative h-full w-full max-w-[calc(100vw-2rem)] shadow-xl shadow-stone-500/5 md:max-w-[450px] 2xl:max-w-[1100px]"
+        transition={{
+          layout: { duration: 0.8, ease: EASINGS.easeOutQuart },
+        }}
+      >
+        <motion.div
+          layoutId="services-inner"
+          layout
+          className="frame-inner h-full bg-white/30 backdrop-blur-2xl"
+          transition={{
+            layout: { duration: 0.8, ease: EASINGS.easeOutQuart },
+          }}
+        >
+          <ServiceContent
+            categories={categories}
+            activeCategory={activeCategory}
+            activeTabIndex={activeTabIndex}
+            keyboardState={keyboardState}
+            onTabChange={setActiveTabIndex}
+          />
+        </motion.div>
+      </motion.div>
       <CategoryNav
         activeCategory={activeCategory}
         onCategoryChange={setActiveCategory}
       />
-    </div>
+    </motion.div>
   );
 }

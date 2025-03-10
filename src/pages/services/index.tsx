@@ -65,11 +65,18 @@ export default function Services({ servicesData }: { servicesData: Services }) {
         <ServicesCarousel categories={servicesData.categories} />
       )}
 
-      <section className="flex flex-col items-center justify-center space-y-6 pb-24 text-center">
-        <div className="flex w-8/12 flex-col items-center justify-center">
+      <motion.section
+        initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{
+          delay: 0.4,
+          duration: 1,
+          ease: EASINGS.easeOutQuart,
+        }}
+        className="flex flex-col items-center justify-center space-y-6 pb-24 text-center"
+      >
+        <motion.div className="flex w-8/12 flex-col items-center justify-center">
           <motion.h2
-            initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             transition={{
               delay: 0.3,
               duration: 1,
@@ -93,7 +100,7 @@ export default function Services({ servicesData }: { servicesData: Services }) {
             technology, constantly exploring new means of expression and highly
             detailed in their practice.
           </motion.h1>
-        </div>
+        </motion.div>
         <motion.button
           whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
           whileTap={{ scale: 0.95, transition: { duration: 0.3 } }}
@@ -101,13 +108,7 @@ export default function Services({ servicesData }: { servicesData: Services }) {
         >
           <Link href="/contact">Get in Touch</Link>
         </motion.button>
-
-        {/* <button className="border-1 flex aspect-square size-32 items-end justify-start rounded-2xl border border-neutral-500/10 bg-gradient-to-t from-orange-50/75 via-sky-100/75 to-violet-50/75 p-6 text-left text-neutral-700/40 shadow-lg shadow-neutral-500/5">
-          <h1 className="w-full">
-            Get in <br /> Touch
-          </h1>
-        </button> */}
-      </section>
+      </motion.section>
 
       <Footer />
     </main>
