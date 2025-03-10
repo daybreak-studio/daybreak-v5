@@ -37,7 +37,7 @@ export default function Services({ servicesData }: { servicesData: Services }) {
   }, []);
 
   return (
-    <main className="relative flex flex-col items-center justify-center space-y-48 pt-48 lg:space-y-36">
+    <main className="relative flex flex-col items-center justify-center space-y-48 pt-48 lg:space-y-52">
       <section className="flex h-full w-full flex-col items-center justify-center space-y-2 lg:space-y-8">
         <motion.h1
           initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}

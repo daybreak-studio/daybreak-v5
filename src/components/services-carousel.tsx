@@ -494,7 +494,7 @@ export default function ServicesCarousel({
 
   return (
     <div className="flex flex-col items-center justify-center p-4">
-      <div className="relative h-full w-full max-w-[450px] 2xl:max-w-[1100px]">
+      <div className="relative h-full w-full max-w-[calc(100vw-2rem)] md:max-w-[450px] 2xl:max-w-[1100px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}
