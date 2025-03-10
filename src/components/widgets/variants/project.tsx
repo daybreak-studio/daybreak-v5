@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useWidgetData } from "@/components/widgets/grid/context";
 import { Clients } from "@/sanity/types";
 import { getProjectFirstMedia } from "@/sanity/lib/media";
-
+import { motion } from "framer-motion";
 interface ProjectProps {
   data: ProjectWidgetTypes;
 }
@@ -56,13 +56,15 @@ export default function ProjectWidget({ data }: ProjectProps) {
       case "2x2":
       case "3x3":
         return (
-          <div onClick={handleClick} className="cursor-pointer">
+          <div onClick={handleClick} className="group cursor-pointer">
+            <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/30 to-black/0 transition-opacity duration-300 group-hover:opacity-0" />
             <MediaRenderer
+              autoPlay={true}
               className="aspect-square"
               media={mediaAsset}
               priority={true}
             />
-            <div className="absolute bottom-8 left-8 z-20">
+            <div className="absolute bottom-8 left-8 z-20 transition-opacity duration-300 group-hover:opacity-0">
               <h2
                 className={`text-white ${data.size === "2x2" ? "text-sm" : "text-base"}`}
               >
