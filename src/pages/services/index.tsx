@@ -14,6 +14,9 @@ import { motion } from "framer-motion";
 import { services } from "@/sanity/schemas/services";
 import Link from "next/link";
 import Footer from "@/components/footer";
+import Lenis from "lenis";
+import { useEffect } from "react";
+
 const servicesWidgets: WidgetRegistry = {
   quotes: QuotesWidget,
   stages: StagesWidget,
@@ -21,6 +24,18 @@ const servicesWidgets: WidgetRegistry = {
 };
 
 export default function Services({ servicesData }: { servicesData: Services }) {
+  useEffect(() => {
+    const lenis = new Lenis();
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <main className="relative flex flex-col items-center justify-center space-y-48 pt-48 lg:space-y-36">
       <section className="flex h-full w-full flex-col items-center justify-center space-y-2 lg:space-y-8">
@@ -75,13 +90,17 @@ export default function Services({ servicesData }: { servicesData: Services }) {
             className="w-fit text-2xl font-[450] text-neutral-700/40 md:text-3xl 2xl:w-2/3 2xl:text-4xl"
           >
             We&apos;re looking for people excited by the possibilities of
-            technology, constantly exploring new means of expression and highly
+            technology, constan tly exploring new means of expression and highly
             detailed in their practice.
           </motion.h1>
         </div>
-        <button className="border-1 rounded-full border-neutral-500/50 bg-neutral-100/75 px-5 py-3 font-medium text-neutral-700/50 shadow-lg shadow-neutral-500/5">
+        <motion.button
+          whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+          whileTap={{ scale: 0.95, transition: { duration: 0.3 } }}
+          className="border-1 rounded-full border-neutral-500/50 bg-neutral-100/75 px-5 py-3 font-medium text-neutral-700/50 shadow-lg shadow-neutral-500/5"
+        >
           <Link href="/contact">Get in Touch</Link>
-        </button>
+        </motion.button>
 
         {/* <button className="border-1 flex aspect-square size-32 items-end justify-start rounded-2xl border border-neutral-500/10 bg-gradient-to-t from-orange-50/75 via-sky-100/75 to-violet-50/75 p-6 text-left text-neutral-700/40 shadow-lg shadow-neutral-500/5">
           <h1 className="w-full">

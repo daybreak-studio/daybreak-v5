@@ -195,7 +195,7 @@ function ServiceContent({
               duration: 0.6,
               ease: EASINGS.easeOutQuart,
             }}
-            className="aspect-square h-[640px] w-full 2xl:p-4"
+            className="aspect-square h-[400px] w-full 2xl:h-[640px] 2xl:p-4"
           >
             <MediaRenderer
               className="frame-inner"

@@ -227,8 +227,7 @@ export const cta = {
   name: "cta",
   title: "CTA",
   fields: createWidgetFields([
-    defineField({ name: "title", type: "string", title: "Title" }),
-    defineField({ name: "description", type: "text", title: "Description" }),
+    defineField({ name: "text", type: "string", title: "Text" }),
     defineField({ name: "link", type: "url", title: "Link" }),
   ]),
   preview: createWidgetPreview("CTA"),
@@ -242,4 +241,5 @@ export const widgets = [
   recents,
   quotes,
   stages,
+  cta,
 ] as ArrayOfType[];

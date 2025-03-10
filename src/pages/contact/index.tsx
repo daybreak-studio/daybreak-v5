@@ -93,7 +93,7 @@ export default function ContactPage() {
       >
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="grid h-screen w-screen place-items-center"
+          className="absolute inset-0 flex items-center justify-center"
         >
           <AnimatePresence initial={false}>
             {formSteps.map((step: FormStep, index: number) => (

@@ -14,7 +14,7 @@ import ProjectCaseStudy from "@/components/project/case-study";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import { client } from "@/sanity/lib/client";
 import { CLIENTS_QUERY } from "@/sanity/lib/queries";
@@ -30,6 +30,7 @@ import { VIDEO_EVENTS } from "@/components/media-renderer";
 import WorksGrid from "@/components/works-grid";
 import Image from "next/image";
 import Footer from "@/components/footer";
+import Lenis from "lenis";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -110,6 +111,18 @@ export default function WorkPage({ data }: { data: Clients[] }) {
     },
     [router],
   );
+
+  useEffect(() => {
+    const lenis = new Lenis();
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
 
   return (
     <>

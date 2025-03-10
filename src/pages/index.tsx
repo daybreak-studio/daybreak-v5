@@ -38,22 +38,17 @@ export default function Home({
   homeData: Home;
   clientsData: Clients[];
 }) {
-  // Initialize Lenis with proper cleanup
   useEffect(() => {
     const lenis = new Lenis();
-
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
-
     requestAnimationFrame(raf);
-
-    // Cleanup function to destroy Lenis instance when component unmounts
     return () => {
       lenis.destroy();
     };
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   // Handles text rendering for the CMS text.
   // We are applying reveal animation and controlling font size.

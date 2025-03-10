@@ -10,15 +10,15 @@ import { clsx } from "clsx";
 const TIER_CONFIG = {
   padding: {
     mobile: ["p-4", "p-5", "p-6", "p-7"],
-    desktop: ["md:p-6", "md:p-7", "md:p-8", "md:p-10"],
+    desktop: ["xl:p-6", "xl:p-7", "xl:p-8", "xl:p-10"],
   },
   titleText: {
     mobile: ["text-base", "text-lg", "text-xl", "text-2xl"],
-    desktop: ["md:text-xl", "md:text-2xl", "md:text-3xl", "md:text-4xl"],
+    desktop: ["xl:text-xl", "xl:text-2xl", "xl:text-3xl", "xl:text-4xl"],
   },
   descriptionText: {
     mobile: ["text-sm", "text-base", "text-lg", "text-xl"],
-    desktop: ["md:text-xl", "md:text-2xl", "md:text-3xl", "md:text-4xl"],
+    desktop: ["xl:text-xl", "xl:text-2xl", "xl:text-3xl", "xl:text-4xl"],
   },
   blur: {
     factor: 0.5,
