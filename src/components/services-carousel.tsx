@@ -387,7 +387,7 @@ function CategoryNav({
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              "relative text-sm font-[450] transition-colors duration-300",
+              "relative rounded-2xl text-sm font-[450] transition-colors duration-300",
               activeCategory === category
                 ? "text-neutral-500"
                 : "text-neutral-400 hover:text-neutral-500",
@@ -397,7 +397,7 @@ function CategoryNav({
             <span className="relative z-10 flex flex-col">
               <motion.span
                 className={cn(
-                  "frame-inner hidden aspect-[4/5] items-start justify-end border-dotted border-neutral-200/80 p-4 text-neutral-400 2xl:flex 2xl:flex-col",
+                  "hidden aspect-[4/5] items-start justify-end border-dotted border-neutral-200/80 p-4 text-neutral-400 2xl:flex 2xl:flex-col",
                 )}
                 animate={{
                   scale: 1,
@@ -422,14 +422,6 @@ function CategoryNav({
                   {index === 2 && "Motion"}
                   {index === 3 && "Web"}
                 </span>
-                {/* <span
-                  className={cn(
-                    "text-neutral-400",
-                    activeCategory === category && "text-neutral-500",
-                  )}
-                >
-                  {index + 1}
-                </span> */}
               </motion.span>
               <span
                 className={cn(

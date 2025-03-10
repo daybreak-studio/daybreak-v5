@@ -90,7 +90,7 @@ export default function Services({ servicesData }: { servicesData: Services }) {
             className="w-fit text-2xl font-[450] text-neutral-700/40 md:text-3xl 2xl:w-2/3 2xl:text-4xl"
           >
             We&apos;re looking for people excited by the possibilities of
-            technology, constan tly exploring new means of expression and highly
+            technology, constantly exploring new means of expression and highly
             detailed in their practice.
           </motion.h1>
         </div>
