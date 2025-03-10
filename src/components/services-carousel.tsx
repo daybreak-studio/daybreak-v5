@@ -192,13 +192,14 @@ function ServiceContent({
             animate={{ opacity: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, filter: "blur(8px)" }}
             transition={{
-              duration: 0.8,
+              duration: 0.6,
               ease: EASINGS.easeOutQuart,
             }}
-            className="h-full w-full 2xl:p-4"
+            className="aspect-square h-[640px] w-full 2xl:p-4"
           >
             <MediaRenderer
-              className="frame-inner size-full"
+              className="frame-inner"
+              fill
               media={
                 categories[activeCategory]?.[activeTabIndex]?.media?.[0] ?? null
               }
@@ -329,14 +330,14 @@ function ServiceContent({
         <AnimatePresence mode="wait">
           <div
             key={`text-${activeCategory}-${activeTabIndex}`}
-            className="flex items-center justify-center 2xl:space-y-4 2xl:p-4"
+            className="flex flex-col items-center justify-center text-center 2xl:items-start 2xl:space-y-4 2xl:p-4 2xl:text-left"
           >
             <motion.h1
               initial={{ opacity: 0, filter: "blur(8px)", y: 10 }}
               animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
               exit={{ opacity: 0, filter: "blur(8px)", y: -10 }}
               transition={{
-                duration: 0.6,
+                duration: 0.4,
                 ease: EASINGS.easeOutQuart,
               }}
               className="hidden text-3xl text-neutral-500 2xl:block"
@@ -348,11 +349,11 @@ function ServiceContent({
               animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
               exit={{ opacity: 0, filter: "blur(8px)", y: -10 }}
               transition={{
-                duration: 0.6,
+                duration: 0.4,
                 ease: EASINGS.easeOutQuart,
                 delay: 0.15,
               }}
-              className="text-pretty text-center text-neutral-400 md:w-10/12 md:text-lg 2xl:text-xl"
+              className="text-pretty text-neutral-400 md:w-10/12 md:text-lg 2xl:text-xl"
             >
               {categories[activeCategory]?.[activeTabIndex]?.caption}
             </motion.h2>
