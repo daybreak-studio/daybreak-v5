@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { PointerEvent as ReactPointerEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
 import { ExpandIcon } from "lucide-react";
@@ -8,10 +7,9 @@ import { GetStaticProps } from "next";
 import { client } from "@/sanity/lib/client";
 import { ABOUT_QUERY } from "@/sanity/lib/queries";
 import { About } from "@/sanity/types";
-import { MediaItem } from "@/sanity/lib/media";
 import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
-import { useMotionValue, useTransform } from "framer-motion";
+import CareersPill from "@/components/job/careers-pill";
 
 // Constants
 const SCROLL_CONFIG = {
@@ -202,6 +200,7 @@ const NavigationDots = ({
 
 // Main component
 export default function AboutPage({ aboutData }: { aboutData: About }) {
+  console.log(aboutData);
   const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
 
   // Carousel setup
@@ -258,6 +257,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
 
   return (
     <motion.div className="fixed inset-0">
+      <CareersPill jobs={aboutData.jobs} />
       {/* Carousel */}
       <div className="main-gradient absolute inset-0">
         <div ref={emblaRef} className="h-full overflow-hidden">

@@ -16,11 +16,12 @@ import Link from "next/link";
 import Footer from "@/components/footer";
 import Lenis from "lenis";
 import { useEffect } from "react";
-
+import CTAWidget from "@/components/widgets/variants/cta";
 const servicesWidgets: WidgetRegistry = {
   quotes: QuotesWidget,
   stages: StagesWidget,
   media: MediaWidget,
+  cta: CTAWidget,
 };
 
 export default function Services({ servicesData }: { servicesData: Services }) {

@@ -8,16 +8,6 @@ import { MediaRenderer } from "@/components/media-renderer";
 import { MediaItem } from "@/sanity/lib/media";
 import { useRef } from "react";
 import { HoverCard } from "@/components/animations/hover";
-type CarouselWidth = "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
-
-const sizeOptions: Record<CarouselWidth, string> = {
-  "1/4": "md:w-[25vw]",
-  "1/3": "md:w-[33vw]",
-  "1/2": "md:w-[50vw]",
-  "2/3": "md:w-[66vw]",
-  "3/4": "md:w-[75vw]",
-  "1/1": "md:w-[100vw]",
-};
 
 interface CarouselProps {
   media: MediaItem[];
@@ -38,13 +28,10 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
       >
         <div className="mx-8 flex items-start gap-4 md:mx-16 xl:mx-36 xl:gap-8">
           {media.map((item) => {
-            const widthClass =
-              sizeOptions[item.width as CarouselWidth] || "md:w-full";
-
             return (
               <div
                 key={item._key}
-                className={`my-8 h-[400px] min-w-[85%] lg:h-[500px] lg:min-w-0 lg:max-w-[600px] lg:flex-shrink-0 ${widthClass}`}
+                className={`my-8 h-[400px] w-full min-w-[85%] lg:h-[600px] lg:min-w-0 lg:max-w-[600px] lg:flex-shrink-0`}
               >
                 <HoverCard>
                   <MediaRenderer

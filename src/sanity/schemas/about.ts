@@ -77,6 +77,55 @@ export const about = defineType({
         },
       ],
     }),
+    defineField({
+      name: "jobs",
+      title: "Job Openings",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          fields: [
+            {
+              name: "role",
+              title: "Role",
+              type: "string",
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: "commitment",
+              title: "Commitment",
+              type: "string",
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: "location",
+              title: "Location",
+              type: "string",
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: "compensation",
+              title: "Compensation",
+              type: "string",
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: "body",
+              title: "Job Description",
+              type: "array",
+              of: [{ type: "block" }],
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: "link",
+              title: "Application Link",
+              type: "url",
+              validation: (Rule: any) => Rule.required(),
+            },
+          ],
+        },
+      ],
+    }),
   ],
   preview: {
     prepare() {

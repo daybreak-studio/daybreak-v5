@@ -25,7 +25,8 @@ export const VIDEO_EVENTS = {
 
 // Optimize image loading with better defaults
 const DEFAULT_IMAGE_PROPS = {
-  sizes: "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
+  sizes:
+    "(max-width: 640px) 640px, (max-width: 1024px) 1024px, (max-width: 1920px) 1920px, 2560px",
   quality: 90,
 } as const;
 
@@ -89,7 +90,11 @@ export const MediaRenderer = memo(
 
     // Handle images
     if (media.source.asset._ref.startsWith("image-")) {
-      const imageUrl = urlFor(media.source);
+      const imageUrl = urlFor(media.source).toString();
+
+      // Use higher default dimensions for high-res displays
+      const defaultWidth = 2560; // Matches our largest breakpoint
+      const defaultHeight = Math.round(defaultWidth * (9 / 16)); // Maintain aspect ratio
 
       return (
         <Wrapper>
@@ -100,9 +105,12 @@ export const MediaRenderer = memo(
             {...(fill
               ? { fill: true }
               : {
-                  width: media.source.asset.metadata?.dimensions?.width || 2000,
+                  width:
+                    media.source.asset.metadata?.dimensions?.width ||
+                    defaultWidth,
                   height:
-                    media.source.asset.metadata?.dimensions?.height || 2000,
+                    media.source.asset.metadata?.dimensions?.height ||
+                    defaultHeight,
                 })}
             priority={priority}
             loading={loading}

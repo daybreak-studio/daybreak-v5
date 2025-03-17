@@ -112,6 +112,32 @@ export type About = {
     }>;
     _key: string;
   }>;
+  jobs?: Array<{
+    role?: string;
+    commitment?: string;
+    location?: string;
+    compensation?: string;
+    body?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    link?: string;
+    _key: string;
+  }>;
 };
 
 export type Settings = {
@@ -273,6 +299,17 @@ export type Services = {
           _key: string;
         }>;
         _type: "stages";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        text?: string;
+        link?: string;
+        _type: "cta";
         _key: string;
       }
   >;
@@ -630,6 +667,17 @@ export type Home = {
           _key: string;
         }>;
         _type: "stages";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        text?: string;
+        link?: string;
+        _type: "cta";
         _key: string;
       }
   >;
@@ -1097,6 +1145,18 @@ export type HOME_QUERYResult = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
+        text?: string;
+        link?: string;
+        _type: "cta";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
         media: Array<
           | {
               source: {
@@ -1397,6 +1457,17 @@ export type SERVICES_QUERYResult = {
   _updatedAt: string;
   _rev: string;
   widgets?: Array<
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        text?: string;
+        link?: string;
+        _type: "cta";
+        _key: string;
+      }
     | {
         position?: {
           row?: number;
@@ -1812,6 +1883,32 @@ export type ABOUT_QUERYResult = {
     }>;
     _key: string;
   }> | null;
+  jobs?: Array<{
+    role?: string;
+    commitment?: string;
+    location?: string;
+    compensation?: string;
+    body?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    link?: string;
+    _key: string;
+  }>;
 } | null;
 
 // Query TypeMap

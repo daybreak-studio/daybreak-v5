@@ -8,8 +8,7 @@ import { EASINGS } from "../animations/easings";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useCallback, memo, useMemo } from "react";
 import { useRouter } from "next/router";
-import { useViewport } from "@/lib/hooks/use-viewport";
-
+import { useMediaQuery } from "usehooks-ts";
 interface ProjectPreviewProps {
   data: Clients;
 }
@@ -202,7 +201,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     : [slug, undefined];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const { isMobile } = useViewport();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isBlurred, setIsBlurred] = useState(false);
 
   // Move project finding inside a useMemo to avoid recalculations
@@ -221,14 +220,6 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     () => mediaArray[currentIndex],
     [mediaArray, currentIndex],
   );
-
-  // Move logging effect to top level
-  useEffect(() => {
-    if (isMobile !== undefined && currentMediaAsset) {
-      console.log(isMobile);
-      console.log("PREVIEW", getMediaAssetId(currentMediaAsset));
-    }
-  }, [isMobile, currentMediaAsset]);
 
   // Move all hooks before any conditional logic
   const handleNavigate = useCallback(
@@ -286,58 +277,65 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
 
   if (!project) return null;
 
+  console.log(isDesktop);
+
   const assetId = getMediaAssetId(currentMediaAsset);
 
   return (
     <motion.div className="flex flex-col overflow-hidden p-8 md:flex-row md:space-x-8">
       {/* Media Section */}
       <motion.div className="order-2 pt-4 md:order-1 md:w-2/3 md:pt-0">
-        <motion.div
-          onClick={handleNext}
-          className="hidden aspect-square h-full w-full cursor-pointer overflow-hidden focus:outline-none md:block"
-          animate={{ filter: isBlurred ? "blur(8px)" : "blur(0px)" }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.97 }}
-          transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
-          {...IMAGE_ANIMATION}
-          layoutId={assetId || ""}
-        >
-          <div className="relative aspect-square h-full w-full">
-            <MediaRenderer
-              className="frame-inner h-full w-full"
-              media={mediaArray[currentIndex]}
-              autoPlay={true}
-              priority={true}
-              fill
-              loading="eager"
-            />
-          </div>
-        </motion.div>
-        <div className="relative flex flex-col md:hidden">
+        {isDesktop ? (
           <motion.div
-            className="frame-inner relative aspect-square h-full w-full touch-pan-y overflow-hidden"
+            {...IMAGE_ANIMATION}
+            layoutId={assetId || ""}
             onClick={handleNext}
+            className="aspect-square h-full w-full cursor-pointer overflow-hidden focus:outline-none"
+            animate={{ filter: isBlurred ? "blur(8px)" : "blur(0px)" }}
+            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            drag="x"
-            dragDirectionLock
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.03}
-            dragMomentum={false}
-            onDragEnd={handleDragEnd}
+            transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
           >
-            <div className="pointer-events-none h-full w-full">
+            <div className="relative aspect-square h-full w-full">
               <MediaRenderer
-                fill
+                className="frame-inner h-full w-full"
                 media={mediaArray[currentIndex]}
                 autoPlay={true}
                 priority={true}
+                fill
                 loading="eager"
-                className="pointer-events-none"
               />
             </div>
           </motion.div>
-          <PreviewDots total={mediaArray.length} current={currentIndex} />
-        </div>
+        ) : (
+          <div className="relative flex flex-col">
+            <motion.div
+              {...IMAGE_ANIMATION}
+              layoutId={assetId || ""}
+              className="frame-inner relative aspect-square h-full w-full touch-pan-y overflow-hidden"
+              onClick={handleNext}
+              whileTap={{ scale: 0.97 }}
+              drag="x"
+              dragDirectionLock
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.03}
+              dragMomentum={false}
+              onDragEnd={handleDragEnd}
+            >
+              <div className="pointer-events-none h-full w-full">
+                <MediaRenderer
+                  fill
+                  media={mediaArray[currentIndex]}
+                  autoPlay={true}
+                  priority={true}
+                  loading="eager"
+                  className="pointer-events-none"
+                />
+              </div>
+            </motion.div>
+            <PreviewDots total={mediaArray.length} current={currentIndex} />
+          </div>
+        )}
       </motion.div>
 
       {/* Info Section */}
