@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { EASINGS } from "@/components/animations/easings";
 import { About } from "@/sanity/types";
 import { PortableText } from "@portabletext/react";
+import { memo } from "react";
 
 type JobPosting = NonNullable<NonNullable<About["jobs"]>[number]>;
 
@@ -12,9 +13,9 @@ interface JobPreviewProps {
 
 function InfoPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col space-y-1 rounded-2xl border border-neutral-200 bg-neutral-600/5 p-4">
+    <div className="flex flex-col space-y-1 rounded-full border border-neutral-200 bg-neutral-50 p-4">
       <span className="text-sm text-neutral-400">{label}</span>
-      <span className="font-medium text-neutral-500">{value}</span>
+      <span className="font-medium text-neutral-600">{value}</span>
     </div>
   );
 }
@@ -23,27 +24,9 @@ export default function JobPreview({ job }: JobPreviewProps) {
   if (!job) return null;
 
   return (
-    <motion.div className="flex flex-col overflow-hidden p-8 md:flex-row md:space-x-8">
-      <motion.div className="order-2 w-full space-y-8 pt-4 md:order-1 md:w-2/3 md:pt-0">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-          className="space-y-6"
-        >
-          <div className="grid grid-cols-3 gap-4">
-            <InfoPill label="Commitment" value={job.commitment} />
-            <InfoPill label="Location" value={job.location} />
-            <InfoPill label="Compensation" value={job.compensation} />
-          </div>
-
-          <div className="prose prose-neutral max-w-none">
-            <PortableText value={job.body} />
-          </div>
-        </motion.div>
-      </motion.div>
-
-      <motion.div className="order-1 flex flex-col justify-between md:order-2 md:w-1/3">
+    <motion.div className="hide-scrollbar h-[65vh] w-full overflow-y-auto p-8">
+      <div className="mx-auto max-w-3xl space-y-8">
+        {/* Header */}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -57,7 +40,7 @@ export default function JobPreview({ job }: JobPreviewProps) {
               },
             },
           }}
-          className="flex flex-col space-y-4"
+          className="mb-6 space-y-4"
         >
           <motion.h2
             variants={{
@@ -72,7 +55,7 @@ export default function JobPreview({ job }: JobPreviewProps) {
                 },
               },
             }}
-            className="text-2xl font-medium text-neutral-500 md:text-xl lg:text-2xl"
+            className="text-3xl font-medium text-neutral-600"
           >
             {job.role}
           </motion.h2>
@@ -94,9 +77,9 @@ export default function JobPreview({ job }: JobPreviewProps) {
                   },
                 },
               }}
-              whileHover={{ scale: 1.02 }}
+              whileHover={{ scale: 1.005 }}
               transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
-              className="group relative flex items-center justify-between overflow-hidden rounded-2xl border-[1px] border-neutral-100 bg-neutral-600/5 p-4 transition-colors duration-500 hover:border-[1px] hover:border-neutral-600/10"
+              className="group flex items-center justify-between overflow-hidden rounded-[18px] border border-neutral-200 bg-neutral-50 p-4 transition-colors duration-500 hover:border-neutral-300 hover:bg-white"
             >
               <div className="relative h-[16px] overflow-hidden">
                 <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-[16px]">
@@ -108,7 +91,30 @@ export default function JobPreview({ job }: JobPreviewProps) {
             </motion.a>
           )}
         </motion.div>
-      </motion.div>
+
+        {/* Info Pills */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
+        >
+          <div className="grid grid-cols-3 gap-4">
+            <InfoPill label="Commitment" value={job.commitment ?? ""} />
+            <InfoPill label="Location" value={job.location ?? ""} />
+            <InfoPill label="Compensation" value={job.compensation ?? ""} />
+          </div>
+        </motion.div>
+
+        {/* Job Content */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: EASINGS.easeOutQuart, delay: 0.2 }}
+          className="prose prose-neutral max-w-none pb-12"
+        >
+          <PortableText value={job.body || []} />
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
