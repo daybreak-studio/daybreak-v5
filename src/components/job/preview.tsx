@@ -2,8 +2,9 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { EASINGS } from "@/components/animations/easings";
 import { About } from "@/sanity/types";
-import { PortableText } from "@portabletext/react";
-import { memo } from "react";
+import { PortableText, PortableTextProps } from "@portabletext/react";
+import { memo, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 type JobPosting = NonNullable<NonNullable<About["jobs"]>[number]>;
 
@@ -11,38 +12,100 @@ interface JobPreviewProps {
   job?: JobPosting;
 }
 
-function InfoPill({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex flex-col space-y-1 rounded-full border border-neutral-200 bg-neutral-50 p-4">
-      <span className="text-sm text-neutral-400">{label}</span>
-      <span className="font-medium text-neutral-600">{value}</span>
-    </div>
-  );
-}
-
 export default function JobPreview({ job }: JobPreviewProps) {
   if (!job) return null;
 
-  return (
-    <motion.div className="hide-scrollbar h-[65vh] w-full overflow-y-auto p-8">
-      <div className="mx-auto max-w-3xl space-y-8">
-        {/* Header */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.2,
-                delayChildren: 0.1,
-              },
-            },
-          }}
-          className="mb-6 space-y-4"
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const scrimRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    const scrim = scrimRef.current;
+    if (!container || !scrim) return;
+
+    const handleScrim = () => {
+      const { scrollTop, scrollHeight, clientHeight } = container;
+      const maxScroll = scrollHeight - clientHeight;
+      const bottomThreshold = 100; // pixels from bottom where we start fading
+
+      // Only start fading when we're near the bottom
+      const distanceFromBottom = maxScroll - scrollTop;
+      const progress = Math.max(
+        0,
+        Math.min(1 - distanceFromBottom / bottomThreshold, 1),
+      );
+
+      scrim.style.opacity = String(1 - progress);
+    };
+
+    handleScrim(); // Initial check
+    container.addEventListener("scroll", handleScrim);
+    const resizeObserver = new ResizeObserver(handleScrim);
+    resizeObserver.observe(container);
+
+    return () => {
+      container.removeEventListener("scroll", handleScrim);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  const components: PortableTextProps["components"] = {
+    block: {
+      h1: ({ children }) => (
+        <h1 className="mb-4 text-3xl text-neutral-400">{children}</h1>
+      ),
+      h2: ({ children }) => (
+        <h2 className="mb-4 text-2xl text-neutral-400">{children}</h2>
+      ),
+      h3: ({ children }) => (
+        <h3 className="mb-4 text-xl text-neutral-400">{children}</h3>
+      ),
+      normal: ({ children }) => (
+        <p className="mb-4 text-lg text-neutral-400">{children}</p>
+      ),
+      blockquote: ({ children }) => (
+        <blockquote className="mb-4 border-l-4 border-neutral-200 pl-4 italic text-neutral-400">
+          {children}
+        </blockquote>
+      ),
+    },
+    list: {
+      bullet: ({ children }) => (
+        <ul className="mb-4 list-disc pl-6 text-lg text-neutral-400">
+          {children}
+        </ul>
+      ),
+      number: ({ children }) => (
+        <ol className="mb-4 list-decimal pl-6 text-lg text-neutral-400">
+          {children}
+        </ol>
+      ),
+    },
+    marks: {
+      link: ({ children, value }) => (
+        <a
+          href={value?.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-neutral-400 underline hover:text-neutral-600"
         >
-          <motion.h2
+          {children}
+        </a>
+      ),
+    },
+  };
+
+  return (
+    <div className="relative">
+      <div
+        ref={scrollContainerRef}
+        className="hide-scrollbar h-[65vh] overflow-y-auto p-12"
+      >
+        {/* Top Gradient Scrim */}
+        <div className="frame-inner pointer-events-none absolute left-0 right-0 top-0 h-[150px] bg-gradient-to-b from-white via-white/50 to-transparent" />
+
+        <div className="mx-auto max-w-4xl">
+          <motion.div
             variants={{
               hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
               visible: {
@@ -55,66 +118,57 @@ export default function JobPreview({ job }: JobPreviewProps) {
                 },
               },
             }}
-            className="text-3xl font-medium text-neutral-600"
+            className="mb-4 space-y-2"
           >
-            {job.role}
-          </motion.h2>
+            <h2 className="text-neutral-400">Daybreak Studio</h2>
+            <h1 className="text-4xl text-neutral-400">{job.role}</h1>
+          </motion.div>
 
-          {job.link && (
-            <motion.a
-              href={job.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              variants={{
-                hidden: { opacity: 0, filter: "blur(8px)", y: 20 },
-                visible: {
-                  opacity: 1,
-                  filter: "blur(0px)",
-                  y: 0,
-                  transition: {
-                    duration: 1,
-                    ease: EASINGS.easeOutQuart,
-                  },
-                },
-              }}
-              whileHover={{ scale: 1.005 }}
-              transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
-              className="group flex items-center justify-between overflow-hidden rounded-[18px] border border-neutral-200 bg-neutral-50 p-4 transition-colors duration-500 hover:border-neutral-300 hover:bg-white"
-            >
-              <div className="relative h-[16px] overflow-hidden">
-                <div className="flex flex-col transition-transform duration-300 ease-out group-hover:-translate-y-[16px]">
-                  <span className="text-xs leading-4">Apply now</span>
-                  <span className="text-xs leading-4">Submit application</span>
-                </div>
+          {/* Info Pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
+            className="mb-4"
+          >
+            <div className="flex gap-2">
+              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-5 py-3">
+                <span className="text-sm text-neutral-400">
+                  {job.commitment}
+                </span>
               </div>
-              <ArrowUpRight className="h-4 w-4 text-neutral-400 transition-all duration-200 group-hover:rotate-45" />
-            </motion.a>
-          )}
-        </motion.div>
+              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-5 py-3">
+                <span className="text-sm text-neutral-400">{job.location}</span>
+              </div>
+              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-5 py-3">
+                <span className="text-sm text-neutral-400">
+                  {job.compensation}
+                </span>
+              </div>
+            </div>
+          </motion.div>
 
-        {/* Info Pills */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-        >
-          <div className="grid grid-cols-3 gap-4">
-            <InfoPill label="Commitment" value={job.commitment ?? ""} />
-            <InfoPill label="Location" value={job.location ?? ""} />
-            <InfoPill label="Compensation" value={job.compensation ?? ""} />
-          </div>
-        </motion.div>
-
-        {/* Job Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: EASINGS.easeOutQuart, delay: 0.2 }}
-          className="prose prose-neutral max-w-none pb-12"
-        >
-          <PortableText value={job.body || []} />
-        </motion.div>
+          {/* Job Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              ease: EASINGS.easeOutQuart,
+              delay: 0.2,
+            }}
+            className="prose prose-neutral max-w-none"
+          >
+            <PortableText value={job.body || []} components={components} />
+          </motion.div>
+        </div>
       </div>
-    </motion.div>
+
+      {/* Bottom Gradient Scrim */}
+      <div
+        ref={scrimRef}
+        className="frame-inner pointer-events-none absolute bottom-0 left-0 right-0 h-[150px] bg-gradient-to-t from-white via-white/50 to-transparent"
+      />
+    </div>
   );
 }
