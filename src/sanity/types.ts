@@ -75,6 +75,32 @@ export type About = {
   _updatedAt: string;
   _rev: string;
   introduction?: string;
+  media?: Array<
+    | {
+        source?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+        alt?: string;
+        _type: "imageItem";
+        _key: string;
+      }
+    | {
+        source?: MuxVideo;
+        width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+        alt?: string;
+        _type: "videoItem";
+        _key: string;
+      }
+  >;
   team?: Array<{
     name?: string;
     role?: string;
@@ -1826,6 +1852,32 @@ export type ABOUT_QUERYResult = {
   _updatedAt: string;
   _rev: string;
   introduction?: string;
+  media?: Array<
+    | {
+        source?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+        alt?: string;
+        _type: "imageItem";
+        _key: string;
+      }
+    | {
+        source?: MuxVideo;
+        width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+        alt?: string;
+        _type: "videoItem";
+        _key: string;
+      }
+  >;
   team: Array<{
     name?: string;
     role?: string;

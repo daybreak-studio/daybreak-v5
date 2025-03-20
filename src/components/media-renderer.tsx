@@ -11,6 +11,7 @@ interface MediaRendererProps {
   // Video props
   autoPlay?: boolean;
   thumbnailTime?: number;
+  disableThumbnails?: boolean;
   // Image props
   priority?: boolean;
   fill?: boolean;
@@ -36,6 +37,7 @@ export const MediaRenderer = memo(
     className,
     autoPlay = false,
     thumbnailTime,
+    disableThumbnails = false,
     priority = false,
     fill = false,
     loading,
@@ -78,7 +80,9 @@ export const MediaRenderer = memo(
             ref={videoRef}
             className={cn("h-full w-full object-cover", className)}
             src={`https://stream.mux.com/${playbackId}/high.mp4`}
-            poster={getMuxThumbnailUrl(media, thumbnailTime)}
+            {...(!disableThumbnails && {
+              poster: getMuxThumbnailUrl(media, thumbnailTime),
+            })}
             autoPlay={autoPlay}
             muted
             playsInline

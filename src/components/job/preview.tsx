@@ -13,8 +13,6 @@ interface JobPreviewProps {
 }
 
 export default function JobPreview({ job }: JobPreviewProps) {
-  if (!job) return null;
-
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const scrimRef = useRef<HTMLDivElement>(null);
 
@@ -38,7 +36,7 @@ export default function JobPreview({ job }: JobPreviewProps) {
       scrim.style.opacity = String(1 - progress);
     };
 
-    handleScrim(); // Initial check
+    handleScrim();
     container.addEventListener("scroll", handleScrim);
     const resizeObserver = new ResizeObserver(handleScrim);
     resizeObserver.observe(container);
@@ -48,6 +46,8 @@ export default function JobPreview({ job }: JobPreviewProps) {
       resizeObserver.disconnect();
     };
   }, []);
+
+  if (!job) return null;
 
   const components: PortableTextProps["components"] = {
     block: {

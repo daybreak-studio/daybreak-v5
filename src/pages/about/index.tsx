@@ -10,107 +10,16 @@ import { About } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
 import CareersPill from "@/components/job/careers-pill";
+import ScrollDrawer from "@/components/scroll-drawer";
+import Lenis from "lenis";
+import Footer from "@/components/footer";
+import { PortableText, PortableTextProps } from "@portabletext/react";
+import Reveal from "@/components/animations/reveal";
+import CarouselComponent from "@/components/carousel";
+import { MediaItem } from "@/sanity/lib/media";
 
 // Constants
-const SCROLL_CONFIG = {
-  TRACKPAD: {
-    THRESHOLD: 15,
-    DELAY: 100,
-  },
-  MOUSE: {
-    THRESHOLD: 35,
-    DELAY: 300,
-  },
-} as const;
-
-// Utility functions
 const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
-
-// Custom hooks
-const useCarouselNavigation = (
-  emblaApi: any,
-  setSelectedIndex: (i: number) => void,
-) => {
-  const [isScrolling, setIsScrolling] = useState(false);
-
-  const handleScroll = useCallback(
-    (event: WheelEvent) => {
-      if (!emblaApi || isScrolling) return;
-      event.preventDefault();
-
-      const isTrackpad =
-        Math.abs(event.deltaX) !== 0 || Math.abs(event.deltaY) < 50;
-      const delta = isTrackpad
-        ? Math.max(Math.abs(event.deltaX), Math.abs(event.deltaY))
-        : Math.abs(event.deltaY);
-      const threshold = isTrackpad
-        ? SCROLL_CONFIG.TRACKPAD.THRESHOLD
-        : SCROLL_CONFIG.MOUSE.THRESHOLD;
-
-      if (delta <= threshold) return;
-
-      setIsScrolling(true);
-      requestAnimationFrame(() => {
-        const direction = isTrackpad
-          ? Math.abs(event.deltaX) > Math.abs(event.deltaY)
-            ? event.deltaX
-            : event.deltaY
-          : event.deltaY;
-
-        const currentIndex = emblaApi.selectedScrollSnap();
-        const targetIndex =
-          direction > 0
-            ? Math.min(currentIndex + 1, emblaApi.scrollSnapList().length - 1)
-            : Math.max(currentIndex - 1, 0);
-
-        emblaApi.scrollTo(targetIndex);
-        setSelectedIndex(targetIndex);
-
-        setTimeout(
-          () => setIsScrolling(false),
-          isTrackpad ? SCROLL_CONFIG.TRACKPAD.DELAY : SCROLL_CONFIG.MOUSE.DELAY,
-        );
-      });
-    },
-    [emblaApi, isScrolling, setSelectedIndex],
-  );
-
-  // Add keyboard handler
-  const handleKeyDown = useCallback(
-    (event: KeyboardEvent) => {
-      if (!emblaApi) return;
-
-      switch (event.key) {
-        case "ArrowLeft":
-        case "ArrowUp":
-          event.preventDefault();
-          const prevIndex = Math.max(emblaApi.selectedScrollSnap() - 1, 0);
-          emblaApi.scrollTo(prevIndex);
-          setSelectedIndex(prevIndex);
-          break;
-        case "ArrowRight":
-        case "ArrowDown":
-          event.preventDefault();
-          const nextIndex = Math.min(
-            emblaApi.selectedScrollSnap() + 1,
-            emblaApi.scrollSnapList().length - 1,
-          );
-          emblaApi.scrollTo(nextIndex);
-          setSelectedIndex(nextIndex);
-          break;
-      }
-    },
-    [emblaApi, setSelectedIndex],
-  );
-
-  // Add keyboard event listener
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleKeyDown]);
-
-  return { handleScroll };
-};
 
 // Update the type for team member to be more specific
 type TeamMember = NonNullable<NonNullable<About["team"]>[number]>;
@@ -148,6 +57,7 @@ const CarouselSlide = ({
         className="object-contain mix-blend-multiply"
         media={person.media[0]}
         autoPlay={true}
+        disableThumbnails
       />
     )}
   </motion.div>
@@ -200,7 +110,6 @@ const NavigationDots = ({
 
 // Main component
 export default function AboutPage({ aboutData }: { aboutData: About }) {
-  console.log(aboutData);
   const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
 
   // Carousel setup
@@ -210,7 +119,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     axis: "x",
     direction: "ltr",
     startIndex,
-    dragFree: true,
+    dragFree: false,
     inViewThreshold: 0.7,
   });
 
@@ -219,9 +128,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-
-  // Custom hooks
-  const { handleScroll } = useCarouselNavigation(emblaApi, setSelectedIndex);
 
   // Effects
   useEffect(() => {
@@ -235,15 +141,36 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     };
 
     emblaApi.on("select", onSelect);
-    const rootNode = emblaApi.rootNode();
-    rootNode.addEventListener("wheel", handleScroll, { passive: false });
 
     return () => {
       clearTimeout(timeoutId);
-      rootNode.removeEventListener("wheel", handleScroll);
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi, handleScroll]);
+  }, [emblaApi]);
+
+  // Add keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!emblaApi) return;
+
+      // Don't handle carousel navigation if modal is expanded
+      if (isExpanded) return;
+
+      switch (event.key) {
+        case "ArrowLeft":
+          event.preventDefault();
+          emblaApi.scrollPrev();
+          break;
+        case "ArrowRight":
+          event.preventDefault();
+          emblaApi.scrollNext();
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [emblaApi, isExpanded]);
 
   // Handlers
   const handleSlideClick = useCallback(
@@ -255,52 +182,109 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     [emblaApi],
   );
 
+  // Initialize Lenis for smooth scrolling
+  useEffect(() => {
+    const lenis = new Lenis();
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
+  console.log(aboutData);
+
+  // Handles text rendering for the CMS text.
+  // We are applying reveal animation and controlling font size.
+  // const components: PortableTextProps["components"] = {
+  //   block: {
+  //     normal: ({ children, index }) => (
+  //       <div>
+  //         <p className="mb-8 text-2xl text-neutral-400 md:text-3xl xl:text-4xl xl:leading-tight 3xl:text-5xl 3xl:leading-[3.25rem]">
+  //           {children}
+  //         </p>
+  //       </div>
+  //     ),
+  //   },
+  //   types: {
+  //     carousel: ({ value }: { value: { media: MediaItem[] } }) => {
+  //       return <CarouselComponent media={value.media} />;
+  //     },
+  //   },
+  // };
+
   return (
-    <motion.div className="fixed inset-0">
-      <CareersPill jobs={aboutData.jobs} />
-      {/* Carousel */}
-      <div className="main-gradient absolute inset-0">
-        <div ref={emblaRef} className="h-full overflow-hidden">
-          <motion.div
-            className="flex h-full items-center mix-blend-multiply"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-          >
-            {aboutData.team?.map((person, i) => (
-              <CarouselSlide
-                key={person._key}
-                person={person}
-                index={i}
-                selectedIndex={selectedIndex}
-                isLoaded={isLoaded}
-                onClick={() => handleSlideClick(i)}
-              />
-            ))}
-          </motion.div>
+    <main className="relative">
+      <motion.div className="fixed inset-0">
+        <CareersPill jobs={aboutData.jobs} />
+        {/* Carousel */}
+        <div className="main-gradient absolute inset-0">
+          <div ref={emblaRef} className="h-full overflow-hidden">
+            <motion.div
+              className="flex h-full items-center mix-blend-multiply"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              {aboutData.team?.map((person, i) => (
+                <CarouselSlide
+                  key={person._key}
+                  person={person}
+                  index={i}
+                  selectedIndex={selectedIndex}
+                  isLoaded={isLoaded}
+                  onClick={() => handleSlideClick(i)}
+                />
+              ))}
+            </motion.div>
+          </div>
         </div>
-      </div>
 
-      {/* Info Card */}
-      <PersonInfo
-        person={aboutData.team?.[previewIndex ?? selectedIndex] || undefined}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
-        isPreview={previewIndex !== null}
-      />
-
-      {/* Navigation Dots */}
-      {!isExpanded && (
-        <NavigationDots
+        {/* Info Card */}
+        <PersonInfo
+          person={aboutData.team?.[previewIndex ?? selectedIndex] || undefined}
+          isExpanded={isExpanded}
+          onToggle={() => setIsExpanded(!isExpanded)}
+          isPreview={previewIndex !== null}
           team={aboutData.team}
-          selectedIndex={selectedIndex}
-          previewIndex={previewIndex}
-          onDotClick={handleSlideClick}
-          onHoverStart={setPreviewIndex}
-          onHoverEnd={() => setPreviewIndex(null)}
+          onSlideClick={handleSlideClick}
         />
-      )}
-    </motion.div>
+
+        {/* Navigation Dots */}
+        {/* {!isExpanded && (
+          <NavigationDots
+            team={aboutData.team}
+            selectedIndex={selectedIndex}
+            previewIndex={previewIndex}
+            onDotClick={handleSlideClick}
+            onHoverStart={setPreviewIndex}
+            onHoverEnd={() => setPreviewIndex(null)}
+          />
+        )} */}
+      </motion.div>
+
+      {/* <ScrollDrawer>
+        <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
+          <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:w-9/12 xl:px-36 2xl:w-7/12">
+            {aboutData.introduction && (
+              <PortableText
+                value={aboutData.introduction}
+                components={components}
+              />
+            )}
+          </Reveal>
+
+          <Reveal>
+            {aboutData.media && <CarouselComponent media={aboutData.media} />}
+          </Reveal>
+        </div>
+
+        <Footer />
+      </ScrollDrawer> */}
+    </main>
   );
 }
 
@@ -320,11 +304,15 @@ function PersonInfo({
   isExpanded,
   onToggle,
   isPreview,
+  team,
+  onSlideClick,
 }: {
   person?: TeamMember;
   isExpanded: boolean;
   onToggle: () => void;
   isPreview: boolean;
+  team?: About["team"];
+  onSlideClick: (index: number) => void;
 }) {
   // Move hooks to the top level, before any conditional returns
   const isAnimating = useRef(false);
@@ -344,8 +332,8 @@ function PersonInfo({
         return;
       }
 
-      // Handle space to toggle regardless of state
-      if (event.key === " ") {
+      // Handle space and enter to toggle regardless of state
+      if (event.key === " " || event.key === "Enter") {
         event.preventDefault();
         if (!isPreview) {
           onToggle(); // Will toggle open/close
@@ -353,18 +341,33 @@ function PersonInfo({
         return;
       }
 
-      // Handle enter only when focused
-      if (isModalFocused && event.key === "Enter") {
-        event.preventDefault();
-        if (!isPreview) {
-          onToggle();
+      // Handle arrow keys when expanded
+      if (isExpanded && person) {
+        const currentIndex =
+          team?.findIndex((p) => p._key === person._key) ?? 0;
+
+        switch (event.key) {
+          case "ArrowLeft":
+            event.preventDefault();
+            // Go to previous person
+            const prevIndex =
+              currentIndex > 0 ? currentIndex - 1 : (team?.length ?? 0) - 1;
+            onSlideClick(prevIndex);
+            break;
+          case "ArrowRight":
+            event.preventDefault();
+            // Go to next person
+            const nextIndex =
+              currentIndex < (team?.length ?? 0) - 1 ? currentIndex + 1 : 0;
+            onSlideClick(nextIndex);
+            break;
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isExpanded, isPreview, onToggle]);
+  }, [isExpanded, isPreview, onToggle, person, team, onSlideClick]);
 
   // Early return after hooks
   if (!person) return null;
@@ -397,7 +400,7 @@ function PersonInfo({
         layoutId="person-info-container"
         className="mx-auto h-min w-min overflow-hidden bg-white/50 p-1 drop-shadow-2xl backdrop-blur-md"
         animate={{
-          borderRadius: isExpanded ? 32 : 16,
+          borderRadius: isExpanded ? 32 : 24,
         }}
         transition={{
           duration: 0.6,
@@ -424,7 +427,7 @@ function PersonInfo({
               "focus-visible:ring-2 focus-visible:ring-neutral-500 [&:focus:not(:focus-visible)]:outline-none",
           )}
           animate={{
-            borderRadius: isExpanded ? 28 : 12,
+            borderRadius: isExpanded ? 28 : 20,
           }}
           transition={{
             duration: 0.6,
