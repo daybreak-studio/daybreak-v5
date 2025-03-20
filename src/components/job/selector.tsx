@@ -67,7 +67,7 @@ export default function JobSelector({ jobs, onJobClick }: JobSelectorProps) {
             }}
             className="text-center text-lg font-[450] text-neutral-400"
           >
-            Don't see your role? Email us at careers@daybreak.studio!
+            Don&apos;t see your role? Email us at careers@daybreak.studio!
           </motion.h2>
         </motion.div>
       </motion.div>

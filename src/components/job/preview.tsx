@@ -48,8 +48,6 @@ export default function JobPreview({ job }: JobPreviewProps) {
     };
   }, []);
 
-  if (!job) return null;
-
   // Initialize Lenis for smooth scrolling
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -123,6 +121,8 @@ export default function JobPreview({ job }: JobPreviewProps) {
       ),
     },
   };
+
+  if (!job) return null;
 
   return (
     <div className="relative">
