@@ -18,7 +18,7 @@ export default function JobSelector({ jobs, onJobClick }: JobSelectorProps) {
           duration: 1.2,
           ease: EASINGS.easeOutExpo,
         }}
-        className="mb-8 flex w-full items-center justify-center p-4 text-center"
+        className="mb-4 flex w-full items-center justify-center p-4 text-center"
       >
         <motion.div
           initial="hidden"
@@ -48,7 +48,7 @@ export default function JobSelector({ jobs, onJobClick }: JobSelectorProps) {
                 },
               },
             }}
-            className="text-center text-3xl font-medium text-neutral-600"
+            className="text-center text-3xl font-[450] text-neutral-600"
           >
             Open Positions
           </motion.h2>
@@ -65,9 +65,9 @@ export default function JobSelector({ jobs, onJobClick }: JobSelectorProps) {
                 },
               },
             }}
-            className="text-center text-neutral-400"
+            className="text-center text-lg font-[450] text-neutral-400"
           >
-            Join our team
+            Don't see your role? Email us at careers@daybreak.studio!
           </motion.h2>
         </motion.div>
       </motion.div>
@@ -83,7 +83,7 @@ export default function JobSelector({ jobs, onJobClick }: JobSelectorProps) {
               delay: 0.4 + index * 0.15,
             }}
             onClick={() => onJobClick(job)}
-            className="group cursor-pointer overflow-hidden rounded-[18px] border border-neutral-200 transition-all duration-200 hover:border-neutral-300 hover:bg-neutral-50"
+            className="group cursor-pointer overflow-hidden rounded-[18px] border border-neutral-200 transition-all duration-200 hover:border-neutral-300 hover:bg-neutral-50/50"
           >
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-4">
@@ -91,7 +91,7 @@ export default function JobSelector({ jobs, onJobClick }: JobSelectorProps) {
                   <Briefcase className="h-5 w-5 text-neutral-500" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-neutral-600">
+                  <h3 className="text-lg font-medium text-neutral-500">
                     {job.role}
                   </h3>
                   <p className="text-sm text-neutral-400">

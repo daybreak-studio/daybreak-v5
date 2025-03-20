@@ -5,6 +5,7 @@ import { About } from "@/sanity/types";
 import { PortableText, PortableTextProps } from "@portabletext/react";
 import { memo, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import Lenis from "lenis";
 
 type JobPosting = NonNullable<NonNullable<About["jobs"]>[number]>;
 
@@ -49,19 +50,46 @@ export default function JobPreview({ job }: JobPreviewProps) {
 
   if (!job) return null;
 
+  // Initialize Lenis for smooth scrolling
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const lenis = new Lenis({
+      wrapper: container,
+      content: container,
+      smoothWheel: true,
+      wheelMultiplier: 0.8,
+      touchMultiplier: 2,
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   const components: PortableTextProps["components"] = {
     block: {
       h1: ({ children }) => (
-        <h1 className="mb-4 text-3xl text-neutral-400">{children}</h1>
+        <h1 className="mb-4 text-2xl text-neutral-400 md:text-3xl">
+          {children}
+        </h1>
       ),
       h2: ({ children }) => (
-        <h2 className="mb-4 text-2xl text-neutral-400">{children}</h2>
+        <h2 className="mb-4 text-lg text-neutral-400 md:text-2xl">
+          {children}
+        </h2>
       ),
       h3: ({ children }) => (
-        <h3 className="mb-4 text-xl text-neutral-400">{children}</h3>
+        <h3 className="mb-4 text-lg text-neutral-400 md:text-xl">{children}</h3>
       ),
       normal: ({ children }) => (
-        <p className="mb-4 text-lg text-neutral-400">{children}</p>
+        <p className="mb-4 text-base text-neutral-400 md:text-lg">{children}</p>
       ),
       blockquote: ({ children }) => (
         <blockquote className="mb-4 border-l-4 border-neutral-200 pl-4 italic text-neutral-400">
@@ -121,7 +149,9 @@ export default function JobPreview({ job }: JobPreviewProps) {
             className="mb-4 space-y-2"
           >
             <h2 className="text-neutral-400">Daybreak Studio</h2>
-            <h1 className="text-4xl text-neutral-400">{job.role}</h1>
+            <h1 className="text-2xl text-neutral-400 md:text-4xl">
+              {job.role}
+            </h1>
           </motion.div>
 
           {/* Info Pills */}
@@ -129,19 +159,21 @@ export default function JobPreview({ job }: JobPreviewProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-            className="mb-4"
+            className="mb-8"
           >
             <div className="flex gap-2">
-              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-5 py-3">
-                <span className="text-sm text-neutral-400">
+              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-3 py-2 md:px-5 md:py-3">
+                <span className="text-xs text-neutral-400 md:text-sm">
                   {job.commitment}
                 </span>
               </div>
-              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-5 py-3">
-                <span className="text-sm text-neutral-400">{job.location}</span>
+              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-3 py-2 md:px-5 md:py-3">
+                <span className="text-xs text-neutral-400 md:text-sm">
+                  {job.location}
+                </span>
               </div>
-              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-5 py-3">
-                <span className="text-sm text-neutral-400">
+              <div className="flex rounded-full border-[1px] border-neutral-300/25 bg-neutral-200/25 px-3 py-2 md:px-5 md:py-3">
+                <span className="text-xs text-neutral-400 md:text-sm">
                   {job.compensation}
                 </span>
               </div>
