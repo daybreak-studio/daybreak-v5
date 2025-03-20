@@ -256,7 +256,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
         />
 
         {/* Navigation Dots */}
-        {/* {!isExpanded && (
+        {!isExpanded && (
           <NavigationDots
             team={aboutData.team}
             selectedIndex={selectedIndex}
@@ -265,7 +265,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
             onHoverStart={setPreviewIndex}
             onHoverEnd={() => setPreviewIndex(null)}
           />
-        )} */}
+        )}
       </motion.div>
 
       {/* <ScrollDrawer>
