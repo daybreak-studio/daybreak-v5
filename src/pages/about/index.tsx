@@ -184,21 +184,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     [emblaApi],
   );
 
-  // Initialize Lenis for smooth scrolling
-  useEffect(() => {
-    const lenis = new Lenis();
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
-
-  console.log(aboutData);
-
   // Handles text rendering for the CMS text.
   // We are applying reveal animation and controlling font size.
   // const components: PortableTextProps["components"] = {
@@ -219,74 +204,53 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   // };
 
   return (
-    <main className="relative">
-      <motion.div className="fixed inset-0">
-        <CareersPill jobs={aboutData.jobs} />
-        {/* Carousel */}
-        <div className="main-gradient absolute inset-0">
-          <div ref={emblaRef} className="h-full overflow-hidden">
-            <motion.div
-              className="flex h-full items-center mix-blend-multiply"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              {aboutData.team?.map((person, i) => (
-                <CarouselSlide
-                  key={person._key}
-                  person={person}
-                  index={i}
-                  selectedIndex={selectedIndex}
-                  isLoaded={isLoaded}
-                  onClick={() => handleSlideClick(i)}
-                />
-              ))}
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Info Card */}
-        <PersonInfo
-          person={aboutData.team?.[previewIndex ?? selectedIndex] || undefined}
-          isExpanded={isExpanded}
-          onToggle={() => setIsExpanded(!isExpanded)}
-          isPreview={previewIndex !== null}
-          team={aboutData.team}
-          onSlideClick={handleSlideClick}
-        />
-
-        {/* Navigation Dots */}
-        {!isExpanded && (
-          <NavigationDots
-            team={aboutData.team}
-            selectedIndex={selectedIndex}
-            previewIndex={previewIndex}
-            onDotClick={handleSlideClick}
-            onHoverStart={setPreviewIndex}
-            onHoverEnd={() => setPreviewIndex(null)}
-          />
-        )}
-      </motion.div>
-
-      {/* <ScrollDrawer>
-        <div className="space-y-16 pt-20 md:space-y-32 xl:space-y-48">
-          <Reveal className="px-8 pb-8 md:w-10/12 md:px-20 xl:w-9/12 xl:px-36 2xl:w-7/12">
-            {aboutData.introduction && (
-              <PortableText
-                value={aboutData.introduction}
-                components={components}
+    <motion.div className="fixed inset-0">
+      <CareersPill jobs={aboutData.jobs} />
+      {/* Carousel */}
+      <div className="main-gradient absolute inset-0">
+        <div ref={emblaRef} className="h-full overflow-hidden">
+          <motion.div
+            className="flex h-full items-center mix-blend-multiply"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+          >
+            {aboutData.team?.map((person, i) => (
+              <CarouselSlide
+                key={person._key}
+                person={person}
+                index={i}
+                selectedIndex={selectedIndex}
+                isLoaded={isLoaded}
+                onClick={() => handleSlideClick(i)}
               />
-            )}
-          </Reveal>
-
-          <Reveal>
-            {aboutData.media && <CarouselComponent media={aboutData.media} />}
-          </Reveal>
+            ))}
+          </motion.div>
         </div>
+      </div>
 
-        <Footer />
-      </ScrollDrawer> */}
-    </main>
+      {/* Info Card */}
+      <PersonInfo
+        person={aboutData.team?.[previewIndex ?? selectedIndex] || undefined}
+        isExpanded={isExpanded}
+        onToggle={() => setIsExpanded(!isExpanded)}
+        isPreview={previewIndex !== null}
+        team={aboutData.team}
+        onSlideClick={handleSlideClick}
+      />
+
+      {/* Navigation Dots */}
+      {!isExpanded && (
+        <NavigationDots
+          team={aboutData.team}
+          selectedIndex={selectedIndex}
+          previewIndex={previewIndex}
+          onDotClick={handleSlideClick}
+          onHoverStart={setPreviewIndex}
+          onHoverEnd={() => setPreviewIndex(null)}
+        />
+      )}
+    </motion.div>
   );
 }
 
