@@ -81,9 +81,7 @@ export default function JobPreview({ job }: JobPreviewProps) {
         </h1>
       ),
       h2: ({ children }) => (
-        <h2 className="mb-4 text-lg text-neutral-400 md:text-2xl">
-          {children}
-        </h2>
+        <h2 className="mb-4 text-2xl text-neutral-400">{children}</h2>
       ),
       h3: ({ children }) => (
         <h3 className="mb-4 text-lg text-neutral-400 md:text-xl">{children}</h3>
@@ -99,12 +97,12 @@ export default function JobPreview({ job }: JobPreviewProps) {
     },
     list: {
       bullet: ({ children }) => (
-        <ul className="mb-4 list-disc pl-6 text-lg text-neutral-400">
+        <ul className="mb-4 list-disc pl-6 text-base text-neutral-400">
           {children}
         </ul>
       ),
       number: ({ children }) => (
-        <ol className="mb-4 list-decimal pl-6 text-lg text-neutral-400">
+        <ol className="mb-4 list-decimal pl-6 text-base text-neutral-400">
           {children}
         </ol>
       ),
@@ -120,6 +118,9 @@ export default function JobPreview({ job }: JobPreviewProps) {
           {children}
         </a>
       ),
+      strong: ({ children }) => (
+        <span className="font-bold text-neutral-400">{children}</span>
+      ),
     },
   };
 
@@ -127,7 +128,7 @@ export default function JobPreview({ job }: JobPreviewProps) {
     <div className="relative">
       <div
         ref={scrollContainerRef}
-        className="hide-scrollbar h-[65vh] overflow-y-auto p-12"
+        className="hide-scrollbar h-[65vh] overflow-y-auto p-10 md:p-12"
       >
         {/* Top Gradient Scrim */}
         <div className="frame-inner pointer-events-none absolute left-0 right-0 top-0 h-[150px] bg-gradient-to-b from-white via-white/50 to-transparent" />
