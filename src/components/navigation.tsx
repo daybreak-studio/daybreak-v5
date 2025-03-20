@@ -347,9 +347,9 @@ export default function Navigation({
         <div className="frame-outer mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-neutral-300/25 bg-neutral-50 mix-blend-multiply shadow-lg shadow-neutral-500/5 backdrop-blur-3xl">
           <Link
             href="/"
-            className="pointer-events-none relative flex items-stretch md:pointer-events-auto"
+            className="frame-inner pointer-events-none relative flex items-stretch md:pointer-events-auto"
           >
-            <div className="logo_container align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:p-0 md:pt-[2px]">
+            <div className="logo_container frame-inner align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:p-0 md:pt-[2px]">
               <div className="glyph_container z-10 flex w-1/4 items-center overflow-hidden">
                 <Logo className="h-full w-full fill-current pb-1 text-neutral-500" />
               </div>

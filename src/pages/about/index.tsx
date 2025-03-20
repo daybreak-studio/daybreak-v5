@@ -110,7 +110,9 @@ const NavigationDots = ({
 
 // Main component
 export default function AboutPage({ aboutData }: { aboutData: About }) {
-  const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
+  // const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
+
+  const startIndex = 0;
 
   // Carousel setup
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -373,182 +375,204 @@ function PersonInfo({
   if (!person) return null;
 
   return (
-    <motion.div
-      layout
-      layoutId="person-info-root"
-      className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
-      style={{ transformOrigin: "bottom center" }}
-      initial={{ opacity: 0, y: 20, scale: 0.9 }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        scale: isPreview ? 1.03 : 1,
-      }}
-      transition={{
-        duration: 0.6,
-        ease: EASINGS.easeOutQuart,
-      }}
-      onAnimationStart={() => {
-        isAnimating.current = true;
-      }}
-      onAnimationComplete={() => {
-        isAnimating.current = false;
-      }}
-    >
+    <AnimatePresence mode="popLayout">
       <motion.div
         layout
-        layoutId="person-info-container"
-        className="mx-auto h-min w-min overflow-hidden bg-white/50 p-1 drop-shadow-2xl backdrop-blur-md"
+        layoutId="person-info-root"
+        className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-4 md:bottom-4 md:px-4"
+        style={{ transformOrigin: "bottom center" }}
+        initial={{ opacity: 0, y: 20, scale: 0.9 }}
         animate={{
-          borderRadius: isExpanded ? 32 : 24,
+          opacity: 1,
+          y: 0,
+          scale: isPreview ? 1.03 : 1,
         }}
         transition={{
           duration: 0.6,
           ease: EASINGS.easeOutQuart,
         }}
+        onAnimationStart={() => {
+          isAnimating.current = true;
+        }}
+        onAnimationComplete={() => {
+          isAnimating.current = false;
+        }}
       >
         <motion.div
-          id="person-info"
           layout
-          layoutId="person-info-background"
-          role="button"
-          aria-expanded={isExpanded}
-          aria-haspopup="dialog"
-          aria-label={`${person.name}'s information. Press Enter to ${isExpanded ? "close" : "open"}`}
-          tabIndex={0}
-          onClick={() => {
-            if (!isAnimating.current) {
-              onToggle();
-            }
-          }}
-          className={cn(
-            "relative flex w-screen max-w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden bg-white/30 p-6 backdrop-blur-2xl md:max-w-[400px]",
-            !isExpanded &&
-              "focus-visible:ring-2 focus-visible:ring-neutral-500 [&:focus:not(:focus-visible)]:outline-none",
-          )}
+          layoutId="person-info-container"
+          className="mx-auto h-min w-min overflow-hidden bg-white/50 p-1 drop-shadow-2xl backdrop-blur-md"
           animate={{
-            borderRadius: isExpanded ? 28 : 20,
+            borderRadius: isExpanded ? 32 : 24,
           }}
           transition={{
             duration: 0.6,
             ease: EASINGS.easeOutQuart,
           }}
-          style={{ transformOrigin: "bottom center" }}
         >
           <motion.div
+            id="person-info"
             layout
-            layoutId="info-container"
+            layoutId="person-info-background"
+            role="button"
+            aria-expanded={isExpanded}
+            aria-haspopup="dialog"
+            aria-label={`${person.name}'s information. Press Enter to ${isExpanded ? "close" : "open"}`}
+            tabIndex={0}
+            onClick={() => {
+              if (!isAnimating.current) {
+                onToggle();
+              }
+            }}
             className={cn(
-              "flex w-full",
-              isExpanded
-                ? "flex-col items-center"
-                : "items-center justify-between",
+              "relative flex w-screen max-w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden bg-white/30 p-6 backdrop-blur-2xl md:max-w-[400px]",
+              !isExpanded &&
+                "focus-visible:ring-2 focus-visible:ring-neutral-500 [&:focus:not(:focus-visible)]:outline-none",
             )}
+            animate={{
+              borderRadius: isExpanded ? 28 : 20,
+            }}
+            transition={{
+              duration: 0.6,
+              ease: EASINGS.easeOutQuart,
+            }}
+            style={{ transformOrigin: "bottom center" }}
           >
             <motion.div
               layout
-              layoutId="text-content"
-              className={cn("flex flex-col", isExpanded && "items-center")}
-              transition={{
-                layout: {
-                  duration: 0.3,
-                  ease: EASINGS.easeOutQuart,
-                },
-                ease: EASINGS.easeOutQuart,
-              }}
+              layoutId="info-container"
+              className={cn(
+                "flex w-full",
+                isExpanded
+                  ? "flex-col items-center"
+                  : "items-center justify-between",
+              )}
             >
-              <AnimatePresence mode="wait">
+              <motion.div
+                layout
+                layoutId="text-content"
+                className="flex w-full flex-col"
+                transition={{
+                  layout: {
+                    duration: 0.6,
+                    ease: EASINGS.easeOutQuart,
+                  },
+                }}
+              >
                 <motion.div
                   layout
-                  key={person._key + "-" + isExpanded}
-                  initial={{ filter: "blur(2px)" }}
-                  animate={{ filter: "blur(0px)" }}
-                  exit={{ filter: "blur(2px)" }}
-                  transition={{
-                    duration: 0.1,
-                    ease: EASINGS.easeOutQuart,
-                  }}
                   className={cn(
-                    "flex flex-col",
+                    "flex w-full flex-col",
                     isExpanded ? "items-center" : "items-start",
                   )}
+                  transition={{
+                    layout: {
+                      duration: 0.6,
+                      ease: EASINGS.easeOutQuart,
+                    },
+                  }}
                 >
-                  <span className="whitespace-nowrap font-medium text-neutral-500">
+                  <motion.span
+                    layout="position"
+                    key={`${person._key}-name`}
+                    initial={{ opacity: 0, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, filter: "blur(8px)" }}
+                    transition={{
+                      layout: { duration: 0.4, ease: EASINGS.easeOutQuart },
+                      duration: 0.6,
+                      ease: EASINGS.easeOutQuart,
+                    }}
+                    className="whitespace-nowrap font-medium text-neutral-500"
+                  >
                     {person.name}
-                  </span>
-                  <span className="whitespace-nowrap text-neutral-400">
+                  </motion.span>
+                  <motion.span
+                    layout="position"
+                    key={`${person._key}-role`}
+                    initial={{ opacity: 0, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, filter: "blur(8px)" }}
+                    transition={{
+                      layout: { duration: 0.4, ease: EASINGS.easeOutQuart },
+
+                      duration: 0.6,
+                      ease: EASINGS.easeOutQuart,
+                    }}
+                    className="whitespace-nowrap text-neutral-400"
+                  >
                     {person.role}
-                  </span>
+                  </motion.span>
                 </motion.div>
-              </AnimatePresence>
+              </motion.div>
+
+              {!isExpanded && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                >
+                  <ExpandIcon className="h-4 w-4 text-neutral-500" />
+                </motion.div>
+              )}
             </motion.div>
 
-            {!isExpanded && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-              >
-                <ExpandIcon className="h-4 w-4 text-neutral-500" />
-              </motion.div>
-            )}
-          </motion.div>
-
-          <AnimatePresence mode="popLayout">
-            {isExpanded && (
-              <motion.div
-                key={person._key}
-                initial={{ opacity: 0, filter: "blur(4px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, filter: "blur(4px)" }}
-                transition={{
-                  duration: 0.4,
-                  ease: EASINGS.easeOutQuart,
-                  layout: { duration: 0.3 },
-                }}
-                className="flex w-full flex-col space-y-6"
-                layout="position"
-              >
-                <motion.p
+            <AnimatePresence mode="popLayout">
+              {isExpanded && (
+                <motion.div
+                  key={person._key}
                   initial={{ opacity: 0, filter: "blur(4px)" }}
                   animate={{ opacity: 1, filter: "blur(0px)" }}
                   exit={{ opacity: 0, filter: "blur(4px)" }}
                   transition={{
                     duration: 0.4,
                     ease: EASINGS.easeOutQuart,
+                    layout: { duration: 0.3 },
                   }}
-                  className="px-8 text-center text-neutral-500"
+                  className="flex w-full flex-col space-y-6"
+                  layout="position"
                 >
-                  {person.bio}
-                </motion.p>
-                <div className="flex items-start gap-1 self-stretch">
-                  {person.qaPairs?.map((qaPair: QAPair, index: number) => (
-                    <motion.div
-                      key={qaPair._key || index}
-                      initial={{ opacity: 0, filter: "blur(4px)" }}
-                      animate={{ opacity: 1, filter: "blur(0px)" }}
-                      exit={{ opacity: 0, filter: "blur(4px)" }}
-                      transition={{
-                        duration: 0.4,
-                        ease: EASINGS.easeOutQuart,
-                      }}
-                      className="flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-neutral-200 bg-neutral-400/5 p-4 text-center"
-                    >
-                      <div className="pb-1 text-sm text-neutral-500">
-                        {qaPair.question}
-                      </div>
-                      <div className="text-md text-neutral-400">
-                        {qaPair.answer}
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <motion.p
+                    initial={{ opacity: 0, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, filter: "blur(4px)" }}
+                    transition={{
+                      duration: 0.4,
+                      ease: EASINGS.easeOutQuart,
+                    }}
+                    className="px-8 text-center text-neutral-500"
+                  >
+                    {person.bio}
+                  </motion.p>
+                  <div className="flex items-start gap-1 self-stretch">
+                    {person.qaPairs?.map((qaPair: QAPair, index: number) => (
+                      <motion.div
+                        key={qaPair._key || index}
+                        initial={{ opacity: 0, filter: "blur(4px)" }}
+                        animate={{ opacity: 1, filter: "blur(0px)" }}
+                        exit={{ opacity: 0, filter: "blur(4px)" }}
+                        transition={{
+                          duration: 0.4,
+                          ease: EASINGS.easeOutQuart,
+                        }}
+                        className="flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-neutral-200 bg-neutral-400/5 p-4 text-center"
+                      >
+                        <div className="pb-1 text-sm text-neutral-500">
+                          {qaPair.question}
+                        </div>
+                        <div className="text-md text-neutral-400">
+                          {qaPair.answer}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
         </motion.div>
       </motion.div>
-    </motion.div>
+    </AnimatePresence>
   );
 }

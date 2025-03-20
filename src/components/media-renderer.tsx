@@ -37,7 +37,7 @@ export const MediaRenderer = memo(
     className,
     autoPlay = false,
     thumbnailTime,
-    disableThumbnails = false,
+    disableThumbnails,
     priority = false,
     fill = false,
     loading,
@@ -80,9 +80,7 @@ export const MediaRenderer = memo(
             ref={videoRef}
             className={cn("h-full w-full object-cover", className)}
             src={`https://stream.mux.com/${playbackId}/high.mp4`}
-            {...(!disableThumbnails && {
-              poster: getMuxThumbnailUrl(media, thumbnailTime),
-            })}
+            poster={getMuxThumbnailUrl(media, thumbnailTime)}
             autoPlay={autoPlay}
             muted
             playsInline
