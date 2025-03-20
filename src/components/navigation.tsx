@@ -344,12 +344,12 @@ export default function Navigation({
         animate={{ y: !showNav || forceHide ? -100 : 0 }}
         transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
       >
-        <div className="mt-4 flex w-fit items-stretch justify-center overflow-hidden rounded-xl border-[1px] border-neutral-300/25 bg-neutral-50 p-1 mix-blend-multiply shadow-lg backdrop-blur-3xl md:rounded-2xl">
+        <div className="frame-inner mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-neutral-300/25 bg-neutral-50 p-1 mix-blend-multiply shadow-lg shadow-neutral-500/5 backdrop-blur-3xl">
           <Link
             href="/"
-            className="pointer-events-none relative flex items-stretch rounded-xl md:pointer-events-auto"
+            className="pointer-events-none relative flex items-stretch md:pointer-events-auto"
           >
-            <div className="logo_container align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:rounded-xl md:p-0 md:pt-[2px]">
+            <div className="logo_container align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:p-0 md:pt-[2px]">
               <div className="glyph_container z-10 flex w-1/4 items-center overflow-hidden">
                 <Logo className="h-full w-full fill-current pb-1 text-neutral-500" />
               </div>
@@ -361,7 +361,7 @@ export default function Navigation({
           </Link>
 
           <nav
-            className="relative z-[120] flex aspect-square items-center justify-center rounded-md bg-white md:hidden"
+            className="frame-inner relative z-[120] flex aspect-square items-center justify-center bg-white md:hidden"
             onClick={() => setIsOpen(!isOpen)}
           >
             <AnimatePresence mode="wait" initial={false}>
@@ -399,7 +399,7 @@ export default function Navigation({
             {tabs
               .filter((tab) => tab.href !== "/")
               .map((tab) => (
-                <Link href={tab.href} className="rounded-xl" key={tab.label}>
+                <Link href={tab.href} className="frame-inner" key={tab.label}>
                   <motion.h1 className="relative px-3 py-3 text-xs font-normal text-neutral-500">
                     <span className="relative z-10">{tab.label}</span>
                     {isValidPath && basePath === tab.href && <Pill />}
@@ -428,7 +428,7 @@ const Pill = () => (
   <motion.span
     layout
     layoutId="pill"
-    className="pill absolute inset-0 z-0 rounded-md md:rounded-xl md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
+    className="pill frame-inner absolute inset-0 z-0 md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
     style={{ originY: "top" }}
     transition={{ type: "spring", bounce: 0.2, duration: 0.4, ease: "easeOut" }}
   />
