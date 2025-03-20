@@ -12,6 +12,7 @@ export const about = defineType({
       type: "text",
       description: "A brief introduction to the team",
     }),
+    createMediaArray(),
     defineField({
       name: "team",
       title: "Team",

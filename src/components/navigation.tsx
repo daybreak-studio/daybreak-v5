@@ -344,7 +344,7 @@ export default function Navigation({
         animate={{ y: !showNav || forceHide ? -100 : 0 }}
         transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
       >
-        <div className="frame-inner mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-neutral-300/25 bg-neutral-50 p-1 mix-blend-multiply shadow-lg shadow-neutral-500/5 backdrop-blur-3xl">
+        <div className="frame-outer mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-neutral-300/25 bg-neutral-50 mix-blend-multiply shadow-lg shadow-neutral-500/5 backdrop-blur-3xl">
           <Link
             href="/"
             className="pointer-events-none relative flex items-stretch md:pointer-events-auto"

@@ -82,7 +82,7 @@ export default function CareersPill({ jobs }: CareersPillProps) {
         <Dialog.Trigger asChild>
           <motion.div
             layoutId="container"
-            className="frame-outer pointer-events-auto fixed top-20 z-50 overflow-hidden border border-neutral-200/5 backdrop-blur-md"
+            className="border-neutral-200/5backdrop-blur-md pointer-events-auto fixed top-20 z-50 overflow-hidden border"
             initial="hidden"
             animate="visible"
             variants={CONTAINER_ANIMATION}
@@ -96,7 +96,7 @@ export default function CareersPill({ jobs }: CareersPillProps) {
             >
               <div className="flex items-center space-x-2 px-5 py-3 text-sm text-neutral-500">
                 <span>Careers</span>
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-500/10">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-500/5 text-xs">
                   {jobs.length}
                 </span>
               </div>
