@@ -1,13 +1,14 @@
 // src/components/carousel/index.tsx
 "use client";
 
-import { memo } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
+import { memo, useEffect, useRef } from "react";
 import { MediaRenderer } from "@/components/media-renderer";
 import { MediaItem } from "@/sanity/lib/media";
-import { useRef } from "react";
 import { HoverCard } from "@/components/animations/hover";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { FreeMode, Mousewheel } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/free-mode";
 
 interface CarouselProps {
   media: MediaItem[];
@@ -15,23 +16,31 @@ interface CarouselProps {
 }
 
 const CarouselComponent = memo(({ media, className }: CarouselProps) => {
-  const [emblaRef, embla] = useEmblaCarousel(
-    { align: "start", loop: false, skipSnaps: true },
-    [WheelGesturesPlugin()],
-  );
-
   return (
     <div className={`relative col-span-full ${className} xl:py-16`}>
-      <div
-        className="hide-scrollbar cursor-ew-resize overflow-x-scroll"
-        ref={emblaRef}
-      >
-        <div className="mx-8 flex items-start gap-4 md:mx-16 xl:mx-36 xl:gap-8">
+      <div className="mx-8 md:mx-16 xl:mx-36">
+        <Swiper
+          modules={[FreeMode, Mousewheel]}
+          spaceBetween={32}
+          slidesPerView="auto"
+          freeMode={{
+            enabled: true,
+            sticky: false,
+            momentumBounce: true,
+            momentumBounceRatio: 0.25,
+          }}
+          mousewheel={{
+            enabled: true,
+            forceToAxis: true,
+            sensitivity: 0.5,
+          }}
+          className="!overflow-visible"
+        >
           {media.map((item) => {
             return (
-              <div
+              <SwiperSlide
                 key={item._key}
-                className={`my-8 h-[400px] w-full min-w-[85%] lg:h-[600px] lg:min-w-0 lg:max-w-[600px] lg:flex-shrink-0`}
+                className="!h-[400px] !w-[85%] lg:!h-[600px] lg:!w-[600px]"
               >
                 <HoverCard>
                   <MediaRenderer
@@ -41,10 +50,10 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
                     autoPlay={true}
                   />
                 </HoverCard>
-              </div>
+              </SwiperSlide>
             );
           })}
-        </div>
+        </Swiper>
       </div>
     </div>
   );
