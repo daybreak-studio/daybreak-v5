@@ -14,7 +14,7 @@ import ProjectCaseStudy from "@/components/project/case-study";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { cn } from "@/lib/utils";
-import { useCallback, useEffect, Suspense } from "react";
+import { useCallback, useEffect, Suspense, useRef } from "react";
 import { AnimatePresence } from "framer-motion";
 import { client } from "@/sanity/lib/client";
 import { CLIENTS_QUERY } from "@/sanity/lib/queries";
@@ -91,38 +91,45 @@ export default function WorkPage({ data }: { data: Clients[] }) {
     ? slug
     : [slug, undefined];
 
-  // Remove animation states
-  const handleOpenChange = useCallback(
-    (open: boolean, client: Clients) => {
-      if (!open) {
-        // Don't redirect if we're on a project page
-        if (!router.query.slug?.[1]) {
-          router.push("/work", undefined, { shallow: true });
-        }
-        window.dispatchEvent(new Event(VIDEO_EVENTS.RESUME_ALL));
-      } else {
-        window.dispatchEvent(new Event(VIDEO_EVENTS.PAUSE_ALL));
-        if (!router.query.slug?.[0]) {
-          router.push(`/work/${client.slug?.current}`, undefined, {
-            shallow: true,
-          });
-        }
-      }
-    },
-    [router],
-  );
+  const lenisRef = useRef<Lenis | null>(null);
 
+  // Initialize Lenis
   useEffect(() => {
-    const lenis = new Lenis();
+    lenisRef.current = new Lenis();
     function raf(time: number) {
-      lenis.raf(time);
+      lenisRef.current?.raf(time);
       requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
     return () => {
-      lenis.destroy();
+      lenisRef.current?.destroy();
     };
   }, []);
+
+  // Handle modal open/close
+  const handleOpenChange = useCallback(
+    (open: boolean, client: Clients) => {
+      if (!open) {
+        window.dispatchEvent(new Event(VIDEO_EVENTS.RESUME_ALL));
+        document.body.style.overflow = "";
+        lenisRef.current?.start();
+      } else {
+        window.dispatchEvent(new Event(VIDEO_EVENTS.PAUSE_ALL));
+        // Only lock scrolling for preview and selector modals
+        const currentProject = projectSlug
+          ? client.projects?.find((project) => project.category === projectSlug)
+          : client.projects?.[0];
+
+        const isCaseStudy = currentProject?._type !== "preview";
+
+        if (!isCaseStudy) {
+          document.body.style.overflow = "hidden";
+          lenisRef.current?.stop();
+        }
+      }
+    },
+    [projectSlug],
+  );
 
   return (
     <>
@@ -142,7 +149,32 @@ export default function WorkPage({ data }: { data: Clients[] }) {
               <Dialog.Root
                 key={client._id}
                 open={isOpen}
-                onOpenChange={(open) => handleOpenChange(open, client)}
+                onOpenChange={(open) => {
+                  if (!open) {
+                    // If we're in a preview/case-study and have a selector (multiple projects)
+                    if (
+                      projectSlug &&
+                      client.projects &&
+                      client.projects.length > 1
+                    ) {
+                      // Go back to selector
+                      router.push(`/work/${clientSlug}`, undefined, {
+                        shallow: true,
+                      });
+                    } else {
+                      // Otherwise close the entire modal (we're either at selector level or single project)
+                      router.push("/work", undefined, { shallow: true });
+                    }
+                    handleOpenChange(open, client);
+                  } else {
+                    if (!router.query.slug?.[0]) {
+                      router.push(`/work/${client.slug?.current}`, undefined, {
+                        shallow: true,
+                      });
+                    }
+                    handleOpenChange(open, client);
+                  }
+                }}
                 modal={modalVariant.type !== "caseStudy"}
               >
                 <Dialog.Title className="sr-only">
@@ -226,7 +258,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                             duration: 0.4,
                             ease: EASINGS.easeOutQuart,
                           }}
-                          className="fixed inset-0 bg-white/70 backdrop-blur-3xl"
+                          className="fixed inset-0 z-[60] bg-white/70 backdrop-blur-3xl"
                         />
                       </Dialog.Overlay>
 
@@ -235,10 +267,12 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                           {...CONTAINER_ANIMATION}
                           layoutId={containerLayoutId}
                           className={cn(
-                            "fixed bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit",
-                            "frame-outer origin-center overflow-y-auto border-[1px] border-neutral-200/50 bg-white",
+                            "fixed bottom-0 left-0 right-0 top-0 z-[70] m-auto h-fit w-fit",
+                            "frame-outer origin-center border-[1px] border-neutral-200/50 bg-white",
                             modalVariant.className,
-                            modalVariant.type === "caseStudy" && "z-60",
+                            modalVariant.type === "caseStudy"
+                              ? "overflow-hidden"
+                              : "overflow-y-auto",
                           )}
                         >
                           {modalVariant.type === "selector" && (
@@ -248,7 +282,9 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                             <ProjectPreview data={client} />
                           )}
                           {modalVariant.type === "caseStudy" && (
-                            <ProjectCaseStudy data={client} />
+                            <div className="h-full w-full overflow-hidden">
+                              <ProjectCaseStudy data={client} />
+                            </div>
                           )}
 
                           {/* Single Dialog.Close component for all modal types */}

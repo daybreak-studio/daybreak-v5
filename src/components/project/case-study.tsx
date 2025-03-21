@@ -1,4 +1,4 @@
-import { motion, animate, easeOut, useInView } from "framer-motion";
+import { motion, animate, easeOut, useInView, PanInfo } from "framer-motion";
 import { CaseStudy, Clients } from "@/sanity/types";
 import {
   useCallback,
@@ -20,6 +20,9 @@ import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
 import { getMediaAssetId } from "@/sanity/lib/media";
 import { IMAGE_ANIMATION } from "./animations";
 import { useViewport } from "@/lib/hooks/use-viewport";
+import { useMediaQuery } from "usehooks-ts";
+import Lenis from "lenis";
+
 // Types
 interface ProjectCaseStudyProps {
   data: Clients;
@@ -339,9 +342,33 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   const router = useRouter();
   const project = data.projects?.[0] as CaseStudy & { _key: string };
   const containerRef = useRef<HTMLDivElement>(null);
+  const lenisRef = useRef<Lenis | null>(null);
 
   const [activeGroupIndex, setActiveGroupIndex] = useState(0);
   const [isZoomed, setIsZoomed] = useState(false);
+
+  // Initialize Lenis for case study
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    lenisRef.current = new Lenis({
+      wrapper: containerRef.current,
+      content: containerRef.current,
+      smoothWheel: true,
+      wheelMultiplier: 0.8,
+      touchMultiplier: 2,
+    });
+
+    function raf(time: number) {
+      lenisRef.current?.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenisRef.current?.destroy();
+    };
+  }, []);
 
   // Smooth scroll helper
   const scrollToGroup = useCallback((index: number) => {

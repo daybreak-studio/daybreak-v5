@@ -339,7 +339,7 @@ export default function Navigation({
   return (
     <>
       <motion.nav
-        className="pointer-events-auto fixed left-0 right-0 top-0 z-50 mx-auto flex w-full justify-center"
+        className="pointer-events-auto fixed left-0 right-0 top-0 z-40 mx-auto flex w-full justify-center"
         initial={{ y: 0 }}
         animate={{ y: !showNav || forceHide ? -100 : 0 }}
         transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
