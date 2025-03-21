@@ -1,4 +1,4 @@
-import { motion, PanInfo } from "framer-motion";
+import { motion, PanInfo, AnimatePresence } from "framer-motion";
 import { Preview, Clients } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { getMediaAssetId } from "@/sanity/lib/media";
@@ -25,50 +25,85 @@ const Navigation = memo(function Navigation({
   onSelect: (index: number) => void;
   mediaArray: Preview["media"];
 }) {
-  if (total <= 1) return null;
+  if (total <= 1 || !mediaArray) return null;
+
+  const VISIBLE_THUMBNAILS = 5;
+  const halfWindow = Math.floor(VISIBLE_THUMBNAILS / 2);
+
+  // Calculate which thumbnails should be visible
+  let startIndex = Math.max(0, current - halfWindow);
+  let endIndex = Math.min(total - 1, startIndex + VISIBLE_THUMBNAILS - 1);
+
+  // Adjust window when near the end
+  if (endIndex === total - 1) {
+    startIndex = Math.max(0, endIndex - VISIBLE_THUMBNAILS + 1);
+  }
+
+  // Get the thumbnails to show
+  const visibleThumbnails = mediaArray.slice(startIndex, endIndex + 1);
 
   return (
     <motion.div
-      initial={{ opacity: 0, filter: "blur(4px)" }}
-      animate={{ opacity: 1, filter: "blur(0px)" }}
-      exit={{ opacity: 0, filter: "blur(4px)" }}
-      transition={{ duration: 1, ease: EASINGS.easeOutQuart }}
+      // Controls the overall container fade in/out
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
       className="hidden items-center space-x-2 md:flex"
     >
+      {/* Left arrow button */}
       <motion.button
         onClick={() => onSelect(current - 1)}
         className="rounded-full p-1 focus:outline-none focus:ring-0"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        transition={{ duration: 0.2 }}
       >
         <ChevronLeft className="h-4 w-4 text-neutral-500" />
       </motion.button>
 
-      {mediaArray?.map((media, index) => (
-        <motion.button
-          key={media._key}
-          onClick={() => onSelect(index)}
-          animate={{ scale: current === index ? 1.2 : 1 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ duration: 0.1, ease: EASINGS.easeOutQuart }}
-          className={cn(
-            "relative rounded-md transition-all duration-200 hover:ring-2 hover:ring-neutral-300",
-            current === index && "ring-2 ring-neutral-400",
-          )}
-        >
-          <MediaRenderer
-            media={media}
-            className="h-5 w-5 rounded-md"
-            priority={true}
-          />
-        </motion.button>
-      ))}
+      {/* Thumbnails container - fixed width to prevent layout shifts */}
+      <div className="flex max-w-[140px] items-center justify-center space-x-2">
+        {visibleThumbnails.map((media, index) => {
+          const actualIndex = startIndex + index;
+          const isActive = current === actualIndex;
+          return (
+            <motion.button
+              key={media._key}
+              onClick={() => onSelect(actualIndex)}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{
+                opacity: 1,
+                scale: isActive ? 1.1 : 1,
+                transition: {
+                  duration: 0.1,
+                  ease: [0.4, 0, 0.2, 1],
+                },
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={cn(
+                "relative rounded-md transition-all duration-[50ms] hover:ring-2 hover:ring-neutral-300",
+                isActive && "ring-2 ring-neutral-400",
+              )}
+            >
+              <MediaRenderer
+                media={media}
+                className="h-5 w-5 rounded-md"
+                priority={true}
+              />
+            </motion.button>
+          );
+        })}
+      </div>
 
+      {/* Right arrow button */}
       <motion.button
         onClick={() => onSelect(current + 1)}
         className="rounded-full p-1 focus:outline-none focus:ring-0"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        transition={{ duration: 0.2 }}
       >
         <ChevronRight className="h-4 w-4 text-neutral-500" />
       </motion.button>
@@ -184,7 +219,7 @@ const PreviewDots = ({
       <div
         key={i}
         className={cn(
-          "h-2 w-2 rounded-full transition-colors duration-200",
+          "h-[6px] w-[6px] rounded-full transition-colors duration-200",
           i === current ? "bg-neutral-400" : "bg-neutral-500/20",
         )}
       />

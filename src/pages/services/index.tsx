@@ -48,12 +48,12 @@ export default function Services({ servicesData }: { servicesData: Services }) {
             duration: 1,
             ease: EASINGS.easeOutQuart,
           }}
-          className="w-8/12 max-w-[36ch] text-center text-2xl font-[450] text-neutral-700/25 md:text-3xl lg:text-3xl 2xl:text-4xl"
+          className="w-9/12 text-center text-3xl font-[450] text-neutral-700/25 md:max-w-[36ch] lg:text-4xl"
         >
           We shape ambitious brands & digital products at every stage of
           evolution
         </motion.h1>
-        <div className="w-full overflow-hidden">
+        <div className="w-full overflow-hidden pt-8">
           <WidgetDataProvider
             data={{ widgets: servicesData.widgets as Widget[] }}
           >

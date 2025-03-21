@@ -132,8 +132,33 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   );
 
   return (
-    <>
-      <div className="hide-scrollbar mx-auto overflow-y-scroll p-8 lg:px-48 lg:py-16">
+    <main className="relative flex flex-col items-center justify-center space-y-48 p-4 pt-48 lg:space-y-52">
+      <section className="flex h-full w-full flex-col items-center justify-center space-y-1">
+        <motion.h1
+          initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{
+            delay: 0.3,
+            duration: 1,
+            ease: EASINGS.easeOutQuart,
+          }}
+          className="w-8/12 text-center text-3xl font-[450] text-neutral-700/25 lg:text-3xl 2xl:text-4xl"
+        >
+          Design that feels right.
+        </motion.h1>
+        <motion.h1
+          initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{
+            delay: 0.4,
+            duration: 1,
+            ease: EASINGS.easeOutQuart,
+          }}
+          className="w-8/12 text-center text-3xl font-[450] text-neutral-700/25 lg:text-3xl 2xl:text-4xl"
+        >
+          Tech that works well.
+        </motion.h1>
+
         <WorksGrid data={data}>
           {(client, index) => {
             const mediaAsset = getClientFirstMedia(client);
@@ -330,9 +355,9 @@ export default function WorkPage({ data }: { data: Clients[] }) {
             );
           }}
         </WorksGrid>
-      </div>
+      </section>
       <Footer />
-    </>
+    </main>
   );
 }
 

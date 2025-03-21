@@ -157,7 +157,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
   // Show empty container during SSR and initial layout calculation
   if (!isLayoutReady) {
     return (
-      <div className="relative mx-auto pt-24">
+      <div className="relative mx-auto pt-32">
         <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
           <div className="flex flex-col gap-4" />
         </div>
@@ -166,7 +166,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
   }
 
   return (
-    <div className="relative mx-auto pt-24">
+    <div className="relative mx-auto pt-32">
       <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
         <AnimatePresence mode="wait">
           <motion.div
