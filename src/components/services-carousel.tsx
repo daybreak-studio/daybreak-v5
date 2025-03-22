@@ -275,7 +275,7 @@ function ServiceContent({
                 }}
                 className={cn(
                   "frame-inner hidden h-32 w-32 items-center justify-center overflow-hidden p-4 font-[450]",
-                  activeTabIndex === index && "bg-neutral-100",
+                  activeTabIndex === index && "bg-neutral-50",
                   "border border-neutral-200/80",
                   activeTabIndex === index
                     ? "text-neutral-500"

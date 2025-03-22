@@ -11,7 +11,7 @@ const ScrollDrawer: React.FC<ScrollDrawerProps> = ({ children, className }) => {
   return (
     <motion.div
       className={clsx(
-        "relative mt-[93vh] rounded-t-[24px] bg-white/90 shadow backdrop-blur-2xl",
+        "relative mt-[93svh] rounded-t-[24px] bg-white/90 shadow backdrop-blur-2xl",
         "overscroll-behavior-none z-[100]",
         className,
       )}

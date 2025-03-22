@@ -82,7 +82,7 @@ export default function CareersPill({ jobs }: CareersPillProps) {
         <Dialog.Trigger asChild>
           <motion.div
             layoutId="container"
-            className="border-neutral-200/5backdrop-blur-md pointer-events-auto fixed top-20 z-50 overflow-hidden border"
+            className="ackdrop-blur-md pointer-events-auto fixed top-20 z-50 overflow-hidden"
             initial="hidden"
             animate="visible"
             variants={CONTAINER_ANIMATION}

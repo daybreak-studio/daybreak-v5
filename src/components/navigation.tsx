@@ -156,11 +156,15 @@ const MobileMenu = ({
     exit={{ opacity: 0, filter: "blur(12px)" }}
     transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
     className={clsx(
-      "fixed inset-0 z-40 flex h-[100dvh] flex-col items-center bg-white/50 pt-12 backdrop-blur-3xl",
+      "fixed inset-0 z-[110] flex h-[100dvh] flex-col items-center bg-white/50 pt-12 backdrop-blur-3xl",
       isOpen && "touch-none overflow-hidden",
     )}
+    onClick={onClose}
   >
-    <div className="container relative flex h-full w-full max-w-lg flex-col items-center justify-center px-8">
+    <div
+      className="container relative flex h-full w-full max-w-lg flex-col items-center justify-center px-8"
+      onClick={(e) => e.stopPropagation()}
+    >
       <motion.div
         className="grid w-full auto-rows-fr grid-cols-3 gap-4"
         initial="hidden"
@@ -331,15 +335,23 @@ export default function Navigation({
   useEffect(() => {
     if (isOpen) {
       window.dispatchEvent(new Event(VIDEO_EVENTS.PAUSE_ALL));
+      document.body.style.overflow = "hidden";
     } else {
       window.dispatchEvent(new Event(VIDEO_EVENTS.RESUME_ALL));
+      document.body.style.overflow = "auto";
     }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
   }, [isOpen]);
 
   return (
     <>
       <motion.nav
-        className="pointer-events-auto fixed left-0 right-0 top-0 z-40 mx-auto flex w-full justify-center"
+        className={clsx(
+          "pointer-events-auto fixed left-0 right-0 top-0 mx-auto flex w-full justify-center",
+          isOpen ? "z-[120]" : "z-[50]",
+        )}
         initial={{ opacity: 1, filter: "blur(0px)" }}
         animate={{
           opacity: !showNav || forceHide ? 0 : 1,
@@ -360,7 +372,11 @@ export default function Navigation({
                 <Wordmark className="h-full w-full fill-current text-neutral-500" />
               </div>
             </div>
-            {isValidPath && basePath === "/" && <Pill />}
+            {isValidPath && basePath === "/" && (
+              <div className="hidden md:block">
+                <Pill />
+              </div>
+            )}
           </Link>
 
           <nav
@@ -435,14 +451,14 @@ const Pill = () => (
     layout
     layoutId="pill"
     style={{ originY: "0px" }}
-    className="pill frame-inner absolute inset-0 z-0 transition-colors duration-200 group-hover:bg-neutral-50 group-hover:shadow-inner group-hover:shadow-neutral-500/10 md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
+    className="pill frame-inner absolute inset-0 z-0 before:pointer-events-none before:absolute before:inset-0 before:rounded-[30px] before:bg-[radial-gradient(circle_at_50%_50%,rgba(255,245,230,0.5)_0%,rgba(255,240,235,0.4)_25%,rgba(250,235,245,0.3)_50%,rgba(245,240,255,0.2)_75%,rgba(250,250,255,0.1)_100%)] before:p-[1px] before:opacity-0 before:transition-opacity before:duration-500 group-hover:before:opacity-100 md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
     animate={{
       boxShadow:
         "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
     }}
     transition={{
       layout: { type: "spring", bounce: 0.2, duration: 0.4, ease: "easeOut" },
-      boxShadow: { duration: 0.2 },
+      boxShadow: { duration: 0.3 },
     }}
   />
 );
