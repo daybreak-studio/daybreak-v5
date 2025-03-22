@@ -33,15 +33,25 @@ const ITEM_ANIMATION = {
 // Grid layout constants
 const WIDTHS = {
   desktop: {
-    standard: "w-[400px]",
+    standard: "w-[clamp(280px,25vw,400px)]",
     hero: {
-      side: "w-[360px]",
-      middle: "w-[520px]",
+      side: "w-[clamp(260px,22vw,360px)]",
+      middle: "w-[clamp(380px,35vw,520px)]",
     },
+    gap: "gap-[clamp(12px,2vw,16px)]",
+  },
+  tablet: {
+    standard: "w-[clamp(200px,20vw,280px)]",
+    hero: {
+      side: "w-[clamp(180px,18vw,260px)]",
+      middle: "w-[clamp(280px,28vw,380px)]",
+    },
+    gap: "gap-[clamp(8px,1.5vw,12px)]",
   },
   mobile: {
-    small: "block w-4/12", // 1/3 width
-    large: "block w-8/12", // 2/3 width
+    small: "w-4/12", // 1/3 width
+    large: "w-8/12", // 2/3 width
+    gap: "gap-2",
   },
 } as const;
 
@@ -87,7 +97,7 @@ interface RowProps {
   row: Clients[];
   rowIndex: number;
   totalRows: number;
-  isDesktop: boolean;
+  viewportSize: "desktop" | "tablet" | "mobile";
   isAnimating: boolean;
   children: (client: Clients, index: number) => React.ReactNode;
 }
@@ -96,23 +106,25 @@ function GridRow({
   row,
   rowIndex,
   totalRows,
-  isDesktop,
+  viewportSize,
   isAnimating,
   children,
 }: RowProps) {
   const isFirstRow = rowIndex === 0;
   const isLastRow = rowIndex === totalRows - 1;
+  const isDesktopLayout =
+    viewportSize === "desktop" || viewportSize === "tablet";
   const isHeroRow =
-    isDesktop && (isFirstRow || (isLastRow && row.length === 3));
+    isDesktopLayout && (isFirstRow || (isLastRow && row.length === 3));
 
   return (
     <div
       className={cn(
-        "flex justify-center",
-        // Spacing
-        isDesktop ? "gap-4" : "gap-2",
+        "flex w-full justify-center",
+        // Spacing based on viewport size
+        WIDTHS[viewportSize].gap,
         // Alignment
-        isDesktop
+        isDesktopLayout
           ? cn(
               "items-center",
               isFirstRow && "items-end",
@@ -128,17 +140,18 @@ function GridRow({
           key={client._id}
           variants={ITEM_ANIMATION}
           className={cn(
-            // Mobile layout (default)
-            index === (rowIndex % 2 === 0 ? 0 : 1)
-              ? WIDTHS.mobile.large
-              : WIDTHS.mobile.small,
-            // Desktop layout
-            isDesktop &&
+            // Mobile layout
+            viewportSize === "mobile" &&
+              (index === (rowIndex % 2 === 0 ? 0 : 1)
+                ? WIDTHS.mobile.large
+                : WIDTHS.mobile.small),
+            // Desktop/Tablet layout
+            isDesktopLayout &&
               (isHeroRow
                 ? index === 1
-                  ? WIDTHS.desktop.hero.middle
-                  : WIDTHS.desktop.hero.side
-                : WIDTHS.desktop.standard),
+                  ? WIDTHS[viewportSize].hero.middle
+                  : WIDTHS[viewportSize].hero.side
+                : WIDTHS[viewportSize].standard),
             // Disable pointer events during animation
             isAnimating && "pointer-events-none",
           )}
@@ -151,7 +164,10 @@ function GridRow({
 }
 
 const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+  const viewportSize = isDesktop ? "desktop" : isTablet ? "tablet" : "mobile";
+
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [isAnimating, setIsAnimating] = useState(true);
 
@@ -161,8 +177,11 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
   }, []);
 
   const rows = useMemo(
-    () => (isDesktop ? generateDesktopRows(data) : generateMobileRows(data)),
-    [data, isDesktop],
+    () =>
+      viewportSize === "desktop" || viewportSize === "tablet"
+        ? generateDesktopRows(data)
+        : generateMobileRows(data),
+    [data, viewportSize],
   );
 
   // Show empty container during SSR and initial layout calculation
@@ -181,7 +200,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
       <div className="mx-auto flex max-w-[1400px] flex-col gap-8">
         <AnimatePresence mode="wait">
           <motion.div
-            key={isDesktop ? "desktop" : "mobile"}
+            key={viewportSize}
             initial="hidden"
             animate="visible"
             onAnimationComplete={() => setIsAnimating(false)}
@@ -194,7 +213,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
                 row={row}
                 rowIndex={rowIndex}
                 totalRows={rows.length}
-                isDesktop={isDesktop}
+                viewportSize={viewportSize}
                 isAnimating={isAnimating}
               >
                 {children}

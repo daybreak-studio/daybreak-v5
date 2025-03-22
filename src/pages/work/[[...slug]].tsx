@@ -232,7 +232,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: 0.2 }}
-                        className="absolute bottom-6 left-6 hidden items-center gap-3 md:flex"
+                        className="absolute bottom-6 left-6 hidden items-center gap-3 lg:flex"
                       >
                         <Suspense fallback={<div>Loading...</div>}>
                           <div className="relative aspect-square size-10 overflow-hidden rounded-lg bg-neutral-100/25">
