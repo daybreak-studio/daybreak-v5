@@ -75,14 +75,13 @@ export const createFormSteps = ({
             onNext={nextStep}
             onPrev={prevStep}
           />
-          <FormCard.Title>Want to launch your next project?</FormCard.Title>
+          <FormCard.Title>Lets talk!</FormCard.Title>
         </FormCard.Header>
         <FormCard.Content className="mt-2">
           <div className="flex flex-col gap-4 md:gap-6">
             <span className="text-sm text-neutral-400 md:text-lg">
-              We&apos;re looking for people excited by the possibilities of
-              technology, constantly exploring new means of expression and
-              highly detailed in their practice.
+              We love playing with the possibilities of tech, and we&apos;re
+              here to explore them with you.
             </span>
             <div className="flex items-center justify-between rounded-2xl border border-neutral-500/10 p-4">
               <span className="text-xs text-neutral-500/75 md:text-base">
@@ -162,7 +161,9 @@ export const createFormSteps = ({
               onNext={nextStep}
               onPrev={prevStep}
             />
-            <FormCard.Title>Let&apos;s get to know you</FormCard.Title>
+            <FormCard.Title>
+              We&apos;ll need a few details first...
+            </FormCard.Title>
           </FormCard.Header>
           <FormCard.Content className="mt-8">
             <div className="flex flex-col gap-4 md:gap-6">
@@ -237,9 +238,7 @@ export const createFormSteps = ({
               onNext={nextStep}
               onPrev={prevStep}
             />
-            <FormCard.Title>
-              What type of project are you looking for?
-            </FormCard.Title>
+            <FormCard.Title>What can we help you with?</FormCard.Title>
           </FormCard.Header>
           <FormCard.Content className="mt-8">
             <div className="flex flex-col gap-4">
@@ -319,7 +318,7 @@ export const createFormSteps = ({
               onNext={nextStep}
               onPrev={prevStep}
             />
-            <FormCard.Title>Tell us more about your project</FormCard.Title>
+            <FormCard.Title>Tell us more about your idea!</FormCard.Title>
           </FormCard.Header>
           <FormCard.Content className="mt-8">
             <div className="flex flex-col gap-4 md:gap-6">
@@ -380,7 +379,7 @@ export const createFormSteps = ({
         <FormCard.Root>
           <FormCard.Header className="space-y-6">
             <FormCard.Navigation current={5} total={5} onPrev={prevStep} />
-            <FormCard.Title>Review Your Information</FormCard.Title>
+            <FormCard.Title>Review your submission</FormCard.Title>
           </FormCard.Header>
           <FormCard.Content className="mt-8">
             <div className="flex flex-col gap-6">
@@ -478,7 +477,7 @@ export const createFormSteps = ({
                       values.message ? "text-neutral-600" : "text-neutral-400",
                     )}
                   >
-                    {values.message || "Tell us about your vision!"}
+                    {values.message || "Tell us about your idea!"}
                   </p>
                 </div>
 

@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect, useCallback, memo, useMemo } from "react";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "usehooks-ts";
+
 interface ProjectPreviewProps {
   data: Clients;
 }
@@ -25,8 +26,7 @@ const Navigation = memo(function Navigation({
   onSelect: (index: number) => void;
   mediaArray: Preview["media"];
 }) {
-  if (total <= 1 || !mediaArray) return null;
-
+  // Always render a container, but only show navigation if we have multiple items
   const VISIBLE_THUMBNAILS = 5;
   const halfWindow = Math.floor(VISIBLE_THUMBNAILS / 2);
 
@@ -40,74 +40,82 @@ const Navigation = memo(function Navigation({
   }
 
   // Get the thumbnails to show
-  const visibleThumbnails = mediaArray.slice(startIndex, endIndex + 1);
+  const visibleThumbnails = mediaArray
+    ? mediaArray.slice(startIndex, endIndex + 1)
+    : [];
+  const containerWidth = `${visibleThumbnails.length * 28}px`; // 20px for thumb + 8px for spacing
 
   return (
-    <motion.div
-      // Controls the overall container fade in/out
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      className="hidden items-center space-x-2 md:flex"
-    >
-      {/* Left arrow button */}
-      <motion.button
-        onClick={() => onSelect(current - 1)}
-        className="rounded-full p-1 focus:outline-none focus:ring-0"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ duration: 0.2 }}
-      >
-        <ChevronLeft className="h-4 w-4 text-neutral-500" />
-      </motion.button>
+    <div className="h-8 md:block">
+      {total > 1 && mediaArray && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="hidden items-center md:flex"
+        >
+          {/* Left arrow button */}
+          <motion.button
+            onClick={() => onSelect(current - 1)}
+            className="rounded-full p-1 focus:outline-none focus:ring-0"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronLeft className="h-4 w-4 text-neutral-500" />
+          </motion.button>
 
-      {/* Thumbnails container - fixed width to prevent layout shifts */}
-      <div className="flex max-w-[140px] items-center justify-center space-x-2">
-        {visibleThumbnails.map((media, index) => {
-          const actualIndex = startIndex + index;
-          const isActive = current === actualIndex;
-          return (
-            <motion.button
-              key={media._key}
-              onClick={() => onSelect(actualIndex)}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{
-                opacity: 1,
-                scale: isActive ? 1.1 : 1,
-                transition: {
-                  duration: 0.1,
-                  ease: [0.4, 0, 0.2, 1],
-                },
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={cn(
-                "relative rounded-md transition-all duration-[50ms] hover:ring-2 hover:ring-neutral-300",
-                isActive && "ring-2 ring-neutral-400",
-              )}
-            >
-              <MediaRenderer
-                media={media}
-                className="h-5 w-5 rounded-md"
-                priority={true}
-              />
-            </motion.button>
-          );
-        })}
-      </div>
+          {/* Dynamic width container for thumbnails */}
+          <div className="flex-shrink-0" style={{ width: containerWidth }}>
+            <div className="flex items-center justify-center space-x-2">
+              {visibleThumbnails.map((media, index) => {
+                const actualIndex = startIndex + index;
+                const isActive = current === actualIndex;
+                return (
+                  <motion.button
+                    key={media._key}
+                    onClick={() => onSelect(actualIndex)}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{
+                      opacity: 1,
+                      scale: isActive ? 1.1 : 1,
+                      transition: {
+                        duration: 0.1,
+                        ease: [0.4, 0, 0.2, 1],
+                      },
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className={cn(
+                      "relative rounded-md transition-all duration-[50ms] hover:ring-2 hover:ring-neutral-300",
+                      isActive && "ring-2 ring-neutral-400",
+                    )}
+                  >
+                    <MediaRenderer
+                      media={media}
+                      className="h-5 w-5 rounded-md"
+                      priority={true}
+                    />
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
 
-      {/* Right arrow button */}
-      <motion.button
-        onClick={() => onSelect(current + 1)}
-        className="rounded-full p-1 focus:outline-none focus:ring-0"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ duration: 0.2 }}
-      >
-        <ChevronRight className="h-4 w-4 text-neutral-500" />
-      </motion.button>
-    </motion.div>
+          {/* Right arrow button */}
+          <motion.button
+            onClick={() => onSelect(current + 1)}
+            className="rounded-full p-1 focus:outline-none focus:ring-0"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ChevronRight className="h-4 w-4 text-neutral-500" />
+          </motion.button>
+        </motion.div>
+      )}
+    </div>
   );
 });
 
@@ -206,27 +214,6 @@ const ProjectInfo = memo(function ProjectInfo({
   );
 });
 
-// Add this helper component for the dots
-const PreviewDots = ({
-  total,
-  current,
-}: {
-  total: number;
-  current: number;
-}) => (
-  <div className="flex justify-center space-x-2 pt-4">
-    {Array.from({ length: total }).map((_, i) => (
-      <div
-        key={i}
-        className={cn(
-          "h-[6px] w-[6px] rounded-full transition-colors duration-200",
-          i === current ? "bg-neutral-400" : "bg-neutral-500/20",
-        )}
-      />
-    ))}
-  </div>
-);
-
 // Main Preview Component
 export default function ProjectPreview({ data }: ProjectPreviewProps) {
   const router = useRouter();
@@ -320,57 +307,46 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     <motion.div className="flex flex-col overflow-hidden p-8 md:flex-row md:space-x-8">
       {/* Media Section */}
       <motion.div className="order-2 pt-4 md:order-1 md:w-2/3 md:pt-0">
-        {isDesktop ? (
+        <div className="relative flex flex-col">
           <motion.div
             {...IMAGE_ANIMATION}
             layoutId={assetId || ""}
+            className="frame-inner relative aspect-square h-full w-full touch-pan-y overflow-hidden"
             onClick={handleNext}
-            className="aspect-square h-full w-full cursor-pointer overflow-hidden focus:outline-none"
-            animate={{ filter: isBlurred ? "blur(8px)" : "blur(0px)" }}
-            whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
-            transition={{ duration: 0.3, ease: EASINGS.easeOutQuart }}
+            drag="x"
+            dragDirectionLock
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.03}
+            dragMomentum={false}
+            onDragEnd={handleDragEnd}
           >
-            <div className="relative aspect-square h-full w-full">
-              <MediaRenderer
-                className="frame-inner h-full w-full"
-                media={mediaArray[currentIndex]}
-                autoPlay={true}
-                priority={true}
-                fill
-                loading="eager"
-              />
+            <div className="pointer-events-none h-full w-full">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentIndex}
+                  initial={{ opacity: 0, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, filter: "blur(4px)" }}
+                  transition={{
+                    duration: 0.2,
+                    ease: [0.4, 0, 0.2, 1],
+                  }}
+                  className="absolute inset-0"
+                >
+                  <MediaRenderer
+                    fill
+                    media={mediaArray[currentIndex]}
+                    autoPlay={true}
+                    priority={true}
+                    loading="eager"
+                    className="pointer-events-none"
+                  />
+                </motion.div>
+              </AnimatePresence>
             </div>
           </motion.div>
-        ) : (
-          <div className="relative flex flex-col">
-            <motion.div
-              {...IMAGE_ANIMATION}
-              layoutId={assetId || ""}
-              className="frame-inner relative aspect-square h-full w-full touch-pan-y overflow-hidden"
-              onClick={handleNext}
-              whileTap={{ scale: 0.97 }}
-              drag="x"
-              dragDirectionLock
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={0.03}
-              dragMomentum={false}
-              onDragEnd={handleDragEnd}
-            >
-              <div className="pointer-events-none h-full w-full">
-                <MediaRenderer
-                  fill
-                  media={mediaArray[currentIndex]}
-                  autoPlay={true}
-                  priority={true}
-                  loading="eager"
-                  className="pointer-events-none"
-                />
-              </div>
-            </motion.div>
-            <PreviewDots total={mediaArray.length} current={currentIndex} />
-          </div>
-        )}
+        </div>
       </motion.div>
 
       {/* Info Section */}
