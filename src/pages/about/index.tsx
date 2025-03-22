@@ -50,17 +50,22 @@ const CarouselSlide = ({
       filter: selectedIndex === index ? "blur(0px)" : "blur(8px)",
       opacity: isLoaded ? (selectedIndex === index ? 1 : 0.65) : 0,
     }}
-    transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
+    transition={{
+      duration: 0.6,
+      ease: EASINGS.easeOutQuart,
+    }}
     onClick={onClick}
     style={{ cursor: "pointer" }}
   >
     {person.media?.[0] && (
-      <MediaRenderer
-        className="object-contain mix-blend-multiply"
-        media={person.media[0]}
-        autoPlay={true}
-        disableThumbnails
-      />
+      <div className="absolute inset-0 flex items-center justify-center mix-blend-multiply">
+        <MediaRenderer
+          className="h-full w-full object-contain mix-blend-multiply"
+          media={person.media[0]}
+          autoPlay={true}
+          disableThumbnails
+        />
+      </div>
     )}
   </motion.div>
 );
@@ -217,7 +222,11 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
             className="grid h-full auto-cols-[75%] grid-flow-col items-center gap-4 mix-blend-multiply md:auto-cols-[50%] lg:auto-cols-[33%] xl:auto-cols-[25%]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.1,
+              ease: EASINGS.easeOutQuart,
+            }}
           >
             {aboutData.team?.map((person, i) => (
               <CarouselSlide
