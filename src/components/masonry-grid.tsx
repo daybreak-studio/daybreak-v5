@@ -23,8 +23,9 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ articles }) => {
   const getColumnCount = () => {
     const width = BREAKPOINTS[breakpoint];
     if (width >= BREAKPOINTS["3xl"]) return 4; // ≥1920px
-    if (width >= BREAKPOINTS.lg) return 3; // ≥1024px
-    if (width >= BREAKPOINTS.md) return 2; // ≥768px
+    if (width >= BREAKPOINTS["2xl"]) return 3; // ≥1536px
+    if (width >= BREAKPOINTS.lg) return 2; // ≥1024px
+    if (width >= BREAKPOINTS.md) return 1; // ≥768px
     return 1; // <768px
   };
 

@@ -347,7 +347,7 @@ export default function Navigation({
         <div className="frame-outer mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-neutral-300/25 bg-neutral-50 mix-blend-multiply shadow-lg shadow-neutral-500/5 backdrop-blur-3xl">
           <Link
             href="/"
-            className="frame-inner pointer-events-none relative flex items-stretch md:pointer-events-auto"
+            className="frame-inner group pointer-events-none relative flex items-stretch md:pointer-events-auto"
           >
             <div className="logo_container frame-inner align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:p-0 md:pt-[2px]">
               <div className="glyph_container z-10 flex w-1/4 items-center overflow-hidden">
@@ -399,8 +399,12 @@ export default function Navigation({
             {tabs
               .filter((tab) => tab.href !== "/")
               .map((tab) => (
-                <Link href={tab.href} className="frame-inner" key={tab.label}>
-                  <motion.h1 className="relative px-3 py-3 text-xs font-normal text-neutral-500">
+                <Link
+                  href={tab.href}
+                  className="frame-inner group"
+                  key={tab.label}
+                >
+                  <motion.h1 className="relative px-3 py-3 text-xs font-normal text-neutral-500 group-hover:text-neutral-700">
                     <span className="relative z-10">{tab.label}</span>
                     {isValidPath && basePath === tab.href && <Pill />}
                   </motion.h1>
@@ -428,8 +432,14 @@ const Pill = () => (
   <motion.span
     layout
     layoutId="pill"
-    className="pill frame-inner absolute inset-0 z-0 md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
-    style={{ originY: "top" }}
-    transition={{ type: "spring", bounce: 0.2, duration: 0.4, ease: "easeOut" }}
+    className="pill frame-inner absolute inset-0 z-0 transition-colors duration-200 group-hover:bg-neutral-50 group-hover:shadow-inner group-hover:shadow-neutral-500/10 md:border-[1px] md:border-neutral-600/5 md:bg-white md:shadow-lg md:shadow-neutral-500/15"
+    animate={{
+      boxShadow:
+        "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+    }}
+    transition={{
+      layout: { type: "spring", bounce: 0.2, duration: 0.4, ease: "easeOut" },
+      boxShadow: { duration: 0.2 },
+    }}
   />
 );
