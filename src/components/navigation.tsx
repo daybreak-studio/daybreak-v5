@@ -111,7 +111,6 @@ const Card = ({
   >
     <Link
       href={href}
-      scroll={false}
       onClick={onClick}
       className="relative block h-full w-full"
     >
@@ -239,7 +238,6 @@ const MobileMenu = ({
       >
         <Link
           href="/contact"
-          scroll={false}
           onClick={onClose}
           className="frame-outer rounded-full bg-white/80 px-6 py-4 text-center font-medium text-neutral-500"
         >
@@ -318,12 +316,6 @@ export default function Navigation({
   const isValidPath = tabs.some((tab) => tab.href === basePath);
   const showNav = useScrollDirection(disableScrollHiding);
 
-  // Add scroll to top on route change
-  useEffect(() => {
-    console.log(basePath);
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [basePath]);
-
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768 && isOpen) {
@@ -358,7 +350,6 @@ export default function Navigation({
         <div className="frame-outer mt-4 flex w-fit items-stretch justify-center overflow-hidden border-[1px] border-neutral-300/25 bg-neutral-50 mix-blend-multiply shadow-lg shadow-neutral-500/5 backdrop-blur-3xl">
           <Link
             href="/"
-            scroll={false}
             className="frame-inner group pointer-events-none relative flex items-stretch md:pointer-events-auto"
           >
             <div className="logo_container frame-inner align-center relative m-2 flex w-20 rounded-none md:m-0 md:mx-4 md:p-0 md:pt-[2px]">
@@ -412,7 +403,6 @@ export default function Navigation({
               .filter((tab) => tab.href !== "/")
               .map((tab) => (
                 <Link
-                  scroll={false}
                   href={tab.href}
                   className="frame-inner group"
                   key={tab.label}

@@ -269,7 +269,6 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                   mode="popLayout"
                   onExitComplete={() => {
                     document.body.style.overflow = "";
-                    document.body.style.pointerEvents = "";
                   }}
                 >
                   {isOpen && (
@@ -317,6 +316,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                             <motion.button
                               onClick={(e) => {
                                 e.preventDefault();
+                                handleOpenChange(false, client);
                                 if (projectSlug) {
                                   router.push(
                                     `/work/${clientSlug}`,
