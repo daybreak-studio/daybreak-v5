@@ -46,7 +46,7 @@ const Navigation = memo(function Navigation({
   const containerWidth = `${visibleThumbnails.length * 28}px`; // 20px for thumb + 8px for spacing
 
   return (
-    <div className="h-8 md:block">
+    <div className="hidden h-8 md:block">
       {total > 1 && mediaArray && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -118,6 +118,27 @@ const Navigation = memo(function Navigation({
     </div>
   );
 });
+
+// Add this helper component for the dots
+const PreviewDots = ({
+  total,
+  current,
+}: {
+  total: number;
+  current: number;
+}) => (
+  <div className="flex justify-center space-x-2 pt-4 md:hidden">
+    {Array.from({ length: total }).map((_, i) => (
+      <div
+        key={i}
+        className={cn(
+          "h-2 w-2 rounded-full transition-colors duration-200",
+          i === current ? "bg-neutral-400" : "bg-neutral-500/20",
+        )}
+      />
+    ))}
+  </div>
+);
 
 // Separate the ProjectInfo into its own component to defer its render
 const ProjectInfo = memo(function ProjectInfo({
@@ -346,6 +367,9 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
               </AnimatePresence>
             </div>
           </motion.div>
+          {mediaArray.length > 1 && (
+            <PreviewDots total={mediaArray.length} current={currentIndex} />
+          )}
         </div>
       </motion.div>
 

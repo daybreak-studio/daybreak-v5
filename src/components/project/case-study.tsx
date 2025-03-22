@@ -510,7 +510,7 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
 
         <motion.div
           {...STAGGER_ANIMATION}
-          className="mb-8 space-y-4 py-64 text-center"
+          className="mb-8 space-y-4 py-24 text-center md:py-48 xl:py-64"
         >
           <motion.h1 {...FADE_UP_ANIMATION} className="text-4xl xl:text-5xl">
             {project.heading}
