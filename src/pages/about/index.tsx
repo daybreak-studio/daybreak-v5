@@ -290,6 +290,7 @@ function PersonInfo({
   const [diceNumber, setDiceNumber] = useState<number | null>(null);
   const [isRolling, setIsRolling] = useState(false);
   const previousIndicesRef = useRef<number[]>([]);
+  const previousDiceNumberRef = useRef<number | null>(null);
 
   // Initialize shuffled pairs when person changes
   useEffect(() => {
@@ -330,6 +331,17 @@ function PersonInfo({
     [],
   );
 
+  // Get a random dice number that's different from the previous one
+  const getUniqueRandomDiceNumber = useCallback(() => {
+    const availableNumbers = [1, 2, 3, 4, 5, 6].filter(
+      (n) => n !== previousDiceNumberRef.current,
+    );
+    const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+    const newNumber = availableNumbers[randomIndex];
+    previousDiceNumberRef.current = newNumber;
+    return newNumber;
+  }, []);
+
   const handleShuffle = useCallback(() => {
     if (!person?.qaPairs) return;
 
@@ -339,7 +351,7 @@ function PersonInfo({
       clearTimeout(rollTimeoutRef.current);
 
       // Show new number and shuffle immediately
-      const newNumber = Math.floor(Math.random() * 6) + 1;
+      const newNumber = getUniqueRandomDiceNumber();
       setDiceNumber(newNumber);
 
       // Get unique random indices and create new shuffled array
@@ -361,7 +373,8 @@ function PersonInfo({
     rollTimeoutRef.current = setTimeout(() => {
       setIsRolling(false);
       // Show random dice number
-      setDiceNumber(Math.floor(Math.random() * 6) + 1);
+      const newNumber = getUniqueRandomDiceNumber();
+      setDiceNumber(newNumber);
 
       // Shuffle QA pairs after the dice number reveal animation
       setTimeout(() => {
@@ -372,7 +385,12 @@ function PersonInfo({
         setIsShaking(true);
       }, 200);
     }, 1000);
-  }, [person?.qaPairs, isRolling, getUniqueRandomIndices]);
+  }, [
+    person?.qaPairs,
+    isRolling,
+    getUniqueRandomIndices,
+    getUniqueRandomDiceNumber,
+  ]);
 
   // Add ref for timeout
   const rollTimeoutRef = useRef<NodeJS.Timeout>();
