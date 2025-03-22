@@ -17,6 +17,7 @@ import Footer from "@/components/footer";
 import Lenis from "lenis";
 import { useEffect } from "react";
 import CTAWidget from "@/components/widgets/variants/cta";
+import BlurReveal from "@/components/animations/blur";
 const servicesWidgets: WidgetRegistry = {
   quotes: QuotesWidget,
   stages: StagesWidget,
@@ -40,19 +41,19 @@ export default function Services({ servicesData }: { servicesData: Services }) {
   return (
     <main className="relative flex flex-col items-center justify-center space-y-48 pt-48 lg:space-y-52">
       <section className="flex h-full w-full flex-col items-center justify-center space-y-2 lg:space-y-8">
-        <motion.h1
-          initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{
-            delay: 0.3,
-            duration: 1,
-            ease: EASINGS.easeOutQuart,
-          }}
+        <BlurReveal
+          // initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+          // animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          // transition={{
+          //   delay: 0.3,
+          //   duration: 1,
+          //   ease: EASINGS.easeOutQuart,
+          // }}
           className="w-9/12 text-center text-3xl font-[450] text-neutral-700/25 md:max-w-[36ch] lg:text-4xl"
         >
           We shape ambitious brands & digital products at every stage of
           evolution
-        </motion.h1>
+        </BlurReveal>
         <div className="w-full overflow-hidden pt-8">
           <WidgetDataProvider
             data={{ widgets: servicesData.widgets as Widget[] }}

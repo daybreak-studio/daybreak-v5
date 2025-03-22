@@ -31,6 +31,7 @@ import WorksGrid from "@/components/works-grid";
 import Image from "next/image";
 import Footer from "@/components/footer";
 import Lenis from "lenis";
+import BlurReveal from "@/components/animations/blur";
 
 // Define modal variants
 const MODAL_VARIANTS = {
@@ -134,30 +135,18 @@ export default function WorkPage({ data }: { data: Clients[] }) {
   return (
     <main className="relative flex flex-col items-center justify-center space-y-48 p-4 pt-48 lg:space-y-52">
       <section className="flex h-full w-full flex-col items-center justify-center space-y-1">
-        <motion.h1
-          initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{
-            delay: 0.3,
-            duration: 1,
-            ease: EASINGS.easeOutQuart,
-          }}
-          className="w-8/12 text-center text-3xl font-[450] text-neutral-700/25 lg:text-3xl 2xl:text-4xl"
+        <BlurReveal
+          // initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+          // animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          // transition={{
+          //   delay: 0.3,
+          //   duration: 1,
+          //   ease: EASINGS.easeOutQuart,
+          // }}
+          className="w-8/12 max-w-[20ch] text-center text-3xl font-[450] text-neutral-700/25 lg:text-3xl 2xl:text-4xl"
         >
-          Design that feels right.
-        </motion.h1>
-        <motion.h1
-          initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{
-            delay: 0.4,
-            duration: 1,
-            ease: EASINGS.easeOutQuart,
-          }}
-          className="w-8/12 text-center text-3xl font-[450] text-neutral-700/25 lg:text-3xl 2xl:text-4xl"
-        >
-          Tech that works well.
-        </motion.h1>
+          Design that feels right. Tech that works well.
+        </BlurReveal>
 
         <WorksGrid data={data}>
           {(client, index) => {

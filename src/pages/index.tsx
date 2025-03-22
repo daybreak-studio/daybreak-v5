@@ -21,6 +21,7 @@ import RiveWidget from "@/components/widgets/variants/rive";
 import { EASINGS } from "@/components/animations/easings";
 import ScrollDrawer from "@/components/scroll-drawer";
 import Lenis from "lenis";
+import BlurReveal from "@/components/animations/blur";
 
 // Register widgets specific to the home page
 const homeWidgets: WidgetRegistry = {
@@ -75,18 +76,18 @@ export default function Home({
       <main className="relative">
         <motion.div className="fixed inset-0">
           <div className="flex h-full flex-col items-center justify-center space-y-6 lg:space-y-8">
-            <motion.h1
-              initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              transition={{
-                delay: 0.3,
-                duration: 1,
-                ease: EASINGS.easeOutQuart,
-              }}
+            <BlurReveal
+              // initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+              // animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              // transition={{
+              //   delay: 0.3,
+              //   duration: 1,
+              //   ease: EASINGS.easeOutQuart,
+              // }}
               className="max-w-[16ch] text-center text-3xl font-[450] text-neutral-700/25 lg:text-3xl 2xl:text-4xl"
             >
               A technology first design studio.
-            </motion.h1>
+            </BlurReveal>
             <WidgetDataProvider
               data={{
                 widgets: homeData.widgets as Widget[],
