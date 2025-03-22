@@ -200,6 +200,7 @@ function ServiceContent({
             <MediaRenderer
               className="frame-inner"
               fill
+              autoPlay
               media={
                 categories[activeCategory]?.[activeTabIndex]?.media?.[0] ?? null
               }

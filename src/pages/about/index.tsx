@@ -10,13 +10,6 @@ import { About } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
 import CareersPill from "@/components/job/careers-pill";
-import ScrollDrawer from "@/components/scroll-drawer";
-import Lenis from "lenis";
-import Footer from "@/components/footer";
-import { PortableText, PortableTextProps } from "@portabletext/react";
-import Reveal from "@/components/animations/reveal";
-import CarouselComponent from "@/components/carousel";
-import { MediaItem } from "@/sanity/lib/media";
 
 // Constants
 const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
@@ -41,7 +34,7 @@ const CarouselSlide = ({
 }) => (
   <motion.div
     key={person._key}
-    className="relative flex h-full w-full flex-[0_0_75%] items-center justify-center mix-blend-multiply xl:flex-[0_0_25%]"
+    className="relative flex h-full w-full items-center justify-center mix-blend-multiply"
     initial={{ scale: 0.8, filter: "blur(12px)", opacity: 0 }}
     animate={{
       scale: selectedIndex === index ? 1 : 0.9,
@@ -210,7 +203,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
       <div className="main-gradient absolute inset-0">
         <div ref={emblaRef} className="h-full overflow-hidden">
           <motion.div
-            className="flex h-full items-center mix-blend-multiply"
+            className="grid h-full auto-cols-[75%] grid-flow-col items-center gap-4 mix-blend-multiply md:auto-cols-[50%] lg:auto-cols-[33%] xl:auto-cols-[25%]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4 }}
