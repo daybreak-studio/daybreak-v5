@@ -29,7 +29,7 @@ const Article = memo(({ article }: { article: ArticleType }) => {
   return (
     <Link href={article.link || ""} target="_blank">
       <div className="transform-gpu">
-        <HoverCard className="mb-4 flex origin-center flex-col p-1">
+        <HoverCard className="flex origin-center flex-col p-1">
           {/* Media Container */}
           <div className="w-full">
             {article.media?.[0] && (
