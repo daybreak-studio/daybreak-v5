@@ -1,7 +1,16 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import useEmblaCarousel from "embla-carousel-react";
-import { ExpandIcon } from "lucide-react";
+import {
+  ExpandIcon,
+  Dices,
+  Dice1,
+  Dice2,
+  Dice3,
+  Dice4,
+  Dice5,
+  Dice6,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { GetStaticProps } from "next";
 import { client } from "@/sanity/lib/client";
@@ -104,6 +113,7 @@ const NavigationDots = ({
 // Main component
 export default function AboutPage({ aboutData }: { aboutData: About }) {
   // const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
+  console.log(aboutData.team);
 
   const startIndex = 0;
 
@@ -123,6 +133,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const [isRolling, setIsRolling] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -273,8 +284,117 @@ function PersonInfo({
   team?: About["team"];
   onSlideClick: (index: number) => void;
 }) {
-  // Move hooks to the top level, before any conditional returns
   const isAnimating = useRef(false);
+  const [shuffledQAPairs, setShuffledQAPairs] = useState<QAPair[]>([]);
+  const [isShaking, setIsShaking] = useState(false);
+  const [diceNumber, setDiceNumber] = useState<number | null>(null);
+  const [isRolling, setIsRolling] = useState(false);
+  const previousIndicesRef = useRef<number[]>([]);
+
+  // Initialize shuffled pairs when person changes
+  useEffect(() => {
+    if (person?.qaPairs) {
+      setShuffledQAPairs([...person.qaPairs]);
+      previousIndicesRef.current = [0, 1]; // Reset previous indices when person changes
+    }
+  }, [person]);
+
+  const getUniqueRandomIndices = useCallback(
+    (array: NonNullable<TeamMember["qaPairs"]>, count: number) => {
+      const currentIndices = previousIndicesRef.current;
+      const availableIndices = Array.from(
+        { length: array.length },
+        (_, i) => i,
+      ).filter((i) => !currentIndices.includes(i));
+
+      // If we've used all indices, allow reusing any except the current ones
+      if (availableIndices.length < count) {
+        const oldIndices = currentIndices.slice();
+        availableIndices.push(
+          ...Array.from({ length: array.length }, (_, i) => i).filter(
+            (i) => !oldIndices.includes(i),
+          ),
+        );
+      }
+
+      const result: number[] = [];
+      while (result.length < count && availableIndices.length > 0) {
+        const randomIndex = Math.floor(Math.random() * availableIndices.length);
+        result.push(availableIndices[randomIndex]);
+        availableIndices.splice(randomIndex, 1);
+      }
+
+      previousIndicesRef.current = result;
+      return result;
+    },
+    [],
+  );
+
+  const handleShuffle = useCallback(() => {
+    if (!person?.qaPairs) return;
+
+    // If any animation is in progress (rolling, showing number, or shaking), handle as spam
+    if (isRolling || diceNumber || isShaking) {
+      // Clear any existing timeouts
+      clearTimeout(rollTimeoutRef.current);
+
+      // Show new number and shuffle immediately
+      const newNumber = Math.floor(Math.random() * 6) + 1;
+      setDiceNumber(newNumber);
+
+      // Get unique random indices and create new shuffled array
+      const qaPairs = person.qaPairs as NonNullable<TeamMember["qaPairs"]>;
+      const newIndices = getUniqueRandomIndices(qaPairs, 2);
+      const newQAPairs = newIndices.map((i) => qaPairs[i]);
+      setShuffledQAPairs(newQAPairs);
+      setIsShaking(true);
+
+      // Stop any rolling animation
+      setIsRolling(false);
+      return;
+    }
+
+    // Normal flow - start the rolling animation
+    setIsRolling(true);
+
+    // Store the timeout reference so we can clear it if needed
+    rollTimeoutRef.current = setTimeout(() => {
+      setIsRolling(false);
+      // Show random dice number
+      setDiceNumber(Math.floor(Math.random() * 6) + 1);
+
+      // Shuffle QA pairs after the dice number reveal animation
+      setTimeout(() => {
+        const qaPairs = person.qaPairs as NonNullable<TeamMember["qaPairs"]>;
+        const newIndices = getUniqueRandomIndices(qaPairs, 2);
+        const newQAPairs = newIndices.map((i) => qaPairs[i]);
+        setShuffledQAPairs(newQAPairs);
+        setIsShaking(true);
+      }, 200);
+    }, 1000);
+  }, [person?.qaPairs, isRolling, getUniqueRandomIndices]);
+
+  // Add ref for timeout
+  const rollTimeoutRef = useRef<NodeJS.Timeout>();
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (rollTimeoutRef.current) {
+        clearTimeout(rollTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Reset dice number after animation
+  useEffect(() => {
+    if (diceNumber) {
+      const timer = setTimeout(() => {
+        setDiceNumber(null);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [diceNumber]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -326,7 +446,15 @@ function PersonInfo({
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isExpanded, isPreview, onToggle, person, team, onSlideClick]);
+  }, [
+    isExpanded,
+    isPreview,
+    onToggle,
+    person,
+    team,
+    onSlideClick,
+    handleShuffle,
+  ]);
 
   // Early return after hooks
   if (!person) return null;
@@ -343,16 +471,23 @@ function PersonInfo({
           opacity: 1,
           y: 0,
           scale: isPreview ? 1.03 : 1,
+          rotate: isShaking ? [0, -2, 2, -1, 1, 0] : 0,
+          x: isShaking ? [0, -5, 5, -3, 3, 0] : 0,
         }}
+        onAnimationComplete={() => setIsShaking(false)}
         transition={{
           duration: 0.6,
           ease: EASINGS.easeOutQuart,
-        }}
-        onAnimationStart={() => {
-          isAnimating.current = true;
-        }}
-        onAnimationComplete={() => {
-          isAnimating.current = false;
+          rotate: {
+            duration: 0.4,
+            ease: "easeInOut",
+            times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+          },
+          x: {
+            duration: 0.4,
+            ease: "easeInOut",
+            times: [0, 0.2, 0.4, 0.6, 0.8, 1],
+          },
         }}
       >
         <motion.div
@@ -502,27 +637,126 @@ function PersonInfo({
                   >
                     {person.bio}
                   </motion.p>
-                  <div className="flex items-start gap-1 self-stretch">
-                    {person.qaPairs?.map((qaPair: QAPair, index: number) => (
-                      <motion.div
-                        key={qaPair._key || index}
-                        initial={{ opacity: 0, filter: "blur(4px)" }}
-                        animate={{ opacity: 1, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, filter: "blur(4px)" }}
-                        transition={{
-                          duration: 0.4,
-                          ease: EASINGS.easeOutQuart,
-                        }}
-                        className="flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-neutral-200 bg-neutral-400/5 p-4 text-center"
-                      >
-                        <div className="pb-1 text-sm text-neutral-500">
-                          {qaPair.question}
-                        </div>
-                        <div className="text-md text-neutral-400">
-                          {qaPair.answer}
-                        </div>
-                      </motion.div>
-                    ))}
+                  <div className="flex flex-col space-y-4">
+                    <div className="relative flex items-start gap-1 self-stretch">
+                      {shuffledQAPairs
+                        .slice(0, 2)
+                        .map((qaPair: QAPair, index: number) => (
+                          <motion.div
+                            key={qaPair._key || index}
+                            initial={{
+                              opacity: 0,
+                              filter: "blur(4px)",
+                              rotate: -5,
+                              x: -10,
+                            }}
+                            animate={{
+                              opacity: 1,
+                              filter: "blur(0px)",
+                              rotate: 0,
+                              x: 0,
+                            }}
+                            exit={{
+                              opacity: 0,
+                              filter: "blur(4px)",
+                              rotate: 5,
+                              x: 10,
+                            }}
+                            transition={{
+                              duration: 0.4,
+                              ease: EASINGS.easeOutQuart,
+                              rotate: {
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 20,
+                              },
+                              x: {
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 20,
+                              },
+                            }}
+                            className="relative flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-neutral-200 bg-neutral-400/5 p-4 text-center"
+                          >
+                            <div className="line-clamp-2 w-full overflow-hidden text-ellipsis break-words pb-1 text-sm text-neutral-500">
+                              {qaPair.question}
+                            </div>
+                            <div className="text-md line-clamp-3 w-full overflow-hidden text-ellipsis break-words text-neutral-400">
+                              {qaPair.answer}
+                            </div>
+                          </motion.div>
+                        ))}
+                      <div className="absolute bottom-0 left-0 right-0 z-10 -mb-3 flex justify-center">
+                        <motion.button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleShuffle();
+                          }}
+                          className="rounded-full border-2 border-neutral-200 bg-neutral-50 p-2 text-neutral-500 hover:bg-white"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <AnimatePresence mode="wait">
+                            {diceNumber ? (
+                              <motion.div
+                                key="dice-number"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                {diceNumber === 1 && (
+                                  <Dice1 className="h-4 w-4" />
+                                )}
+                                {diceNumber === 2 && (
+                                  <Dice2 className="h-4 w-4" />
+                                )}
+                                {diceNumber === 3 && (
+                                  <Dice3 className="h-4 w-4" />
+                                )}
+                                {diceNumber === 4 && (
+                                  <Dice4 className="h-4 w-4" />
+                                )}
+                                {diceNumber === 5 && (
+                                  <Dice5 className="h-4 w-4" />
+                                )}
+                                {diceNumber === 6 && (
+                                  <Dice6 className="h-4 w-4" />
+                                )}
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="dices"
+                                initial={{ opacity: 1, scale: 1 }}
+                                animate={
+                                  isRolling
+                                    ? {
+                                        scale: [
+                                          1, 1.1, 0.9, 1.1, 0.9, 1.1, 0.9, 1,
+                                        ],
+                                        rotate: [
+                                          0, 15, -15, 25, -25, 35, -25, 0,
+                                        ],
+                                        y: [0, -2, 2, -2, 2, -2, 2, 0],
+                                        transition: {
+                                          duration: 1,
+                                          ease: "easeOut",
+                                          times: [
+                                            0, 0.2, 0.4, 0.6, 0.7, 0.8, 0.9, 1,
+                                          ],
+                                        },
+                                      }
+                                    : { scale: 1, rotate: 0, y: 0 }
+                                }
+                                exit={{ opacity: 0, scale: 0.8 }}
+                              >
+                                <Dices className="h-4 w-4" />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </motion.button>
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               )}
