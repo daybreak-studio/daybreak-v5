@@ -25,15 +25,12 @@
     --destructive-foreground: 210 40% 98%;
     --ring: 215 20.2% 65.1%;
     --radius: 0.5rem;
-    /* Gradients */
     --main-gradient: linear-gradient(
       0deg,
-      rgba(240, 240, 220, 1) 0%,
-      rgba(249, 221, 213, 1) 25%,
-      rgba(236, 236, 240, 1) 75%
+      rgb(245, 245, 225) 0%,
+      rgb(245, 235, 235) 50%,
+      rgb(240, 240, 250) 100%
     );
-    --gradient-animation-duration: 10s;
-    --gradient-pause-position: -16.666%;
   }
 
   .dark {
