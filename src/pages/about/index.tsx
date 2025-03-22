@@ -678,10 +678,10 @@ function PersonInfo({
                             }}
                             className="relative flex aspect-square h-full w-full flex-col items-center justify-center rounded-2xl border-[1px] border-neutral-200 bg-neutral-400/5 p-4 text-center"
                           >
-                            <div className="line-clamp-2 w-full overflow-hidden text-ellipsis break-words pb-1 text-sm text-neutral-500">
+                            <div className="line-clamp-3 w-full overflow-hidden text-ellipsis break-words pb-1 text-sm text-neutral-500">
                               {qaPair.question}
                             </div>
-                            <div className="text-md line-clamp-3 w-full overflow-hidden text-ellipsis break-words text-neutral-400">
+                            <div className="line-clamp-4 w-full overflow-hidden text-ellipsis break-words text-sm text-neutral-400">
                               {qaPair.answer}
                             </div>
                           </motion.div>
