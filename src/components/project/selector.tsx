@@ -28,8 +28,8 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
     <div className="space-y-4 p-4">
       <motion.div
         transition={{
-          duration: 1.2,
-          ease: EASINGS.easeOutExpo,
+          duration: 0.8,
+          ease: EASINGS.easeOutQuart,
         }}
         className="flex w-full items-center justify-center p-4 text-center"
       >
@@ -41,8 +41,8 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
             visible: {
               opacity: 1,
               transition: {
-                staggerChildren: 0.15,
-                delayChildren: 0.3,
+                staggerChildren: 0.12,
+                delayChildren: 0.15,
               },
             },
           }}
@@ -56,7 +56,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                 filter: "blur(0px)",
                 y: 0,
                 transition: {
-                  duration: 0.6,
+                  duration: 0.8,
                   ease: EASINGS.easeOutQuart,
                 },
               },
@@ -73,7 +73,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                 filter: "blur(0px)",
                 y: 0,
                 transition: {
-                  duration: 0.6,
+                  duration: 0.8,
                   ease: EASINGS.easeOutQuart,
                 },
               },
@@ -98,18 +98,18 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
               initial={{ opacity: 0, filter: "blur(10px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
               transition={{
-                duration: 1,
+                duration: 0.8,
                 ease: EASINGS.easeOutQuart,
-                delay: 0.4 + index * 0.15,
+                delay: 0.2 + index * 0.12,
               }}
               onClick={(e) => handleProjectClick(e, project.category!)}
               className="cursor-pointer overflow-hidden"
             >
-              <div className="frame-inner flex items-center justify-center overflow-hidden border border-neutral-400/10 bg-neutral-300/10 p-2 md:flex-col md:items-start md:p-1">
+              <div className="frame-inner relative z-0 flex items-center justify-center overflow-hidden border border-neutral-400/10 bg-neutral-300/10 p-2 md:flex-col md:items-start md:p-1">
                 <motion.div
                   {...IMAGE_ANIMATION}
                   layoutId={getMediaAssetId(mediaAsset) || undefined}
-                  className="frame-inner relative aspect-square w-20 overflow-hidden md:w-full"
+                  className="frame-inner relative z-10 aspect-square w-20 overflow-hidden md:w-full"
                 >
                   <MediaRenderer
                     fill
@@ -119,7 +119,7 @@ export default function ProjectSelector({ data }: ProjectSelectorProps) {
                     className="h-full w-full object-cover"
                   />
                 </motion.div>
-                <div className="flex w-full p-2 pl-4 md:flex-col md:p-4">
+                <div className="relative z-10 flex w-full p-2 pl-4 md:flex-col md:p-4">
                   <div className="flex w-full items-center justify-between md:justify-start md:space-x-1 md:pb-2">
                     <h3 className="text-md capitalize text-neutral-500 md:text-xl md:font-medium">
                       {project.category}

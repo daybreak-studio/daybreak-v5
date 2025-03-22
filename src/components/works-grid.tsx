@@ -88,10 +88,18 @@ interface RowProps {
   rowIndex: number;
   totalRows: number;
   isDesktop: boolean;
+  isAnimating: boolean;
   children: (client: Clients, index: number) => React.ReactNode;
 }
 
-function GridRow({ row, rowIndex, totalRows, isDesktop, children }: RowProps) {
+function GridRow({
+  row,
+  rowIndex,
+  totalRows,
+  isDesktop,
+  isAnimating,
+  children,
+}: RowProps) {
   const isFirstRow = rowIndex === 0;
   const isLastRow = rowIndex === totalRows - 1;
   const isHeroRow =
@@ -131,6 +139,8 @@ function GridRow({ row, rowIndex, totalRows, isDesktop, children }: RowProps) {
                   ? WIDTHS.desktop.hero.middle
                   : WIDTHS.desktop.hero.side
                 : WIDTHS.desktop.standard),
+            // Disable pointer events during animation
+            isAnimating && "pointer-events-none",
           )}
         >
           {children(client, rowIndex)}
@@ -143,6 +153,7 @@ function GridRow({ row, rowIndex, totalRows, isDesktop, children }: RowProps) {
 const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isLayoutReady, setIsLayoutReady] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(true);
 
   useIsomorphicLayoutEffect(() => {
     setIsLayoutReady(true);
@@ -173,6 +184,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
             key={isDesktop ? "desktop" : "mobile"}
             initial="hidden"
             animate="visible"
+            onAnimationComplete={() => setIsAnimating(false)}
             variants={CONTAINER_ANIMATION}
             className="flex flex-col gap-4"
           >
@@ -183,6 +195,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
                 rowIndex={rowIndex}
                 totalRows={rows.length}
                 isDesktop={isDesktop}
+                isAnimating={isAnimating}
               >
                 {children}
               </GridRow>
