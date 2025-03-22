@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { EASINGS } from "./easings";
 
-const transition = { duration: 1.5, ease: EASINGS.easeOutQuart };
+const transition = { duration: 1, ease: EASINGS.easeOutQuart };
 const variants = {
   hidden: { filter: "blur(20px)", transform: "translateY(20%)", opacity: 0 },
   visible: { filter: "blur(0)", transform: "translateY(0)", opacity: 1 },
@@ -26,7 +26,7 @@ export default function BlurReveal({
     <motion.div
       initial="hidden"
       whileInView="visible"
-      transition={{ staggerChildren: 0.06 }}
+      transition={{ staggerChildren: 0.04 }}
       className={className}
     >
       {typeof content === "string" ? (

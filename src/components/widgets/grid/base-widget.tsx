@@ -47,17 +47,17 @@ export function BaseWidget({
 
   const span = getSpanSize(size);
 
-  const MIN_DELAY = 0.2;
-  const MAX_DELAY = 0.5;
+  const MIN_DELAY = 0.3;
+  const MAX_DELAY = 0;
   const randomDelay = MIN_DELAY + Math.random() * (MAX_DELAY - MIN_DELAY);
 
   return (
     <motion.div
       initial={{
         opacity: 0,
-        y: 20,
+        // y: -24,
         scale: 0.9,
-        filter: "blur(10px)",
+        filter: "blur(16px)",
       }}
       animate={{
         opacity: 1,
@@ -66,7 +66,7 @@ export function BaseWidget({
         filter: "blur(0px)",
       }}
       transition={{
-        duration: 1,
+        duration: 1.5,
         delay: randomDelay,
         ease: EASINGS.easeOutQuart,
       }}
