@@ -12,7 +12,7 @@ interface JobSelectorProps {
 
 export default function JobSelector({ jobs, onJobClick }: JobSelectorProps) {
   return (
-    <div className="hide-scrollbar h-fit max-h-[65vh] overflow-y-auto px-8 py-6">
+    <div className="hide-scrollbar px-6 py-6 md:px-8">
       <motion.div
         transition={{
           duration: 1.2,

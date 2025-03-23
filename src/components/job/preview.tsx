@@ -128,7 +128,7 @@ export default function JobPreview({ job }: JobPreviewProps) {
     <div className="relative">
       <div
         ref={scrollContainerRef}
-        className="hide-scrollbar h-[65vh] overflow-y-auto p-10 md:p-12"
+        className="hide-scrollbar max-h-[calc(80vh-120px)] min-h-0 overflow-y-auto p-6 md:p-8"
       >
         {/* Top Gradient Scrim */}
         <div className="frame-inner pointer-events-none absolute left-0 right-0 top-0 h-[150px] bg-gradient-to-b from-white via-white/50 to-transparent" />

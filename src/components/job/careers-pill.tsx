@@ -54,8 +54,8 @@ const CONTENT_ANIMATION = {
 };
 // Define modal variant similar to projects
 const MODAL_VARIANT = {
-  selector: "w-[90vw] max-w-[550px] md:max-h-[80vh] overflow-hidden",
-  preview: "w-[90vw] max-w-[700px] md:max-h-[80vh] overflow-hidden",
+  selector: "w-[90vw] max-w-[550px] overflow-hidden",
+  preview: "w-[90vw] max-w-[700px] overflow-hidden",
 };
 
 export default function CareersPill({ jobs }: CareersPillProps) {
@@ -128,8 +128,8 @@ export default function CareersPill({ jobs }: CareersPillProps) {
                 variants={CONTAINER_ANIMATION}
                 layoutId="container"
                 className={cn(
-                  "fixed inset-0 z-50 m-auto h-fit w-fit",
-                  "frame-outer overflow-hidden border-[1px] border-neutral-200/50",
+                  "fixed inset-0 z-50 m-auto flex items-center justify-center",
+                  "frame-outer h-fit w-fit overflow-hidden border-[1px] border-neutral-200/50",
                   selectedJob ? MODAL_VARIANT.preview : MODAL_VARIANT.selector,
                 )}
                 style={{ transformOrigin: "top center" }}
@@ -139,7 +139,7 @@ export default function CareersPill({ jobs }: CareersPillProps) {
                   exit="exit"
                   variants={CONTENT_ANIMATION}
                   layoutId="content"
-                  className="frame-inner relative h-full w-full origin-top bg-white/60"
+                  className="frame-inner relative h-fit w-full origin-top bg-white/60"
                 >
                   {selectedJob ? (
                     <JobPreview key="preview" job={selectedJob} />
