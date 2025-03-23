@@ -46,13 +46,9 @@ const CarouselSlide = ({
     initial={{ scale: 0.8, opacity: 0 }}
     animate={{
       scale: selectedIndex === index ? 1 : 0.9,
-      opacity: 1,
+      opacity: selectedIndex === index ? 1 : 0.65,
     }}
-    transition={{
-      duration: 0.6,
-      ease: EASINGS.easeOutQuart,
-      delay: 0.3 + index * 0.2,
-    }}
+    transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
     onClick={onClick}
     style={{ cursor: "ew-resize" }}
   >
@@ -712,7 +708,7 @@ function PersonInfo({
                             e.stopPropagation();
                             handleShuffle();
                           }}
-                          className="rounded-full border-2 border-neutral-200 bg-neutral-50 p-2 text-neutral-500 hover:bg-white"
+                          className="rounded-full border-2 border-neutral-200 bg-neutral-50 p-2 text-neutral-500 hover:bg-white focus-visible:outline-none focus-visible:ring-0"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
