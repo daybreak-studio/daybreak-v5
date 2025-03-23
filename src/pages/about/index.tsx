@@ -153,9 +153,11 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     if (!emblaApi) return;
 
     const onSelect = () => {
-      requestAnimationFrame(() => {
-        setSelectedIndex(emblaApi.selectedScrollSnap());
-      });
+      const newIndex = emblaApi.selectedScrollSnap();
+      // Only update if the index actually changed
+      if (newIndex !== selectedIndex) {
+        setSelectedIndex(newIndex);
+      }
     };
 
     emblaApi.on("select", onSelect);
@@ -163,7 +165,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     return () => {
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi]);
+  }, [emblaApi, selectedIndex]);
 
   // Add keyboard navigation
   useEffect(() => {
@@ -193,8 +195,8 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   const handleSlideClick = useCallback(
     (index: number) => {
       setPreviewIndex(null);
+      // Let the onSelect handler update selectedIndex
       emblaApi?.scrollTo(index);
-      setSelectedIndex(index);
     },
     [emblaApi],
   );
