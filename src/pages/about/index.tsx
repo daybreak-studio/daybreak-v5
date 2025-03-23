@@ -33,13 +33,11 @@ const CarouselSlide = ({
   person,
   index,
   selectedIndex,
-  isLoaded,
   onClick,
 }: {
   person: TeamMember;
   index: number;
   selectedIndex: number;
-  isLoaded: boolean;
   onClick: () => void;
 }) => (
   <motion.div
@@ -48,11 +46,12 @@ const CarouselSlide = ({
     initial={{ scale: 0.8, opacity: 0 }}
     animate={{
       scale: selectedIndex === index ? 1 : 0.9,
-      opacity: isLoaded ? 1 : 0,
+      opacity: 1,
     }}
     transition={{
       duration: 0.6,
       ease: EASINGS.easeOutQuart,
+      delay: 0.3 + index * 0.2,
     }}
     onClick={onClick}
     style={{ cursor: "ew-resize" }}
@@ -146,7 +145,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   // State
   const [selectedIndex, setSelectedIndex] = useState(startIndex);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const [isRolling, setIsRolling] = useState(false);
 
@@ -154,7 +152,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   useEffect(() => {
     if (!emblaApi) return;
 
-    const timeoutId = setTimeout(() => setIsLoaded(true), 100);
     const onSelect = () => {
       requestAnimationFrame(() => {
         setSelectedIndex(emblaApi.selectedScrollSnap());
@@ -164,7 +161,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     emblaApi.on("select", onSelect);
 
     return () => {
-      clearTimeout(timeoutId);
       emblaApi.off("select", onSelect);
     };
   }, [emblaApi]);
@@ -230,7 +226,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
                   person={person}
                   index={i}
                   selectedIndex={selectedIndex}
-                  isLoaded={isLoaded}
                   onClick={() => handleSlideClick(i)}
                 />
               ))}
