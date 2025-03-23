@@ -43,12 +43,11 @@ const CarouselSlide = ({
 }) => (
   <motion.div
     key={person._key}
-    className="relative flex h-full w-full items-center justify-center mix-blend-multiply"
-    initial={{ scale: 0.8, filter: "blur(12px)", opacity: 0 }}
+    className="relative flex h-full w-full items-center justify-center"
+    initial={{ scale: 0.8, opacity: 0 }}
     animate={{
       scale: selectedIndex === index ? 1 : 0.9,
-      filter: selectedIndex === index ? "blur(0px)" : "blur(8px)",
-      opacity: isLoaded ? (selectedIndex === index ? 1 : 0.65) : 0,
+      opacity: isLoaded ? 1 : 0,
     }}
     transition={{
       duration: 0.6,
@@ -58,12 +57,23 @@ const CarouselSlide = ({
     style={{ cursor: "pointer" }}
   >
     {person.media?.[0] && (
-      <div className="absolute inset-0 flex items-center justify-center mix-blend-multiply">
+      <div className="absolute inset-0 flex items-center justify-center">
         <MediaRenderer
-          className="h-full w-full object-contain mix-blend-multiply"
+          className="h-full w-full object-contain mix-blend-darken"
           media={person.media[0]}
           autoPlay={true}
           disableThumbnails
+        />
+        <motion.div
+          className="absolute inset-0"
+          animate={{
+            backdropFilter: selectedIndex === index ? "blur(0px)" : "blur(8px)",
+            opacity: selectedIndex === index ? 0 : 0.4,
+          }}
+          transition={{
+            duration: 0.6,
+            ease: EASINGS.easeOutQuart,
+          }}
         />
       </div>
     )}

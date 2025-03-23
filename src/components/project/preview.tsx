@@ -95,7 +95,8 @@ const Navigation = memo(function Navigation({
                     <MediaRenderer
                       media={media}
                       className="h-5 w-5 rounded-md"
-                      priority={true}
+                      loading="lazy"
+                      priority={false}
                     />
                   </motion.button>
                 );
@@ -332,7 +333,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
           <motion.div
             {...IMAGE_ANIMATION}
             layoutId={assetId || ""}
-            className="frame-inner relative aspect-square h-full w-full touch-pan-y overflow-hidden"
+            className="frame-inner relative aspect-square h-full w-full touch-pan-y overflow-hidden focus:outline-none"
             onClick={handleNext}
             whileTap={{ scale: 0.97 }}
             drag="x"
@@ -359,8 +360,8 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
                     fill
                     media={mediaArray[currentIndex]}
                     autoPlay={true}
-                    priority={true}
-                    loading="eager"
+                    priority={currentIndex === 0}
+                    loading={currentIndex === 0 ? "eager" : "lazy"}
                     className="pointer-events-none"
                   />
                 </motion.div>
