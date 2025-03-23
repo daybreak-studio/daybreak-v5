@@ -18,6 +18,9 @@ import Lenis from "lenis";
 import { useEffect } from "react";
 import CTAWidget from "@/components/widgets/variants/cta";
 import BlurReveal from "@/components/animations/blur";
+import { urlFor } from "@/sanity/lib/image";
+import Metadata from "@/components/metadata";
+
 const servicesWidgets: WidgetRegistry = {
   quotes: QuotesWidget,
   stages: StagesWidget,
@@ -39,81 +42,78 @@ export default function Services({ servicesData }: { servicesData: Services }) {
   }, []);
 
   return (
-    <main className="relative flex flex-col items-center justify-center space-y-48 pt-48 lg:space-y-52">
-      <section className="flex h-full w-full flex-col items-center justify-center space-y-2 lg:space-y-8">
-        <BlurReveal
-          // initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
-          // animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          // transition={{
-          //   delay: 0.3,
-          //   duration: 1,
-          //   ease: EASINGS.easeOutQuart,
-          // }}
-          className="w-9/12 text-center text-3xl font-[450] text-neutral-700/25 md:max-w-[36ch] lg:text-4xl"
+    <>
+      <Metadata
+        title="Services | Daybreak Studio"
+        description="We shape ambitious brands & digital products at every stage of evolution"
+      />
+      <main className="relative flex flex-col items-center justify-center space-y-48 pt-48 lg:space-y-52">
+        <section className="flex h-full w-full flex-col items-center justify-center space-y-2 lg:space-y-8">
+          <BlurReveal className="w-9/12 text-center text-3xl font-[450] text-neutral-700/25 md:max-w-[36ch] lg:text-4xl">
+            We shape ambitious brands & digital products at every stage of
+            evolution
+          </BlurReveal>
+          <div className="w-full overflow-hidden pt-8">
+            <WidgetDataProvider
+              data={{ widgets: servicesData.widgets as Widget[] }}
+            >
+              <WidgetGrid components={servicesWidgets} />
+            </WidgetDataProvider>
+          </div>
+        </section>
+
+        {servicesData.categories && (
+          <ServicesCarousel categories={servicesData.categories} />
+        )}
+
+        <motion.section
+          initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+          transition={{
+            delay: 0.4,
+            duration: 1,
+            ease: EASINGS.easeOutQuart,
+          }}
+          className="flex flex-col items-center justify-center space-y-6 pb-24 text-center"
         >
-          We shape ambitious brands & digital products at every stage of
-          evolution
-        </BlurReveal>
-        <div className="w-full overflow-hidden pt-8">
-          <WidgetDataProvider
-            data={{ widgets: servicesData.widgets as Widget[] }}
+          <motion.div className="flex w-8/12 flex-col items-center justify-center">
+            <motion.h2
+              transition={{
+                delay: 0.3,
+                duration: 1,
+                ease: EASINGS.easeOutQuart,
+              }}
+              className="mb-4 w-fit text-lg text-neutral-700/40 md:text-lg lg:text-2xl"
+            >
+              Inquiries
+            </motion.h2>
+            <motion.h1
+              initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{
+                delay: 0.3,
+                duration: 1,
+                ease: EASINGS.easeOutQuart,
+              }}
+              className="w-fit text-2xl font-[450] text-neutral-700/40 md:text-3xl 2xl:w-2/3 2xl:text-4xl"
+            >
+              We&apos;re looking for people excited by the possibilities of
+              technology, constantly exploring new means of expression and
+              highly detailed in their practice.
+            </motion.h1>
+          </motion.div>
+          <motion.button
+            whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
+            whileTap={{ scale: 0.95, transition: { duration: 0.3 } }}
+            className="border-1 rounded-full border-neutral-500/50 bg-neutral-100/75 px-5 py-3 font-medium text-neutral-700/50 shadow-lg shadow-neutral-500/5"
           >
-            <WidgetGrid components={servicesWidgets} />
-          </WidgetDataProvider>
-        </div>
-      </section>
+            <Link href="/contact">Get in Touch</Link>
+          </motion.button>
+        </motion.section>
 
-      {servicesData.categories && (
-        <ServicesCarousel categories={servicesData.categories} />
-      )}
-
-      <motion.section
-        initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
-        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-        transition={{
-          delay: 0.4,
-          duration: 1,
-          ease: EASINGS.easeOutQuart,
-        }}
-        className="flex flex-col items-center justify-center space-y-6 pb-24 text-center"
-      >
-        <motion.div className="flex w-8/12 flex-col items-center justify-center">
-          <motion.h2
-            transition={{
-              delay: 0.3,
-              duration: 1,
-              ease: EASINGS.easeOutQuart,
-            }}
-            className="mb-4 w-fit text-lg text-neutral-700/40 md:text-lg lg:text-2xl"
-          >
-            Inquiries
-          </motion.h2>
-          <motion.h1
-            initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{
-              delay: 0.3,
-              duration: 1,
-              ease: EASINGS.easeOutQuart,
-            }}
-            className="w-fit text-2xl font-[450] text-neutral-700/40 md:text-3xl 2xl:w-2/3 2xl:text-4xl"
-          >
-            We&apos;re looking for people excited by the possibilities of
-            technology, constantly exploring new means of expression and highly
-            detailed in their practice.
-          </motion.h1>
-        </motion.div>
-        <motion.button
-          whileHover={{ scale: 1.05, transition: { duration: 0.3 } }}
-          whileTap={{ scale: 0.95, transition: { duration: 0.3 } }}
-          className="border-1 rounded-full border-neutral-500/50 bg-neutral-100/75 px-5 py-3 font-medium text-neutral-700/50 shadow-lg shadow-neutral-500/5"
-        >
-          <Link href="/contact">Get in Touch</Link>
-        </motion.button>
-      </motion.section>
-
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </>
   );
 }
 

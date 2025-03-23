@@ -1,8 +1,3 @@
-export const metadata = {
-  title: "Daybreak Studio",
-  description: "A technology first design studio",
-};
-
 export default function RootLayout({
   children,
 }: {

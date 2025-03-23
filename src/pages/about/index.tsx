@@ -19,6 +19,8 @@ import { About } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
 import CareersPill from "@/components/job/careers-pill";
+import { urlFor } from "@/sanity/lib/image";
+import Metadata from "@/components/metadata";
 
 // Constants
 const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
@@ -221,58 +223,68 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   //   },
   // };
 
+  const ogImage = aboutData.media?.[0]?.source
+    ? urlFor(aboutData.media[0].source).toString()
+    : "/og-image.png";
+
   return (
-    <motion.div className="fixed inset-0">
-      <CareersPill jobs={aboutData.jobs} />
-      {/* Carousel */}
-      <div className="main-gradient absolute inset-0">
-        <div ref={emblaRef} className="h-full overflow-hidden">
-          <motion.div
-            className="grid h-full auto-cols-[75%] grid-flow-col items-center gap-4 mix-blend-multiply md:auto-cols-[50%] lg:auto-cols-[33%] xl:auto-cols-[25%]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.1,
-              ease: EASINGS.easeOutQuart,
-            }}
-          >
-            {aboutData.team?.map((person, i) => (
-              <CarouselSlide
-                key={person._key}
-                person={person}
-                index={i}
-                selectedIndex={selectedIndex}
-                isLoaded={isLoaded}
-                onClick={() => handleSlideClick(i)}
-              />
-            ))}
-          </motion.div>
-        </div>
-      </div>
-
-      {/* Info Card */}
-      <PersonInfo
-        person={aboutData.team?.[previewIndex ?? selectedIndex] || undefined}
-        isExpanded={isExpanded}
-        onToggle={() => setIsExpanded(!isExpanded)}
-        isPreview={previewIndex !== null}
-        team={aboutData.team}
-        onSlideClick={handleSlideClick}
+    <>
+      <Metadata
+        title="About Us | Daybreak Studio"
+        description={"Meet the team at Daybreak Studio"}
       />
+      <motion.div className="fixed inset-0">
+        <CareersPill jobs={aboutData.jobs} />
+        {/* Carousel */}
+        <div className="main-gradient absolute inset-0">
+          <div ref={emblaRef} className="h-full overflow-hidden">
+            <motion.div
+              className="grid h-full auto-cols-[75%] grid-flow-col items-center gap-4 mix-blend-multiply md:auto-cols-[50%] lg:auto-cols-[33%] xl:auto-cols-[25%]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{
+                duration: 0.8,
+                delay: 0.1,
+                ease: EASINGS.easeOutQuart,
+              }}
+            >
+              {aboutData.team?.map((person, i) => (
+                <CarouselSlide
+                  key={person._key}
+                  person={person}
+                  index={i}
+                  selectedIndex={selectedIndex}
+                  isLoaded={isLoaded}
+                  onClick={() => handleSlideClick(i)}
+                />
+              ))}
+            </motion.div>
+          </div>
+        </div>
 
-      {/* Navigation Dots */}
-      {!isExpanded && (
-        <NavigationDots
+        {/* Info Card */}
+        <PersonInfo
+          person={aboutData.team?.[previewIndex ?? selectedIndex] || undefined}
+          isExpanded={isExpanded}
+          onToggle={() => setIsExpanded(!isExpanded)}
+          isPreview={previewIndex !== null}
           team={aboutData.team}
-          selectedIndex={selectedIndex}
-          previewIndex={previewIndex}
-          onDotClick={handleSlideClick}
-          onHoverStart={setPreviewIndex}
-          onHoverEnd={() => setPreviewIndex(null)}
+          onSlideClick={handleSlideClick}
         />
-      )}
-    </motion.div>
+
+        {/* Navigation Dots */}
+        {!isExpanded && (
+          <NavigationDots
+            team={aboutData.team}
+            selectedIndex={selectedIndex}
+            previewIndex={previewIndex}
+            onDotClick={handleSlideClick}
+            onHoverStart={setPreviewIndex}
+            onHoverEnd={() => setPreviewIndex(null)}
+          />
+        )}
+      </motion.div>
+    </>
   );
 }
 

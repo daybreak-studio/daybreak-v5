@@ -22,6 +22,8 @@ import { EASINGS } from "@/components/animations/easings";
 import ScrollDrawer from "@/components/scroll-drawer";
 import Lenis from "lenis";
 import BlurReveal from "@/components/animations/blur";
+import { urlFor } from "@/sanity/lib/image";
+import Metadata from "@/components/metadata";
 
 // Register widgets specific to the home page
 const homeWidgets: WidgetRegistry = {
@@ -70,9 +72,16 @@ export default function Home({
     },
   };
 
+  const ogImage = homeData.media?.[0]?.source
+    ? urlFor(homeData.media[0].source).toString()
+    : "/og-default.jpg";
+
   return (
     <>
-      {/* <GradientBackground /> */}
+      <Metadata
+        title="Daybreak Studio"
+        description={"A technology first design studio"}
+      />
       <main className="relative">
         <motion.div className="fixed inset-0">
           <div className="flex h-full flex-col items-center justify-center space-y-6 lg:space-y-8">

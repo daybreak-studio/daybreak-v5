@@ -12,6 +12,7 @@ import {
 } from "@/components/form/utils/animations";
 import { usePersistedForm } from "@/components/form/utils/storage";
 import { EASINGS } from "@/components/animations/easings";
+import Metadata from "@/components/metadata";
 
 interface FormStep {
   id: string;
@@ -84,65 +85,71 @@ export default function ContactPage() {
   }
 
   return (
-    <FormProvider {...form}>
-      <motion.div
-        className="fixed inset-0"
-        initial="hidden"
-        animate="visible"
-        variants={FORM_ANIMATION}
-      >
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="absolute inset-0 flex items-center justify-center"
+    <>
+      <Metadata
+        title="Contact Us | Daybreak Studio"
+        description="We love playing with the possibilities of tech, and we're here to explore them with you."
+      />
+      <FormProvider {...form}>
+        <motion.div
+          className="fixed inset-0"
+          initial="hidden"
+          animate="visible"
+          variants={FORM_ANIMATION}
         >
-          <AnimatePresence initial={false}>
-            {formSteps.map((step: FormStep, index: number) => (
-              <motion.div
-                key={step.id}
-                initial={{
-                  opacity: 0,
-                  rotate: getRotation(index, currentStep),
-                  scale: getScale(index, currentStep),
-                  y: getY(index, currentStep),
-                  filter: `blur(${getCardVisibility(index, currentStep).blur}px)`,
-                }}
-                animate={{
-                  opacity: getCardVisibility(index, currentStep).opacity,
-                  rotate: getRotation(index, currentStep),
-                  scale: getScale(index, currentStep),
-                  y: getY(index, currentStep),
-                  filter: `blur(${getCardVisibility(index, currentStep).blur}px)`,
-                }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.95,
-                  filter: "blur(10px)",
-                  transition: {
-                    duration: 0.6,
-                    ease: EASINGS.easeOutQuart,
-                  },
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 20,
-                  mass: 1,
-                  velocity: 0.5,
-                  opacity: { duration: 0.6 },
-                  filter: { duration: 0.6 },
-                }}
-                style={{
-                  position: "absolute",
-                  pointerEvents: currentStep === index ? "auto" : "none",
-                  zIndex: index,
-                }}
-              >
-                {step.content}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </form>
-      </motion.div>
-    </FormProvider>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="absolute inset-0 flex items-center justify-center"
+          >
+            <AnimatePresence initial={false}>
+              {formSteps.map((step: FormStep, index: number) => (
+                <motion.div
+                  key={step.id}
+                  initial={{
+                    opacity: 0,
+                    rotate: getRotation(index, currentStep),
+                    scale: getScale(index, currentStep),
+                    y: getY(index, currentStep),
+                    filter: `blur(${getCardVisibility(index, currentStep).blur}px)`,
+                  }}
+                  animate={{
+                    opacity: getCardVisibility(index, currentStep).opacity,
+                    rotate: getRotation(index, currentStep),
+                    scale: getScale(index, currentStep),
+                    y: getY(index, currentStep),
+                    filter: `blur(${getCardVisibility(index, currentStep).blur}px)`,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    scale: 0.95,
+                    filter: "blur(10px)",
+                    transition: {
+                      duration: 0.6,
+                      ease: EASINGS.easeOutQuart,
+                    },
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 20,
+                    mass: 1,
+                    velocity: 0.5,
+                    opacity: { duration: 0.6 },
+                    filter: { duration: 0.6 },
+                  }}
+                  style={{
+                    position: "absolute",
+                    pointerEvents: currentStep === index ? "auto" : "none",
+                    zIndex: index,
+                  }}
+                >
+                  {step.content}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </form>
+        </motion.div>
+      </FormProvider>
+    </>
   );
 }
