@@ -19,7 +19,6 @@ import { About } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
 import CareersPill from "@/components/job/careers-pill";
-import { urlFor } from "@/sanity/lib/image";
 import Metadata from "@/components/metadata";
 
 // Constants
@@ -203,29 +202,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
     },
     [emblaApi],
   );
-
-  // Handles text rendering for the CMS text.
-  // We are applying reveal animation and controlling font size.
-  // const components: PortableTextProps["components"] = {
-  //   block: {
-  //     normal: ({ children, index }) => (
-  //       <div>
-  //         <p className="mb-8 text-2xl text-neutral-400 md:text-3xl xl:text-4xl xl:leading-tight 3xl:text-5xl 3xl:leading-[3.25rem]">
-  //           {children}
-  //         </p>
-  //       </div>
-  //     ),
-  //   },
-  //   types: {
-  //     carousel: ({ value }: { value: { media: MediaItem[] } }) => {
-  //       return <CarouselComponent media={value.media} />;
-  //     },
-  //   },
-  // };
-
-  const ogImage = aboutData.media?.[0]?.source
-    ? urlFor(aboutData.media[0].source).toString()
-    : "/og-image.png";
 
   return (
     <>
