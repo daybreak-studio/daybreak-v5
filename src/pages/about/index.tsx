@@ -539,8 +539,7 @@ function PersonInfo({
             }}
             className={cn(
               "relative flex w-screen max-w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden bg-white/30 p-6 backdrop-blur-2xl md:max-w-[400px]",
-              !isExpanded &&
-                "focus-visible:ring-2 focus-visible:ring-neutral-500 [&:focus:not(:focus-visible)]:outline-none",
+              "focus:outline-none focus-visible:outline-none",
             )}
             animate={{
               borderRadius: isExpanded ? 28 : 20,
