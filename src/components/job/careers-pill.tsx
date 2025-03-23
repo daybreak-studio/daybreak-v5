@@ -80,28 +80,30 @@ export default function CareersPill({ jobs }: CareersPillProps) {
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <div className="flex w-full items-center justify-center">
         <Dialog.Trigger asChild>
-          <motion.div
+          <motion.button
             layoutId="container"
-            className="ackdrop-blur-md pointer-events-auto fixed top-20 z-50 overflow-hidden"
+            className="fixed top-20 z-50 cursor-pointer overflow-hidden"
             initial="hidden"
             animate="visible"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             variants={CONTAINER_ANIMATION}
+            style={{ pointerEvents: "auto" }}
           >
             <motion.div
               layoutId="content"
-              className="frame-inner relative h-full w-full origin-top bg-white/60"
+              className="frame-inner relative flex h-full w-full origin-top items-center space-x-2 bg-white/60 px-5 py-3 text-sm text-neutral-500"
               initial="hidden"
               animate="visible"
               variants={CONTENT_ANIMATION}
+              style={{ pointerEvents: "none" }}
             >
-              <div className="flex items-center space-x-2 px-5 py-3 text-sm text-neutral-500">
-                <span>Careers</span>
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-500/5 text-xs">
-                  {jobs.length}
-                </span>
-              </div>
+              <span>Careers</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-neutral-500/5 text-xs">
+                {jobs.length}
+              </span>
             </motion.div>
-          </motion.div>
+          </motion.button>
         </Dialog.Trigger>
       </div>
 

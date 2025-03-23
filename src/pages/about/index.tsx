@@ -54,7 +54,7 @@ const CarouselSlide = ({
       ease: EASINGS.easeOutQuart,
     }}
     onClick={onClick}
-    style={{ cursor: "pointer" }}
+    style={{ cursor: "ew-resize" }}
   >
     {person.media?.[0] && (
       <motion.div
