@@ -3,7 +3,7 @@ import { TeamWidgetTypes } from "@/components/widgets/grid/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { About } from "@/sanity/types";
+import { Team } from "@/sanity/types";
 
 interface TeamProps {
   data: TeamWidgetTypes;
@@ -11,7 +11,7 @@ interface TeamProps {
 
 export default function TeamWidget({ data }: TeamProps) {
   const [currentMemberIndex, setCurrentMemberIndex] = useState(0);
-  const teamData = data.about?.team;
+  const teamData = data.team?.team;
 
   // Randomize initial index when component mounts
   useEffect(() => {

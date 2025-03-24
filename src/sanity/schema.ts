@@ -5,7 +5,8 @@ import { clients, preview, caseStudy } from "./schemas/clients";
 import { services } from "./schemas/services";
 import { settings } from "./schemas/settings";
 import { about } from "./schemas/about";
+import { team } from "./schemas/team";
 
 export const schema: { types: SchemaTypeDefinition[] } = {
-  types: [home, clients, preview, caseStudy, services, settings, about],
+  types: [home, clients, preview, caseStudy, services, settings, about, team],
 };

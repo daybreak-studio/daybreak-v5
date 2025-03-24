@@ -68,6 +68,104 @@ export type Geopoint = {
   alt?: number;
 };
 
+export type Team = {
+  _id: string;
+  _type: "team";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  introduction?: string;
+  media?: Array<
+    | {
+        source?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+        alt?: string;
+        _type: "imageItem";
+        _key: string;
+      }
+    | {
+        source?: MuxVideo;
+        width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+        alt?: string;
+        _type: "videoItem";
+        _key: string;
+      }
+  >;
+  team?: Array<{
+    name?: string;
+    role?: string;
+    media?: Array<
+      | {
+          source?: {
+            asset?: {
+              _ref: string;
+              _type: "reference";
+              _weak?: boolean;
+              [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+            };
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
+          };
+          width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+          alt?: string;
+          _type: "imageItem";
+          _key: string;
+        }
+      | {
+          source?: MuxVideo;
+          width?: "1/4" | "1/3" | "1/2" | "2/3" | "3/4" | "1/1";
+          alt?: string;
+          _type: "videoItem";
+          _key: string;
+        }
+    >;
+    bio?: string;
+    qaPairs?: Array<{
+      question?: string;
+      answer?: string;
+      _key: string;
+    }>;
+    _key: string;
+  }>;
+  jobs?: Array<{
+    role?: string;
+    commitment?: string;
+    location?: string;
+    compensation?: string;
+    body?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "normal" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "blockquote";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    link?: string;
+    _key: string;
+  }>;
+};
+
 export type About = {
   _id: string;
   _type: "about";
@@ -286,11 +384,6 @@ export type Services = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
-        about?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-        };
         _type: "team";
         _key: string;
       }
@@ -582,20 +675,6 @@ export type Home = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
-        about?: {
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-        };
-        _type: "team";
-        _key: string;
-      }
-    | {
-        position?: {
-          row?: number;
-          column?: number;
-        };
-        size?: "1x1" | "2x2" | "3x3";
         tweet?: string;
         author?: string;
         link?: string;
@@ -674,6 +753,31 @@ export type Home = {
         size?: "1x1" | "2x2" | "3x3";
         src?: string;
         _type: "rive";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        _type: "team";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        clients?: Array<{
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+          _key: string;
+          [internalGroqTypeReferenceTo]?: "clients";
+        }>;
+        _type: "recents";
         _key: string;
       }
     | {
@@ -1001,6 +1105,7 @@ export type AllSanitySchemaTypes =
   | SanityImageDimensions
   | SanityFileAsset
   | Geopoint
+  | Team
   | About
   | Settings
   | Services
@@ -1169,7 +1274,7 @@ export type CLIENTS_QUERYResult = Array<{
   > | null;
 }>;
 // Variable: HOME_QUERY
-// Query: *[_type == "home"][!(_id in path('drafts.**'))][0] {    ...,    media[] {        ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }    },    widgets[] {      ...,      media[] {          ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }      }    },    newsfeed[] {      ...,      media[] {          ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }      }    }  }
+// Query: *[_type == "home"][!(_id in path('drafts.**'))][0] {    ...,    media[] {        ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }    },    widgets[] {      ...,      media[] {          ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }      },      about-> {        ...,        team[] {          ...,          media[] {              ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }          }        }      }    },    newsfeed[] {      ...,      media[] {          ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }      }    }  }
 export type HOME_QUERYResult = {
   _id: string;
   _type: "home";
@@ -1188,6 +1293,7 @@ export type HOME_QUERYResult = {
         _type: "cta";
         _key: string;
         media: null;
+        about: null;
       }
     | {
         position?: {
@@ -1243,6 +1349,7 @@ export type HOME_QUERYResult = {
         > | null;
         _type: "media";
         _key: string;
+        about: null;
       }
     | {
         position?: {
@@ -1261,6 +1368,7 @@ export type HOME_QUERYResult = {
         _type: "project";
         _key: string;
         media: null;
+        about: null;
       }
     | {
         position?: {
@@ -1278,6 +1386,7 @@ export type HOME_QUERYResult = {
         _type: "quotes";
         _key: string;
         media: null;
+        about: null;
       }
     | {
         position?: {
@@ -1295,6 +1404,7 @@ export type HOME_QUERYResult = {
         _type: "recents";
         _key: string;
         media: null;
+        about: null;
       }
     | {
         position?: {
@@ -1306,6 +1416,7 @@ export type HOME_QUERYResult = {
         _type: "rive";
         _key: string;
         media: null;
+        about: null;
       }
     | {
         position?: {
@@ -1322,6 +1433,7 @@ export type HOME_QUERYResult = {
         _type: "stages";
         _key: string;
         media: null;
+        about: null;
       }
     | {
         position?: {
@@ -1332,6 +1444,7 @@ export type HOME_QUERYResult = {
         _type: "team";
         _key: string;
         media: null;
+        about: null;
       }
     | {
         position?: {
@@ -1357,6 +1470,7 @@ export type HOME_QUERYResult = {
         }> | null;
         _type: "twitter";
         _key: string;
+        about: null;
       }
   > | null;
   missionStatement?: Array<{
@@ -1993,14 +2107,134 @@ export type ABOUT_QUERYResult = {
     _key: string;
   }>;
 } | null;
+// Variable: TEAM_QUERY
+// Query: *[_type == "team"][!(_id in path('drafts.**'))][0] {    ...,    team[] {      ...,      media[] {          ...,  _type,  source {    ...,    _type,    "asset": {      "_ref": asset._ref,      "_type": asset._type,      ...asset->{        playbackId,        assetId,        status,        metadata {          dimensions,          lqip,          palette,          hasAlpha,          isOpaque,          blurHash        }      }    }  }      }    }  }
+export type TEAM_QUERYResult = {
+  _id: string;
+  _type: "team";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  introduction?: string;
+  media?: Array<
+    | {
+        source?: {
+          asset?: {
+            _ref: string;
+            _type: "reference";
+            _weak?: boolean;
+            [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+          };
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+        alt?: string;
+        _type: "imageItem";
+        _key: string;
+      }
+    | {
+        source?: MuxVideo;
+        width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+        alt?: string;
+        _type: "videoItem";
+        _key: string;
+      }
+  >;
+  team: Array<{
+    name?: string;
+    role?: string;
+    media: Array<
+      | {
+          source: {
+            asset:
+              | {
+                  _ref: string | null;
+                  _type: "reference" | null;
+                  playbackId: null;
+                  assetId: string | null;
+                  status: null;
+                  metadata: {
+                    dimensions: SanityImageDimensions | null;
+                    lqip: string | null;
+                    palette: SanityImagePalette | null;
+                    hasAlpha: boolean | null;
+                    isOpaque: boolean | null;
+                    blurHash: string | null;
+                  } | null;
+                }
+              | {
+                  _ref: string | null;
+                  _type: "reference" | null;
+                };
+            hotspot?: SanityImageHotspot;
+            crop?: SanityImageCrop;
+            _type: "image";
+          } | null;
+          width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+          alt?: string;
+          _type: "imageItem";
+          _key: string;
+        }
+      | {
+          source: {
+            _type: "mux.video";
+            asset: {
+              _ref: string | null;
+              _type: "reference" | null;
+            };
+          } | null;
+          width?: "1/1" | "1/2" | "1/3" | "1/4" | "2/3" | "3/4";
+          alt?: string;
+          _type: "videoItem";
+          _key: string;
+        }
+    > | null;
+    bio?: string;
+    qaPairs?: Array<{
+      question?: string;
+      answer?: string;
+      _key: string;
+    }>;
+    _key: string;
+  }> | null;
+  jobs?: Array<{
+    role?: string;
+    commitment?: string;
+    location?: string;
+    compensation?: string;
+    body?: Array<{
+      children?: Array<{
+        marks?: Array<string>;
+        text?: string;
+        _type: "span";
+        _key: string;
+      }>;
+      style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "normal";
+      listItem?: "bullet" | "number";
+      markDefs?: Array<{
+        href?: string;
+        _type: "link";
+        _key: string;
+      }>;
+      level?: number;
+      _type: "block";
+      _key: string;
+    }>;
+    link?: string;
+    _key: string;
+  }>;
+} | null;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "clients"][!(_id in path(\'drafts.**\'))] {\n    ...,\n    projects[] {\n      ...,\n      _type == "preview" => {\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      _type == "caseStudy" => {\n        mediaGroups[] {\n          ...,\n          heading,\n          caption,\n          media[] {\n            \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n          }\n        }\n      }\n    }\n  }\n': CLIENTS_QUERYResult;
-    '\n  *[_type == "home"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    media[] {\n      \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n    },\n    widgets[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    },\n    newsfeed[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': HOME_QUERYResult;
+    '\n  *[_type == "home"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    media[] {\n      \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n    },\n    widgets[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      },\n      about-> {\n        ...,\n        team[] {\n          ...,\n          media[] {\n            \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n          }\n        }\n      }\n    },\n    newsfeed[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': HOME_QUERYResult;
     '\n  *[_type == "services"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    categories {\n      brand[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      product[] {\n        ...,\n      media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      motion[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      },\n      web[] {\n        ...,\n        media[] {\n          \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n        }\n      }\n    }\n  }\n': SERVICES_QUERYResult;
     '\n  *[_type == "about"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    team[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': ABOUT_QUERYResult;
+    '\n  *[_type == "team"][!(_id in path(\'drafts.**\'))][0] {\n    ...,\n    team[] {\n      ...,\n      media[] {\n        \n  ...,\n  _type,\n  source {\n    ...,\n    _type,\n    "asset": {\n      "_ref": asset._ref,\n      "_type": asset._type,\n      ...asset->{\n        playbackId,\n        assetId,\n        status,\n        metadata {\n          dimensions,\n          lqip,\n          palette,\n          hasAlpha,\n          isOpaque,\n          blurHash\n        }\n      }\n    }\n  }\n\n      }\n    }\n  }\n': TEAM_QUERYResult;
   }
 }

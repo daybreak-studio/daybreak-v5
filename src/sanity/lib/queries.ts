@@ -125,3 +125,15 @@ export const ABOUT_QUERY = groq`
     }
   }
 `;
+
+export const TEAM_QUERY = groq`
+  *[_type == "team"][!(_id in path('drafts.**'))][0] {
+    ...,
+    team[] {
+      ...,
+      media[] {
+        ${MEDIA_PROJECTION}
+      }
+    }
+  }
+`;
