@@ -95,10 +95,10 @@ export default function QuotesWidget({ data }: QuotesProps) {
                 }}
                 className="flex flex-col"
               >
-                <h1 className="text-sm font-medium text-neutral-400">
+                <h1 className="text-sm font-medium text-neutral-400 md:text-base">
                   {testimonials[index]?.author}
                 </h1>
-                <h1 className="text-xs text-neutral-400">
+                <h1 className="text-xs text-neutral-400 md:text-sm">
                   {testimonials[index]?.title}
                 </h1>
               </motion.div>
