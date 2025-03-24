@@ -1,6 +1,6 @@
 import { Clients } from "@/sanity/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useState } from "react";
 import { useIsDesktop, useIsTablet } from "@/lib/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 
@@ -171,7 +171,7 @@ const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [isAnimating, setIsAnimating] = useState(true);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setIsLayoutReady(true);
     return () => setIsLayoutReady(false);
   }, []);

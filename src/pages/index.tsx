@@ -24,6 +24,7 @@ import Lenis from "lenis";
 import BlurReveal from "@/components/animations/blur";
 import { urlFor } from "@/sanity/lib/image";
 import Metadata from "@/components/metadata";
+import TeamWidget from "@/components/widgets/variants/team";
 
 // Register widgets specific to the home page
 const homeWidgets: WidgetRegistry = {
@@ -32,6 +33,7 @@ const homeWidgets: WidgetRegistry = {
   project: ProjectWidget,
   recents: RecentsWidget,
   rive: RiveWidget,
+  team: TeamWidget,
 };
 
 export default function Home({

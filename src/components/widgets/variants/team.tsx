@@ -3,22 +3,25 @@ import { TeamWidgetTypes } from "@/components/widgets/grid/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Team } from "@/sanity/types";
-
+import { About } from "@/sanity/types";
+import { client } from "@/sanity/lib/client";
+import { TEAM_QUERY } from "@/sanity/lib/queries";
+import { motion, AnimatePresence } from "framer-motion";
 interface TeamProps {
   data: TeamWidgetTypes;
 }
 
 export default function TeamWidget({ data }: TeamProps) {
+  const [teamData, setTeamData] = useState<About["team"]>();
   const [currentMemberIndex, setCurrentMemberIndex] = useState(0);
-  const teamData = data.team?.team;
 
-  // Randomize initial index when component mounts
   useEffect(() => {
-    if (teamData?.length) {
-      setCurrentMemberIndex(Math.floor(Math.random() * teamData.length));
-    }
-  }, [teamData]);
+    const fetchTeamData = async () => {
+      const teamData = await client.fetch(TEAM_QUERY);
+      setTeamData(teamData.team);
+    };
+    fetchTeamData();
+  }, []);
 
   // Rotate through team members every 5 seconds
   useEffect(() => {
@@ -26,7 +29,7 @@ export default function TeamWidget({ data }: TeamProps) {
 
     const interval = setInterval(() => {
       setCurrentMemberIndex((prev) => (prev + 1) % teamData.length);
-    }, 5000);
+    }, 3500);
 
     return () => clearInterval(interval);
   }, [teamData]);
@@ -36,40 +39,45 @@ export default function TeamWidget({ data }: TeamProps) {
       case "1x1":
       case "2x2":
         return (
-          <div className="flex h-full w-full flex-col gap-1">
-            <div className="h-full w-full bg-white/60">
-              {teamData?.[currentMemberIndex]?.media?.[0] && (
-                <MediaRenderer
-                  className="h-full w-full object-cover"
-                  media={teamData[currentMemberIndex].media[0]}
-                  autoPlay={true}
-                  disableThumbnails
-                />
-              )}
+          <Link href="/team">
+            <div className="flex h-full w-full flex-col gap-1">
+              <div className="relative h-full w-full bg-white/60">
+                {/* Permanent edge glow */}
+                <div className="absolute inset-0 z-20 rounded-[30px] bg-[radial-gradient(circle_at_50%_50%,rgba(255,245,230,0)_0%,rgba(255,240,235,0)_25%,rgba(250,235,245,0)_50%,rgba(245,240,255,0)_50%,rgba(250,235,245,0.5)_75%,rgba(245,240,255,0.6)_90%,rgba(250,250,255,0.8)_100%)]" />
+                {/* Hover fill glow */}
+                <div className="absolute inset-0 z-20 rounded-[30px] bg-[radial-gradient(circle_at_50%_50%,rgba(255,245,230,0.9)_0%,rgba(255,240,235,0.8)_25%,rgba(250,235,245,0.7)_50%,rgba(245,240,255,0.6)_75%,rgba(250,250,255,0.5)_100%)] opacity-0 mix-blend-overlay transition-opacity duration-500 hover:opacity-100" />
+                <AnimatePresence mode="wait">
+                  {teamData?.[currentMemberIndex]?.media?.[0] && (
+                    <motion.div
+                      key={currentMemberIndex}
+                      initial={{ opacity: 0, filter: "blur(10px)" }}
+                      animate={{ opacity: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, filter: "blur(10px)" }}
+                      transition={{ duration: 0.5 }}
+                      className="relative z-10 h-full w-full"
+                    >
+                      <MediaRenderer
+                        className="[object-position:50%_10% h-full w-full scale-110 object-cover blur-sm"
+                        media={teamData[currentMemberIndex].media[0]}
+                        autoPlay={true}
+                        disableThumbnails
+                      />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+                <motion.div
+                  className="absolute inset-0 z-30 rounded-[30px] bg-white/40 backdrop-blur-md"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.h1 className="absolute bottom-8 left-8 z-[100] w-3/4 text-3xl font-[450] text-neutral-700/60 mix-blend-multiply">
+                    Our Team
+                  </motion.h1>
+                </motion.div>
+              </div>
             </div>
-            {/* <Link href="/contact" className="block h-1/2">
-              <div className="frame-inner relative flex h-full w-full cursor-pointer overflow-hidden bg-pink-500/15 transition-all duration-300 ease-in-out hover:bg-pink-500/30">
-                <div className="absolute left-0 top-0 h-full w-4 bg-pink-600/80" />
-                <div className="flex flex-col gap-1 pl-7 pt-3">
-                  <h1 className="text-2xl font-medium text-pink-700">
-                    Meeting with Daybreak Studio 🖇️
-                  </h1>
-                  <h2 className="text-xl text-pink-700">12 - 1 PM</h2>
-                </div>
-              </div>
-            </Link>
-            <Link href="/contact" className="block h-1/2">
-              <div className="frame-inner relative flex h-full w-full cursor-pointer overflow-hidden bg-sky-500/15 transition-all duration-300 ease-in-out hover:bg-sky-500/30">
-                <div className="absolute left-0 top-0 h-full w-4 bg-sky-600/80" />
-                <div className="flex flex-col gap-1 pl-7 pt-3">
-                  <h1 className="text-2xl font-medium text-sky-700">
-                    Get in Touch 📨
-                  </h1>
-                  <h2 className="text-xl text-sky-700">1 - 2 PM</h2>
-                </div>
-              </div>
-            </Link> */}
-          </div>
+          </Link>
         );
       case "3x3":
         return <div>CTA</div>;

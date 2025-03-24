@@ -149,9 +149,6 @@ const NavigationDots = ({
 
 // Main component
 export default function AboutPage({ aboutData }: { aboutData: About }) {
-  // const startIndex = aboutData.team ? getMiddleIndex(aboutData.team.length) : 0;
-  console.log(aboutData.team);
-
   const startIndex = 0;
 
   // Carousel setup

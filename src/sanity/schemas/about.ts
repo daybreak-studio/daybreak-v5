@@ -3,7 +3,7 @@ import { createMediaArray } from "./media";
 
 export const about = defineType({
   name: "about",
-  title: "About",
+  title: "About (Archived)",
   type: "document",
   fields: [
     defineField({

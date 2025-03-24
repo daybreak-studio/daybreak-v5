@@ -223,7 +223,7 @@ export default function TeamPage({ teamData }: { teamData: Team }) {
   return (
     <>
       <Metadata
-        title="About Us | Daybreak Studio"
+        title="Team | Daybreak Studio"
         description={"Meet the team at Daybreak Studio"}
       />
       <motion.div className="fixed inset-0">

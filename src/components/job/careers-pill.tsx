@@ -110,6 +110,15 @@ export default function CareersPill({ jobs }: CareersPillProps) {
       <AnimatePresence mode="popLayout">
         {isOpen && (
           <Dialog.Portal forceMount>
+            <Dialog.Title className="sr-only">
+              {selectedJob ? "Job Details" : "Available Positions"}
+            </Dialog.Title>
+            <Dialog.Description className="sr-only">
+              {selectedJob
+                ? `Details for ${selectedJob.role} position`
+                : "Browse available job positions"}
+            </Dialog.Description>
+
             <Dialog.Overlay asChild forceMount>
               <motion.div
                 initial={{ opacity: 0 }}

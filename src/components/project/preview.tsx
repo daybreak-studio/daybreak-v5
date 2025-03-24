@@ -321,8 +321,6 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
 
   if (!project) return null;
 
-  console.log(isDesktop);
-
   const assetId = getMediaAssetId(currentMediaAsset);
 
   return (

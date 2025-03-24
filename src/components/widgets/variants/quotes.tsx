@@ -50,7 +50,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
       case "3x3":
         return (
           <div className="frame-inner flex h-full w-full flex-col p-6">
-            <h1 className="text-xs text-neutral-500">
+            <h1 className="text-xs text-neutral-400">
               Please use a supported widget size: 2x2
             </h1>
           </div>
@@ -74,7 +74,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
                   ease: EASINGS.easeInOutQuart,
                 }}
               >
-                <h1 className="text-xs text-neutral-500 md:text-lg">
+                <h1 className="text-xs text-neutral-400 md:text-2xl">
                   {testimonials[index]?.quote}
                 </h1>
               </motion.div>
@@ -95,10 +95,10 @@ export default function QuotesWidget({ data }: QuotesProps) {
                 }}
                 className="flex flex-col"
               >
-                <h1 className="text-sm font-medium text-neutral-500">
+                <h1 className="text-sm font-medium text-neutral-400">
                   {testimonials[index]?.author}
                 </h1>
-                <h1 className="text-xs text-neutral-500">
+                <h1 className="text-xs text-neutral-400">
                   {testimonials[index]?.title}
                 </h1>
               </motion.div>
@@ -106,7 +106,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
 
             <div className="absolute bottom-4 right-4 hidden flex-col gap-2 md:flex">
               <motion.button
-                className="rounded-full bg-neutral-500/5 p-2"
+                className="rounded-full bg-neutral-400/5 p-2"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleNext();
@@ -114,10 +114,10 @@ export default function QuotesWidget({ data }: QuotesProps) {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <ChevronUp className="h-3 w-3 text-neutral-500" />
+                <ChevronUp className="h-3 w-3 text-neutral-400" />
               </motion.button>
               <motion.button
-                className="rounded-full bg-neutral-500/5 p-2"
+                className="rounded-full bg-neutral-400/5 p-2"
                 onClick={(e) => {
                   e.stopPropagation();
                   handlePrev();
@@ -125,7 +125,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <ChevronDown className="h-3 w-3 text-neutral-500" />
+                <ChevronDown className="h-3 w-3 text-neutral-400" />
               </motion.button>
             </div>
           </div>

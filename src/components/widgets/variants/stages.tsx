@@ -13,11 +13,11 @@ const TIER_CONFIG = {
   },
   titleText: {
     mobile: ["text-base", "text-lg", "text-xl", "text-2xl"],
-    desktop: ["xl:text-xl", "xl:text-2xl", "xl:text-3xl", "xl:text-4xl"],
+    desktop: ["xl:text-2xl", "xl:text-2xl", "xl:text-3xl", "xl:text-3xl"],
   },
   descriptionText: {
     mobile: ["text-sm", "text-base", "text-lg", "text-xl"],
-    desktop: ["xl:text-xl", "xl:text-2xl", "xl:text-3xl", "xl:text-4xl"],
+    desktop: ["xl:text-2xl", "xl:text-2xl", "xl:text-3xl", "xl:text-3xl"],
   },
   blur: {
     factor: 0.5,
@@ -131,7 +131,7 @@ export default function StagesWidget({ data }: StagesProps) {
       case "2x2":
         return (
           <div className="frame-inner flex h-full w-full flex-col p-6">
-            <h1 className="text-xs text-neutral-500">
+            <h1 className="text-xs text-neutral-400">
               Please use a supported widget size: 3x3
             </h1>
           </div>
@@ -215,7 +215,7 @@ export default function StagesWidget({ data }: StagesProps) {
                       <motion.h1
                         layoutId={`stage-title-${stageIndex}`}
                         className={clsx(
-                          "font-medium text-neutral-500",
+                          "font-medium text-neutral-400",
                           styles.titleSize,
                         )}
                         initial={{ filter: "blur(8px)", opacity: 0 }}
