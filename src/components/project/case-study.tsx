@@ -1,4 +1,4 @@
-import { motion, animate, easeOut, useInView, PanInfo } from "framer-motion";
+import { motion, animate, useInView } from "framer-motion";
 import { CaseStudy, Clients } from "@/sanity/types";
 import {
   useCallback,
@@ -6,7 +6,6 @@ import {
   useState,
   useRef,
   Fragment,
-  forwardRef,
   memo,
   useMemo,
 } from "react";
@@ -17,10 +16,7 @@ import { cn } from "@/lib/utils";
 import { MediaItem } from "@/sanity/lib/media";
 import { EASINGS } from "@/components/animations/easings";
 import { ChevronDownIcon, ChevronUpIcon, XIcon } from "lucide-react";
-import { getMediaAssetId } from "@/sanity/lib/media";
-import { IMAGE_ANIMATION } from "./animations";
-import { useViewport } from "@/lib/hooks/use-viewport";
-import { useMediaQuery } from "usehooks-ts";
+import { useIsDesktop } from "@/lib/hooks/use-media-query";
 import Lenis from "lenis";
 
 // Types
@@ -101,7 +97,7 @@ const MediaGroup = memo(function MediaGroup({
   onActivate,
 }: MediaGroupProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const { isDesktop } = useViewport();
+  const isDesktop = useIsDesktop();
   const isInView = useInView(ref, {
     amount: "some",
     margin: "-45% 0px -45% 0px",

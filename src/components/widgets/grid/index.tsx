@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import { useViewport } from "@/lib/hooks/use-viewport";
 import { useWidgetData } from "@/components/widgets/grid/context";
 import { useDebug } from "@/lib/contexts/debug";
 import { Widget, WidgetRegistry } from "./types";
 import { motion } from "framer-motion";
 import { EASINGS } from "@/components/animations/easings";
+import { useBreakpoint } from "@/lib/hooks/use-media-query";
 
 const GRID_CONFIG = {
   COLUMNS: 7,
@@ -23,15 +23,14 @@ const GRID_CONFIG = {
 type GridBreakpoint = keyof typeof GRID_CONFIG.CELL_SIZES;
 
 const DebugGridOverlay = () => {
-  const { breakpoint } = useViewport();
-  const gridBreakpoint = breakpoint as GridBreakpoint;
+  const breakpoint = useBreakpoint() as GridBreakpoint;
 
   return (
     <div
       className="absolute inset-4 z-50 grid"
       style={{
-        gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]})`,
-        gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]})`,
+        gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]})`,
+        gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]})`,
         gap: `clamp(6px, 1vw, ${GRID_CONFIG.GAP}px)`,
         pointerEvents: "none",
       }}
@@ -61,9 +60,9 @@ interface WidgetGridProps {
 }
 
 export function WidgetGrid({ components }: WidgetGridProps) {
-  const { breakpoint } = useViewport();
+  const breakpoint = useBreakpoint() as GridBreakpoint;
   const widgets = useWidgetData<Widget[]>("widgets");
-  const gridBreakpoint = breakpoint as GridBreakpoint;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const { debug } = useDebug();
@@ -124,8 +123,8 @@ export function WidgetGrid({ components }: WidgetGridProps) {
           ref={gridRef}
           className="relative grid"
           style={{
-            gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]})`,
-            gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[gridBreakpoint]})`,
+            gridTemplateColumns: `repeat(${GRID_CONFIG.COLUMNS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]})`,
+            gridTemplateRows: `repeat(${GRID_CONFIG.ROWS}, ${GRID_CONFIG.CELL_SIZES[breakpoint]})`,
             gap: `clamp(6px, 1vw, ${GRID_CONFIG.GAP}px)`,
             padding: "clamp(0.5rem, 2vw, 1rem)",
           }}

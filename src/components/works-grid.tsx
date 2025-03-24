@@ -1,7 +1,7 @@
 import { Clients } from "@/sanity/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { useMemo, useState } from "react";
-import { useMediaQuery, useIsomorphicLayoutEffect } from "usehooks-ts";
+import { useLayoutEffect, useMemo, useState } from "react";
+import { useIsDesktop, useIsTablet } from "@/lib/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 
 interface WorksGridProps {
@@ -164,14 +164,14 @@ function GridRow({
 }
 
 const WorksGrid: React.FC<WorksGridProps> = ({ data = [], children }) => {
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
-  const isTablet = useMediaQuery("(min-width: 768px) and (max-width: 1023px)");
+  const isDesktop = useIsDesktop();
+  const isTablet = useIsTablet();
   const viewportSize = isDesktop ? "desktop" : isTablet ? "tablet" : "mobile";
 
   const [isLayoutReady, setIsLayoutReady] = useState(false);
   const [isAnimating, setIsAnimating] = useState(true);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     setIsLayoutReady(true);
     return () => setIsLayoutReady(false);
   }, []);

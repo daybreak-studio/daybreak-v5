@@ -233,11 +233,28 @@ export const cta = {
   preview: createWidgetPreview("CTA"),
 };
 
+export const team = {
+  type: "object",
+  name: "team",
+  title: "Team",
+  fields: createWidgetFields([
+    defineField({
+      name: "about",
+      title: "About",
+      type: "reference",
+      to: [{ type: "about" }],
+      validation: (Rule) => Rule.required(),
+    }),
+  ]),
+  preview: createWidgetPreview("Team"),
+};
+
 export const widgets = [
   twitter,
   media,
   project,
   rive,
+  team,
   recents,
   quotes,
   stages,

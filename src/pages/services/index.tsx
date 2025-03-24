@@ -11,21 +11,21 @@ import QuotesWidget from "@/components/widgets/variants/quotes";
 import StagesWidget from "@/components/widgets/variants/stages";
 import { EASINGS } from "@/components/animations/easings";
 import { motion } from "framer-motion";
-import { services } from "@/sanity/schemas/services";
 import Link from "next/link";
 import Footer from "@/components/footer";
 import Lenis from "lenis";
 import { useEffect } from "react";
 import CTAWidget from "@/components/widgets/variants/cta";
 import BlurReveal from "@/components/animations/blur";
-import { urlFor } from "@/sanity/lib/image";
 import Metadata from "@/components/metadata";
+import TeamWidget from "@/components/widgets/variants/team";
 
 const servicesWidgets: WidgetRegistry = {
   quotes: QuotesWidget,
   stages: StagesWidget,
   media: MediaWidget,
   cta: CTAWidget,
+  team: TeamWidget,
 };
 
 export default function Services({ servicesData }: { servicesData: Services }) {

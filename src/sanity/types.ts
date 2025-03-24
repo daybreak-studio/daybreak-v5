@@ -286,6 +286,20 @@ export type Services = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
+        about?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+        };
+        _type: "team";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
         clients?: Array<{
           _ref: string;
           _type: "reference";
@@ -568,6 +582,20 @@ export type Home = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
+        about?: {
+          _ref: string;
+          _type: "reference";
+          _weak?: boolean;
+        };
+        _type: "team";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
         tweet?: string;
         author?: string;
         link?: string;
@@ -646,22 +674,6 @@ export type Home = {
         size?: "1x1" | "2x2" | "3x3";
         src?: string;
         _type: "rive";
-        _key: string;
-      }
-    | {
-        position?: {
-          row?: number;
-          column?: number;
-        };
-        size?: "1x1" | "2x2" | "3x3";
-        clients?: Array<{
-          _ref: string;
-          _type: "reference";
-          _weak?: boolean;
-          _key: string;
-          [internalGroqTypeReferenceTo]?: "clients";
-        }>;
-        _type: "recents";
         _key: string;
       }
     | {
@@ -1317,6 +1329,16 @@ export type HOME_QUERYResult = {
           column?: number;
         };
         size?: "1x1" | "2x2" | "3x3";
+        _type: "team";
+        _key: string;
+        media: null;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
         tweet?: string;
         author?: string;
         link?: string;
@@ -1601,6 +1623,15 @@ export type SERVICES_QUERYResult = {
           _key: string;
         }>;
         _type: "stages";
+        _key: string;
+      }
+    | {
+        position?: {
+          row?: number;
+          column?: number;
+        };
+        size?: "1x1" | "2x2" | "3x3";
+        _type: "team";
         _key: string;
       }
     | {

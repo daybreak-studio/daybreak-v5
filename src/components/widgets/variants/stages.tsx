@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BaseWidget } from "../grid/base-widget";
 import { StagesWidgetTypes } from "../grid/types";
 import { EASINGS } from "@/components/animations/easings";
-import { useViewport } from "@/lib/hooks/use-viewport";
 import { clsx } from "clsx";
 
 // Tier configuration

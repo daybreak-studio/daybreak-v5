@@ -62,6 +62,15 @@ export const HOME_QUERY = groq`
       ...,
       media[] {
         ${MEDIA_PROJECTION}
+      },
+      about-> {
+        ...,
+        team[] {
+          ...,
+          media[] {
+            ${MEDIA_PROJECTION}
+          }
+        }
       }
     },
     newsfeed[] {

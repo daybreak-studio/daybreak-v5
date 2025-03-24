@@ -20,6 +20,7 @@ import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
 import CareersPill from "@/components/job/careers-pill";
 import Metadata from "@/components/metadata";
+import { useIsHoverEnabled } from "@/lib/hooks/use-media-query";
 
 // Constants
 const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
@@ -39,41 +40,67 @@ const CarouselSlide = ({
   index: number;
   selectedIndex: number;
   onClick: () => void;
-}) => (
-  <motion.div
-    key={person._key}
-    className="relative flex h-full w-full items-center justify-center"
-    initial={{ scale: 0.8, opacity: 0 }}
-    animate={{
-      scale: selectedIndex === index ? 1 : 0.9,
-      opacity: selectedIndex === index ? 1 : 0.65,
-    }}
-    transition={{ duration: 0.6, ease: EASINGS.easeOutQuart }}
-    onClick={onClick}
-    style={{ cursor: "ew-resize" }}
-  >
-    {person.media?.[0] && (
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center"
-        animate={{
-          filter: selectedIndex === index ? "blur(0px)" : "blur(8px)",
-          opacity: selectedIndex === index ? 1 : 0.4,
-        }}
-        transition={{
-          duration: 0.6,
-          ease: EASINGS.easeOutQuart,
-        }}
-      >
-        <MediaRenderer
-          className="h-full w-full object-contain mix-blend-darken"
-          media={person.media[0]}
-          autoPlay={true}
-          disableThumbnails
-        />
-      </motion.div>
-    )}
-  </motion.div>
-);
+}) => {
+  const prefersHover = useIsHoverEnabled();
+  const [isMouseDown, setIsMouseDown] = useState(false);
+
+  // Reset isMouseDown when selectedIndex changes
+  useEffect(() => {
+    setIsMouseDown(false);
+  }, [selectedIndex]);
+
+  return (
+    <motion.div
+      key={person._key}
+      className="relative flex h-full w-full items-center justify-center"
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{
+        scale: selectedIndex === index ? 1 : 0.8,
+        opacity: selectedIndex === index ? 1 : 0.4,
+        filter: selectedIndex === index ? "blur(0px)" : "blur(8px)",
+      }}
+      whileHover={
+        prefersHover
+          ? {
+              scale: selectedIndex === index ? 1 : 0.9,
+              opacity: selectedIndex === index ? 1 : 0.8,
+              filter: "blur(0px)",
+            }
+          : undefined
+      }
+      whileTap={{
+        scale: selectedIndex === index ? 0.98 : 0.85,
+      }}
+      transition={{
+        duration: 0.6,
+        ease: EASINGS.easeOutQuart,
+      }}
+      onClick={onClick}
+      onMouseDown={() => setIsMouseDown(true)}
+      onMouseUp={() => setIsMouseDown(false)}
+      onMouseLeave={() => setIsMouseDown(false)}
+      style={{
+        cursor:
+          selectedIndex === index
+            ? isMouseDown
+              ? "grabbing"
+              : "grab"
+            : "pointer",
+      }}
+    >
+      {person.media?.[0] && (
+        <motion.div className="absolute inset-0 flex items-center justify-center">
+          <MediaRenderer
+            className="h-full w-full object-contain mix-blend-darken"
+            media={person.media[0]}
+            autoPlay={true}
+            disableThumbnails
+          />
+        </motion.div>
+      )}
+    </motion.div>
+  );
+};
 
 // First, let's add the NavigationDots component
 const NavigationDots = ({
@@ -142,7 +169,6 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
   const [selectedIndex, setSelectedIndex] = useState(startIndex);
   const [isExpanded, setIsExpanded] = useState(false);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
-  const [isRolling, setIsRolling] = useState(false);
 
   // Effects
   useEffect(() => {
@@ -214,7 +240,7 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
               animate={{ opacity: 1 }}
               transition={{
                 duration: 0.8,
-                delay: 0.1,
+                delay: 0.2,
                 ease: EASINGS.easeOutQuart,
               }}
             >
@@ -231,11 +257,25 @@ export default function AboutPage({ aboutData }: { aboutData: About }) {
           </div>
         </div>
 
+        {/* Mobile Overlay */}
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 z-40 bg-black/5 backdrop-blur-sm md:hidden"
+              onClick={() => setIsExpanded(false)}
+            />
+          )}
+        </AnimatePresence>
+
         {/* Info Card */}
         <PersonInfo
           person={aboutData.team?.[previewIndex ?? selectedIndex] || undefined}
           isExpanded={isExpanded}
-          onToggle={() => setIsExpanded(!isExpanded)}
+          toggleModal={() => setIsExpanded(!isExpanded)}
           isPreview={previewIndex !== null}
           team={aboutData.team}
           onSlideClick={handleSlideClick}
@@ -271,14 +311,14 @@ export const getStaticProps: GetStaticProps = async () => {
 function PersonInfo({
   person,
   isExpanded,
-  onToggle,
+  toggleModal,
   isPreview,
   team,
   onSlideClick,
 }: {
   person?: TeamMember;
   isExpanded: boolean;
-  onToggle: () => void;
+  toggleModal: () => void;
   isPreview: boolean;
   team?: About["team"];
   onSlideClick: (index: number) => void;
@@ -416,13 +456,12 @@ function PersonInfo({
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const modalElement = document.getElementById("person-info");
-      const isModalFocused = document.activeElement === modalElement;
 
       // Always handle Escape
       if (event.key === "Escape") {
         event.preventDefault();
         if (isExpanded) {
-          onToggle();
+          toggleModal();
           modalElement?.focus();
         }
         return;
@@ -432,7 +471,7 @@ function PersonInfo({
       if (event.key === " " || event.key === "Enter") {
         event.preventDefault();
         if (!isPreview) {
-          onToggle(); // Will toggle open/close
+          toggleModal(); // Will toggle open/close
         }
         return;
       }
@@ -466,7 +505,7 @@ function PersonInfo({
   }, [
     isExpanded,
     isPreview,
-    onToggle,
+    toggleModal,
     person,
     team,
     onSlideClick,
@@ -506,6 +545,12 @@ function PersonInfo({
             times: [0, 0.2, 0.4, 0.6, 0.8, 1],
           },
         }}
+        onClick={(e) => {
+          // Only close if clicking the outer container (not the modal content)
+          if (e.target === e.currentTarget && isExpanded) {
+            toggleModal();
+          }
+        }}
       >
         <motion.div
           layout
@@ -529,9 +574,7 @@ function PersonInfo({
             aria-label={`${person.name}'s information. Press Enter to ${isExpanded ? "close" : "open"}`}
             tabIndex={0}
             onClick={() => {
-              if (!isAnimating.current) {
-                onToggle();
-              }
+              toggleModal();
             }}
             className={cn(
               "relative flex w-screen max-w-[calc(100vw-2rem)] cursor-pointer flex-col items-center justify-between space-y-4 overflow-hidden bg-white/30 p-6 backdrop-blur-2xl md:max-w-[400px]",

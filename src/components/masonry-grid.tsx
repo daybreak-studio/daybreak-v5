@@ -1,7 +1,11 @@
 import type { Home } from "@/sanity/types";
 import Article from "@/components/article";
-import { useViewport } from "@/lib/hooks/use-viewport";
-import { BREAKPOINTS } from "@/lib/hooks/use-viewport";
+import {
+  useIsDesktop,
+  useIsTablet,
+  useIsMobile,
+  BREAKPOINTS,
+} from "@/lib/hooks/use-media-query";
 
 type ArticleType = NonNullable<Home["newsfeed"]>[number];
 
@@ -10,7 +14,9 @@ interface MasonryGridProps {
 }
 
 const MasonryGrid: React.FC<MasonryGridProps> = ({ articles }) => {
-  const { breakpoint } = useViewport();
+  const isDesktop = useIsDesktop();
+  const isTablet = useIsTablet();
+  const isMobile = useIsMobile();
 
   // Sort articles by date
   const sortedArticles = [...articles].sort((a, b) => {
@@ -19,13 +25,10 @@ const MasonryGrid: React.FC<MasonryGridProps> = ({ articles }) => {
     return dateB - dateA;
   });
 
-  // Get column count based on viewport width
+  // Get column count based on viewport size
   const getColumnCount = () => {
-    const width = BREAKPOINTS[breakpoint];
-    if (width >= BREAKPOINTS["3xl"]) return 4; // ≥1920px
-    if (width >= BREAKPOINTS["2xl"]) return 3; // ≥1536px
-    if (width >= BREAKPOINTS.lg) return 2; // ≥1024px
-    if (width >= BREAKPOINTS.md) return 1; // ≥768px
+    if (isDesktop) return 4; // ≥1920px
+    if (isTablet) return 2; // ≥768px
     return 1; // <768px
   };
 

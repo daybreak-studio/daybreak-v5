@@ -8,7 +8,7 @@ import { EASINGS } from "../animations/easings";
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useCallback, memo, useMemo } from "react";
 import { useRouter } from "next/router";
-import { useMediaQuery } from "usehooks-ts";
+import { useIsDesktop } from "@/lib/hooks/use-media-query";
 
 interface ProjectPreviewProps {
   data: Clients;
@@ -245,7 +245,7 @@ export default function ProjectPreview({ data }: ProjectPreviewProps) {
     : [slug, undefined];
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useIsDesktop();
   const [isBlurred, setIsBlurred] = useState(false);
 
   // Move project finding inside a useMemo to avoid recalculations
