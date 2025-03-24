@@ -74,7 +74,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
                   ease: EASINGS.easeInOutQuart,
                 }}
               >
-                <h1 className="text-xs text-neutral-400 md:text-2xl">
+                <h1 className="text-sm text-neutral-400 md:text-2xl">
                   {testimonials[index]?.quote}
                 </h1>
               </motion.div>

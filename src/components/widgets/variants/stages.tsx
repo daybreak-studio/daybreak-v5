@@ -4,6 +4,7 @@ import { BaseWidget } from "../grid/base-widget";
 import { StagesWidgetTypes } from "../grid/types";
 import { EASINGS } from "@/components/animations/easings";
 import { clsx } from "clsx";
+import { useIsTouchDevice } from "@/lib/hooks/use-media-query";
 
 // Tier configuration
 const TIER_CONFIG = {
@@ -98,31 +99,10 @@ export default function StagesWidget({ data }: StagesProps) {
   const stages = [...(data.stages ?? [])].reverse();
   const [index, setIndex] = useState(stages.length - 1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isTouchDevice = useIsTouchDevice();
 
   const handleStageInteraction = (stageIndex: number) => {
     setIndex(stageIndex);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
-    if (!containerRef.current) return;
-
-    const container = containerRef.current;
-    const containerRect = container.getBoundingClientRect();
-    const clientY =
-      "touches" in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
-
-    const relativeY = clientY - containerRect.top;
-    const containerHeight = containerRect.height;
-
-    const stageHeight = containerHeight / stages.length;
-    const activeStageIndex = Math.min(
-      Math.floor(relativeY / stageHeight),
-      stages.length - 1,
-    );
-
-    if (activeStageIndex >= 0 && activeStageIndex < stages.length) {
-      handleStageInteraction(activeStageIndex);
-    }
   };
 
   const renderContent = () => {
@@ -138,12 +118,7 @@ export default function StagesWidget({ data }: StagesProps) {
         );
       case "3x3":
         return (
-          <div
-            ref={containerRef}
-            className="relative h-full w-full touch-none"
-            onTouchMove={(e: React.TouchEvent) => handleTouchMove(e)}
-            onTouchStart={(e: React.TouchEvent) => handleTouchMove(e)}
-          >
+          <div ref={containerRef} className="relative h-full w-full">
             {/* Single morphing background that follows active state */}
             <motion.div
               layoutId="morphing-background"
@@ -175,7 +150,7 @@ export default function StagesWidget({ data }: StagesProps) {
                       "frame-inner absolute inset-0 origin-bottom-left border-[1px] border-dashed border-neutral-300/75",
                       styles.padding,
                       !isActive && styles.background,
-                      "cursor-pointer touch-none",
+                      "cursor-pointer",
                     )}
                     style={{
                       top: offset,
@@ -205,7 +180,11 @@ export default function StagesWidget({ data }: StagesProps) {
                     }}
                     layout
                     layoutId={`stage-container-${stageIndex}`}
-                    onHoverStart={() => handleStageInteraction(stageIndex)}
+                    onHoverStart={() => {
+                      if (!isTouchDevice) {
+                        handleStageInteraction(stageIndex);
+                      }
+                    }}
                     onClick={() => handleStageInteraction(stageIndex)}
                   >
                     <motion.div

@@ -7,6 +7,7 @@ import { About } from "@/sanity/types";
 import { client } from "@/sanity/lib/client";
 import { TEAM_QUERY } from "@/sanity/lib/queries";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 interface TeamProps {
   data: TeamWidgetTypes;
 }
@@ -38,6 +39,7 @@ export default function TeamWidget({ data }: TeamProps) {
     switch (data.size) {
       case "1x1":
       case "2x2":
+      case "3x3":
         return (
           <Link href="/team">
             <div className="flex h-full w-full flex-col gap-1">
@@ -57,7 +59,10 @@ export default function TeamWidget({ data }: TeamProps) {
                       className="relative z-10 h-full w-full"
                     >
                       <MediaRenderer
-                        className="[object-position:50%_10% h-full w-full scale-110 object-cover blur-sm"
+                        className={cn(
+                          `[object-position:50%_10% h-full w-full scale-110 object-cover blur-sm`,
+                          data.size === "1x1" && "blur-none",
+                        )}
                         media={teamData[currentMemberIndex].media[0]}
                         autoPlay={true}
                         disableThumbnails
@@ -71,7 +76,15 @@ export default function TeamWidget({ data }: TeamProps) {
                   whileHover={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <motion.h1 className="absolute bottom-8 left-8 z-[100] w-3/4 text-3xl font-[450] text-neutral-700/60 mix-blend-multiply">
+                  <motion.h1
+                    className={cn(
+                      `absolute z-[100] font-[450] text-neutral-400 mix-blend-multiply`,
+                      data.size === "1x1" &&
+                        "bottom-6 left-6 max-w-[4ch] text-2xl",
+                      data.size === "2x2" && "bottom-8 left-8 text-3xl",
+                      data.size === "3x3" && "bottom-12 left-12 text-4xl",
+                    )}
+                  >
                     Our Team
                   </motion.h1>
                 </motion.div>
@@ -79,8 +92,6 @@ export default function TeamWidget({ data }: TeamProps) {
             </div>
           </Link>
         );
-      case "3x3":
-        return <div>CTA</div>;
     }
   };
 
