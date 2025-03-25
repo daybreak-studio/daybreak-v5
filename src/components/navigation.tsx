@@ -349,8 +349,8 @@ export default function Navigation({
     <>
       <motion.nav
         className={clsx(
-          "pointer-events-auto fixed left-0 right-0 top-0 mx-auto flex w-full justify-center",
-          isOpen ? "z-[120]" : "z-[50]",
+          "pointer-events-auto fixed left-0 right-0 top-0 z-[50] flex w-screen justify-center",
+          isOpen && "z-[120]",
         )}
         initial={{ opacity: 1, filter: "blur(0px)" }}
         animate={{
