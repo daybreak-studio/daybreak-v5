@@ -71,7 +71,7 @@ export default function TeamWidget({ data }: TeamProps) {
                   )}
                 </AnimatePresence>
                 <motion.div
-                  className="absolute inset-0 z-30 rounded-[30px] bg-white/40 backdrop-blur-md"
+                  className="absolute inset-0 z-30 rounded-[30px] bg-white/40 backdrop-blur-sm"
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
