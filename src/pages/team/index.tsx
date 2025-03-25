@@ -150,6 +150,7 @@ const NavigationDots = ({
 // Main component
 export default function TeamPage({ teamData }: { teamData: Team }) {
   const startIndex = 0;
+  const isAnimating = useRef(false);
 
   // Carousel setup
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -173,8 +174,8 @@ export default function TeamPage({ teamData }: { teamData: Team }) {
 
     const onSelect = () => {
       const newIndex = emblaApi.selectedScrollSnap();
-      // Only update if the index actually changed
-      if (newIndex !== selectedIndex) {
+      // Only update if the index actually changed and we're not already animating
+      if (newIndex !== selectedIndex && !isAnimating.current) {
         setSelectedIndex(newIndex);
       }
     };
@@ -186,36 +187,63 @@ export default function TeamPage({ teamData }: { teamData: Team }) {
     };
   }, [emblaApi, selectedIndex]);
 
-  // Add keyboard navigation
+  // Add keyboard navigation with debounce
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!emblaApi) return;
+    if (!emblaApi) return;
 
+    let timeoutId: NodeJS.Timeout;
+    const handleKeyDown = (event: KeyboardEvent) => {
       // Don't handle carousel navigation if modal is expanded
       if (isExpanded) return;
 
-      switch (event.key) {
-        case "ArrowLeft":
-          event.preventDefault();
-          emblaApi.scrollPrev();
-          break;
-        case "ArrowRight":
-          event.preventDefault();
-          emblaApi.scrollNext();
-          break;
+      // Prevent rapid keypresses
+      if (isAnimating.current) return;
+      isAnimating.current = true;
+
+      try {
+        switch (event.key) {
+          case "ArrowLeft":
+            event.preventDefault();
+            emblaApi.scrollPrev();
+            break;
+          case "ArrowRight":
+            event.preventDefault();
+            emblaApi.scrollNext();
+            break;
+        }
+      } finally {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          isAnimating.current = false;
+        }, 100);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      clearTimeout(timeoutId);
+      isAnimating.current = false;
+    };
   }, [emblaApi, isExpanded]);
 
   // Handlers
   const handleSlideClick = useCallback(
     (index: number) => {
-      setPreviewIndex(null);
-      // Let the onSelect handler update selectedIndex
-      emblaApi?.scrollTo(index);
+      // Prevent rapid clicks
+      if (isAnimating.current) return;
+      isAnimating.current = true;
+
+      try {
+        setPreviewIndex(null);
+        // Let the onSelect handler update selectedIndex
+        emblaApi?.scrollTo(index);
+      } finally {
+        // Reset animation flag after a short delay
+        setTimeout(() => {
+          isAnimating.current = false;
+        }, 100);
+      }
     },
     [emblaApi],
   );
@@ -381,38 +409,34 @@ function PersonInfo({
   const handleShuffle = useCallback(() => {
     if (!person?.qaPairs) return;
 
-    // If any animation is in progress (rolling, showing number, or shaking), handle as spam
-    if (isRolling || diceNumber || isShaking) {
-      // Clear any existing timeouts
+    // Clear any existing timeouts first
+    if (rollTimeoutRef.current) {
       clearTimeout(rollTimeoutRef.current);
+    }
 
-      // Show new number and shuffle immediately
+    // If any animation is in progress, handle as immediate update
+    if (isRolling || diceNumber || isShaking) {
       const newNumber = getUniqueRandomDiceNumber();
-      setDiceNumber(newNumber);
-
-      // Get unique random indices and create new shuffled array
       const qaPairs = person.qaPairs as NonNullable<TeamMember["qaPairs"]>;
       const newIndices = getUniqueRandomIndices(qaPairs, 2);
       const newQAPairs = newIndices.map((i) => qaPairs[i]);
+
+      // Batch state updates
+      setDiceNumber(newNumber);
       setShuffledQAPairs(newQAPairs);
       setIsShaking(true);
-
-      // Stop any rolling animation
       setIsRolling(false);
       return;
     }
 
-    // Normal flow - start the rolling animation
+    // Normal flow with proper cleanup
     setIsRolling(true);
 
-    // Store the timeout reference so we can clear it if needed
     rollTimeoutRef.current = setTimeout(() => {
-      setIsRolling(false);
-      // Show random dice number
       const newNumber = getUniqueRandomDiceNumber();
+      setIsRolling(false);
       setDiceNumber(newNumber);
 
-      // Shuffle QA pairs after the dice number reveal animation
       setTimeout(() => {
         const qaPairs = person.qaPairs as NonNullable<TeamMember["qaPairs"]>;
         const newIndices = getUniqueRandomIndices(qaPairs, 2);
@@ -424,6 +448,8 @@ function PersonInfo({
   }, [
     person?.qaPairs,
     isRolling,
+    diceNumber,
+    isShaking,
     getUniqueRandomIndices,
     getUniqueRandomDiceNumber,
   ]);
@@ -452,62 +478,75 @@ function PersonInfo({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      // Prevent handling if modal is not mounted
       const modalElement = document.getElementById("person-info");
+      if (!modalElement) return;
 
-      // Always handle Escape
-      if (event.key === "Escape") {
-        event.preventDefault();
-        if (isExpanded) {
-          toggleModal();
-          modalElement?.focus();
+      // Prevent handling multiple rapid keypresses
+      if (isAnimating.current) return;
+      isAnimating.current = true;
+
+      try {
+        // Always handle Escape
+        if (event.key === "Escape") {
+          event.preventDefault();
+          if (isExpanded) {
+            toggleModal();
+            modalElement.focus();
+          }
+          return;
         }
-        return;
-      }
 
-      // Handle space and enter to toggle regardless of state
-      if (event.key === " " || event.key === "Enter") {
-        event.preventDefault();
-        if (!isPreview) {
-          toggleModal(); // Will toggle open/close
+        // Handle space and enter to toggle regardless of state
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          if (!isPreview) {
+            toggleModal(); // Will toggle open/close
+          }
+          return;
         }
-        return;
-      }
 
-      // Handle arrow keys when expanded
-      if (isExpanded && person) {
-        const currentIndex =
-          team?.findIndex((p) => p._key === person._key) ?? 0;
+        // Handle arrow keys when expanded
+        if (isExpanded && person) {
+          const currentIndex =
+            team?.findIndex((p) => p._key === person._key) ?? 0;
 
-        switch (event.key) {
-          case "ArrowLeft":
-            event.preventDefault();
-            // Go to previous person
-            const prevIndex =
-              currentIndex > 0 ? currentIndex - 1 : (team?.length ?? 0) - 1;
-            onSlideClick(prevIndex);
-            break;
-          case "ArrowRight":
-            event.preventDefault();
-            // Go to next person
-            const nextIndex =
-              currentIndex < (team?.length ?? 0) - 1 ? currentIndex + 1 : 0;
-            onSlideClick(nextIndex);
-            break;
+          switch (event.key) {
+            case "ArrowLeft":
+              event.preventDefault();
+              if (currentIndex > 0 || (team?.length ?? 0) > 1) {
+                const prevIndex =
+                  currentIndex > 0 ? currentIndex - 1 : (team?.length ?? 0) - 1;
+                onSlideClick(prevIndex);
+              }
+              break;
+            case "ArrowRight":
+              event.preventDefault();
+              if (
+                currentIndex < (team?.length ?? 0) - 1 ||
+                (team?.length ?? 0) > 1
+              ) {
+                const nextIndex =
+                  currentIndex < (team?.length ?? 0) - 1 ? currentIndex + 1 : 0;
+                onSlideClick(nextIndex);
+              }
+              break;
+          }
         }
+      } finally {
+        // Reset animation flag after a short delay
+        setTimeout(() => {
+          isAnimating.current = false;
+        }, 100);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    isExpanded,
-    isPreview,
-    toggleModal,
-    person,
-    team,
-    onSlideClick,
-    handleShuffle,
-  ]);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      isAnimating.current = false;
+    };
+  }, [isExpanded, isPreview, toggleModal, person, team, onSlideClick]);
 
   // Early return after hooks
   if (!person) return null;

@@ -87,6 +87,7 @@ const shouldShowCloseButton = (modalType: string) => {
 };
 
 export default function WorkPage({ data }: { data: Clients[] }) {
+  console.log(data);
   const router = useRouter();
   const { slug } = router.query;
   const [clientSlug, projectSlug] = Array.isArray(slug)

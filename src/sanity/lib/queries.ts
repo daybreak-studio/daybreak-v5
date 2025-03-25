@@ -29,7 +29,7 @@ const MEDIA_PROJECTION = `
 
 // Main queries
 export const CLIENTS_QUERY = groq`
-  *[_type == "clients"][!(_id in path('drafts.**'))] {
+  *[_type == "clients"][!(_id in path('drafts.**'))] | order(priority asc) {
     ...,
     projects[] {
       ...,

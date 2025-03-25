@@ -74,10 +74,6 @@ export default function Home({
     },
   };
 
-  const ogImage = homeData.media?.[0]?.source
-    ? urlFor(homeData.media[0].source).toString()
-    : "/og-default.jpg";
-
   return (
     <>
       <Metadata
@@ -95,9 +91,10 @@ export default function Home({
               //   duration: 1,
               //   ease: EASINGS.easeOutQuart,
               // }}
-              className="max-w-[16ch] text-center text-3xl font-[450] text-neutral-700/25 lg:text-3xl 2xl:text-4xl"
+              className="max-w-[16ch] text-center text-3xl font-[450] text-neutral-700/50 lg:text-3xl 2xl:text-4xl"
             >
-              A technology first design studio.
+              A (people-first) design first design studio but also technology
+              only a little bit?
             </BlurReveal>
             <WidgetDataProvider
               data={{

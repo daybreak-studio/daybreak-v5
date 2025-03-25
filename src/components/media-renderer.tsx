@@ -64,7 +64,13 @@ export const MediaRenderer = memo(
     if (!media?.source?.asset) return null;
 
     const Wrapper = ({ children }: { children: React.ReactNode }) => (
-      <motion.div className={fill ? "relative h-full w-full" : ""}>
+      <motion.div
+        className={cn(
+          fill
+            ? "relative h-full w-full focus:outline-none focus:ring-0"
+            : "focus:outline-none focus:ring-0",
+        )}
+      >
         {children}
       </motion.div>
     );
@@ -78,7 +84,10 @@ export const MediaRenderer = memo(
         <Wrapper>
           <video
             ref={videoRef}
-            className={cn("h-full w-full object-cover", className)}
+            className={cn(
+              "h-full w-full object-cover focus:outline-none focus:ring-0",
+              className,
+            )}
             src={`https://stream.mux.com/${playbackId}/high.mp4`}
             poster={getMuxThumbnailUrl(media, thumbnailTime)}
             autoPlay={autoPlay}
@@ -103,7 +112,10 @@ export const MediaRenderer = memo(
           <Image
             src={imageUrl}
             alt={media.alt || ""}
-            className={cn("object-cover", className)}
+            className={cn(
+              "object-cover focus:outline-none focus:ring-0",
+              className,
+            )}
             {...(fill
               ? { fill: true }
               : {

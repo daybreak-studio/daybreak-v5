@@ -40,7 +40,7 @@ const CarouselComponent = memo(({ media, className }: CarouselProps) => {
             return (
               <SwiperSlide
                 key={item._key}
-                className="!h-[400px] !w-[85%] lg:!h-[600px] lg:!w-[600px]"
+                className="!h-[400px] !w-[85%] hover:cursor-grab active:cursor-grabbing lg:!h-[600px] lg:!w-[600px]"
               >
                 <HoverCard>
                   <MediaRenderer

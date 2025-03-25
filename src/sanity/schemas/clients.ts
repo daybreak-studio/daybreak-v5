@@ -8,19 +8,16 @@ export const clients = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "priority",
+      title: "Priority",
+      type: "number",
+      description: "Lower numbers will appear first (e.g. 1 appears before 10)",
+      initialValue: 10,
+    }),
+    defineField({
       name: "name",
       title: "Client Name",
       type: "string",
-    }),
-    defineField({
-      name: "logo",
-      title: "Client Logo",
-      type: "image",
-      description: "Square aspect ratio recommended.",
-      options: {
-        accept: "image/png,image/jpeg",
-      },
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: "slug",
@@ -32,6 +29,17 @@ export const clients = defineType({
       },
       validation: (Rule) => Rule.required(),
     }),
+    defineField({
+      name: "logo",
+      title: "Client Logo",
+      type: "image",
+      description: "Square aspect ratio recommended.",
+      options: {
+        accept: "image/png,image/jpeg",
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+
     defineField({
       name: "description",
       title: "Description",
