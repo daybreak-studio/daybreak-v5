@@ -17,7 +17,7 @@ const tabs: Tab[] = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/work", label: "Work" },
-  { href: "/team", label: "Team" },
+  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 

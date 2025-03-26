@@ -78,7 +78,7 @@ export default function Home({
     <>
       <Metadata
         title="Daybreak Studio"
-        description={"A technology first design studio"}
+        description={"A design and technology studio."}
       />
       <main className="relative">
         <motion.div className="fixed inset-0">
@@ -93,8 +93,7 @@ export default function Home({
               // }}
               className="max-w-[16ch] text-center text-3xl font-[450] text-neutral-700/50 lg:text-3xl 2xl:text-4xl"
             >
-              A (people-first) design first design studio but also technology
-              only a little bit?
+              A design and technology studio.
             </BlurReveal>
             <WidgetDataProvider
               data={{

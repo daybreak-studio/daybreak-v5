@@ -56,7 +56,7 @@ export default function App({ Component, pageProps }: AppProps) {
              #######################            ########################
 
                       Daybreak Studio — 2025 — daybreak.studio
-                         A technology first design studio.
+                         A design and technology studio.
 
                            Are you a developer? Join us!
                              careers@daybreak.studio
