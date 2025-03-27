@@ -225,6 +225,7 @@ const Navigation = memo(function Navigation({
       transition={{
         duration: 0.3,
         ease: EASINGS.easeOutQuart,
+        delay: 0.6,
       }}
     >
       <motion.div
@@ -265,7 +266,7 @@ const Navigation = memo(function Navigation({
               <motion.div
                 layout
                 key="expanded"
-                className="relative w-screen max-w-[calc(100vw-2rem)] md:max-w-[400px]"
+                className="relative w-[400px]"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -275,11 +276,19 @@ const Navigation = memo(function Navigation({
                   <AnimatePresence mode="popLayout" custom={direction}>
                     <motion.div
                       key={`content-${activeGroup}`}
-                      initial={{ opacity: 0, y: direction * 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: direction * -20 }}
+                      initial={{
+                        opacity: 0,
+                        y: direction * 20,
+                        filter: "blur(8px)",
+                      }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      exit={{
+                        opacity: 0,
+                        y: direction * -20,
+                        filter: "blur(8px)",
+                      }}
                       transition={{
-                        duration: 0.4,
+                        duration: 0.8,
                         ease: EASINGS.easeOutQuart,
                       }}
                     >
@@ -489,8 +498,11 @@ export default function ProjectCaseStudy({ data }: ProjectCaseStudyProps) {
   );
 
   return (
-    <div ref={containerRef} className="h-full overflow-y-auto overscroll-none">
-      <div className="hide-scrollbar px-4 py-8 xl:px-8">
+    <div
+      ref={containerRef}
+      className="hide-scrollbar h-full overflow-y-auto overscroll-none"
+    >
+      <div className="hide-scrollbar relative px-4 py-8 xl:px-8">
         <div className="mb-8 flex justify-end">
           <motion.button
             onClick={handleClose}

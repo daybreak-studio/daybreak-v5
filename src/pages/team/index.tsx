@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { GetStaticProps } from "next";
 import { client } from "@/sanity/lib/client";
 import { TEAM_QUERY } from "@/sanity/lib/queries";
-import { About, Team } from "@/sanity/types";
+import { Team } from "@/sanity/types";
 import { MediaRenderer } from "@/components/media-renderer";
 import { EASINGS } from "@/components/animations/easings";
 import CareersPill from "@/components/job/careers-pill";
@@ -26,7 +26,7 @@ import { useIsHoverEnabled } from "@/lib/hooks/use-media-query";
 const getMiddleIndex = (length: number) => Math.floor((length - 1) / 2);
 
 // Update the type for team member to be more specific
-type TeamMember = NonNullable<NonNullable<About["team"]>[number]>;
+type TeamMember = NonNullable<NonNullable<Team["team"]>[number]>;
 type QAPair = NonNullable<TeamMember["qaPairs"]>[number];
 
 // Components
@@ -187,63 +187,36 @@ export default function TeamPage({ teamData }: { teamData: Team }) {
     };
   }, [emblaApi, selectedIndex]);
 
-  // Add keyboard navigation with debounce
+  // Add keyboard navigation
   useEffect(() => {
-    if (!emblaApi) return;
-
-    let timeoutId: NodeJS.Timeout;
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (!emblaApi) return;
+
       // Don't handle carousel navigation if modal is expanded
       if (isExpanded) return;
 
-      // Prevent rapid keypresses
-      if (isAnimating.current) return;
-      isAnimating.current = true;
-
-      try {
-        switch (event.key) {
-          case "ArrowLeft":
-            event.preventDefault();
-            emblaApi.scrollPrev();
-            break;
-          case "ArrowRight":
-            event.preventDefault();
-            emblaApi.scrollNext();
-            break;
-        }
-      } finally {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          isAnimating.current = false;
-        }, 100);
+      switch (event.key) {
+        case "ArrowLeft":
+          event.preventDefault();
+          emblaApi.scrollPrev();
+          break;
+        case "ArrowRight":
+          event.preventDefault();
+          emblaApi.scrollNext();
+          break;
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      clearTimeout(timeoutId);
-      isAnimating.current = false;
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [emblaApi, isExpanded]);
 
   // Handlers
   const handleSlideClick = useCallback(
     (index: number) => {
-      // Prevent rapid clicks
-      if (isAnimating.current) return;
-      isAnimating.current = true;
-
-      try {
-        setPreviewIndex(null);
-        // Let the onSelect handler update selectedIndex
-        emblaApi?.scrollTo(index);
-      } finally {
-        // Reset animation flag after a short delay
-        setTimeout(() => {
-          isAnimating.current = false;
-        }, 100);
-      }
+      setPreviewIndex(null);
+      // Let the onSelect handler update selectedIndex
+      emblaApi?.scrollTo(index);
     },
     [emblaApi],
   );

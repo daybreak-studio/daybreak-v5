@@ -47,7 +47,7 @@ const MODAL_VARIANTS = {
   },
   caseStudy: {
     className:
-      "h-[100dvh] w-screen max-w-none overflow-y-auto rounded-none bg-white",
+      "h-[100dvh] w-screen max-w-none overflow-hidden rounded-none bg-white",
     type: "caseStudy",
   },
 } as const;
@@ -115,20 +115,20 @@ export default function WorkPage({ data }: { data: Clients[] }) {
       if (!open) {
         window.dispatchEvent(new Event(VIDEO_EVENTS.RESUME_ALL));
         document.body.style.overflow = "";
+        document.body.classList.remove("hide-scrollbar");
         lenisRef.current?.start();
       } else {
         window.dispatchEvent(new Event(VIDEO_EVENTS.PAUSE_ALL));
-        // Only lock scrolling for preview and selector modals
         const currentProject = projectSlug
           ? client.projects?.find((project) => project.category === projectSlug)
           : client.projects?.[0];
 
         const isCaseStudy = currentProject?._type !== "preview";
 
-        if (!isCaseStudy) {
-          document.body.style.overflow = "hidden";
-          lenisRef.current?.stop();
-        }
+        // Always stop Lenis and hide body overflow for all modal types
+        document.body.style.overflow = "hidden";
+        document.body.classList.add("hide-scrollbar");
+        lenisRef.current?.stop();
       }
     },
     [projectSlug],
@@ -303,7 +303,7 @@ export default function WorkPage({ data }: { data: Clients[] }) {
                       handleOpenChange(open, client);
                     }
                   }}
-                  modal={modalVariant.type !== "caseStudy"}
+                  modal={true}
                 >
                   <Dialog.Title className="sr-only">
                     {client.name} Project Details

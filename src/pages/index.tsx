@@ -82,7 +82,7 @@ export default function Home({
       />
       <main className="relative">
         <motion.div className="fixed inset-0">
-          <div className="flex h-full flex-col items-center justify-center space-y-6 lg:space-y-8">
+          <div className="flex h-full flex-col items-center justify-center space-y-2 xl:space-y-6">
             <BlurReveal
               // initial={{ opacity: 0, y: 25, filter: "blur(10px)" }}
               // animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}

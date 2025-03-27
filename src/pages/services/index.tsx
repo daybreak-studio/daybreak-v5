@@ -47,8 +47,8 @@ export default function Services({ servicesData }: { servicesData: Services }) {
         title="Services | Daybreak Studio"
         description="We shape ambitious brands & digital products at every stage of evolution"
       />
-      <main className="relative flex flex-col items-center justify-center space-y-48 pt-48 lg:space-y-52">
-        <section className="flex h-full w-full flex-col items-center justify-center space-y-2 lg:space-y-8">
+      <main className="relative flex flex-col items-center justify-center space-y-48 pt-36 lg:space-y-48 2xl:pt-48">
+        <section className="flex h-full w-full flex-col items-center justify-center space-y-4 lg:space-y-6">
           <BlurReveal className="w-9/12 text-center text-3xl font-[450] text-neutral-700/25 md:max-w-[36ch] lg:text-4xl">
             We shape ambitious brands & digital products at every stage of
             evolution

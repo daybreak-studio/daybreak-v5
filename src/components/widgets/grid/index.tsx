@@ -14,7 +14,7 @@ const GRID_CONFIG = {
     sm: "clamp(100px, 15vw, 100px)",
     md: "clamp(110px, 16vw, 120px)",
     lg: "clamp(120px, 17vw, 130px)",
-    xl: "clamp(130px, 18vw, 140px)",
+    xl: "clamp(80px, 12vw, 120px)",
     "2xl": "clamp(140px, 19vw, 160px)",
     "3xl": "clamp(150px, 20vw, 180px)",
   } as const,

@@ -74,7 +74,7 @@ export default function QuotesWidget({ data }: QuotesProps) {
                   ease: EASINGS.easeInOutQuart,
                 }}
               >
-                <h1 className="text-sm text-neutral-400 md:text-2xl">
+                <h1 className="text-sm text-neutral-400 md:text-lg 2xl:text-2xl">
                   {testimonials[index]?.quote}
                 </h1>
               </motion.div>
@@ -95,16 +95,16 @@ export default function QuotesWidget({ data }: QuotesProps) {
                 }}
                 className="flex flex-col"
               >
-                <h1 className="text-sm font-medium text-neutral-400 md:text-base">
+                <h1 className="text-sm font-medium text-neutral-400 2xl:text-base">
                   {testimonials[index]?.author}
                 </h1>
-                <h1 className="text-xs text-neutral-400 md:text-sm">
+                <h1 className="text-xs text-neutral-400 2xl:text-sm">
                   {testimonials[index]?.title}
                 </h1>
               </motion.div>
             </AnimatePresence>
 
-            <div className="absolute bottom-4 right-4 hidden flex-col gap-2 md:flex">
+            <div className="absolute bottom-4 right-4 hidden flex-col gap-2 2xl:flex">
               <motion.button
                 className="rounded-full bg-neutral-400/5 p-2"
                 onClick={(e) => {
