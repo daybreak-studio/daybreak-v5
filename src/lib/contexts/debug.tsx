@@ -13,32 +13,22 @@ const DebugContext = createContext<DebugContextType>({
 
 export function DebugProvider({ children }: { children: React.ReactNode }) {
   const [debug, setDebug] = useState(false);
-  const [shiftPressed, setShiftPressed] = useState(false);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Shift") {
-        setShiftPressed(true);
-      } else if (shiftPressed && event.key === "D") {
+      // Check for Ctrl/CMD + D
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "d") {
         event.preventDefault();
         setDebug((prev) => !prev);
       }
     };
 
-    const handleKeyUp = (event: KeyboardEvent) => {
-      if (event.key === "Shift") {
-        setShiftPressed(false);
-      }
-    };
-
     window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [shiftPressed]);
+  }, []);
 
   return (
     <DebugContext.Provider
@@ -52,7 +42,7 @@ export function DebugProvider({ children }: { children: React.ReactNode }) {
             exit={{ opacity: 0, y: 5 }}
             className="fixed right-4 top-4 z-50 text-xs text-neutral-500"
           >
-            Debug Mode (Shift + D)
+            Debug Mode (Ctrl/CMD + D)
           </motion.h4>
         )}
       </AnimatePresence>
