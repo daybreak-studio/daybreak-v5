@@ -22,6 +22,7 @@ import { Dot } from "lucide-react";
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 type ProjectType = keyof typeof ProjectTypes;
 
@@ -247,11 +248,12 @@ export const createFormSteps = ({
                 name="projectTypes"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4">
                       {Object.entries(ProjectTypes).map(([value, label]) => {
                         const isSelected = field.value?.includes(
                           value as ProjectType,
                         );
+                        const imageSrc = `/images/${value}.jpg`;
 
                         return (
                           <FormField
@@ -260,27 +262,37 @@ export const createFormSteps = ({
                             name="projectTypes"
                             render={({ field }) => (
                               <FormItem>
-                                <label className="relative flex cursor-pointer flex-row items-center justify-between rounded-2xl border border-neutral-200 bg-white/20 p-4 text-sm transition-colors hover:bg-white/30">
-                                  <span className="cursor-pointer text-neutral-500">
-                                    {label}
-                                  </span>
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={isSelected}
-                                      onCheckedChange={() => {
-                                        const newValue = isSelected
-                                          ? field.value?.filter(
-                                              (item) => item !== value,
-                                            )
-                                          : [
-                                              ...(field.value || []),
-                                              value as ProjectType,
-                                            ];
-                                        field.onChange(newValue);
-                                      }}
-                                      className="border-neutral-500/20 data-[state=checked]:bg-neutral-600 data-[state=checked]:text-white"
+                                <label className="relative flex cursor-pointer flex-col items-center justify-between rounded-2xl border border-neutral-200 bg-white/20 p-2 text-sm transition-colors hover:bg-white/30 sm:p-4">
+                                  <div className="relative h-32 w-full overflow-hidden rounded-xl">
+                                    <Image
+                                      src={imageSrc}
+                                      alt={label}
+                                      fill
+                                      className="object-cover"
                                     />
-                                  </FormControl>
+                                  </div>
+                                  <div className="mt-2 flex w-full items-center justify-between sm:mt-3">
+                                    <span className="cursor-pointer text-xs text-neutral-500 sm:text-sm">
+                                      {label}
+                                    </span>
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={isSelected}
+                                        onCheckedChange={() => {
+                                          const newValue = isSelected
+                                            ? field.value?.filter(
+                                                (item) => item !== value,
+                                              )
+                                            : [
+                                                ...(field.value || []),
+                                                value as ProjectType,
+                                              ];
+                                          field.onChange(newValue);
+                                        }}
+                                        className="border-neutral-500/20 data-[state=checked]:bg-neutral-600 data-[state=checked]:text-white"
+                                      />
+                                    </FormControl>
+                                  </div>
                                 </label>
                               </FormItem>
                             )}
