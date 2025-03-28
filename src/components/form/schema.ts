@@ -12,7 +12,11 @@ export const contactFormSchema = z.object({
   email: z.string().email("Invalid email address"),
   projectTypes: z.array(z.enum(["brand", "web", "motion", "product"])),
   message: z.string().min(10, "Message is too short"),
-  link: z.string().url().optional().or(z.literal("")),
+  link: z
+    .string()
+    .regex(/[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+/, "Please enter a valid domain")
+    .optional()
+    .or(z.literal("")),
 });
 
 export type ContactFormValues = z.infer<typeof contactFormSchema>;

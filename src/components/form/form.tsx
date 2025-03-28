@@ -78,7 +78,7 @@ const FormCardNavigation = ({
   return (
     <div className="flex items-center justify-between">
       <button
-        className="rounded-lg p-2 opacity-40 transition-opacity hover:opacity-100 disabled:opacity-20"
+        className="rounded-lg p-2 text-neutral-400 transition-colors duration-300 hover:text-neutral-500 disabled:text-neutral-300"
         onClick={onPrev}
         disabled={current === 1}
         aria-label="Previous"
@@ -86,11 +86,11 @@ const FormCardNavigation = ({
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
-      <span className="text-sm text-neutral-500/50 md:text-base">
+      <span className="text-sm text-neutral-400 md:text-base">
         {current} of {total}
       </span>
       <button
-        className="rounded-lg p-2 opacity-40 transition-opacity hover:opacity-100 disabled:opacity-20"
+        className="rounded-lg p-2 text-neutral-400 transition-colors duration-300 hover:text-neutral-500 disabled:text-neutral-300"
         onClick={onNext}
         disabled={current === total}
         aria-label="Next"

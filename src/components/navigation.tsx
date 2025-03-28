@@ -17,7 +17,7 @@ const tabs: Tab[] = [
   { href: "/", label: "Home" },
   { href: "/services", label: "Services" },
   { href: "/work", label: "Work" },
-  { href: "/about", label: "About" },
+  { href: "/team", label: "Team" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -188,11 +188,11 @@ const MobileMenu = ({
 
         <div className="col-span-1 col-start-3 row-span-2 flex flex-col gap-4">
           <Card
-            href="/about"
+            href="/team"
             icon={UserGroupIcon}
-            label="About"
+            label="Team"
             onClick={onClose}
-            isActive={currentPath === "/about"}
+            isActive={currentPath === "/team"}
           />
           <Card
             href="/services"

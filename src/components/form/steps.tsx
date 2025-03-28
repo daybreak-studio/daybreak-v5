@@ -80,12 +80,12 @@ export const createFormSteps = ({
         </FormCard.Header>
         <FormCard.Content className="mt-2">
           <div className="flex flex-col gap-4 md:gap-6">
-            <span className="text-sm text-neutral-400 md:text-lg">
+            <span className="text-sm text-neutral-500 md:text-lg">
               We love playing with the possibilities of tech, and we&apos;re
               here to explore them with you.
             </span>
             <div className="flex items-center justify-between rounded-2xl border border-neutral-500/10 p-4">
-              <span className="text-xs text-neutral-500/75 md:text-base">
+              <span className="text-xs text-neutral-500 md:text-base">
                 Email us:
               </span>
               <button
@@ -113,10 +113,10 @@ export const createFormSteps = ({
                         ease: EASINGS.easeOutQuart,
                       }}
                     >
-                      <span className="text-xs text-neutral-500/75 md:text-base">
+                      <span className="text-xs text-neutral-500 md:text-base">
                         Copied to clipboard!
                       </span>
-                      <ClipboardDocumentCheckIcon className="h-4 w-4 text-neutral-500/75" />
+                      <ClipboardDocumentCheckIcon className="h-4 w-4 text-neutral-500" />
                     </motion.div>
                   ) : (
                     <motion.div
@@ -130,10 +130,10 @@ export const createFormSteps = ({
                         ease: EASINGS.easeInQuart,
                       }}
                     >
-                      <span className="text-xs text-neutral-500/75 md:text-base">
+                      <span className="text-xs text-neutral-500 md:text-base">
                         hello@daybreak.studio
                       </span>
-                      <ClipboardDocumentIcon className="h-4 w-4 text-neutral-500/75" />
+                      <ClipboardDocumentIcon className="h-4 w-4 text-neutral-500" />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -173,13 +173,13 @@ export const createFormSteps = ({
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-1 text-neutral-500">
+                    <FormLabel className="flex items-center gap-1 text-neutral-600">
                       Full Name
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-black"
+                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-2 focus:ring-neutral-300"
                         placeholder="Your name"
                         {...field}
                       />
@@ -193,13 +193,13 @@ export const createFormSteps = ({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-1 text-neutral-500">
+                    <FormLabel className="flex items-center gap-1 text-neutral-600">
                       Email
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-black"
+                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-2 focus:ring-neutral-300"
                         type="email"
                         placeholder="your@email.com"
                         {...field}
@@ -262,7 +262,7 @@ export const createFormSteps = ({
                             name="projectTypes"
                             render={({ field }) => (
                               <FormItem>
-                                <label className="relative flex cursor-pointer flex-col items-center justify-between rounded-2xl border border-neutral-200 bg-white/20 p-2 text-sm transition-colors hover:bg-white/30 sm:p-4">
+                                <label className="relative flex cursor-pointer flex-col items-center justify-between rounded-2xl border border-neutral-200 bg-white/20 p-2 text-sm transition-colors hover:bg-white sm:p-4">
                                   <div className="relative h-32 w-full overflow-hidden rounded-xl">
                                     <Image
                                       src={imageSrc}
@@ -272,7 +272,7 @@ export const createFormSteps = ({
                                     />
                                   </div>
                                   <div className="mt-2 flex w-full items-center justify-between sm:mt-3">
-                                    <span className="cursor-pointer text-xs text-neutral-500 sm:text-sm">
+                                    <span className="cursor-pointer text-xs text-neutral-600 sm:text-sm">
                                       {label}
                                     </span>
                                     <FormControl>
@@ -289,7 +289,7 @@ export const createFormSteps = ({
                                               ];
                                           field.onChange(newValue);
                                         }}
-                                        className="border-neutral-500/20 data-[state=checked]:bg-neutral-600 data-[state=checked]:text-white"
+                                        className="border-neutral-500/20 data-[state=checked]:bg-neutral-800 data-[state=checked]:text-white"
                                       />
                                     </FormControl>
                                   </div>
@@ -339,14 +339,14 @@ export const createFormSteps = ({
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="flex items-center gap-1">
+                    <FormLabel className="flex items-center gap-1 text-neutral-600">
                       Project Details
                       <span className="text-red-500">*</span>
                     </FormLabel>
                     <FormControl>
                       <Textarea
                         placeholder="Share your vision, goals, and any specific requirements..."
-                        className="h-32 w-full resize-none rounded-2xl bg-neutral-50 p-4"
+                        className="h-32 w-full resize-none rounded-2xl bg-neutral-50 p-4 text-neutral-500 placeholder:text-neutral-400 focus:ring-2 focus:ring-neutral-300"
                         {...field}
                       />
                     </FormControl>
@@ -359,11 +359,13 @@ export const createFormSteps = ({
                 name="link"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Reference Link (Optional)</FormLabel>
+                    <FormLabel className="text-neutral-600">
+                      Reference Link (Optional)
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-black"
-                        placeholder="https://..."
+                        className="rounded-xl border-[1px] border-neutral-200 text-neutral-500 placeholder:text-neutral-400 focus:ring-2 focus:ring-neutral-300"
+                        placeholder="daybreak.studio"
                         {...field}
                       />
                     </FormControl>
@@ -393,12 +395,12 @@ export const createFormSteps = ({
             <FormCard.Navigation current={5} total={5} onPrev={prevStep} />
             <FormCard.Title>Review your submission</FormCard.Title>
           </FormCard.Header>
-          <FormCard.Content className="mt-8">
+          <FormCard.Content className="mt-6">
             <div className="flex flex-col gap-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
+              <div className="space-y-6">
+                <div className="space-y-1">
                   <div className="flex items-center">
-                    <h3 className="text-sm font-medium text-neutral-500">
+                    <h3 className="text-sm font-medium text-neutral-600">
                       Contact Details
                     </h3>
                     <Dot
@@ -415,7 +417,7 @@ export const createFormSteps = ({
                       className={cn(
                         "text-sm",
                         values.fullName
-                          ? "text-neutral-600"
+                          ? "text-neutral-500"
                           : "text-neutral-400",
                       )}
                     >
@@ -424,7 +426,7 @@ export const createFormSteps = ({
                     <p
                       className={cn(
                         "text-sm",
-                        values.email ? "text-neutral-600" : "text-neutral-400",
+                        values.email ? "text-neutral-500" : "text-neutral-400",
                       )}
                     >
                       {values.email || "No email provided"}
@@ -434,7 +436,7 @@ export const createFormSteps = ({
 
                 <div className="space-y-2">
                   <div className="flex items-center">
-                    <h3 className="text-sm font-medium text-neutral-500">
+                    <h3 className="text-sm font-medium text-neutral-600">
                       Project Types
                     </h3>
                     <Dot
@@ -473,7 +475,7 @@ export const createFormSteps = ({
 
                 <div className="space-y-2">
                   <div className="flex items-center">
-                    <h3 className="text-sm font-medium text-neutral-500">
+                    <h3 className="text-sm font-medium text-neutral-600">
                       Project Details
                     </h3>
                     <Dot
@@ -495,7 +497,7 @@ export const createFormSteps = ({
 
                 {values.link && (
                   <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-neutral-500">
+                    <h3 className="text-sm font-medium text-neutral-600">
                       Reference Link
                     </h3>
                     <a
@@ -567,14 +569,14 @@ export const createFormSteps = ({
             </FormCard.Header>
             <FormCard.Content className="mt-8">
               <div className="space-y-6">
-                <span className="text-[16px] font-[450] text-neutral-500/70">
+                <span className="text-[16px] font-[450] text-neutral-600">
                   We&apos;ll review your details and reach out within 24-48
                   hours.
                 </span>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-neutral-500">
+                    <h3 className="text-sm font-medium text-neutral-600">
                       Project Types
                     </h3>
                     <div className="flex flex-wrap gap-2">
@@ -590,7 +592,7 @@ export const createFormSteps = ({
                   </div>
 
                   <div className="space-y-2">
-                    <h3 className="text-sm font-medium text-neutral-500">
+                    <h3 className="text-sm font-medium text-neutral-600">
                       Message
                     </h3>
                     <p className="text-sm text-neutral-600">{values.message}</p>
@@ -598,7 +600,7 @@ export const createFormSteps = ({
 
                   {values.link && (
                     <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-neutral-500">
+                      <h3 className="text-sm font-medium text-neutral-600">
                         Reference Link
                       </h3>
                       <a
